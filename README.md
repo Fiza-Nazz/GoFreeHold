@@ -253,8 +253,22 @@ cp .env.example .env          # Windows: copy .env.example .env
 
 # 4. Generate application key
 php artisan key:generate
+```
 
-# 5. Create database and run all 37 migrations + seed demo data
+> ⚠️ **Important — Create your database first:**  
+> Open MySQL/MariaDB (phpMyAdmin, TablePlus, HeidiSQL, or terminal) and run:
+> ```sql
+> CREATE DATABASE gofreehold CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+> ```
+> Then open `backend/.env` and set your database credentials:
+> ```env
+> DB_DATABASE=gofreehold
+> DB_USERNAME=root
+> DB_PASSWORD=          ← your MySQL/MariaDB root password (leave blank if none)
+> ```
+
+```bash
+# 5. Run all 37 migrations and seed demo accounts
 php artisan migrate --seed
 
 # 6. Start the API server
