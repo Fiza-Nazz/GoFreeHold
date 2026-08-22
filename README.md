@@ -211,60 +211,64 @@ frontend/
 
 ---
 
-## 🔑 Demo Accounts
+## 🚀 Setup Guide for Paul — Step by Step (0 to 100)
 
-> 💡 All accounts are pre-seeded and ready to use. No configuration required.
+### ✅ What You Need Installed First
 
-| Role | Email | Password | Portal |
-|------|-------|----------|--------|
-| 🛡️ Administrator | `admin@gofreehold.com` | **`password`** | `/admin/dashboard` |
-| 🏠 Property Owner | `owner1@gofreehold.com` | **`password`** | `/owner/dashboard` |
-| 👤 Tenant | `tenant1@gofreehold.com` | **`password`** | `/tenant/dashboard` |
-| 🔧 Maintenance | `maintenance@gofreehold.com` | **`password`** | `/maintenance/dashboard` |
+| Tool | Download Link | Why |
+|------|--------------|-----|
+| **PHP 8.2+** | [php.net/downloads](https://www.php.net/downloads) | Laravel backend runs on PHP |
+| **Composer** | [getcomposer.org](https://getcomposer.org) | PHP package manager |
+| **Node.js 20+** | [nodejs.org](https://nodejs.org) | React frontend runs on Node |
+| **MySQL / MariaDB** | [mariadb.org](https://mariadb.org/download) or XAMPP | Database |
+
+> 💡 **Easiest option for Windows:** Install [XAMPP](https://www.apachefriends.org/) — it includes PHP, MySQL, and phpMyAdmin all-in-one.
 
 <br/>
 
 ---
 
-## 🚀 Installation — 0 to 100 Guide
+### 📥 Step 1 — Clone the Repository
 
-### Prerequisites
-
-| Requirement | Version |
-|-------------|---------|
-| PHP | 8.2+ (`pdo_mysql`, `mbstring`, `gd`, `fileinfo` extensions) |
-| Composer | Latest |
-| Node.js + npm | 20+ |
-| MariaDB / MySQL | 8.0+ on `localhost:3306` |
+```bash
+git clone https://github.com/Fiza-Nazz/GoFreeHold.git
+cd GoFreeHold
+```
 
 <br/>
 
-### ⚙️ Step 1 — Backend Setup
+---
+
+### ⚙️ Step 2 — Backend Setup
 
 ```bash
-# 1. Navigate to backend
 cd backend
+```
 
-# 2. Install PHP dependencies
+**2a. Install PHP packages:**
+```bash
 composer install
+```
 
-# 3. Copy environment config
-cp .env.example .env          # Windows: copy .env.example .env
+**2b. Create your environment file:**
+```bash
+# Mac / Linux:
+cp .env.example .env
 
-# 4. Generate application key
+# Windows Command Prompt:
+copy .env.example .env
+```
+
+**2c. Generate the application secret key:**
+```bash
 php artisan key:generate
 ```
 
-> ⚠️ **Important — Create your database first:**  
-> Open MySQL/MariaDB (phpMyAdmin, TablePlus, HeidiSQL, or terminal) and run:
+**2d. Create the database:**
+
+> Open **phpMyAdmin** (at `http://localhost/phpmyadmin`) or any MySQL tool and run:
 > ```sql
 > CREATE DATABASE gofreehold CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-> ```
-> Then open `backend/.env` and set your database credentials:
-> ```env
-> DB_DATABASE=gofreehold
-> DB_USERNAME=root
-> DB_PASSWORD=          ← your MySQL/MariaDB root password (leave blank if none)
 > ```
 
 ```bash
