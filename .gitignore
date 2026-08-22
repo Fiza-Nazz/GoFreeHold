@@ -1,0 +1,33 @@
+# Dependencies
+backend/vendor/
+frontend/node_modules/
+
+# Environment files
+backend/.env
+frontend/.env
+backend/.env.backup
+backend/.env.production
+
+# Storage & Logs
+backend/storage/*.key
+backend/storage/logs/*.log
+backend/storage/framework/cache/*
+backend/storage/framework/sessions/*
+backend/storage/framework/views/*
+!backend/storage/fonts/
+
+# Build artifacts
+frontend/dist/
+frontend/dist-ssr/
+*.local
+
+# IDE & OS
+.idea/
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+.DS_Store
+Thumbs.db

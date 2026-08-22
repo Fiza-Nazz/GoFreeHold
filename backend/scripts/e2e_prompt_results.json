@@ -1,0 +1,624 @@
+{
+    "generated_at": "2026-08-05T17:50:13+00:00",
+    "base": "http://127.0.0.1:8000/api",
+    "pass": 73,
+    "fail": 0,
+    "warn": 2,
+    "total": 75,
+    "prompt_verdict": "YES_WITH_KNOWN_CLIENT_PENDING",
+    "results": [
+        {
+            "id": "M1.login.admin",
+            "module": "M1",
+            "title": "Login as admin",
+            "ok": true,
+            "level": "check",
+            "detail": "token issued"
+        },
+        {
+            "id": "M1.login.owner",
+            "module": "M1",
+            "title": "Login as owner",
+            "ok": true,
+            "level": "check",
+            "detail": "token issued"
+        },
+        {
+            "id": "M1.login.tenant",
+            "module": "M1",
+            "title": "Login as tenant",
+            "ok": true,
+            "level": "check",
+            "detail": "token issued"
+        },
+        {
+            "id": "M1.login.maintenance",
+            "module": "M1",
+            "title": "Login as maintenance",
+            "ok": true,
+            "level": "check",
+            "detail": "token issued"
+        },
+        {
+            "id": "M1.me",
+            "module": "M1",
+            "title": "GET /user",
+            "ok": true,
+            "level": "check",
+            "detail": "code=200"
+        },
+        {
+            "id": "M3.owners",
+            "module": "M3",
+            "title": "List owners",
+            "ok": true,
+            "level": "check",
+            "detail": "code=200 count=2"
+        },
+        {
+            "id": "M3.tenants",
+            "module": "M3",
+            "title": "List tenants",
+            "ok": true,
+            "level": "check",
+            "detail": "code=200"
+        },
+        {
+            "id": "M3.properties",
+            "module": "M3",
+            "title": "List properties",
+            "ok": true,
+            "level": "check",
+            "detail": "code=200 count=8"
+        },
+        {
+            "id": "M3.units",
+            "module": "M3",
+            "title": "List units",
+            "ok": true,
+            "level": "check",
+            "detail": "code=200 count=10"
+        },
+        {
+            "id": "M4.contracts",
+            "module": "M4",
+            "title": "List contracts",
+            "ok": true,
+            "level": "check",
+            "detail": "code=200 count=8"
+        },
+        {
+            "id": "M3.ownerProfile",
+            "module": "M3",
+            "title": "Owner profile available",
+            "ok": true,
+            "level": "check",
+            "detail": "id=1"
+        },
+        {
+            "id": "M3.tenantProfile",
+            "module": "M3",
+            "title": "Tenant profile available",
+            "ok": true,
+            "level": "check",
+            "detail": "id=4"
+        },
+        {
+            "id": "M3.propertyReady",
+            "module": "M3",
+            "title": "Property available",
+            "ok": true,
+            "level": "check",
+            "detail": "id=1"
+        },
+        {
+            "id": "M3.unitReady",
+            "module": "M3",
+            "title": "AVAILABLE unit ready",
+            "ok": true,
+            "level": "check",
+            "detail": "id=2"
+        },
+        {
+            "id": "M3.booking",
+            "module": "M3",
+            "title": "Advance booking + receipt payload",
+            "ok": true,
+            "level": "check",
+            "detail": "code=200 receipt=REC-20260805174859-386"
+        },
+        {
+            "id": "M3.receiptPersisted",
+            "module": "M3",
+            "title": "Booking cash receipt saved in DB",
+            "ok": true,
+            "level": "check",
+            "detail": "code=200 id=1"
+        },
+        {
+            "id": "M3.resetAfterBook",
+            "module": "M3",
+            "title": "Reset unit to AVAILABLE after booking test",
+            "ok": true,
+            "level": "warn",
+            "detail": "code=200"
+        },
+        {
+            "id": "M3.vacantReport",
+            "module": "M3",
+            "title": "Vacant property report",
+            "ok": true,
+            "level": "check",
+            "detail": "code=200"
+        },
+        {
+            "id": "M4.contractReady",
+            "module": "M4",
+            "title": "Active contract available",
+            "ok": true,
+            "level": "check",
+            "detail": "id=12"
+        },
+        {
+            "id": "M2.ownerSummary",
+            "module": "M2",
+            "title": "Owner portfolio summary",
+            "ok": true,
+            "level": "check",
+            "detail": "code=200 {\"portfolio\":{\"total_properties\":1,\"total_units\":1,\"occupied_units\":0,\"vacant_units\":0,\"booked_units\":0}}"
+        },
+        {
+            "id": "M2.ownerProps",
+            "module": "M2",
+            "title": "Owner property drill-down",
+            "ok": true,
+            "level": "check",
+            "detail": "code=200"
+        },
+        {
+            "id": "M2.ownerVacant",
+            "module": "M2",
+            "title": "Owner vacant units",
+            "ok": true,
+            "level": "check",
+            "detail": "code=200"
+        },
+        {
+            "id": "M4.cheque",
+            "module": "M4",
+            "title": "Create PDC cheque",
+            "ok": true,
+            "level": "check",
+            "detail": "code=201 {\"status\":\"success\",\"message\":\"Cheque added.\",\"data\":{\"cheque\":{\"cheque_number\":\"CHQ-E2E-174903\",\"bank_name\":\"E2E Bank\",\"amount\":5000,\"due_date\":\"2026-09-04T00:00:00.000000Z\",\"contract_id\":12,\"status\""
+        },
+        {
+            "id": "M4.callLog",
+            "module": "M4",
+            "title": "Create contract call log",
+            "ok": true,
+            "level": "check",
+            "detail": "code=201 {\"status\":\"success\",\"message\":\"Call log added.\",\"data\":{\"log\":{\"contract_id\":12,\"date\":\"2026-08-05T00:00:00.000000Z\",\"remark\":\"E2E call log test\",\"logged_by\":{\"id\":1,\"name\":\"Admin User\"},\"updated_at\":"
+        },
+        {
+            "id": "M4.pdf",
+            "module": "M4",
+            "title": "Contract PDF generate",
+            "ok": true,
+            "level": "check",
+            "detail": "code=200 bytes=7066"
+        },
+        {
+            "id": "M4.legalCase",
+            "module": "M4",
+            "title": "Create legal case linked to contract",
+            "ok": true,
+            "level": "check",
+            "detail": "code=201 id=1 {\"status\":\"success\",\"message\":\"Legal case created.\",\"data\":{\"legal_case\":{\"contract_id\":12,\"status\":\"open\",\"notes\":\"E2E legal case \\u2014 prompt.md Module 4\",\"u"
+        },
+        {
+            "id": "M4.legalCaseDetail",
+            "module": "M4",
+            "title": "Legal case detail",
+            "ok": true,
+            "level": "check",
+            "detail": "code=200"
+        },
+        {
+            "id": "M4.legalCaseUpdate",
+            "module": "M4",
+            "title": "Update legal case status/notes",
+            "ok": true,
+            "level": "check",
+            "detail": "code=200"
+        },
+        {
+            "id": "M5.payment",
+            "module": "M5",
+            "title": "Record rent payment",
+            "ok": true,
+            "level": "check",
+            "detail": "code=201 {\"status\":\"success\",\"message\":\"Payment recorded successfully.\",\"data\":{\"payment\":{\"contract_id\":12,\"tenant_id\":4,\"type\":\"rent\",\"mode\":\"cash\",\"amount\":5000,\"date\":\"2026-08-05T00:00:00.000000Z\",\"due_date\":null,\"reference_n"
+        },
+        {
+            "id": "M5.ledger",
+            "module": "M5",
+            "title": "Rent ledger list",
+            "ok": true,
+            "level": "check",
+            "detail": "code=200 rows=2"
+        },
+        {
+            "id": "M5.receivables",
+            "module": "M5",
+            "title": "Receivables summary",
+            "ok": true,
+            "level": "check",
+            "detail": "code=200"
+        },
+        {
+            "id": "M5.serviceCharges",
+            "module": "M5",
+            "title": "Service charges list",
+            "ok": true,
+            "level": "check",
+            "detail": "code=200"
+        },
+        {
+            "id": "M5.payables",
+            "module": "M5",
+            "title": "Payables summary",
+            "ok": true,
+            "level": "check",
+            "detail": "code=200"
+        },
+        {
+            "id": "M5.accountingStub",
+            "module": "M5",
+            "title": "accounts.rmsez.com integration stub",
+            "ok": true,
+            "level": "warn",
+            "detail": "stub present (not live wired)"
+        },
+        {
+            "id": "M6.prepContract",
+            "module": "M6",
+            "title": "Prep settlement contract",
+            "ok": true,
+            "level": "check",
+            "detail": "unit=13 contract=14 code=201 {\"status\":\"success\",\"message\":\"Contract created successfully.\",\"data\":{\"contract\":{\"unit_id\":13,\"tenant_id\":4,\"owner_id\":20,\"start_date\":\"2026-06-06T00:00:00.000000Z\",\"end_date\":\"2"
+        },
+        {
+            "id": "M6.createSettlement",
+            "module": "M6",
+            "title": "Create pending settlement",
+            "ok": true,
+            "level": "check",
+            "detail": "code=201 {\"status\":\"success\",\"message\":\"Settlement created.\",\"data\":{\"settlement\":{\"owner_id\":1,\"contract_id\":14,\"vacant_date\":\"2026-08-05T00:00:00.000000Z\",\"dues\":500,\"receivable\":200,\"on_case\":false,\"status\":\"pending\",\"updated_"
+        },
+        {
+            "id": "M6.settlementPayment",
+            "module": "M6",
+            "title": "Add settlement payment",
+            "ok": true,
+            "level": "check",
+            "detail": "code=201 {\"status\":\"success\",\"message\":\"Settlement payment recorded.\",\"data\":{\"payment\":{\"settlement_id\":11,\"payment_method\":\"cash\",\"amount\":200,\"payment_date\":\"2026-08-05T00:00:00.000000Z\""
+        },
+        {
+            "id": "M6.complete",
+            "module": "M6",
+            "title": "Complete settlement",
+            "ok": true,
+            "level": "check",
+            "detail": "code=200 {\"status\":\"success\",\"message\":\"Settlement updated.\",\"data\":{\"settlement\":{\"id\":11,\"owner_id\":1,\"contract_id\":14,\"vacant_date\":\"2026-08-05T00:00:00.000000Z\",\"dues\":\"500.00\",\"receivable\":\"200.00\",\"statu"
+        },
+        {
+            "id": "M6.unitAvailable",
+            "module": "M6",
+            "title": "Unit status AVAILABLE after settlement",
+            "ok": true,
+            "level": "check",
+            "detail": "status=AVAILABLE"
+        },
+        {
+            "id": "M6.outstandingRecv",
+            "module": "M6",
+            "title": "Outstanding receivables report",
+            "ok": true,
+            "level": "check",
+            "detail": "code=200"
+        },
+        {
+            "id": "M6.income",
+            "module": "M6",
+            "title": "Income tracking list",
+            "ok": true,
+            "level": "check",
+            "detail": "code=200"
+        },
+        {
+            "id": "M6.expense",
+            "module": "M6",
+            "title": "Expense tracking list",
+            "ok": true,
+            "level": "check",
+            "detail": "code=200"
+        },
+        {
+            "id": "M7.tenantComplaint",
+            "module": "M7",
+            "title": "Tenant submit complaint",
+            "ok": true,
+            "level": "check",
+            "detail": "code=201 id=11 {\"status\":\"success\",\"message\":\"Complaint logged successfully.\",\"data\":{\"complaint\":{\"unit_id\":1,\"title\":\"E2E AC not cooling\",\"description\":\"Automated E2E complaint \\u2014 AC not co"
+        },
+        {
+            "id": "M7.adminSeesComplaint",
+            "module": "M7",
+            "title": "Admin sees tenant complaint",
+            "ok": true,
+            "level": "check",
+            "detail": "found=yes"
+        },
+        {
+            "id": "M7.assign",
+            "module": "M7",
+            "title": "Assign complaint to maintenance",
+            "ok": true,
+            "level": "check",
+            "detail": "code=200 {\"status\":\"success\",\"message\":\"Complaint assigned to technician.\",\"data\":{\"job\":{\"complaint_id\":11,\"assigned_to\":{\"id\":2,\"name\":\"Maintenance User\"},\"assigned_by"
+        },
+        {
+            "id": "M7.resolve",
+            "module": "M7",
+            "title": "Mark complaint resolved",
+            "ok": true,
+            "level": "check",
+            "detail": "code=200"
+        },
+        {
+            "id": "M7.dailyReport",
+            "module": "M7",
+            "title": "Daily maintenance report",
+            "ok": true,
+            "level": "check",
+            "detail": "code=200"
+        },
+        {
+            "id": "M7.appliances",
+            "module": "M7",
+            "title": "Appliance catalog",
+            "ok": true,
+            "level": "check",
+            "detail": "code=200"
+        },
+        {
+            "id": "M7.warehouse",
+            "module": "M7",
+            "title": "Warehouse inventory",
+            "ok": true,
+            "level": "check",
+            "detail": "code=200"
+        },
+        {
+            "id": "M7.unitInventory",
+            "module": "M7",
+            "title": "Unit inventory",
+            "ok": true,
+            "level": "check",
+            "detail": "code=200"
+        },
+        {
+            "id": "M7.purchases",
+            "module": "M7",
+            "title": "Purchase orders list",
+            "ok": true,
+            "level": "check",
+            "detail": "code=200"
+        },
+        {
+            "id": "M7.createPO",
+            "module": "M7",
+            "title": "Create purchase order",
+            "ok": true,
+            "level": "check",
+            "detail": "code=201 {\"status\":\"success\",\"message\":\"Purchase created.\",\"data\":{\"purchase\":{\"supplier_name\":\"E2E Supplier\",\"purchase_date\":\"2026-08-05T00:00:00.000000Z\",\"remark\":\"E2E PO\",\"status\":\"pending\",\"total_amount\":1"
+        },
+        {
+            "id": "M8.report.revenue",
+            "module": "M8",
+            "title": "Report revenue",
+            "ok": true,
+            "level": "check",
+            "detail": "code=200 {\"year\":2026,\"total_revenue\":\"67270.00\",\"breakdown\":[{\"month\":7,\"type\":\"rent\",\"total\":\"26000.00\"},{\"month\":8,\"type\":\"deposit\",\"total\":\"2000.00\"},{\"month\":8,\"typ"
+        },
+        {
+            "id": "M8.report.receivables",
+            "module": "M8",
+            "title": "Report receivables",
+            "ok": true,
+            "level": "check",
+            "detail": "code=200 {\"total_outstanding\":575580,\"entries\":[{\"contract_id\":1,\"total_debit\":\"385000.00\",\"total_credit\":\"21000.00\",\"balance\":\"364000.00\",\"contract\":{\"id\":1,\"unit_id\":1"
+        },
+        {
+            "id": "M8.report.expired-contracts",
+            "module": "M8",
+            "title": "Report expired-contracts",
+            "ok": true,
+            "level": "check",
+            "detail": "code=200 {\"days_threshold\":100,\"total_count\":1,\"contracts\":[{\"id\":12,\"unit_id\":1,\"tenant_id\":4,\"owner_id\":20,\"date\":null,\"start_date\":\"2026-08-02T00:00:00.000000Z\",\"end_"
+        },
+        {
+            "id": "M8.report.inventory-summary",
+            "module": "M8",
+            "title": "Report inventory-summary",
+            "ok": true,
+            "level": "check",
+            "detail": "code=200 {\"total_warehouse_items\":0,\"total_unit_items\":0,\"low_stock_count\":0,\"low_stock_items\":[],\"warehouse_stock\":[],\"unit_stock\":[]}"
+        },
+        {
+            "id": "M8.report.historical-ledgers",
+            "module": "M8",
+            "title": "Report historical-ledgers",
+            "ok": true,
+            "level": "check",
+            "detail": "code=200 {\"ledgers\":[{\"id\":53,\"contract_id\":11,\"payment_id\":18,\"date\":\"2026-08-10T00:00:00.000000Z\",\"description\":\"RENT payment ref REG-RENT-001\",\"debit\":\"0.00\",\"credit\""
+        },
+        {
+            "id": "M8.excel.revenue",
+            "module": "M8",
+            "title": "Excel export revenue",
+            "ok": true,
+            "level": "check",
+            "detail": "code=200 bytes=7130"
+        },
+        {
+            "id": "M8.excel.receivables",
+            "module": "M8",
+            "title": "Excel export receivables",
+            "ok": true,
+            "level": "check",
+            "detail": "code=200 bytes=6742"
+        },
+        {
+            "id": "M8.excel.expired-contracts",
+            "module": "M8",
+            "title": "Excel export expired-contracts",
+            "ok": true,
+            "level": "check",
+            "detail": "code=200 bytes=6568"
+        },
+        {
+            "id": "M8.excel.inventory-summary",
+            "module": "M8",
+            "title": "Excel export inventory-summary",
+            "ok": true,
+            "level": "check",
+            "detail": "code=200 bytes=6440"
+        },
+        {
+            "id": "M8.excel.historical-ledgers",
+            "module": "M8",
+            "title": "Excel export historical-ledgers",
+            "ok": true,
+            "level": "check",
+            "detail": "code=200 bytes=7755"
+        },
+        {
+            "id": "M8.notifSettings",
+            "module": "M8",
+            "title": "Notification settings",
+            "ok": true,
+            "level": "check",
+            "detail": "code=200"
+        },
+        {
+            "id": "M2.tenantFinance",
+            "module": "M2",
+            "title": "Tenant finance ledger",
+            "ok": true,
+            "level": "check",
+            "detail": "code=200 {\"status\":\"success\",\"data\":{\"entries\":[{\"id\":57,\"contract_id\":12,\"payment_id\":20,\"date\":\"2026-08-05T00:00:00.000000Z\",\"description\":\"RENT payment ref E2E-PAY-17"
+        },
+        {
+            "id": "M2.tenantPayments",
+            "module": "M2",
+            "title": "Tenant finance payments",
+            "ok": true,
+            "level": "check",
+            "detail": "code=200"
+        },
+        {
+            "id": "M7.maintComplaints",
+            "module": "M7",
+            "title": "Maintenance complaints list",
+            "ok": true,
+            "level": "check",
+            "detail": "code=200"
+        },
+        {
+            "id": "M7.maintDaily",
+            "module": "M7",
+            "title": "Maintenance daily report access",
+            "ok": true,
+            "level": "check",
+            "detail": "code=200"
+        },
+        {
+            "id": "X.tenantBlockAdmin",
+            "module": "X",
+            "title": "Tenant blocked from admin properties",
+            "ok": true,
+            "level": "check",
+            "detail": "code=403"
+        },
+        {
+            "id": "X.tenantBlockOwner",
+            "module": "X",
+            "title": "Tenant blocked from owner dashboard",
+            "ok": true,
+            "level": "check",
+            "detail": "code=403"
+        },
+        {
+            "id": "X.ownerBlockAdmin",
+            "module": "X",
+            "title": "Owner blocked from admin contracts",
+            "ok": true,
+            "level": "check",
+            "detail": "code=403"
+        },
+        {
+            "id": "X.maintBlockPayments",
+            "module": "X",
+            "title": "Maintenance blocked from admin payments",
+            "ok": true,
+            "level": "check",
+            "detail": "code=403"
+        },
+        {
+            "id": "M8.cmd.alert_contract-expiry",
+            "module": "M8",
+            "title": "Run alert:contract-expiry",
+            "ok": true,
+            "level": "check",
+            "detail": "exit=0 Expiry alert email sent for 1 contracts to admin@gofreehold.com."
+        },
+        {
+            "id": "M8.cmd.alert_pending-cheques",
+            "module": "M8",
+            "title": "Run alert:pending-cheques",
+            "ok": true,
+            "level": "check",
+            "detail": "exit=0 No pending cheques due soon."
+        },
+        {
+            "id": "M8.cmd.alert_vacant-properties",
+            "module": "M8",
+            "title": "Run alert:vacant-properties",
+            "ok": true,
+            "level": "check",
+            "detail": "exit=0 Vacant properties alert sent for 5 units to admin@gofreehold.com."
+        },
+        {
+            "id": "M8.cmd.alert_monthly-dues",
+            "module": "M8",
+            "title": "Run alert:monthly-dues",
+            "ok": true,
+            "level": "check",
+            "detail": "exit=0 No outstanding monthly dues found."
+        }
+    ],
+    "context": {
+        "owner_profile_id": 1,
+        "tenant_profile_id": 4,
+        "property_id": 1,
+        "unit_id": 2,
+        "contract_id": 12,
+        "settlement_contract_id": 14
+    },
+    "failed_ids": [],
+    "warn_ids": [
+        "M3.resetAfterBook",
+        "M5.accountingStub"
+    ]
+}
