@@ -25,8 +25,10 @@ class ReportController extends Controller
     {
         $year = $request->query('year', Carbon::now()->year);
 
+        $monthSql = \Illuminate\Support\Facades\DB::getDriverName() === 'sqlite' ? "CAST(strftime('%m', date) AS INTEGER)" : 'MONTH(date)';
+
         $payments = Payment::whereYear('date', $year)
-            ->selectRaw('MONTH(date) as month, type, SUM(amount) as total')
+            ->selectRaw("{$monthSql} as month, type, SUM(amount) as total")
             ->groupBy('month', 'type')
             ->get();
 

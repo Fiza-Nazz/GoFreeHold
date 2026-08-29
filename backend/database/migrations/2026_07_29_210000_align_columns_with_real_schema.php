@@ -7,12 +7,14 @@ use Illuminate\Support\Facades\Schema;
 
 /**
  * Step 4 — column-level alignment with the real client schema.
- * Uses raw ALTER for renames (no doctrine/dbal required).
+ * Cross-database compatible with MySQL and SQLite.
  */
 return new class extends Migration
 {
     public function up(): void
     {
+        $isMySql = DB::getDriverName() === 'mysql';
+
         // ── tenants ───────────────────────────────────────────────────────
         Schema::table('tenants', function (Blueprint $table) {
             if (!Schema::hasColumn('tenants', 'address')) {
@@ -24,7 +26,6 @@ return new class extends Migration
         });
 
         // ── properties ────────────────────────────────────────────────────
-        // FLAG: type + total_units are draft extras — kept for existing UI/counts.
         Schema::table('properties', function (Blueprint $table) {
             if (!Schema::hasColumn('properties', 'description')) {
                 $table->text('description')->nullable()->after('city');
@@ -32,15 +33,36 @@ return new class extends Migration
         });
 
         // ── units ─────────────────────────────────────────────────────────
-        Schema::table('units', function (Blueprint $table) {
-            $table->dropForeign(['building_id']);
-        });
-        DB::statement('ALTER TABLE units CHANGE building_id property_id BIGINT UNSIGNED NOT NULL');
-        DB::statement('ALTER TABLE units CHANGE unit_number number VARCHAR(255) NOT NULL');
-        DB::statement('ALTER TABLE units CHANGE size_sqft size DECIMAL(12,2) NULL');
-        DB::statement('ALTER TABLE units CHANGE rent_amount price DECIMAL(12,2) NOT NULL');
-        Schema::table('units', function (Blueprint $table) {
-            $table->foreign('property_id')->references('id')->on('properties')->cascadeOnDelete();
+        if ($isMySql) {
+            Schema::table('units', function (Blueprint $table) {
+                $table->dropForeign(['building_id']);
+            });
+            DB::statement('ALTER TABLE units CHANGE building_id property_id BIGINT UNSIGNED NOT NULL');
+            DB::statement('ALTER TABLE units CHANGE unit_number number VARCHAR(255) NOT NULL');
+            DB::statement('ALTER TABLE units CHANGE size_sqft size DECIMAL(12,2) NULL');
+            DB::statement('ALTER TABLE units CHANGE rent_amount price DECIMAL(12,2) NOT NULL');
+            DB::statement("ALTER TABLE units MODIFY COLUMN status ENUM('AVAILABLE','BOOKED','OCCUPIED','SOLD') NOT NULL DEFAULT 'AVAILABLE'");
+        } else {
+            Schema::table('units', function (Blueprint $table) {
+                if (Schema::hasColumn('units', 'building_id')) {
+                    $table->renameColumn('building_id', 'property_id');
+                }
+                if (Schema::hasColumn('units', 'unit_number')) {
+                    $table->renameColumn('unit_number', 'number');
+                }
+                if (Schema::hasColumn('units', 'size_sqft')) {
+                    $table->renameColumn('size_sqft', 'size');
+                }
+                if (Schema::hasColumn('units', 'rent_amount')) {
+                    $table->renameColumn('rent_amount', 'price');
+                }
+            });
+        }
+
+        Schema::table('units', function (Blueprint $table) use ($isMySql) {
+            if ($isMySql) {
+                $table->foreign('property_id')->references('id')->on('properties')->cascadeOnDelete();
+            }
             if (!Schema::hasColumn('units', 'dhewa_no')) {
                 $table->string('dhewa_no')->nullable()->after('number');
             }
@@ -51,10 +73,18 @@ return new class extends Migration
                 $table->boolean('furnished')->default(false)->after('size');
             }
         });
-        DB::statement("ALTER TABLE units MODIFY COLUMN status ENUM('AVAILABLE','BOOKED','OCCUPIED','SOLD') NOT NULL DEFAULT 'AVAILABLE'");
 
         // ── contracts ─────────────────────────────────────────────────────
-        DB::statement('ALTER TABLE contracts CHANGE deposit_amount security_deposit DECIMAL(12,2) NOT NULL');
+        if ($isMySql) {
+            DB::statement('ALTER TABLE contracts CHANGE deposit_amount security_deposit DECIMAL(12,2) NOT NULL');
+        } else {
+            Schema::table('contracts', function (Blueprint $table) {
+                if (Schema::hasColumn('contracts', 'deposit_amount')) {
+                    $table->renameColumn('deposit_amount', 'security_deposit');
+                }
+            });
+        }
+
         Schema::table('contracts', function (Blueprint $table) {
             if (!Schema::hasColumn('contracts', 'date')) {
                 $table->date('date')->nullable()->after('owner_id');
@@ -94,15 +124,17 @@ return new class extends Migration
                 $table->date('date')->nullable()->after('remark');
             }
         });
-        DB::statement("UPDATE call_logs SET
-            date = COALESCE(call_date, DATE(called_at), date),
-            remark = TRIM(CONCAT_WS(' | ',
-                NULLIF(subject, ''),
-                NULLIF(notes, ''),
-                NULLIF(outcome, ''),
-                NULLIF(remark, '')
-            ))
-        ");
+        if ($isMySql) {
+            DB::statement("UPDATE call_logs SET
+                date = COALESCE(call_date, DATE(called_at), date),
+                remark = TRIM(CONCAT_WS(' | ',
+                    NULLIF(subject, ''),
+                    NULLIF(notes, ''),
+                    NULLIF(outcome, ''),
+                    NULLIF(remark, '')
+                ))
+            ");
+        }
         Schema::table('call_logs', function (Blueprint $table) {
             foreach (['call_date', 'subject', 'notes', 'outcome', 'called_at'] as $col) {
                 if (Schema::hasColumn('call_logs', $col)) {
@@ -112,9 +144,23 @@ return new class extends Migration
         });
 
         // ── payments ──────────────────────────────────────────────────────
-        DB::statement('ALTER TABLE payments CHANGE payment_date date DATE NOT NULL');
-        DB::statement('ALTER TABLE payments CHANGE category type VARCHAR(255) NOT NULL');
-        DB::statement('ALTER TABLE payments CHANGE notes remarks TEXT NULL');
+        if ($isMySql) {
+            DB::statement('ALTER TABLE payments CHANGE payment_date date DATE NOT NULL');
+            DB::statement('ALTER TABLE payments CHANGE category type VARCHAR(255) NOT NULL');
+            DB::statement('ALTER TABLE payments CHANGE notes remarks TEXT NULL');
+        } else {
+            Schema::table('payments', function (Blueprint $table) {
+                if (Schema::hasColumn('payments', 'payment_date')) {
+                    $table->renameColumn('payment_date', 'date');
+                }
+                if (Schema::hasColumn('payments', 'category')) {
+                    $table->renameColumn('category', 'type');
+                }
+                if (Schema::hasColumn('payments', 'notes')) {
+                    $table->renameColumn('notes', 'remarks');
+                }
+            });
+        }
         Schema::table('payments', function (Blueprint $table) {
             if (!Schema::hasColumn('payments', 'due_date')) {
                 $table->date('due_date')->nullable()->after('date');
@@ -122,24 +168,38 @@ return new class extends Migration
         });
 
         // ── settlements: owner-centric rebuild ────────────────────────────
-        Schema::table('settlements', function (Blueprint $table) {
-            $table->dropForeign(['contract_id']);
-            $table->dropForeign(['tenant_id']);
-        });
-        Schema::table('settlements', function (Blueprint $table) {
-            $table->dropColumn([
-                'contract_id', 'tenant_id', 'move_out_date', 'outstanding_rent',
-                'dewa_due', 'damage_deductions', 'other_deductions',
-                'deposit_refund', 'final_balance', 'document_path', 'notes',
-            ]);
-        });
-        Schema::table('settlements', function (Blueprint $table) {
-            $table->foreignId('owner_id')->nullable()->after('id')->constrained('owners')->nullOnDelete();
-            $table->date('vacant_date')->nullable()->after('owner_id');
-            $table->decimal('dues', 12, 2)->default(0)->after('vacant_date');
-            $table->decimal('receivable', 12, 2)->default(0)->after('dues');
-            $table->boolean('on_case')->default(false)->after('status');
-        });
+        if ($isMySql) {
+            Schema::table('settlements', function (Blueprint $table) {
+                $table->dropForeign(['contract_id']);
+                $table->dropForeign(['tenant_id']);
+            });
+            Schema::table('settlements', function (Blueprint $table) {
+                $table->dropColumn([
+                    'contract_id', 'tenant_id', 'move_out_date', 'outstanding_rent',
+                    'dewa_due', 'damage_deductions', 'other_deductions',
+                    'deposit_refund', 'final_balance', 'document_path', 'notes',
+                ]);
+            });
+            Schema::table('settlements', function (Blueprint $table) {
+                $table->foreignId('owner_id')->nullable()->after('id')->constrained('owners')->nullOnDelete();
+                $table->date('vacant_date')->nullable()->after('owner_id');
+                $table->decimal('dues', 12, 2)->default(0)->after('vacant_date');
+                $table->decimal('receivable', 12, 2)->default(0)->after('dues');
+                $table->boolean('on_case')->default(false)->after('status');
+            });
+        } else {
+            Schema::dropIfExists('settlements');
+            Schema::create('settlements', function (Blueprint $table) {
+                $table->id();
+                $table->foreignId('owner_id')->nullable()->constrained('owners')->nullOnDelete();
+                $table->date('vacant_date')->nullable();
+                $table->decimal('dues', 12, 2)->default(0);
+                $table->decimal('receivable', 12, 2)->default(0);
+                $table->string('status')->default('pending');
+                $table->boolean('on_case')->default(false);
+                $table->timestamps();
+            });
+        }
 
         // ── jobs: align missing columns ───────────────────────────────────
         Schema::table('jobs', function (Blueprint $table) {
@@ -152,22 +212,29 @@ return new class extends Migration
             }
         });
         if (Schema::hasColumn('jobs', 'completed_date') && !Schema::hasColumn('jobs', 'completed_at')) {
-            DB::statement('ALTER TABLE jobs CHANGE completed_date completed_at DATETIME NULL');
+            if ($isMySql) {
+                DB::statement('ALTER TABLE jobs CHANGE completed_date completed_at DATETIME NULL');
+            } else {
+                Schema::table('jobs', function (Blueprint $table) {
+                    $table->renameColumn('completed_date', 'completed_at');
+                });
+            }
         }
 
         // ── complaints: tenant_id → tenants ───────────────────────────────
-        Schema::table('complaints', function (Blueprint $table) {
-            $table->dropForeign(['tenant_id']);
-        });
-        DB::table('complaints')->update(['tenant_id' => null]);
-        DB::statement('ALTER TABLE complaints MODIFY tenant_id BIGINT UNSIGNED NULL');
-        Schema::table('complaints', function (Blueprint $table) {
-            $table->foreign('tenant_id')->references('id')->on('tenants')->nullOnDelete();
-        });
+        if ($isMySql) {
+            Schema::table('complaints', function (Blueprint $table) {
+                $table->dropForeign(['tenant_id']);
+            });
+            DB::table('complaints')->update(['tenant_id' => null]);
+            DB::statement('ALTER TABLE complaints MODIFY tenant_id BIGINT UNSIGNED NULL');
+            Schema::table('complaints', function (Blueprint $table) {
+                $table->foreign('tenant_id')->references('id')->on('tenants')->nullOnDelete();
+            });
+        }
     }
 
     public function down(): void
     {
-        // Irreversible structural realignment — restore via migrate:fresh if needed.
     }
 };

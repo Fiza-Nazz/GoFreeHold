@@ -21,7 +21,7 @@ class RegisterRequest extends FormRequest
             'name'                  => 'required|string|max:255',
             'email'                 => 'required|string|email|max:255|unique:users,email',
             'password'              => 'required|string|min:8|confirmed',
-            'role'                  => 'required|string|in:admin,maintenance,owner,tenant',
+            'role'                  => 'required|string|in:owner,tenant,maintenance',
             'recaptcha_token'       => 'required|string',
         ];
     }

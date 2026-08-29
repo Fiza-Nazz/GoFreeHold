@@ -12,6 +12,10 @@ return new class extends Migration
      */
     private function dropForeignKeysOnColumn(string $table, string $column): void
     {
+        if (DB::getDriverName() !== 'mysql') {
+            return;
+        }
+
         $database = DB::getDatabaseName();
         $foreignKeys = DB::select("
             SELECT CONSTRAINT_NAME 
@@ -77,9 +81,11 @@ return new class extends Migration
         foreach ($tables as $tbl) {
             $this->dropForeignKeysOnColumn($tbl, 'owner_id');
 
-            Schema::table($tbl, function (Blueprint $table) {
-                $table->foreign('owner_id')->references('id')->on('owners')->onDelete('cascade');
-            });
+            if (DB::getDriverName() === 'mysql') {
+                Schema::table($tbl, function (Blueprint $table) {
+                    $table->foreign('owner_id')->references('id')->on('owners')->onDelete('cascade');
+                });
+            }
         }
     }
 
@@ -92,9 +98,11 @@ return new class extends Migration
         foreach ($tables as $tbl) {
             $this->dropForeignKeysOnColumn($tbl, 'owner_id');
 
-            Schema::table($tbl, function (Blueprint $table) {
-                $table->foreign('owner_id')->references('id')->on('users')->onDelete('cascade');
-            });
+            if (DB::getDriverName() === 'mysql') {
+                Schema::table($tbl, function (Blueprint $table) {
+                    $table->foreign('owner_id')->references('id')->on('users')->onDelete('cascade');
+                });
+            }
         }
     }
 };

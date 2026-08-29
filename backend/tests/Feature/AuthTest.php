@@ -10,11 +10,7 @@ class AuthTest extends TestCase
 {
     use RefreshDatabase;
 
-    /**
-     * Test user can register with valid credentials.
-     * Verifies role assignment and token issuance.
-     */
-    public function test_user_can_register()
+    public function test_user_can_register(): void
     {
         $response = $this->postJson('/api/auth/register', [
             'name'                  => 'John Doe',
@@ -25,20 +21,15 @@ class AuthTest extends TestCase
             'recaptcha_token'       => 'test-token-bypass',
         ]);
 
-        // Auth service may return 200 or 201 — assert 2xx
-        $response->assertSuccessful()
-                 ->assertJsonStructure(['status', 'data']);
+        $response->assertStatus(201)
+                 ->assertJsonStructure(['status', 'data' => ['token', 'user']]);
 
         $this->assertDatabaseHas('users', [
             'email' => 'johndoe@example.com',
         ]);
     }
 
-    /**
-     * Test user can login and receives a valid token.
-     * Response is wrapped in data.
-     */
-    public function test_user_can_login()
+    public function test_user_can_login(): void
     {
         $user = User::factory()->create([
             'email'    => 'jane@example.com',
@@ -52,13 +43,10 @@ class AuthTest extends TestCase
         ]);
 
         $response->assertStatus(200)
-                 ->assertJsonStructure(['status', 'data' => ['token']]);
+                 ->assertJsonStructure(['status', 'data' => ['token', 'user']]);
     }
 
-    /**
-     * Test user can logout successfully (token revoked).
-     */
-    public function test_user_can_logout()
+    public function test_user_can_logout(): void
     {
         $user  = User::factory()->create();
         $token = $user->createToken('auth_token')->plainTextToken;
@@ -70,15 +58,46 @@ class AuthTest extends TestCase
         $response->assertStatus(200);
     }
 
-    /**
-     * Test RBAC: tenant cannot access admin routes.
-     */
-    public function test_tenant_cannot_access_admin_routes()
+    public function test_register_fails_without_email(): void
     {
-        $tenant = User::factory()->create(['role' => 'tenant']);
+        $this->postJson('/api/auth/register', [
+            'name'                  => 'No Email',
+            'password'              => 'password123',
+            'password_confirmation' => 'password123',
+            'role'                  => 'tenant',
+            'recaptcha_token'       => 'skip',
+        ])->assertUnprocessable()
+          ->assertJsonValidationErrors(['email']);
+    }
 
-        $response = $this->actingAs($tenant)->getJson('/api/admin/properties');
+    public function test_register_fails_with_short_password(): void
+    {
+        $this->postJson('/api/auth/register', [
+            'name'                  => 'Short Pass',
+            'email'                 => 'short@test.com',
+            'password'              => '123',
+            'password_confirmation' => '123',
+            'role'                  => 'tenant',
+            'recaptcha_token'       => 'skip',
+        ])->assertUnprocessable()
+          ->assertJsonValidationErrors(['password']);
+    }
 
-        $response->assertStatus(403);
+    public function test_register_rejects_admin_role_from_public(): void
+    {
+        $this->postJson('/api/auth/register', [
+            'name'                  => 'Hacker',
+            'email'                 => 'hacker@test.com',
+            'password'              => 'password123',
+            'password_confirmation' => 'password123',
+            'role'                  => 'admin',
+            'recaptcha_token'       => 'skip',
+        ])->assertUnprocessable()
+          ->assertJsonValidationErrors(['role']);
+    }
+
+    public function test_me_returns_401_without_token(): void
+    {
+        $this->getJson('/api/user')->assertUnauthorized();
     }
 }

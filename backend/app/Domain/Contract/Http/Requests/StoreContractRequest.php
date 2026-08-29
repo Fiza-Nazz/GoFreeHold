@@ -14,7 +14,16 @@ class StoreContractRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'unit_id'          => 'required|exists:units,id',
+            'unit_id'          => [
+                'required',
+                'exists:units,id',
+                function ($attribute, $value, $fail) {
+                    $unit = \App\Domain\Property\Models\Unit::find($value);
+                    if ($unit && $unit->status === 'OCCUPIED') {
+                        $fail('The selected unit is already occupied.');
+                    }
+                },
+            ],
             'tenant_id'        => 'required|exists:tenants,id',
             'owner_id'         => 'required|exists:owners,id',
             'date'             => 'nullable|date',

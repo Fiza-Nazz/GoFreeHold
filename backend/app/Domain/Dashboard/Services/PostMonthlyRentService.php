@@ -98,8 +98,11 @@ class PostMonthlyRentService
 
     public function dueExistsForMonth(int $contractId, string $monthLabel): bool
     {
+        $startOfMonth = Carbon::createFromFormat('Y-m', $monthLabel)->startOfMonth()->toDateString();
+        $endOfMonth   = Carbon::createFromFormat('Y-m', $monthLabel)->endOfMonth()->toDateString();
+
         return RentTransaction::where('contract_id', $contractId)
-            ->whereRaw("DATE_FORMAT(date, '%Y-%m') = ?", [$monthLabel])
+            ->whereBetween('date', [$startOfMonth, $endOfMonth])
             ->where('debit', '>', 0)
             ->where('description', 'like', 'Rent due%')
             ->exists();

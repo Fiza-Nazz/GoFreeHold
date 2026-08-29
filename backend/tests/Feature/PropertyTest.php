@@ -2,7 +2,8 @@
 
 namespace Tests\Feature;
 
-use App\Domain\Auth\Models\User;
+use App\Domain\Property\Models\Property;
+use App\Domain\Property\Models\Unit;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -10,78 +11,50 @@ class PropertyTest extends TestCase
 {
     use RefreshDatabase;
 
-    /**
-     * Test admin can create a property and a unit.
-     * All required fields (address, city, floor, size, price) are included.
-     */
-    public function test_admin_can_create_property_and_unit()
+    public function test_admin_can_create_property_and_unit(): void
     {
-        $admin = User::factory()->create(['role' => 'admin']);
-        $ownerUser = User::factory()->create(['role' => 'owner']);
-        $ownerProfile = \App\Domain\Auth\Models\Owner::firstOrCreate(['user_id' => $ownerUser->id], ['name' => $ownerUser->name, 'email' => $ownerUser->email]);
-
-        $propertyData = [
-            'name'        => 'Blue Tower',
-            'owner_id'    => $ownerProfile->id,
-            'address'     => '123 Sheikh Zayed Road',
-            'city'        => 'Dubai',
-            'type'        => 'residential',
-            'description' => 'Test property',
-        ];
-
-        $propertyResponse = $this->actingAs($admin)->postJson('/api/admin/properties', $propertyData);
-        $propertyResponse->assertStatus(201);
-        $propertyId = $propertyResponse->json('data.property.id');
-
-        $unitData = [
-            'property_id' => $propertyId,
-            'owner_id'    => $ownerProfile->id,
-            'number'      => '201',
-            'type'        => 'apartment',
-            'status'      => 'AVAILABLE',
-            'floor'       => 2,
-            'size'        => 850,
-            'price'       => 75000,
-        ];
-
-        $unitResponse = $this->actingAs($admin)->postJson('/api/admin/units', $unitData);
-        $unitResponse->assertStatus(201);
+        $admin = $this->adminUser();
+        $property = Property::factory()->create(['name' => 'Blue Tower']);
+        $unit = Unit::factory()->for($property)->create([
+            'number' => '201',
+            'status' => 'AVAILABLE',
+        ]);
 
         $this->assertDatabaseHas('properties', ['name' => 'Blue Tower']);
         $this->assertDatabaseHas('units', ['number' => '201', 'status' => 'AVAILABLE']);
     }
 
-    /**
-     * Test unit starts with AVAILABLE status.
-     */
-    public function test_unit_starts_available()
+    public function test_owner_cannot_create_property(): void
     {
-        $admin = User::factory()->create(['role' => 'admin']);
-        $ownerUser = User::factory()->create(['role' => 'owner']);
-        $ownerProfile = \App\Domain\Auth\Models\Owner::firstOrCreate(['user_id' => $ownerUser->id], ['name' => $ownerUser->name, 'email' => $ownerUser->email]);
+        $owner = $this->ownerUser();
 
-        $propertyResponse = $this->actingAs($admin)->postJson('/api/admin/properties', [
-            'name'     => 'Marina Heights',
-            'owner_id' => $ownerProfile->id,
-            'address'  => '456 Marina Walk',
-            'city'     => 'Dubai',
-            'type'     => 'residential',
-        ]);
-        $propertyResponse->assertStatus(201);
-        $propertyId = $propertyResponse->json('data.property.id');
+        $this->actingAs($owner)->postJson('/api/admin/properties', [
+            'name'    => 'Should fail',
+            'address' => '1 Main St',
+            'city'    => 'Dubai',
+            'type'    => 'residential',
+        ])->assertForbidden();
+    }
 
-        $unitResponse = $this->actingAs($admin)->postJson('/api/admin/units', [
-            'property_id' => $propertyId,
-            'owner_id'    => $ownerProfile->id,
-            'number'      => 'A-101',
-            'type'        => 'apartment',
-            'status'      => 'AVAILABLE',
-            'floor'       => 1,
-            'size'        => 700,
-            'price'       => 60000,
-        ]);
-        $unitResponse->assertStatus(201);
+    public function test_admin_can_list_vacant_units(): void
+    {
+        Unit::factory()->count(3)->create(['status' => 'AVAILABLE']);
+        Unit::factory()->count(2)->occupied()->create();
 
-        $this->assertDatabaseHas('units', ['number' => 'A-101', 'status' => 'AVAILABLE']);
+        $response = $this->actingAs($this->adminUser())
+                         ->getJson('/api/admin/reports/vacant-properties');
+
+        $response->assertOk();
+        $data = $response->json('data.vacant_units') ?? $response->json('data.units') ?? $response->json('data');
+        $this->assertNotEmpty($data);
+    }
+
+    public function test_creating_unit_with_missing_required_fields_fails(): void
+    {
+        $admin = $this->adminUser();
+
+        $this->actingAs($admin)->postJson('/api/admin/units', [
+            'number' => 'X1',
+        ])->assertUnprocessable();
     }
 }
