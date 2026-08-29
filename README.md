@@ -24,7 +24,7 @@
 
 [![MariaDB](https://img.shields.io/badge/MariaDB-003545?style=for-the-badge&logo=mariadb&logoColor=white)](https://mariadb.org)
 [![DomPDF](https://img.shields.io/badge/DomPDF-UAE_EJARI_PDF-1E1B4B?style=for-the-badge)](https://github.com/dompdf/dompdf)
-[![PHPUnit](https://img.shields.io/badge/PHPUnit-15_Tests_✓_Passing-059669?style=for-the-badge)](https://phpunit.de)
+[![PHPUnit](https://img.shields.io/badge/PHPUnit-62_Tests_✓_Passing-059669?style=for-the-badge)](https://phpunit.de)
 [![Sanctum](https://img.shields.io/badge/Laravel_Sanctum-RBAC_Auth-065F46?style=for-the-badge)](https://laravel.com/docs/sanctum)
 [![reCAPTCHA](https://img.shields.io/badge/Google_reCAPTCHA_v2-Bot_Protection-4285F4?style=for-the-badge&logo=google&logoColor=white)](https://www.google.com/recaptcha)
 
@@ -316,32 +316,52 @@ Paul (or any reviewer) clones and runs the project — the **"I'm not a robot"**
 
 ---
 
-## 🧪 Automated Test Suite — PHPUnit
+## 🧪 TDD Automated Test Suite — PHPUnit (62 Passing Tests)
+
+The backend is built following strict **Test-Driven Development (TDD)** principles with fast in-memory SQLite testing and full RBAC isolation.
 
 ```bash
 cd backend
+
+# 1. Run the entire test suite (62 tests, 112 assertions, ~6s)
 php artisan test
+
+# 2. Run only Domain Unit tests (pure service business logic)
+php artisan test --testsuite=Unit
+
+# 3. Run only HTTP Feature & Security tests
+php artisan test --testsuite=Feature
+
+# 4. Run RBAC role-isolation tests
+php artisan test --filter=RbacTest
 ```
 
-```
-   PASS  Tests\Feature\AuthTest          ........ 5 assertions
-   PASS  Tests\Feature\PropertyTest      ........ 4 assertions
-   PASS  Tests\Feature\ContractTest      ........ 7 assertions
-   PASS  Tests\Feature\PaymentTest       ........ 6 assertions
-   PASS  Tests\Feature\SettlementTest    ........ 8 assertions
-   PASS  Tests\Feature\MaintenanceTest   ........ 8 assertions
+```text
+   PASS  Tests\Unit\Domain\Auth\AuthServiceTest                      (6 tests)
+   PASS  Tests\Unit\Domain\Contract\ContractVacateServiceTest         (2 tests)
+   PASS  Tests\Unit\Domain\Dashboard\PostMonthlyRentServiceTest      (4 tests)
+   PASS  Tests\Unit\Domain\Payment\PaymentLedgerTest                 (2 tests)
+   PASS  Tests\Feature\AuthTest                                      (7 tests)
+   PASS  Tests\Feature\PropertyTest                                  (4 tests)
+   PASS  Tests\Feature\ContractTest                                  (5 tests)
+   PASS  Tests\Feature\PaymentTest                                   (3 tests)
+   PASS  Tests\Feature\SettlementTest                                (2 tests)
+   PASS  Tests\Feature\MaintenanceTest                               (3 tests)
+   PASS  Tests\Feature\ReportTest                                    (2 tests)
+   PASS  Tests\Feature\RbacTest                                      (18 tests)
+   PASS  Tests\Feature\ValidationTest                                (4 tests)
 
-   Tests: 15 passed  |  Assertions: 38  |  Time: 2.45s
+   Tests: 62 passed (112 assertions) | Time: 6.18s
 ```
 
-| Test | Coverage |
-|------|----------|
-| **AuthTest** | Role validation, Sanctum token issuance, RBAC middleware blocking |
-| **PropertyTest** | Unit status transitions: `AVAILABLE` → `BOOKED` → `OCCUPIED` → `AVAILABLE` |
-| **ContractTest** | Auto-occupy unit, auto first-month rent-due posting, renewal timestamps |
-| **PaymentTest** | Double-entry ledger credit, soft-delete reversal, audit trail |
-| **SettlementTest** | Settlement wizard, deposit deduction, auto-unit vacancy release |
-| **MaintenanceTest** | Ticket lifecycle, status progression, daily report analytics |
+| Test Category | Files & Coverage |
+|---|---|
+| 🧬 **Domain Unit Tests** | `AuthServiceTest`, `ContractVacateServiceTest`, `PostMonthlyRentServiceTest`, `PaymentLedgerTest` — pure service rules, monthly idempotency, ledger reversals |
+| 🛡️ **RBAC Security Suite** | `RbacTest` — Data-provider testing ensuring Admin endpoints strictly return `403 Forbidden` for tenant/owner and `401 Unauthorized` for guests |
+| 🔐 **Public Auth Security** | `AuthTest` — Disallows public admin self-registration (`role in:owner,tenant,maintenance`), password strength, Sanctum token revocations |
+| 🏢 **Property & Leasing** | `PropertyTest`, `ContractTest` — Occupied unit collision prevention, automatic `AVAILABLE` / `OCCUPIED` transitions, EJARI PDF stream |
+| 💰 **Ledger & Settlement** | `PaymentTest`, `SettlementTest` — Auto double-entry credit, mandatory soft-delete reasons, conditional auto-vacate on settlement completion |
+| ❌ **Validation Unhappy Paths** | `ValidationTest` — Invalid payloads, negative rent, reverse dates, barter payment mode rejection |
 
 <br/>
 
