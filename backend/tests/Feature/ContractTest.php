@@ -127,4 +127,54 @@ class ContractTest extends TestCase
              ->assertOk()
              ->assertHeader('Content-Type', 'application/pdf');
     }
+
+    public function test_create_contract_with_automatic_tenant_creation(): void
+    {
+        $admin = $this->adminUser();
+        $unit  = Unit::factory()->create(['status' => 'AVAILABLE']);
+        $owner = Owner::factory()->create();
+
+        $response = $this->actingAs($admin)->postJson('/api/admin/contracts', [
+            'unit_id'                => $unit->id,
+            'owner_id'               => $owner->id,
+            'tenant_name'            => 'Ahmed Al Zaabi',
+            'tenant_email'           => 'ahmed.zaabi@dubai.ae',
+            'tenant_phone'           => '+971551234567',
+            'tenant_emirates_id'     => '784-1988-7654321-1',
+            'tenant_nationality'     => 'Emirati',
+            'tenant_passport_number' => 'A99887766',
+            'start_date'             => Carbon::now()->startOfMonth()->toDateString(),
+            'end_date'               => Carbon::now()->addYear()->startOfMonth()->toDateString(),
+            'due_date'               => Carbon::now()->startOfMonth()->toDateString(),
+            'rent_amount'            => 8500,
+            'security_deposit'       => 5000,
+            'type'                   => 'residential',
+            'mode_of_payment'        => 'bank_transfer',
+        ]);
+
+        $response->assertStatus(201);
+        $contractId = $response->json('data.contract.id');
+
+        // Assert Tenant and User were auto-created
+        $this->assertDatabaseHas('users', [
+            'email' => 'ahmed.zaabi@dubai.ae',
+            'role'  => 'tenant',
+        ]);
+
+        $this->assertDatabaseHas('tenants', [
+            'email'       => 'ahmed.zaabi@dubai.ae',
+            'emirates_id' => '784-1988-7654321-1',
+        ]);
+
+        // Assert Unit is occupied and rent transaction posted
+        $this->assertDatabaseHas('units', [
+            'id'     => $unit->id,
+            'status' => 'OCCUPIED',
+        ]);
+
+        $this->assertDatabaseHas('rent_transactions', [
+            'contract_id' => $contractId,
+            'debit'       => 8500,
+        ]);
+    }
 }

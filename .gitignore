@@ -31,3 +31,5 @@ frontend/dist-ssr/
 *.sw?
 .DS_Store
 Thumbs.db
+*.zip
+backend/gofreehold

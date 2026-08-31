@@ -5,6 +5,7 @@ namespace App\Domain\Contract\Http\Controllers;
 use App\Domain\Contract\Http\Requests\StoreContractRequest;
 use App\Domain\Contract\Http\Requests\UpdateContractRequest;
 use App\Domain\Contract\Models\Contract;
+use App\Domain\Contract\Services\ContractService;
 use App\Domain\Contract\Services\ContractVacateService;
 use App\Domain\Dashboard\Services\PostMonthlyRentService;
 use App\Domain\Property\Models\Unit;
@@ -34,7 +35,7 @@ class ContractController extends Controller
         return response()->json(['status' => 'success', 'data' => ['contracts' => $contracts]]);
     }
 
-    public function store(StoreContractRequest $request, PostMonthlyRentService $rentDueService): JsonResponse
+    public function store(StoreContractRequest $request, ContractService $contractService): JsonResponse
     {
         $validated = $request->validated();
 
@@ -45,26 +46,17 @@ class ContractController extends Controller
             }
         }
 
-        DB::beginTransaction();
         try {
-            $validated['status'] = 'active';
-            $contract = Contract::create($validated);
-
-            Unit::where('id', $validated['unit_id'])->update(['status' => 'OCCUPIED']);
-
-            // First-month rent due — same service/idempotency as scheduled monthly job
-            $rentDueService->postInitialDueForContract($contract);
-
-            DB::commit();
+            $contract = $contractService->createContract($validated);
 
             return response()->json([
                 'status'  => 'success',
                 'message' => 'Contract created successfully.',
                 'data'    => ['contract' => $contract->load(['unit.property', 'tenant', 'owner'])],
             ], 201);
+        } catch (\InvalidArgumentException $e) {
+            return response()->json(['status' => 'error', 'message' => $e->getMessage()], 422);
         } catch (\Exception $e) {
-            DB::rollBack();
-
             return response()->json(['status' => 'error', 'message' => 'Failed to create contract.'], 500);
         }
     }

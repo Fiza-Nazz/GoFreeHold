@@ -24,7 +24,7 @@
 
 [![MariaDB](https://img.shields.io/badge/MariaDB-003545?style=for-the-badge&logo=mariadb&logoColor=white)](https://mariadb.org)
 [![DomPDF](https://img.shields.io/badge/DomPDF-UAE_EJARI_PDF-1E1B4B?style=for-the-badge)](https://github.com/dompdf/dompdf)
-[![PHPUnit](https://img.shields.io/badge/PHPUnit-62_Tests_✓_Passing-059669?style=for-the-badge)](https://phpunit.de)
+[![PHPUnit](https://img.shields.io/badge/PHPUnit-67_Tests_✓_Passing-059669?style=for-the-badge)](https://phpunit.de)
 [![Sanctum](https://img.shields.io/badge/Laravel_Sanctum-RBAC_Auth-065F46?style=for-the-badge)](https://laravel.com/docs/sanctum)
 [![reCAPTCHA](https://img.shields.io/badge/Google_reCAPTCHA_v2-Bot_Protection-4285F4?style=for-the-badge&logo=google&logoColor=white)](https://www.google.com/recaptcha)
 
@@ -316,14 +316,14 @@ Paul (or any reviewer) clones and runs the project — the **"I'm not a robot"**
 
 ---
 
-## 🧪 TDD Automated Test Suite — PHPUnit (62 Passing Tests)
+## 🧪 TDD Automated Test Suite — PHPUnit (67 Passing Tests)
 
 The backend is built following strict **Test-Driven Development (TDD)** principles with fast in-memory SQLite testing and full RBAC isolation.
 
 ```bash
 cd backend
 
-# 1. Run the entire test suite (62 tests, 112 assertions, ~6s)
+# 1. Run the entire test suite (67 tests, 133 assertions, ~6s)
 php artisan test
 
 # 2. Run only Domain Unit tests (pure service business logic)
@@ -338,12 +338,13 @@ php artisan test --filter=RbacTest
 
 ```text
    PASS  Tests\Unit\Domain\Auth\AuthServiceTest                      (6 tests)
+   PASS  Tests\Unit\Domain\Contract\ContractServiceTest              (4 tests)
    PASS  Tests\Unit\Domain\Contract\ContractVacateServiceTest         (2 tests)
    PASS  Tests\Unit\Domain\Dashboard\PostMonthlyRentServiceTest      (4 tests)
    PASS  Tests\Unit\Domain\Payment\PaymentLedgerTest                 (2 tests)
    PASS  Tests\Feature\AuthTest                                      (7 tests)
    PASS  Tests\Feature\PropertyTest                                  (4 tests)
-   PASS  Tests\Feature\ContractTest                                  (5 tests)
+   PASS  Tests\Feature\ContractTest                                  (6 tests)
    PASS  Tests\Feature\PaymentTest                                   (3 tests)
    PASS  Tests\Feature\SettlementTest                                (2 tests)
    PASS  Tests\Feature\MaintenanceTest                               (3 tests)
@@ -351,15 +352,15 @@ php artisan test --filter=RbacTest
    PASS  Tests\Feature\RbacTest                                      (18 tests)
    PASS  Tests\Feature\ValidationTest                                (4 tests)
 
-   Tests: 62 passed (112 assertions) | Time: 6.18s
+   Tests: 67 passed (133 assertions) | Time: 6.8s
 ```
 
 | Test Category | Files & Coverage |
 |---|---|
-| 🧬 **Domain Unit Tests** | `AuthServiceTest`, `ContractVacateServiceTest`, `PostMonthlyRentServiceTest`, `PaymentLedgerTest` — pure service rules, monthly idempotency, ledger reversals |
+| 🧬 **Domain Unit Tests** | `AuthServiceTest`, `ContractServiceTest`, `ContractVacateServiceTest`, `PostMonthlyRentServiceTest`, `PaymentLedgerTest` — pure service rules, automatic tenant profile creation on contract onboarding, monthly idempotency, ledger reversals |
 | 🛡️ **RBAC Security Suite** | `RbacTest` — Data-provider testing ensuring Admin endpoints strictly return `403 Forbidden` for tenant/owner and `401 Unauthorized` for guests |
 | 🔐 **Public Auth Security** | `AuthTest` — Disallows public admin self-registration (`role in:owner,tenant,maintenance`), password strength, Sanctum token revocations |
-| 🏢 **Property & Leasing** | `PropertyTest`, `ContractTest` — Occupied unit collision prevention, automatic `AVAILABLE` / `OCCUPIED` transitions, EJARI PDF stream |
+| 🏢 **Property & Leasing** | `PropertyTest`, `ContractTest` — Automatic tenant onboarding, occupied unit collision prevention, automatic `AVAILABLE` / `OCCUPIED` transitions, EJARI PDF stream |
 | 💰 **Ledger & Settlement** | `PaymentTest`, `SettlementTest` — Auto double-entry credit, mandatory soft-delete reasons, conditional auto-vacate on settlement completion |
 | ❌ **Validation Unhappy Paths** | `ValidationTest` — Invalid payloads, negative rent, reverse dates, barter payment mode rejection |
 
