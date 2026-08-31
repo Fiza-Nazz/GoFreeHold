@@ -24,7 +24,7 @@
 
 [![MariaDB](https://img.shields.io/badge/MariaDB-003545?style=for-the-badge&logo=mariadb&logoColor=white)](https://mariadb.org)
 [![DomPDF](https://img.shields.io/badge/DomPDF-UAE_EJARI_PDF-1E1B4B?style=for-the-badge)](https://github.com/dompdf/dompdf)
-[![PHPUnit](https://img.shields.io/badge/PHPUnit-67_Tests_✓_Passing-059669?style=for-the-badge)](https://phpunit.de)
+[![PHPUnit](https://img.shields.io/badge/PHPUnit-68_Tests_✓_Passing-059669?style=for-the-badge)](https://phpunit.de)
 [![Sanctum](https://img.shields.io/badge/Laravel_Sanctum-RBAC_Auth-065F46?style=for-the-badge)](https://laravel.com/docs/sanctum)
 [![reCAPTCHA](https://img.shields.io/badge/Google_reCAPTCHA_v2-Bot_Protection-4285F4?style=for-the-badge&logo=google&logoColor=white)](https://www.google.com/recaptcha)
 
@@ -316,14 +316,14 @@ Paul (or any reviewer) clones and runs the project — the **"I'm not a robot"**
 
 ---
 
-## 🧪 TDD Automated Test Suite — PHPUnit (67 Passing Tests)
+## 🧪 TDD Automated Test Suite — PHPUnit (68 Passing Tests)
 
 The backend is built following strict **Test-Driven Development (TDD)** principles with fast in-memory SQLite testing and full RBAC isolation.
 
 ```bash
 cd backend
 
-# 1. Run the entire test suite (67 tests, 133 assertions, ~6s)
+# 1. Run the entire test suite (68 tests, 158 assertions, ~7s)
 php artisan test
 
 # 2. Run only Domain Unit tests (pure service business logic)
@@ -350,9 +350,10 @@ php artisan test --filter=RbacTest
    PASS  Tests\Feature\MaintenanceTest                               (3 tests)
    PASS  Tests\Feature\ReportTest                                    (2 tests)
    PASS  Tests\Feature\RbacTest                                      (18 tests)
+   PASS  Tests\Feature\RealWorkflowE2ETest                            (1 test)
    PASS  Tests\Feature\ValidationTest                                (4 tests)
 
-   Tests: 67 passed (133 assertions) | Time: 6.8s
+   Tests: 68 passed (158 assertions) | Time: 7.9s
 ```
 
 | Test Category | Files & Coverage |
@@ -361,6 +362,7 @@ php artisan test --filter=RbacTest
 | 🛡️ **RBAC Security Suite** | `RbacTest` — Data-provider testing ensuring Admin endpoints strictly return `403 Forbidden` for tenant/owner and `401 Unauthorized` for guests |
 | 🔐 **Public Auth Security** | `AuthTest` — Disallows public admin self-registration (`role in:owner,tenant,maintenance`), password strength, Sanctum token revocations |
 | 🏢 **Property & Leasing** | `PropertyTest`, `ContractTest` — Automatic tenant onboarding, occupied unit collision prevention, automatic `AVAILABLE` / `OCCUPIED` transitions, EJARI PDF stream |
+| 🔄 **End-to-End Workflow** | `RealWorkflowE2ETest` — Complete Dubai real estate lifecycle: inline tenant creation → contract signing → rent debit ledger → cheque payment credit → renewal → move-out vacate |
 | 💰 **Ledger & Settlement** | `PaymentTest`, `SettlementTest` — Auto double-entry credit, mandatory soft-delete reasons, conditional auto-vacate on settlement completion |
 | ❌ **Validation Unhappy Paths** | `ValidationTest` — Invalid payloads, negative rent, reverse dates, barter payment mode rejection |
 
