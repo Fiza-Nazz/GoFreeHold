@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import api from '../../api/axios'
 import { formatDate } from '../../utils/formatDate'
-import { THEME, Icon, CornerBrackets, portalPageCss, heroStyle, panelStyle, ghostBtnStyle } from '../../components/gfh/adminTheme'
+import { THEME, Icon, ICONS, CornerBrackets, portalPageCss, heroStyle, panelStyle, ghostBtnStyle } from '../../components/gfh/adminTheme'
 
 interface CallLog {
   id: number
@@ -73,7 +73,7 @@ export default function ContractCallLogPage() {
   }
 
   return (
-    <div className="gfh-portal-page" style={{ fontFamily: "'Inter', 'Segoe UI', system-ui, sans-serif" }}>
+    <div className="gfh-portal-page" style={{ fontFamily: "'Poppins', system-ui, sans-serif" }}>
       <style>{portalPageCss}</style>
 
       <div className="fade-in" style={heroStyle}>
@@ -144,6 +144,9 @@ export default function ContractCallLogPage() {
                   className="gfh-portal-btn"
                   onClick={() => deleteLog(log.id)}
                   style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: 4,
                     padding: '4px 10px',
                     fontSize: 11.5,
                     fontWeight: 700,
@@ -155,6 +158,7 @@ export default function ContractCallLogPage() {
                     cursor: 'pointer',
                   }}
                 >
+                  <Icon path={ICONS.trash} size={12} />
                   Delete
                 </button>
               </div>

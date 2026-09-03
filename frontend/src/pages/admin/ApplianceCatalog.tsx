@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import api from '../../api/axios'
-import { THEME, Icon, CornerBrackets, portalPageCss, heroStyle, panelStyle, thStyle, tdStyle, ghostBtnStyle } from '../../components/gfh/adminTheme'
+import { THEME, Icon, ICONS, CornerBrackets, portalPageCss, heroStyle, panelStyle, thStyle, tdStyle, ghostBtnStyle } from '../../components/gfh/adminTheme'
 
 interface Appliance {
   id: number
@@ -95,7 +95,7 @@ export default function ApplianceCatalog() {
   }
 
   return (
-    <div className="gfh-portal-page" style={{ fontFamily: "'Inter', 'Segoe UI', system-ui, sans-serif" }}>
+    <div className="gfh-portal-page" style={{ fontFamily: "'Poppins', system-ui, sans-serif" }}>
       <style>{portalPageCss}</style>
 
       <div className="fade-in" style={heroStyle}>
@@ -168,9 +168,11 @@ export default function ApplianceCatalog() {
                     <td style={tdStyle}>{app.warranty_expiry || 'N/A'}</td>
                     <td style={tdStyle}>
                       <button
-                        style={{ padding: '5px 10px', fontSize: 12, fontWeight: 700, borderRadius: 0, background: '#f6f1fe', color: THEME.purple, border: `1px solid ${THEME.border}`, cursor: 'pointer' }}
+                        className="gfh-portal-btn"
+                        style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '5px 10px', fontSize: 12, fontWeight: 700, borderRadius: 0, background: '#991b1b', color: '#fff', border: 'none', cursor: 'pointer' }}
                         onClick={() => handleDelete(app.id)}
                       >
+                        <Icon path={ICONS.trash} size={12} />
                         Delete
                       </button>
                     </td>

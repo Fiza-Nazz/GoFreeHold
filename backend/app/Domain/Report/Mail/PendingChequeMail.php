@@ -28,9 +28,10 @@ class PendingChequeMail extends Mailable
     public function content(): Content
     {
         return new Content(
-            htmlString: "<h2>GoFreeHold Pending Cheques Alert</h2><p>The following PDC cheques are due soon:</p><ul>" . 
-                implode('', array_map(fn($c) => "<li>Cheque #{$c['cheque_number']} ({$c['bank_name']}) - AED {$c['amount']} due on {$c['due_date']}</li>", $this->cheques->toArray())) .
-                "</ul>"
+            view: 'emails.pending-cheques',
+            with: [
+                'cheques' => $this->cheques,
+            ],
         );
     }
 }

@@ -37,7 +37,7 @@ export default function VacantPropertyReport() {
   }
 
   return (
-    <div className="gfh-portal-page gfh-vp-page" style={{ fontFamily: "'Inter', 'Segoe UI', system-ui, sans-serif" }}>
+    <div className="gfh-portal-page gfh-vp-page" style={{ fontFamily: "'Poppins', system-ui, sans-serif" }}>
       <style>{`${portalPageCss}
         /* Screen-only print letterhead — hidden normally, shown only when printing */
         .gfh-vp-print-only {

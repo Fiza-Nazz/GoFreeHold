@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import api from '../../api/axios'
 import { formatDate } from '../../utils/formatDate'
-import { THEME, Icon, CornerBrackets, portalPageCss, heroStyle, panelStyle, ghostBtnStyle } from '../../components/gfh/adminTheme'
+import { THEME, Icon, ICONS, CornerBrackets, portalPageCss, heroStyle, panelStyle, ghostBtnStyle } from '../../components/gfh/adminTheme'
 
 const PAYMENT_TYPES = ['rent', 'dewa', 'deposit', 'settlement', 'service_charge', 'other']
 const MODES = ['cash', 'card', 'bank_transfer', 'cheque', 'online']
@@ -85,7 +85,7 @@ export default function PaymentForm({ onSuccess }: PaymentFormProps) {
   }
 
   return (
-    <div className="gfh-portal-page" style={{ fontFamily: "'Inter', 'Segoe UI', system-ui, sans-serif" }}>
+    <div className="gfh-portal-page" style={{ fontFamily: "'Poppins', system-ui, sans-serif" }}>
       <style>{portalPageCss}</style>
 
       <div className="fade-in" style={heroStyle}>
@@ -119,8 +119,8 @@ export default function PaymentForm({ onSuccess }: PaymentFormProps) {
                     style={{
                       padding: '10px 8px',
                       borderRadius: 0,
-                      border: `1.5px solid ${formData.type === cat ? '#1e1b4b' : THEME.border}`,
-                      background: formData.type === cat ? '#1e1b4b' : '#ffffff',
+                      border: `1.5px solid ${formData.type === cat ? '#6B21A8' : THEME.border}`,
+                      background: formData.type === cat ? '#6B21A8' : '#ffffff',
                       color: formData.type === cat ? '#fff' : THEME.ink,
                       cursor: 'pointer',
                       fontSize: 13,
@@ -229,8 +229,13 @@ export default function PaymentForm({ onSuccess }: PaymentFormProps) {
               </div>
             )}
 
-            <button type="submit" className="gfh-portal-btn" style={{ ...ghostBtnStyle, justifyContent: 'center', width: '100%', background: '#065f46' }} disabled={status === 'loading'}>
-              {status === 'loading' ? <span className="spinner" /> : 'Record Payment'}
+            <button type="submit" className="gfh-portal-btn" style={{ ...ghostBtnStyle, justifyContent: 'center', width: '100%', background: '#065f46', display: 'flex', alignItems: 'center', gap: 8 }} disabled={status === 'loading'}>
+              {status === 'loading' ? <span className="spinner" /> : (
+                <>
+                  <Icon path={ICONS.check} size={15} />
+                  Record Payment
+                </>
+              )}
             </button>
           </form>
         </div>

@@ -21,5 +21,8 @@ Route::middleware(['auth:sanctum', 'role:admin'])->prefix('admin')->group(functi
     Route::get('/reports/export/{type}', [ReportController::class, 'exportExcel']);
 
     Route::get('/settings/notifications', [NotificationSettingController::class, 'index']);
+    Route::get('/settings/notifications/logs', [NotificationSettingController::class, 'logs']);
+    Route::match(['get', 'post', 'put'], '/settings/notifications/run-scheduler', [NotificationSettingController::class, 'runScheduler']);
+    Route::match(['get', 'post', 'put'], '/settings/notifications/trigger/{key}', [NotificationSettingController::class, 'trigger']);
     Route::put('/settings/notifications/{notificationSetting}', [NotificationSettingController::class, 'update']);
 });

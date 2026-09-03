@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import api from '../../api/axios'
-import { THEME, Icon, CornerBrackets, portalPageCss, heroStyle, panelStyle, thStyle, tdStyle, ghostBtnStyle } from '../../components/gfh/adminTheme'
+import { THEME, Icon, ICONS, CornerBrackets, portalPageCss, heroStyle, panelStyle, thStyle, tdStyle, ghostBtnStyle } from '../../components/gfh/adminTheme'
 
 interface FinancialEntry {
   id: number
@@ -115,7 +115,7 @@ export default function FinancialTracking() {
   }
 
   return (
-    <div className="gfh-portal-page" style={{ fontFamily: "'Inter', 'Segoe UI', system-ui, sans-serif" }}>
+    <div className="gfh-portal-page" style={{ fontFamily: "'Poppins', system-ui, sans-serif" }}>
       <style>{portalPageCss}</style>
 
       <div className="fade-in" style={heroStyle}>
@@ -232,9 +232,10 @@ export default function FinancialTracking() {
                       <td style={tdStyle}>
                         <button
                           className="gfh-portal-btn"
-                          style={{ padding: '6px 12px', fontSize: 12, fontWeight: 700, borderRadius: 0, backgroundColor: btnTint.delete.bg, color: btnTint.delete.color, border: btnTint.delete.border, cursor: 'pointer' }}
+                          style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '6px 12px', fontSize: 12, fontWeight: 700, borderRadius: 0, backgroundColor: btnTint.delete.bg, color: btnTint.delete.color, border: btnTint.delete.border, cursor: 'pointer' }}
                           onClick={() => handleDelete(entry.id)}
                         >
+                          <Icon path={ICONS.trash} size={12} />
                           Delete
                         </button>
                       </td>

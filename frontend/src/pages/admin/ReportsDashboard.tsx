@@ -62,7 +62,7 @@ export default function ReportsDashboard() {
   }
 
   return (
-    <div className="gfh-portal-page gfh-rp-page" style={{ fontFamily: "'Inter', 'Segoe UI', system-ui, sans-serif" }}>
+    <div className="gfh-portal-page gfh-rp-page" style={{ fontFamily: "'Poppins', system-ui, sans-serif" }}>
       <style>{`${portalPageCss}
         .gfh-rp-print-only { display: none; }
 
@@ -196,14 +196,18 @@ export default function ReportsDashboard() {
             onClick={handlePrint}
             style={{
               ...ghostBtnStyle,
-              background: '#075985',
+              background: '#3C096C',
+              color: '#ffffff',
               border: 'none',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 6,
             }}
           >
             <Icon path={icons.printer} size={15} />
             Print Report
           </button>
-          <button className="gfh-portal-btn" onClick={exportExcel} style={{ ...ghostBtnStyle, background: '#0e7490' }}>
+          <button className="gfh-portal-btn" onClick={exportExcel} style={{ ...ghostBtnStyle, background: '#240046', display: 'inline-flex', alignItems: 'center', gap: 6 }}>
             <Icon path={icons.download} size={15} />
             Export to Excel
           </button>
@@ -228,10 +232,11 @@ export default function ReportsDashboard() {
               fontWeight: 700,
               padding: '9px 16px',
               borderRadius: 0,
-              border: activeTab === t.key ? 'none' : `1px solid ${THEME.border}`,
-              background: activeTab === t.key ? '#1e1b4b' : '#f0f9ff',
-              color: activeTab === t.key ? '#fff' : '#075985',
+              border: activeTab === t.key ? 'none' : '1px solid #CBD5E1',
+              background: activeTab === t.key ? '#240046' : '#F8FAFC',
+              color: activeTab === t.key ? '#ffffff' : '#0F172A',
               cursor: 'pointer',
+              transition: 'background 0.15s ease, color 0.15s ease',
             }}
           >
             {t.label}

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState, useCallback } from 'react'
 import { Link } from 'react-router-dom'
 import api from '../../api/axios'
 import { THEME, ADMIN_COLORS, Icon, portalPageCss, panelStyle, thStyle, tdStyle, ghostBtnStyle } from '../../components/gfh/adminTheme'
@@ -44,7 +44,7 @@ function useCountUp(target: number, active: boolean, duration = 900) {
 }
 
 function StatCard({
-  value, label, sub, bg, active, prefix = '',
+  value, label, sub, bg, active, prefix = '', icon,
 }: {
   value: number
   label: string
@@ -52,39 +52,215 @@ function StatCard({
   bg: string
   active: boolean
   prefix?: string
+  icon?: string
 }) {
   const n = useCountUp(value, active)
+  const formatted = `${prefix}${n.toLocaleString()}`
+  // Dynamically scale font size so big numbers never collide with the icon
+  const fontSize = formatted.length > 8 ? 20 : formatted.length > 6 ? 22 : 26
+
   return (
     <div style={{
       background: bg,
       color: '#fff',
       borderRadius: 0,
-      padding: '20px 18px',
-      minHeight: 118,
+      padding: '18px 16px',
+      minHeight: 124,
       display: 'flex',
       flexDirection: 'column',
       justifyContent: 'space-between',
       boxShadow: '0 8px 20px -10px rgba(15,23,42,0.45)',
+      position: 'relative',
+      overflow: 'hidden',
     }}>
-      <div style={{ fontSize: 28, fontWeight: 800, lineHeight: 1.1, fontVariantNumeric: 'tabular-nums' }}>
-        {prefix}{n.toLocaleString()}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 8 }}>
+        <div style={{
+          fontSize,
+          fontWeight: 800,
+          lineHeight: 1.15,
+          fontVariantNumeric: 'tabular-nums',
+          letterSpacing: '-0.5px',
+          wordBreak: 'break-word',
+          minWidth: 0,
+          flex: 1,
+        }}>
+          {formatted}
+        </div>
+        {icon && (
+          <div style={{
+            background: 'rgba(255,255,255,0.22)',
+            width: 32,
+            height: 32,
+            minWidth: 32,
+            minHeight: 32,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            borderRadius: 0,
+            flexShrink: 0,
+          }}>
+            <Icon path={icon} size={16} />
+          </div>
+        )}
       </div>
       <div>
-        <div style={{ fontSize: 13.5, fontWeight: 700, marginTop: 8 }}>{label}</div>
+        <div style={{ fontSize: 13, fontWeight: 700, marginTop: 8, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+          {label}
+        </div>
         <div style={{
           display: 'inline-block',
-          marginTop: 8,
-          fontSize: 10.5,
+          marginTop: 6,
+          fontSize: 10,
           fontWeight: 700,
-          letterSpacing: '0.3px',
+          letterSpacing: '0.4px',
           textTransform: 'uppercase',
-          background: 'rgba(0,0,0,0.22)',
-          padding: '3px 8px',
+          background: 'rgba(0,0,0,0.25)',
+          padding: '2px 7px',
           borderRadius: 0,
         }}>
           {sub}
         </div>
       </div>
+    </div>
+  )
+}
+
+function UnitDropdown({
+  units,
+  value,
+  onChange,
+}: {
+  units: any[]
+  value: string
+  onChange: (val: string) => void
+}) {
+  const [isOpen, setIsOpen] = useState(false)
+  const dropdownRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setIsOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
+
+  const selectedUnit = units.find(u => String(u.id) === String(value))
+  const selectedLabel = selectedUnit
+    ? `Unit ${selectedUnit.number || selectedUnit.id}${selectedUnit.property?.name ? ` · ${selectedUnit.property.name}` : ''}`
+    : 'All units'
+
+  return (
+    <div ref={dropdownRef} style={{ position: 'relative', minWidth: 240 }}>
+      <button
+        type="button"
+        onClick={() => setIsOpen(prev => !prev)}
+        style={{
+          width: '100%',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          padding: '9px 12px',
+          border: `1px solid ${THEME.border}`,
+          borderRadius: 0,
+          background: '#ffffff',
+          color: THEME.ink,
+          fontWeight: 600,
+          fontSize: 13.5,
+          fontFamily: "'Poppins', system-ui, sans-serif",
+          cursor: 'pointer',
+          textAlign: 'left',
+        }}
+      >
+        <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+          {selectedLabel}
+        </span>
+        <svg
+          width={14}
+          height={14}
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          style={{
+            marginLeft: 8,
+            transition: 'transform 0.15s ease',
+            transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)',
+            flexShrink: 0,
+          }}
+        >
+          <polyline points="6 9 12 15 18 9" />
+        </svg>
+      </button>
+
+      {isOpen && (
+        <div
+          style={{
+            position: 'absolute',
+            top: 'calc(100% + 4px)',
+            left: 0,
+            width: '100%',
+            minWidth: 260,
+            maxHeight: 250,
+            overflowY: 'auto',
+            background: '#ffffff',
+            border: `1px solid ${THEME.border}`,
+            boxShadow: '0 10px 25px -5px rgba(15, 23, 42, 0.25)',
+            zIndex: 999,
+            borderRadius: 0,
+            fontFamily: "'Poppins', system-ui, sans-serif",
+          }}
+        >
+          <div
+            onClick={() => {
+              onChange('')
+              setIsOpen(false)
+            }}
+            style={{
+              padding: '9px 12px',
+              fontSize: 13,
+              fontWeight: value === '' ? 700 : 500,
+              color: value === '' ? '#6B21A8' : '#334155',
+              background: value === '' ? '#f1f5f9' : '#ffffff',
+              cursor: 'pointer',
+              borderBottom: '1px solid #f1f5f9',
+            }}
+            onMouseEnter={e => (e.currentTarget.style.background = '#f8fafc')}
+            onMouseLeave={e => (e.currentTarget.style.background = value === '' ? '#f1f5f9' : '#ffffff')}
+          >
+            All units
+          </div>
+          {units.map((u: any) => {
+            const isSelected = String(u.id) === String(value)
+            return (
+              <div
+                key={u.id}
+                onClick={() => {
+                  onChange(String(u.id))
+                  setIsOpen(false)
+                }}
+                style={{
+                  padding: '9px 12px',
+                  fontSize: 13,
+                  fontWeight: isSelected ? 700 : 500,
+                  color: isSelected ? '#6B21A8' : '#334155',
+                  background: isSelected ? '#f1f5f9' : '#ffffff',
+                  cursor: 'pointer',
+                  borderBottom: '1px solid #f8fafc',
+                }}
+                onMouseEnter={e => (e.currentTarget.style.background = '#f8fafc')}
+                onMouseLeave={e => (e.currentTarget.style.background = isSelected ? '#f1f5f9' : '#ffffff')}
+              >
+                Unit {u.number || u.id}{u.property?.name ? ` · ${u.property.name}` : ''}
+              </div>
+            )
+          })}
+        </div>
+      )}
     </div>
   )
 }
@@ -171,21 +347,21 @@ export default function AdminDashboard() {
   }, [recentComplaints, unitFilter])
 
   const cards = [
-    { value: stats.total_properties, label: 'Total Properties', sub: 'Portfolio', bg: '#1e1b4b' },
-    { value: stats.occupied_units, label: 'Rented / Occupied', sub: 'Units', bg: '#065f46' },
-    { value: stats.total_contracts, label: 'Active Bookings', sub: 'Contracts', bg: '#075985' },
-    { value: stats.vacant_units, label: 'Vacant Units', sub: 'Available', bg: '#991b1b' },
-    { value: stats.monthly_revenue, label: 'Rent Portfolio', sub: 'AED', bg: '#0e7490', prefix: '' },
-    { value: stats.open_complaints, label: 'Open Complaints', sub: 'Ops', bg: '#b45309' },
+    { value: stats.total_properties, label: 'Total Properties', sub: 'Portfolio', bg: '#240046', icon: icons.building },
+    { value: stats.occupied_units, label: 'Rented / Occupied', sub: 'Units', bg: '#065f46', icon: icons.door },
+    { value: stats.total_contracts, label: 'Active Bookings', sub: 'Contracts', bg: '#075985', icon: icons.contracts },
+    { value: stats.vacant_units, label: 'Vacant Units', sub: 'Available', bg: '#991b1b', icon: icons.alert },
+    { value: stats.monthly_revenue, label: 'Rent Portfolio', sub: 'AED', bg: '#0e7490', prefix: '', icon: icons.wallet },
+    { value: stats.open_complaints, label: 'Open Complaints', sub: 'Ops', bg: '#b45309', icon: icons.wrench },
   ]
 
   return (
-    <div className="gfh-portal-page" style={{ fontFamily: "'Inter', 'Segoe UI', system-ui, sans-serif", background: '#FFFFFF' }}>
+    <div className="gfh-portal-page" style={{ fontFamily: "'Poppins', system-ui, sans-serif", background: '#F8F7FD' }}>
       <style>{`
         ${portalPageCss}
         .gfh-dash-spinner {
           display: inline-block; width: 22px; height: 22px;
-          border: 3px solid rgba(15,118,110,0.2); border-top-color: ${ADMIN_COLORS.teal};
+          border: 3px solid rgba(36,0,70,0.2); border-top-color: #240046;
           border-radius: 0%; animation: gfhDashSpin 0.7s linear infinite; margin-bottom: 12px;
         }
         @keyframes gfhDashSpin { to { transform: rotate(360deg); } }
@@ -199,7 +375,7 @@ export default function AdminDashboard() {
           <div style={{ fontSize: 13, color: THEME.textMuted, fontWeight: 600 }}>Rental Management Overview</div>
           <div style={{ fontSize: 12, color: '#9ca3af', marginTop: 2 }}>Live metrics from properties, units, contracts & receivables</div>
         </div>
-        <button type="button" className="gfh-portal-btn" onClick={fetchDashboardData} disabled={isLoading} style={{ ...ghostBtnStyle, opacity: isLoading ? 0.6 : 1 }}>
+        <button type="button" className="gfh-portal-btn" onClick={fetchDashboardData} disabled={isLoading} style={{ ...ghostBtnStyle, background: '#240046', opacity: isLoading ? 0.6 : 1 }}>
           <Icon path={icons.refresh} size={15} />
           Refresh
         </button>
@@ -212,7 +388,7 @@ export default function AdminDashboard() {
         </div>
       ) : (
         <>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: 14, marginBottom: 20 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(170px, 1fr))', gap: 14, marginBottom: 20 }}>
             {cards.map(card => (
               <StatCard
                 key={card.label}
@@ -222,6 +398,7 @@ export default function AdminDashboard() {
                 bg={card.bg}
                 active={ready}
                 prefix={card.prefix}
+                icon={card.icon}
               />
             ))}
           </div>
@@ -241,29 +418,14 @@ export default function AdminDashboard() {
             <label style={{ fontSize: 12, fontWeight: 700, color: THEME.textMuted, textTransform: 'uppercase', letterSpacing: '0.3px' }}>
               Select Unit
             </label>
-            <select
+            {/* Custom dropdown — always opens downward */}
+            <UnitDropdown
+              units={units}
               value={unitFilter}
-              onChange={e => setUnitFilter(e.target.value)}
-              style={{
-                minWidth: 220,
-                padding: '9px 12px',
-                border: `1px solid ${THEME.border}`,
-                borderRadius: 0,
-                background: '#fff',
-                color: THEME.ink,
-                fontWeight: 600,
-                fontSize: 13.5,
-              }}
-            >
-              <option value="">All units</option>
-              {units.map((u: any) => (
-                <option key={u.id} value={u.id}>
-                  Unit {u.number || u.id}{u.property?.name ? ` · ${u.property.name}` : ''}
-                </option>
-              ))}
-            </select>
+              onChange={setUnitFilter}
+            />
             <div style={{ marginLeft: 'auto', fontSize: 12.5, color: THEME.textMuted, fontWeight: 600 }}>
-              Outstanding receivables: <span style={{ color: ADMIN_COLORS.red }}>AED {stats.pending_receivables.toLocaleString()}</span>
+              Outstanding receivables: <span style={{ color: ADMIN_COLORS.red, fontWeight: 800 }}>AED {stats.pending_receivables.toLocaleString()}</span>
             </div>
           </div>
 
@@ -271,7 +433,7 @@ export default function AdminDashboard() {
             <div style={{ ...panelStyle, borderRadius: 0, minHeight: 240 }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
                 <h3 style={{ margin: 0, fontSize: 16, fontWeight: 800, color: THEME.ink }}>Properties</h3>
-                <Link to="/admin/properties" className="gfh-portal-link" style={{ fontSize: 13 }}>View all →</Link>
+                <Link to="/admin/properties" className="gfh-portal-link" style={{ fontSize: 13, color: '#6B21A8', fontWeight: 700 }}>View all →</Link>
               </div>
               {properties.length === 0 ? (
                 <p style={{ color: THEME.textMuted, fontWeight: 500 }}>No properties found.</p>
@@ -303,7 +465,7 @@ export default function AdminDashboard() {
             <div style={{ ...panelStyle, borderRadius: 0, minHeight: 240 }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
                 <h3 style={{ margin: 0, fontSize: 16, fontWeight: 800, color: THEME.ink }}>Recent Complaints</h3>
-                <Link to="/admin/complaints" className="gfh-portal-link" style={{ fontSize: 13 }}>Open →</Link>
+                <Link to="/admin/complaints" className="gfh-portal-link" style={{ fontSize: 13, color: '#6B21A8', fontWeight: 700 }}>Open →</Link>
               </div>
               {filteredComplaints.length === 0 ? (
                 <p style={{ color: THEME.textMuted, fontWeight: 500 }}>No complaints for this filter.</p>

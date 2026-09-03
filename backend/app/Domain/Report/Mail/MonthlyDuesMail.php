@@ -30,22 +30,12 @@ class MonthlyDuesMail extends Mailable
 
     public function content(): Content
     {
-        $rows = $this->dues->map(function ($row) {
-            $tenant = e($row['tenant_name'] ?? '—');
-            $unit = e($row['unit_number'] ?? '—');
-            $property = e($row['property_name'] ?? '—');
-            $amt = number_format((float) $row['outstanding'], 2);
-            return "<li>Contract GFH-" . str_pad((string) $row['contract_id'], 5, '0', STR_PAD_LEFT)
-                . " — {$tenant} @ {$property}/{$unit} — AED {$amt}</li>";
-        })->implode('');
-
-        $total = number_format($this->grandTotal, 2);
-
         return new Content(
-            htmlString: "<h2>GoFreeHold Monthly Dues Alert</h2>"
-                . "<p>The following active contracts have outstanding rent (debit − credit &gt; 0):</p>"
-                . "<ul>{$rows}</ul>"
-                . "<p><strong>Grand total outstanding: AED {$total}</strong></p>"
+            view: 'emails.monthly-dues',
+            with: [
+                'dues'       => $this->dues,
+                'grandTotal' => $this->grandTotal,
+            ],
         );
     }
 }

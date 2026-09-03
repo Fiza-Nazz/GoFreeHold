@@ -28,9 +28,10 @@ class ContractExpiryMail extends Mailable
     public function content(): Content
     {
         return new Content(
-            htmlString: "<h2>GoFreeHold Contract Expiry Alert</h2><p>The following contracts are expiring within the next 100 days:</p><ul>" . 
-                implode('', array_map(fn($c) => "<li>Contract GFH-{$c['id']} (Tenant: {$c['tenant']['name']}) - Expires on {$c['end_date']}</li>", $this->expiringContracts->toArray())) .
-                "</ul>"
+            view: 'emails.contract-expiry',
+            with: [
+                'expiringContracts' => $this->expiringContracts,
+            ],
         );
     }
 }

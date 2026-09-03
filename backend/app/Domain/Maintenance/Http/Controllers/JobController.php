@@ -44,6 +44,7 @@ class JobController extends Controller
         ]);
 
         $validated['assigned_by'] = $request->user()->id;
+        $validated['assigned_to'] = $validated['assigned_to'] ?? $request->user()->id;
         $validated['status'] = $validated['status'] ?? 'assigned';
 
         $job = Job::create($validated);

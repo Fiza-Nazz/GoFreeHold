@@ -40,7 +40,7 @@ const DARK_COLORS = {
   navyDark: '#075985',      // Deep navy blue for PDF / Secondary
   cyanDark: '#0e7490',      // Deep cyan for Legal case
   crimsonDark: '#991b1b',   // Deep dark red for Vacate / Dues
-  purpleDark: '#1e1b4b',    // Deep dark purple header/accents
+  purpleDark: '#6B21A8',    // Deep dark purple header/accents
   slateDark: '#1e293b',     // Deep slate card headers
 }
 
@@ -288,7 +288,7 @@ export default function ContractDetailPage() {
   const balanceDue = Number(contract.rent_amount) - (contract.payments?.reduce((acc, p) => acc + Number(p.amount), 0) || 0)
 
   return (
-    <div className="gfh-portal-page" style={{ fontFamily: "'Inter', 'Segoe UI', system-ui, sans-serif" }}>
+    <div className="gfh-portal-page" style={{ fontFamily: "'Poppins', system-ui, sans-serif" }}>
       <style>{portalPageCss}</style>
 
       {/* ─── PAGE HEADER (Both Modes) ─────────────────────────────────── */}
@@ -436,7 +436,7 @@ export default function ContractDetailPage() {
                 disabled={pdfLoading}
                 style={{
                   padding: '8px 14px', fontSize: 11, fontWeight: 800, borderRadius: 0,
-                  border: 'none', background: '#1e1b4b', color: '#ffffff', cursor: 'pointer',
+                  border: 'none', background: '#6B21A8', color: '#ffffff', cursor: 'pointer',
                   textTransform: 'uppercase', letterSpacing: '0.4px'
                 }}
               >

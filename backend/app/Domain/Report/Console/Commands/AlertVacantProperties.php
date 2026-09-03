@@ -2,8 +2,10 @@
 
 namespace App\Domain\Report\Console\Commands;
 
+use App\Domain\Auth\Models\User;
 use App\Domain\Property\Models\Unit;
 use App\Domain\Report\Mail\VacantPropertiesMail;
+use App\Domain\Report\Models\NotificationLog;
 use App\Domain\Report\Models\NotificationSetting;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
@@ -31,22 +33,57 @@ class AlertVacantProperties extends Command
             ->orderBy('number')
             ->get();
 
+        $adminUser = User::where('email', $recipient)->first() ?? User::where('role', 'admin')->first() ?? User::first();
+        if (!$adminUser) {
+            $adminUser = User::create([
+                'name'     => 'System Admin',
+                'email'    => $recipient ?: 'admin@gofreehold.ae',
+                'password' => bcrypt('password123'),
+                'role'     => 'admin',
+            ]);
+        }
+        $adminId = $adminUser->id;
+
         if ($vacant->isEmpty()) {
             $this->info('No vacant (AVAILABLE) units found.');
+            NotificationLog::create([
+                'type'         => 'vacant_properties',
+                'recipient_id' => $adminId,
+                'message'      => 'Checked: No vacant units found.',
+                'status'       => 'checked',
+                'sent_at'      => now(),
+            ]);
 
             return self::SUCCESS;
         }
 
         try {
             Mail::to($recipient)->send(new VacantPropertiesMail($vacant));
-            $this->info("Vacant properties alert sent for {$vacant->count()} units to {$recipient}.");
+            $msg = "Vacant properties alert sent for {$vacant->count()} units to {$recipient}.";
+            $this->info($msg);
             Log::info('Vacant property alert emailed', [
                 'count'     => $vacant->count(),
                 'recipient' => $recipient,
             ]);
+
+            NotificationLog::create([
+                'type'         => 'vacant_properties',
+                'recipient_id' => $adminId,
+                'message'      => $msg,
+                'status'       => 'sent',
+                'sent_at'      => now(),
+            ]);
         } catch (\Exception $e) {
             $this->error('Failed to send mail: ' . $e->getMessage());
             Log::error('Vacant property alert mail failed: ' . $e->getMessage());
+
+            NotificationLog::create([
+                'type'         => 'vacant_properties',
+                'recipient_id' => $adminId,
+                'message'      => 'Failed: ' . $e->getMessage(),
+                'status'       => 'failed',
+                'sent_at'      => now(),
+            ]);
 
             return self::FAILURE;
         }

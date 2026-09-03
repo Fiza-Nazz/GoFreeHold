@@ -30,17 +30,12 @@ class VacantPropertiesMail extends Mailable
 
     public function content(): Content
     {
-        $rows = $this->units->map(function ($u) {
-            $property = $u->property?->name ?? '—';
-            $number = $u->number ?? $u->id;
-            $price = number_format((float) ($u->price ?? 0), 2);
-            return "<li>{$property} / Unit {$number} — AED {$price} ({$u->status})</li>";
-        })->implode('');
-
         return new Content(
-            htmlString: "<h2>GoFreeHold Vacant Properties Alert</h2>"
-                . "<p>There are currently <strong>{$this->vacantCount}</strong> AVAILABLE unit(s):</p>"
-                . "<ul>{$rows}</ul>"
+            view: 'emails.vacant-properties',
+            with: [
+                'units'       => $this->units,
+                'vacantCount' => $this->vacantCount,
+            ],
         );
     }
 }

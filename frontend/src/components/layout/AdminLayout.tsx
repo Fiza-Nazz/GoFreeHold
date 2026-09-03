@@ -135,19 +135,19 @@ export default function AdminLayout() {
   return (
     <div className="gfh-app-layout">
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
 
         .gfh-app-layout {
           display: flex;
           min-height: 100vh;
-          background: #ffffff;
-          font-family: 'Inter', -apple-system, sans-serif;
+          background: #F8F7FD;
+          font-family: 'Poppins', system-ui, sans-serif;
         }
 
         .gfh-sidebar {
-          width: 260px;
-          flex-shrink: 0;
-          background: #0f172a;
+          width: 250px;
+          min-width: 250px;
+          background: #18002E;
           display: flex;
           flex-direction: column;
           height: 100vh;
@@ -157,7 +157,7 @@ export default function AdminLayout() {
         }
 
         .gfh-sidebar::-webkit-scrollbar { width: 5px; }
-        .gfh-sidebar::-webkit-scrollbar-thumb { background: #334155; border-radius: 0; }
+        .gfh-sidebar::-webkit-scrollbar-thumb { background: #3C096C; border-radius: 0; }
 
         .gfh-sidebar-logo {
           display: flex;
@@ -165,13 +165,15 @@ export default function AdminLayout() {
           gap: 12px;
           padding: 22px 20px;
           border-bottom: 1px solid rgba(255,255,255,0.08);
+          background: #100020;
         }
 
         .gfh-logo-icon {
           width: 40px;
           height: 40px;
           border-radius: 0;
-          background: #991b1b;
+          background: #240046;
+          border: 1px solid rgba(255,255,255,0.2);
           display: flex;
           align-items: center;
           justify-content: center;
@@ -190,7 +192,7 @@ export default function AdminLayout() {
           font-size: 10px;
           font-weight: 600;
           letter-spacing: 1.1px;
-          color: #94a3b8;
+          color: #C084FC;
           text-transform: uppercase;
         }
 
@@ -204,7 +206,7 @@ export default function AdminLayout() {
           font-weight: 700;
           letter-spacing: 1.1px;
           text-transform: uppercase;
-          color: #64748b;
+          color: #A78BFA;
           padding: 16px 12px 8px;
         }
 
@@ -215,7 +217,7 @@ export default function AdminLayout() {
           padding: 10px 12px;
           margin: 2px 0;
           border-radius: 0;
-          color: #cbd5e1;
+          color: #E9D5FF;
           font-size: 13.5px;
           font-weight: 500;
           text-decoration: none;
@@ -223,14 +225,15 @@ export default function AdminLayout() {
         }
 
         .gfh-nav-item:hover {
-          background: rgba(255,255,255,0.06);
+          background: rgba(60, 9, 108, 0.45);
           color: #ffffff;
         }
 
         .gfh-nav-item.active {
-          background: #991b1b;
+          background: #240046;
           color: #ffffff;
           font-weight: 700;
+          border-left: 3px solid #7B2CBF;
         }
 
         .gfh-nav-icon {

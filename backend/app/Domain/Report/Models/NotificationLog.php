@@ -2,13 +2,28 @@
 
 namespace App\Domain\Report\Models;
 
+use App\Domain\Auth\Models\User;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-/**
- * Stub table notifications_log — not written by Alert commands yet.
- * FLAG: wire logging when client confirms notification audit requirements.
- */
 class NotificationLog extends Model
 {
-    //
+    protected $table = 'notifications_log';
+
+    protected $fillable = [
+        'type',
+        'recipient_id',
+        'message',
+        'status',
+        'sent_at',
+    ];
+
+    protected $casts = [
+        'sent_at' => 'datetime',
+    ];
+
+    public function recipient(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'recipient_id');
+    }
 }

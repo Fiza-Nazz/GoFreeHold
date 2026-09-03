@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import api from '../../api/axios'
 import { formatDate } from '../../utils/formatDate'
-import { THEME, Icon, CornerBrackets, portalPageCss, heroStyle, panelStyle, ghostBtnStyle } from '../../components/gfh/adminTheme'
+import { THEME, Icon, ICONS, CornerBrackets, portalPageCss, heroStyle, panelStyle, ghostBtnStyle } from '../../components/gfh/adminTheme'
 
 interface CaseDoc {
   id: number
@@ -234,7 +234,7 @@ export default function LegalCases() {
   }
 
   return (
-    <div className="gfh-portal-page" style={{ fontFamily: "'Inter', 'Segoe UI', system-ui, sans-serif" }}>
+    <div className="gfh-portal-page" style={{ fontFamily: "'Poppins', system-ui, sans-serif" }}>
       <style>{portalPageCss}</style>
 
       <div className="fade-in" style={heroStyle}>
@@ -248,8 +248,8 @@ export default function LegalCases() {
           </p>
         </div>
         <button className="gfh-portal-btn" onClick={() => setIsCreateOpen(true)} style={ghostBtnStyle}>
-          <Icon path={icons.plus} size={16} />
-          New legal case
+          <Icon path={ICONS.plus} size={15} />
+          Open New Case
         </button>
       </div>
 
@@ -362,7 +362,8 @@ export default function LegalCases() {
                   value={detail.notes || ''}
                   onChange={(e) => setDetail({ ...detail, notes: e.target.value })}
                 />
-                <button type="button" className="gfh-portal-btn" style={{ ...ghostBtnStyle, marginTop: 8, background: '#065f46' }} onClick={saveNotes}>
+                <button type="button" className="gfh-portal-btn" style={{ ...ghostBtnStyle, marginTop: 8, background: '#065f46', display: 'inline-flex', alignItems: 'center', gap: 6 }} onClick={saveNotes}>
+                  <Icon path={ICONS.check} size={14} />
                   Save Notes
                 </button>
               </div>
@@ -378,9 +379,10 @@ export default function LegalCases() {
                         {doc.file_name}{' '}
                         <button
                           type="button"
-                          style={{ padding: '3px 9px', fontSize: 11, fontWeight: 700, marginLeft: 8, borderRadius: 0, background: '#991b1b', color: '#fff', border: 'none', cursor: 'pointer' }}
+                          style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '3px 9px', fontSize: 11, fontWeight: 700, marginLeft: 8, borderRadius: 0, background: '#991b1b', color: '#fff', border: 'none', cursor: 'pointer' }}
                           onClick={() => deleteDoc(doc.id)}
                         >
+                          <Icon path={ICONS.trash} size={12} />
                           Delete
                         </button>
                       </li>
@@ -389,7 +391,10 @@ export default function LegalCases() {
                 )}
                 <form onSubmit={uploadDoc} style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap' }}>
                   <input type="file" style={inputStyle} onChange={(e) => setUploadFile(e.target.files?.[0] || null)} required />
-                  <button type="submit" className="gfh-portal-btn" style={{ ...ghostBtnStyle, background: '#0e7490' }}>Upload</button>
+                  <button type="submit" className="gfh-portal-btn" style={{ ...ghostBtnStyle, background: '#0e7490', display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+                    <Icon path={ICONS.download} size={14} />
+                    Upload
+                  </button>
                 </form>
               </div>
             </div>
