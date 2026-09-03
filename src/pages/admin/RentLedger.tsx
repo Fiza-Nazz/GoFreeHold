@@ -69,7 +69,7 @@ function StatCard({ label, value, color, icon, iconBg }: { label: string; value:
       <div style={{ width: 40, height: 40, borderRadius: 0, background: iconBg, color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 10 }}>
         <Icon path={icon} size={18} />
       </div>
-      <div style={{ fontFamily: "'Playfair Display', serif", fontSize: 22, fontWeight: 700, color }}>{value}</div>
+      <div style={{ fontFamily: "'Poppins', sans-serif", fontSize: 22, fontWeight: 700, color: color || THEME.ink }}>{value}</div>
       <div style={{ fontSize: 12, color: THEME.textMuted, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.3px', marginTop: 2 }}>{label}</div>
     </div>
   )
@@ -168,21 +168,21 @@ export default function RentLedger() {
           <StatCard
             label="Total Debit (Due)"
             value={`AED ${Number(summary.total_debit).toLocaleString()}`}
-            color="#fff"
+            color="#991b1b"
             icon={icons.debit}
             iconBg="#991b1b"
           />
           <StatCard
             label="Total Credit (Paid)"
             value={`AED ${Number(summary.total_credit).toLocaleString()}`}
-            color="#fff"
+            color="#065f46"
             icon={icons.check}
             iconBg="#065f46"
           />
           <StatCard
             label="Outstanding Balance"
             value={`AED ${Number(summary.total_balance).toLocaleString()}`}
-            color="#fff"
+            color={Number(summary.total_balance) > 0 ? '#991b1b' : '#065f46'}
             icon={icons.debit}
             iconBg="#b45309"
           />

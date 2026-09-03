@@ -58,7 +58,7 @@ function StatCard({ label, value, color, icon, iconBg, delay }: { label: string;
       <div style={{ width: 40, height: 40, borderRadius: 0, background: iconBg, color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 10 }}>
         <Icon path={icon} size={18} />
       </div>
-      <div style={{ fontFamily: "'Playfair Display', serif", fontSize: 22, fontWeight: 700, color }}>{value}</div>
+      <div style={{ fontFamily: "'Poppins', sans-serif", fontSize: 22, fontWeight: 700, color: color || THEME.ink }}>{value}</div>
       <div style={{ fontSize: 12, fontWeight: 700, color: THEME.textMuted, letterSpacing: '0.4px', textTransform: 'uppercase', marginTop: 6 }}>{label}</div>
     </div>
   )
@@ -163,14 +163,14 @@ export default function FinancialTracking() {
           <StatCard
             label="Total income"
             value={`AED ${Number(summary.total_income).toLocaleString()}`}
-            color="#fff"
+            color="#065f46"
             icon="M12 19V5M5 12l7-7 7 7"
             iconBg="#065f46"
           />
           <StatCard
             label="Total expense"
             value={`AED ${Number(summary.total_expense).toLocaleString()}`}
-            color="#fff"
+            color="#991b1b"
             icon="M12 5v14M19 12l-7 7-7-7"
             iconBg="#991b1b"
             delay="0.1s"
@@ -178,7 +178,7 @@ export default function FinancialTracking() {
           <StatCard
             label="Loans"
             value={`AED ${Number(summary.total_loan).toLocaleString()}`}
-            color="#fff"
+            color="#b45309"
             icon="M21 12V7H5a2 2 0 0 1 0-4h14v4M3 5v14a2 2 0 0 0 2 2h16v-5M18 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4z"
             iconBg="#b45309"
             delay="0.2s"
@@ -186,7 +186,7 @@ export default function FinancialTracking() {
           <StatCard
             label="Net cash flow"
             value={`AED ${Number(summary.net_cash_flow).toLocaleString()}`}
-            color="#fff"
+            color={summary.net_cash_flow >= 0 ? '#065f46' : '#991b1b'}
             icon="M3 3v18h18"
             iconBg={summary.net_cash_flow >= 0 ? '#065f46' : '#991b1b'}
             delay="0.3s"
