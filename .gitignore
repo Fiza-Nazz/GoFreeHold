@@ -33,3 +33,6 @@ frontend/dist-ssr/
 Thumbs.db
 *.zip
 backend/gofreehold
+
+# Documentation/checklist
+checker.md
