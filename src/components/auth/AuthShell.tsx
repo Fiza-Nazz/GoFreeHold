@@ -1,39 +1,53 @@
-import type { ReactNode } from 'react'
+﻿import type { ReactNode } from 'react'
+import { CornerBrackets } from '../gfh/adminTheme'
 
 /** Shared visual shell for Login / Register / Forgot / Reset — presentation only. */
 const FEATURES = [
   {
-    label: 'Property Portfolio Management',
+    label: 'Freehold Portfolio & Unit Management',
+    sub: 'Real-time drilldown into buildings, floors, and occupancy',
     icon: 'M3 21h18M5 21V5a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v16M13 21V9a1 1 0 0 1 1-1h5a1 1 0 0 1 1 1v12',
   },
   {
-    label: 'Tenant & Lease Management',
+    label: 'UAE RERA-Compliant Tenancy & PDC Cheques',
+    sub: 'Automated contract lifecycles, addendums, and banking tracking',
     icon: 'M9 3h6l4 4v14a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1zM9 9h6M9 13h6M9 17h4',
   },
   {
-    label: 'Maintenance & Repairs Tracking',
+    label: 'Automated Rent Ledgers & Watchdog Alerts',
+    sub: 'Scheduled 100-day contract expiry, dues, and vacant alerts',
+    icon: 'M12 8v4l3 3m6-3a9 9 0 1 1-18 0 9 9 0 0 1 18 0z',
+  },
+  {
+    label: 'Maintenance, Work Orders & Move-out Settlements',
+    sub: 'Rapid technician dispatch, store room inventory, and clearance audits',
     icon: 'M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.8 2.8-2-2 2.8-2.8z',
   },
 ]
 
 export const authShellCss = `
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
 
   :root {
-    --auth-green-950: #020a17;
-    --auth-green-900: #0a1a33;
-    --auth-green-800: #0f2547;
-    --auth-green-700: #16305e;
-    --auth-green-600: #1e4079;
-    --auth-green-100: #dce6f7;
-    --auth-green-50: #f2f6fc;
-    --auth-ink: #0a1a33;
-    --auth-muted: #6b7280;
-    --auth-line: #e5e7eb;
-    --auth-input: #f3f4f6;
-    --auth-white: #ffffff;
-    --auth-danger: #b91c1c;
-    --auth-success: #16305e;
+    --auth-purple-deep: #18002E;
+    --auth-purple-mid: #240046;
+    --auth-purple-light: #3C096C;
+    --auth-purple-accent: #5A189A;
+    --auth-purple-glow: rgba(90, 24, 154, 0.4);
+    --auth-canvas: #F8F7FD;
+    --auth-card-border: #E2E8F0;
+    --auth-card-bg: #FFFFFF;
+    --auth-ink: #18002E;
+    --auth-muted: #64748B;
+    --auth-line: #E2E8F0;
+    --auth-input-bg: #FFFFFF;
+    --auth-input-border: #CBD5E1;
+    --auth-danger: #991B1B;
+    --auth-danger-bg: #FEF2F2;
+    --auth-danger-border: #FECACA;
+    --auth-success: #065F46;
+    --auth-success-bg: #F0FDF4;
+    --auth-success-border: #BBF7D0;
   }
 
   * { box-sizing: border-box; }
@@ -42,19 +56,20 @@ export const authShellCss = `
     min-height: 100vh;
     width: 100%;
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
-    background: var(--auth-white);
-    color: #111827;
+    grid-template-columns: 1.05fr 0.95fr;
+    font-family: 'Poppins', system-ui, -apple-system, sans-serif;
+    background: var(--auth-canvas);
+    color: var(--auth-ink);
   }
 
+  /* ── LEFT SHOWCASE PANEL (DEEP MIDNIGHT PURPLE) ── */
   .auth-left {
-    background: linear-gradient(155deg, var(--auth-green-950) 0%, var(--auth-green-900) 45%, var(--auth-green-800) 100%);
-    color: var(--auth-white);
-    padding: 48px 52px;
+    background: linear-gradient(155deg, #100020 0%, #18002E 38%, #240046 75%, #3C096C 100%);
+    color: #FFFFFF;
+    padding: 60px 56px;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: space-between;
     position: relative;
     overflow: hidden;
   }
@@ -62,73 +77,118 @@ export const authShellCss = `
   .auth-left::before {
     content: '';
     position: absolute;
-    inset: -25% -15% auto auto;
-    width: 380px;
-    height: 380px;
+    top: -15%;
+    right: -15%;
+    width: 440px;
+    height: 440px;
     border-radius: 50%;
-    background: radial-gradient(circle at 30% 30%, rgba(30, 64, 121, 0.55), rgba(30, 64, 121, 0) 70%);
+    background: radial-gradient(circle, rgba(90, 24, 154, 0.35) 0%, rgba(36, 0, 70, 0) 70%);
     pointer-events: none;
+    z-index: 0;
   }
 
   .auth-left::after {
     content: '';
     position: absolute;
-    inset: auto -20% -30% auto;
-    width: 320px;
-    height: 320px;
-    border-radius: 0%;
-    background: rgba(255,255,255,0.04);
+    bottom: -20%;
+    left: -15%;
+    width: 380px;
+    height: 380px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(60, 9, 108, 0.3) 0%, rgba(24, 0, 46, 0) 70%);
     pointer-events: none;
+    z-index: 0;
   }
 
   .auth-brand {
     display: flex;
     align-items: center;
-    gap: 12px;
-    margin-bottom: 40px;
+    gap: 14px;
     position: relative;
     z-index: 1;
   }
 
   .auth-logo {
-    width: 42px;
-    height: 42px;
+    width: 44px;
+    height: 44px;
     border-radius: 0;
-    background: rgba(255,255,255,0.12);
-    border: 1px solid rgba(255,255,255,0.22);
+    background: #18002E;
+    border: 1.5px solid #5A189A;
+    box-shadow: 0 0 14px rgba(90, 24, 154, 0.5);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-weight: 800;
-    font-size: 14px;
-    letter-spacing: 0.02em;
-    box-shadow: 0 6px 18px rgba(2, 10, 23, 0.45);
+    font-weight: 900;
+    font-size: 16px;
+    color: #FFFFFF;
+    letter-spacing: 0.05em;
   }
 
   .auth-brand-name {
-    font-size: 20px;
+    font-size: 22px;
     font-weight: 800;
     letter-spacing: -0.01em;
+    color: #FFFFFF;
+    display: flex;
+    flex-direction: column;
+    line-height: 1.1;
+  }
+
+  .auth-brand-sub {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: #C77DFF;
+    margin-top: 4px;
+  }
+
+  .auth-hero-wrap {
+    margin: 40px 0;
+    position: relative;
+    z-index: 1;
+  }
+
+  .auth-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(90, 24, 154, 0.25);
+    border: 1px solid rgba(199, 125, 255, 0.35);
+    color: #E0AAFF;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 5px 12px;
+    border-radius: 0;
+    margin-bottom: 20px;
+  }
+
+  .auth-badge-dot {
+    width: 6px;
+    height: 6px;
+    background: #10B981;
+    border-radius: 50%;
+    box-shadow: 0 0 6px #10B981;
   }
 
   .auth-left h1 {
-    font-size: clamp(28px, 3.2vw, 38px);
+    font-size: clamp(30px, 3.2vw, 42px);
     font-weight: 800;
-    line-height: 1.15;
-    margin: 0 0 14px;
-    max-width: 420px;
-    position: relative;
-    z-index: 1;
+    line-height: 1.2;
+    margin: 0 0 16px;
+    color: #FFFFFF;
+    letter-spacing: -0.02em;
   }
 
   .auth-left-support {
     font-size: 15px;
-    line-height: 1.55;
-    color: rgba(255,255,255,0.78);
+    line-height: 1.65;
+    color: rgba(255, 255, 255, 0.82);
     margin: 0 0 36px;
-    max-width: 400px;
-    position: relative;
-    z-index: 1;
+    max-width: 480px;
+    font-weight: 400;
   }
 
   .auth-features {
@@ -137,50 +197,85 @@ export const authShellCss = `
     padding: 0;
     display: flex;
     flex-direction: column;
-    gap: 16px;
-    position: relative;
-    z-index: 1;
+    gap: 20px;
   }
 
   .auth-features li {
     display: flex;
-    align-items: center;
-    gap: 12px;
-    font-size: 14px;
-    font-weight: 600;
-    color: rgba(255,255,255,0.92);
+    align-items: flex-start;
+    gap: 14px;
   }
 
   .auth-feature-icon {
-    width: 36px;
-    height: 36px;
+    width: 40px;
+    height: 40px;
     border-radius: 0;
-    background: rgba(255,255,255,0.1);
-    border: 1px solid rgba(255,255,255,0.16);
+    background: rgba(60, 9, 108, 0.45);
+    border: 1px solid rgba(199, 125, 255, 0.25);
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
-    color: #9fc0f2;
+    color: #C77DFF;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
   }
 
+  .auth-feature-text {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .auth-feature-title {
+    font-size: 14.5px;
+    font-weight: 700;
+    color: #FFFFFF;
+    letter-spacing: -0.01em;
+  }
+
+  .auth-feature-desc {
+    font-size: 12.5px;
+    color: rgba(255, 255, 255, 0.65);
+    margin-top: 3px;
+    line-height: 1.4;
+  }
+
+  .auth-trust-footer {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.55);
+    padding-top: 24px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ── RIGHT FORM PANEL (LUXURY CANVAS) ── */
   .auth-right {
-    background: var(--auth-white);
+    background: var(--auth-canvas);
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 40px 28px;
+    padding: 48px 36px;
+    position: relative;
   }
 
   .auth-form-card {
     width: 100%;
-    max-width: 420px;
+    max-width: 480px;
+    background: var(--auth-card-bg);
+    border: 1px solid var(--auth-card-border);
+    border-radius: 0;
+    padding: 44px 40px;
+    position: relative;
+    box-shadow: 0 20px 45px -10px rgba(24, 0, 46, 0.08), 0 4px 12px rgba(0, 0, 0, 0.03);
   }
 
   .auth-form-card h2 {
     font-size: 28px;
     font-weight: 800;
-    color: #111827;
+    color: var(--auth-ink);
     margin: 0 0 8px;
     letter-spacing: -0.02em;
   }
@@ -189,37 +284,43 @@ export const authShellCss = `
     font-size: 14px;
     color: var(--auth-muted);
     margin: 0 0 28px;
-    line-height: 1.45;
+    line-height: 1.5;
+    font-weight: 500;
   }
 
   .auth-alert {
-    background: #fef2f2;
-    border: 1px solid #fecaca;
+    background: var(--auth-danger-bg);
+    border: 1px solid var(--auth-danger-border);
     color: var(--auth-danger);
-    padding: 12px 14px;
+    padding: 13px 16px;
     border-radius: 0;
     font-size: 13px;
     font-weight: 600;
-    margin-bottom: 16px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
   }
 
   .auth-alert-success {
-    background: var(--auth-green-50);
-    border: 1px solid #b9cceb;
+    background: var(--auth-success-bg);
+    border: 1px solid var(--auth-success-border);
     color: var(--auth-success);
   }
 
   .auth-form {
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 18px;
   }
 
   .auth-label {
     display: block;
     font-size: 12px;
     font-weight: 700;
-    color: #374151;
+    color: var(--auth-purple-mid);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
     margin-bottom: 7px;
   }
 
@@ -229,41 +330,47 @@ export const authShellCss = `
 
   .auth-input-icon {
     position: absolute;
-    left: 13px;
+    left: 14px;
     top: 50%;
     transform: translateY(-50%);
-    color: #9ca3af;
+    color: var(--auth-muted);
     display: flex;
     pointer-events: none;
+    transition: color 0.15s ease;
   }
 
   .auth-input, .auth-select {
     width: 100%;
-    border: 1px solid var(--auth-line);
-    background: var(--auth-input);
+    height: 48px;
+    border: 1px solid var(--auth-input-border);
+    background: var(--auth-input-bg);
     border-radius: 0;
-    padding: 13px 14px 13px 42px;
+    padding: 0 14px 0 44px;
     font-size: 14px;
-    font-family: inherit;
-    color: #111827;
+    font-family: 'Poppins', sans-serif;
+    color: var(--auth-ink);
     outline: none;
-    transition: border-color 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
   }
 
-  .auth-input::placeholder { color: #9ca3af; }
+  .auth-input::placeholder { color: #94A3B8; font-weight: 400; }
 
   .auth-input:focus, .auth-select:focus {
-    border-color: var(--auth-green-700);
-    background: var(--auth-white);
-    box-shadow: 0 0 0 3px rgba(22, 48, 94, 0.15);
+    border-color: var(--auth-purple-mid);
+    box-shadow: 0 0 0 3px rgba(36, 0, 70, 0.12);
+  }
+
+  .auth-input:focus + .auth-input-icon {
+    color: var(--auth-purple-mid);
   }
 
   .auth-input.auth-input-error {
     border-color: var(--auth-danger);
+    background: #FFFDFD;
   }
 
   .auth-input[readonly] {
-    background: #e5e7eb;
+    background: #F1F5F9;
     color: var(--auth-muted);
     cursor: not-allowed;
   }
@@ -271,8 +378,8 @@ export const authShellCss = `
   .auth-select {
     appearance: none;
     cursor: pointer;
-    padding-right: 36px;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2316305e' stroke-width='2.5'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    padding-right: 40px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23240046' stroke-width='2.5'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
     background-repeat: no-repeat;
     background-position: right 14px center;
   }
@@ -286,14 +393,14 @@ export const authShellCss = `
 
   .auth-caps {
     font-size: 12px;
-    color: var(--auth-green-800);
+    color: #B45309;
     margin-top: 6px;
     font-weight: 600;
   }
 
   .auth-toggle-pw {
     position: absolute;
-    right: 12px;
+    right: 14px;
     top: 50%;
     transform: translateY(-50%);
     background: none;
@@ -302,9 +409,11 @@ export const authShellCss = `
     font-size: 12px;
     font-weight: 700;
     color: var(--auth-muted);
-    padding: 4px;
+    padding: 6px 8px;
+    border-radius: 0;
+    transition: color 0.15s ease;
   }
-  .auth-toggle-pw:hover { color: var(--auth-green-700); }
+  .auth-toggle-pw:hover { color: var(--auth-purple-mid); }
 
   .auth-row {
     display: flex;
@@ -312,6 +421,7 @@ export const authShellCss = `
     justify-content: space-between;
     gap: 12px;
     flex-wrap: wrap;
+    margin: 2px 0 6px;
   }
 
   .auth-remember {
@@ -321,68 +431,81 @@ export const authShellCss = `
     font-size: 13px;
     color: var(--auth-muted);
     cursor: pointer;
+    font-weight: 500;
   }
 
   .auth-remember input {
     width: 16px;
     height: 16px;
-    accent-color: var(--auth-green-700);
+    accent-color: var(--auth-purple-mid);
     cursor: pointer;
+    border-radius: 0;
   }
 
   .auth-link {
-    color: var(--auth-green-700);
+    color: var(--auth-purple-mid);
     font-weight: 700;
     font-size: 13px;
     text-decoration: none;
+    transition: color 0.15s ease;
   }
-  .auth-link:hover { text-decoration: underline; }
+  .auth-link:hover {
+    color: var(--auth-purple-accent);
+    text-decoration: underline;
+  }
 
   .auth-submit {
     width: 100%;
+    height: 48px;
     border: none;
     border-radius: 0;
-    background: var(--auth-green-800);
-    color: var(--auth-white);
-    font-family: inherit;
+    background: linear-gradient(135deg, #18002E 0%, #240046 100%);
+    color: #FFFFFF;
+    font-family: 'Poppins', sans-serif;
     font-weight: 700;
-    font-size: 14.5px;
-    padding: 14px 16px;
+    font-size: 14px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 0 20px;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
-    margin-top: 4px;
-    transition: background 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
+    gap: 10px;
+    margin-top: 8px;
+    box-shadow: 0 4px 14px rgba(24, 0, 46, 0.25);
+    transition: background 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
   }
   .auth-submit:hover:not(:disabled) {
-    background: var(--auth-green-700);
+    background: linear-gradient(135deg, #240046 0%, #3C096C 100%);
     transform: translateY(-1px);
-    box-shadow: 0 8px 20px rgba(15, 37, 71, 0.28);
+    box-shadow: 0 8px 24px rgba(36, 0, 70, 0.35);
   }
-  .auth-submit:disabled { opacity: 0.65; cursor: not-allowed; transform: none; }
+  .auth-submit:active:not(:disabled) {
+    transform: translateY(0);
+  }
+  .auth-submit:disabled { opacity: 0.65; cursor: not-allowed; transform: none; box-shadow: none; }
 
   .auth-spinner {
-    width: 15px;
-    height: 15px;
+    width: 16px;
+    height: 16px;
     border: 2px solid rgba(255,255,255,0.35);
-    border-top-color: #fff;
-    border-radius: 0%;
+    border-top-color: #FFFFFF;
+    border-radius: 50%;
     animation: auth-spin 0.7s linear infinite;
   }
   @keyframes auth-spin { to { transform: rotate(360deg); } }
 
   .auth-help {
     text-align: center;
-    margin-top: 18px;
+    margin-top: 22px;
     font-size: 12.5px;
     color: var(--auth-muted);
   }
 
   .auth-footer {
     text-align: center;
-    margin-top: 22px;
+    margin-top: 14px;
     font-size: 13.5px;
     color: var(--auth-muted);
   }
@@ -396,7 +519,8 @@ export const authShellCss = `
   .auth-recaptcha {
     display: flex;
     justify-content: center;
-    transform: scale(0.95);
+    margin: 4px 0;
+    transform: scale(0.96);
     transform-origin: center;
   }
 
@@ -406,27 +530,35 @@ export const authShellCss = `
     justify-content: center;
     border: none;
     border-radius: 0;
-    background: var(--auth-green-800);
-    color: var(--auth-white);
+    background: linear-gradient(135deg, #18002E 0%, #240046 100%);
+    color: #FFFFFF;
+    font-family: 'Poppins', sans-serif;
     font-weight: 700;
-    font-size: 14px;
+    font-size: 13.5px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
     text-decoration: none;
-    padding: 13px 22px;
-    transition: background 0.15s ease;
+    padding: 13px 24px;
+    box-shadow: 0 4px 14px rgba(24, 0, 46, 0.25);
+    transition: background 0.15s ease, transform 0.15s ease;
   }
-  .auth-btn-link:hover { background: var(--auth-green-700); }
+  .auth-btn-link:hover {
+    background: linear-gradient(135deg, #240046 0%, #3C096C 100%);
+    transform: translateY(-1px);
+  }
 
-  @media (max-width: 860px) {
+  @media (max-width: 960px) {
     .auth-shell { grid-template-columns: 1fr; }
     .auth-left { display: none; }
-    .auth-right { padding: 28px 18px; min-height: 100vh; }
+    .auth-right { padding: 36px 20px; min-height: 100vh; }
+    .auth-form-card { padding: 36px 24px; }
     .auth-grid-2 { grid-template-columns: 1fr; }
   }
 `
 
 function FeatureIcon({ path }: { path: string }) {
   return (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <path d={path} />
     </svg>
   )
@@ -435,7 +567,7 @@ function FeatureIcon({ path }: { path: string }) {
 export function FieldIcon({ path }: { path: string }) {
   return (
     <span className="auth-input-icon" aria-hidden="true">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
         <path d={path} />
       </svg>
     </span>
@@ -461,26 +593,50 @@ export default function AuthShell({ children }: AuthShellProps) {
       <aside className="auth-left" aria-hidden={false}>
         <div className="auth-brand">
           <div className="auth-logo">GF</div>
-          <div className="auth-brand-name">GoFreeHold</div>
+          <div className="auth-brand-name">
+            GoFreeHold
+            <span className="auth-brand-sub">Real Estate Management</span>
+          </div>
         </div>
-        <h1>Property Management Made Simple</h1>
-        <p className="auth-left-support">
-          Run freehold portfolios, leases, payments, and maintenance from one secure platform built for Dubai property teams.
-        </p>
-        <ul className="auth-features">
-          {FEATURES.map((f) => (
-            <li key={f.label}>
-              <span className="auth-feature-icon">
-                <FeatureIcon path={f.icon} />
-              </span>
-              {f.label}
-            </li>
-          ))}
-        </ul>
+
+        <div className="auth-hero-wrap">
+          <div className="auth-badge">
+            <span className="auth-badge-dot" />
+            Dubai Enterprise Property Cloud
+          </div>
+
+          <h1>Next-Generation Freehold Ecosystem</h1>
+          <p className="auth-left-support">
+            Comprehensive property management platform built for UAE landlords, property owners, and tenants. Seamlessly handle leasing, receivables, and maintenance.
+          </p>
+
+          <ul className="auth-features">
+            {FEATURES.map((f) => (
+              <li key={f.label}>
+                <span className="auth-feature-icon">
+                  <FeatureIcon path={f.icon} />
+                </span>
+                <div className="auth-feature-text">
+                  <span className="auth-feature-title">{f.label}</span>
+                  <span className="auth-feature-desc">{f.sub}</span>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div className="auth-trust-footer">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#C77DFF" strokeWidth="2">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+            <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+          </svg>
+          <span>256-Bit SSL Encrypted • RERA & Dubai Real Estate Compliant</span>
+        </div>
       </aside>
 
       <main className="auth-right">
         <div className="auth-form-card">
+          <CornerBrackets color="#240046" />
           {children}
         </div>
       </main>
