@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import api from '../../api/axios'
 import { formatDate } from '../../utils/formatDate'
-import { THEME, Icon, CornerBrackets, portalPageCss, heroStyle, panelStyle, thStyle, tdStyle, ghostBtnStyle } from '../../components/gfh/adminTheme'
+import { THEME, Icon, ICONS, CornerBrackets, portalPageCss, heroStyle, panelStyle, thStyle, tdStyle, ghostBtnStyle } from '../../components/gfh/adminTheme'
 
 interface Cheque {
   id: number
@@ -103,7 +103,7 @@ export default function PdcChequeTracker() {
   }
 
   return (
-    <div className="gfh-portal-page" style={{ fontFamily: "'Inter', 'Segoe UI', system-ui, sans-serif" }}>
+    <div className="gfh-portal-page" style={{ fontFamily: "'Poppins', system-ui, sans-serif" }}>
       <style>{portalPageCss}</style>
 
       <div className="fade-in" style={heroStyle}>
@@ -179,26 +179,29 @@ export default function PdcChequeTracker() {
                             <button
                               type="button"
                               className="gfh-portal-btn"
-                              style={{ padding: '5px 10px', fontSize: 11, fontWeight: 700, borderRadius: 0, border: 'none', background: '#065f46', color: '#fff', cursor: 'pointer' }}
+                              style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '5px 10px', fontSize: 11, fontWeight: 700, borderRadius: 0, border: 'none', background: '#065f46', color: '#fff', cursor: 'pointer' }}
                               onClick={() => updateStatus(cheque, 'cleared')}
                             >
+                              <Icon path={ICONS.check} size={12} />
                               Mark Cleared
                             </button>
                             <button
                               type="button"
                               className="gfh-portal-btn"
-                              style={{ padding: '5px 10px', fontSize: 11, fontWeight: 700, borderRadius: 0, border: 'none', background: '#991b1b', color: '#fff', cursor: 'pointer' }}
+                              style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '5px 10px', fontSize: 11, fontWeight: 700, borderRadius: 0, border: 'none', background: '#991b1b', color: '#fff', cursor: 'pointer' }}
                               onClick={() => updateStatus(cheque, 'bounced')}
                             >
+                              <Icon path={ICONS.alert} size={12} />
                               Mark Bounced
                             </button>
                           </>}
                           <button
                             type="button"
                             className="gfh-portal-btn"
-                            style={{ padding: '5px 10px', fontSize: 11, fontWeight: 700, borderRadius: 0, border: 'none', background: '#fef2f2', color: '#991b1b', cursor: 'pointer' }}
+                            style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '5px 10px', fontSize: 11, fontWeight: 700, borderRadius: 0, border: 'none', background: '#fef2f2', color: '#991b1b', cursor: 'pointer' }}
                             onClick={() => deleteCheque(cheque)}
                           >
+                            <Icon path={ICONS.trash} size={12} />
                             Delete
                           </button>
                         </div>

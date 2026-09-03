@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import ReactDOM from 'react-dom/client'
 import api from '../../api/axios'
 import { formatDate } from '../../utils/formatDate'
-import { THEME, Icon, CornerBrackets, portalPageCss, heroStyle, panelStyle, thStyle, tdStyle, ghostBtnStyle } from '../../components/gfh/adminTheme'
+import { THEME, Icon, ICONS, CornerBrackets, portalPageCss, heroStyle, panelStyle, thStyle, tdStyle, ghostBtnStyle } from '../../components/gfh/adminTheme'
 import TenancyContractTemplate, { type ContractData } from '../../components/gfh/TenancyContractTemplate'
 import { generateContractPDF } from '../../utils/generateContractPDF'
 
@@ -219,7 +219,7 @@ export default function ContractManagement() {
   }
 
   return (
-    <div className="gfh-portal-page" style={{ fontFamily: "'Inter', 'Segoe UI', system-ui, sans-serif" }}>
+    <div className="gfh-portal-page" style={{ fontFamily: "'Poppins', system-ui, sans-serif" }}>
       <style>{portalPageCss}</style>
 
       <div className="fade-in" style={heroStyle}>
@@ -313,7 +313,7 @@ export default function ContractManagement() {
                       </div>
                     </td>
                     <td style={tdStyle}>
-                      <div style={{ display: 'flex', gap: 5, flexWrap: 'wrap' }}>
+                      <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', alignItems: 'center' }}>
                         <Link
                           to={`/admin/contracts/${c.id}`}
                           className="gfh-portal-btn"
@@ -321,9 +321,10 @@ export default function ContractManagement() {
                             padding: '5px 10px', fontSize: 10.5, fontWeight: 700,
                             borderRadius: 0, border: 'none',
                             background: '#075985', color: '#fff', textDecoration: 'none',
-                            display: 'inline-flex', alignItems: 'center'
+                            display: 'inline-flex', alignItems: 'center', gap: 4,
                           }}
                         >
+                          <Icon path={ICONS.eye} size={13} />
                           Details
                         </Link>
                         <button
@@ -337,7 +338,7 @@ export default function ContractManagement() {
                             color: '#fff',
                             cursor: pdfLoading !== null ? 'not-allowed' : 'pointer',
                             opacity: pdfLoading !== null && pdfLoading !== c.id ? 0.5 : 1,
-                            display: 'flex', alignItems: 'center', gap: 5, transition: 'all 0.2s',
+                            display: 'inline-flex', alignItems: 'center', gap: 4, transition: 'all 0.2s',
                           }}
                         >
                           {pdfLoading === c.id ? (
@@ -347,22 +348,29 @@ export default function ContractManagement() {
                               </svg>
                               Generating...
                             </>
-                          ) : 'PDF'}
+                          ) : (
+                            <>
+                              <Icon path={ICONS.download} size={13} />
+                              PDF
+                            </>
+                          )}
                         </button>
 
                         {c.status === 'active' && <>
                           <button
                             className="gfh-portal-btn"
                             onClick={() => { setRenewModal(c); setRenewData({ new_end_date: '', new_rent_amount: String(c.rent_amount) }) }}
-                            style={{ padding: '5px 10px', fontSize: 10.5, fontWeight: 700, borderRadius: 0, border: 'none', background: '#065f46', color: '#fff', cursor: 'pointer' }}
+                            style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '5px 10px', fontSize: 10.5, fontWeight: 700, borderRadius: 0, border: 'none', background: '#065f46', color: '#fff', cursor: 'pointer' }}
                           >
+                            <Icon path={ICONS.refresh} size={13} />
                             Renew
                           </button>
                           <button
                             className="gfh-portal-btn"
                             onClick={() => setVacateContract(c)}
-                            style={{ padding: '5px 10px', fontSize: 10.5, fontWeight: 700, borderRadius: 0, border: 'none', background: '#991b1b', color: '#fff', cursor: 'pointer' }}
+                            style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '5px 10px', fontSize: 10.5, fontWeight: 700, borderRadius: 0, border: 'none', background: '#991b1b', color: '#fff', cursor: 'pointer' }}
                           >
+                            <Icon path={ICONS.close} size={13} />
                             Vacate
                           </button>
                         </>}

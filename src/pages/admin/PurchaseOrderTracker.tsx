@@ -142,7 +142,7 @@ export default function PurchaseOrderTracker() {
   const pendingCount = orders.filter(po => po.status === 'pending').length
 
   return (
-    <div className="gfh-portal-page" style={{ fontFamily: "'Inter', 'Segoe UI', system-ui, sans-serif" }}>
+    <div className="gfh-portal-page" style={{ fontFamily: "'Poppins', system-ui, sans-serif" }}>
       <style>{portalPageCss}</style>
 
       <div className="fade-in" style={heroStyle}>
@@ -246,7 +246,7 @@ export default function PurchaseOrderTracker() {
                           <button
                             type="button"
                             className="gfh-portal-btn"
-                            style={{ display: 'inline-flex', alignItems: 'center', gap: 5, padding: '5px 10px', fontSize: 12, fontWeight: 700, borderRadius: 0, background: '#fff', color: THEME.violetLight, border: `1px solid ${THEME.border}`, cursor: 'pointer' }}
+                            style={{ display: 'inline-flex', alignItems: 'center', gap: 5, padding: '5px 10px', fontSize: 12, fontWeight: 700, borderRadius: 0, background: '#991b1b', color: '#fff', border: 'none', cursor: 'pointer' }}
                             onClick={() => handleDelete(po.id)}
                           >
                             <Icon path={icons.trash} size={12} />

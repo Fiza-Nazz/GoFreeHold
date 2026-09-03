@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import api from '../../api/axios'
-import { THEME, Icon, CornerBrackets, portalPageCss, heroStyle, panelStyle, thStyle, tdStyle, ghostBtnStyle } from '../../components/gfh/adminTheme'
+import { THEME, Icon, ICONS, CornerBrackets, portalPageCss, heroStyle, panelStyle, thStyle, tdStyle, ghostBtnStyle } from '../../components/gfh/adminTheme'
 
 interface InventoryItem {
   id: number
@@ -98,7 +98,7 @@ export default function InventoryManagement() {
   const warehouseItemsCount = items.filter(i => i.location_type === 'warehouse').length
 
   return (
-    <div className="gfh-portal-page" style={{ fontFamily: "'Inter', 'Segoe UI', system-ui, sans-serif" }}>
+    <div className="gfh-portal-page" style={{ fontFamily: "'Poppins', system-ui, sans-serif" }}>
       <style>{portalPageCss}</style>
 
       <div className="fade-in" style={heroStyle}>
@@ -222,9 +222,11 @@ export default function InventoryManagement() {
                       </td>
                       <td style={tdStyle}>
                         <button
-                          style={{ padding: '5px 10px', fontSize: 12, fontWeight: 700, borderRadius: 0, background: '#fff', color: '#ef4444', border: '1px solid #ef4444', cursor: 'pointer' }}
+                          className="gfh-portal-btn"
+                          style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '5px 10px', fontSize: 12, fontWeight: 700, borderRadius: 0, background: '#991b1b', color: '#fff', border: 'none', cursor: 'pointer' }}
                           onClick={() => handleDelete(item.id)}
                         >
+                          <Icon path={ICONS.trash} size={12} />
                           Delete
                         </button>
                       </td>

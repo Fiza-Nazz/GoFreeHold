@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import api from '../../api/axios'
-import { THEME, Icon, CornerBrackets, portalPageCss, heroStyle, panelStyle, ghostBtnStyle } from '../../components/gfh/adminTheme'
+import { THEME, Icon, ICONS, CornerBrackets, portalPageCss, heroStyle, panelStyle, ghostBtnStyle } from '../../components/gfh/adminTheme'
 
 interface Complaint {
   id: number
@@ -123,7 +123,7 @@ export default function ComplaintDashboard() {
   }
 
   return (
-    <div className="gfh-portal-page" style={{ fontFamily: "'Inter', 'Segoe UI', system-ui, sans-serif" }}>
+    <div className="gfh-portal-page" style={{ fontFamily: "'Poppins', system-ui, sans-serif" }}>
       <style>{portalPageCss}</style>
 
       <div className="fade-in" style={heroStyle}>
@@ -188,19 +188,21 @@ export default function ComplaintDashboard() {
                   </div>
                 </div>
 
-                <div style={{ display: 'flex', gap: 8, flexShrink: 0 }}>
+                <div style={{ display: 'flex', gap: 8, flexShrink: 0, alignItems: 'center' }}>
                   <button
                     className="gfh-portal-btn"
-                    style={{ padding: '7px 15px', fontSize: 12.5, fontWeight: 700, borderRadius: 0, backgroundColor: '#075985', color: '#fff', border: 'none', cursor: 'pointer' }}
+                    style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '7px 15px', fontSize: 12.5, fontWeight: 700, borderRadius: 0, backgroundColor: '#075985', color: '#fff', border: 'none', cursor: 'pointer' }}
                     onClick={() => { setAssignModal(item); setSelectedTech(String(item.job?.assigned_to ?? item.job?.assignedTo?.id ?? '')); }}
                   >
+                    <Icon path={ICONS.wrench} size={14} />
                     Assign Tech
                   </button>
                   <button
                     className="gfh-portal-btn"
-                    style={{ padding: '7px 15px', fontSize: 12.5, fontWeight: 700, borderRadius: 0, backgroundColor: '#b45309', color: '#fff', border: 'none', cursor: 'pointer' }}
+                    style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '7px 15px', fontSize: 12.5, fontWeight: 700, borderRadius: 0, backgroundColor: '#b45309', color: '#fff', border: 'none', cursor: 'pointer' }}
                     onClick={() => { setStatusModal(item); setNewStatus(item.status); }}
                   >
+                    <Icon path={ICONS.edit} size={14} />
                     Update Status
                   </button>
                 </div>

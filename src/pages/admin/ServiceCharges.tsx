@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import api from '../../api/axios'
 import { formatDate } from '../../utils/formatDate'
-import { THEME, Icon, CornerBrackets, portalPageCss, heroStyle, panelStyle, ghostBtnStyle } from '../../components/gfh/adminTheme'
+import { THEME, Icon, ICONS, CornerBrackets, portalPageCss, heroStyle, panelStyle, ghostBtnStyle } from '../../components/gfh/adminTheme'
 
 interface ServiceCharge {
   id: number
@@ -101,7 +101,7 @@ export default function ServiceCharges() {
   }
 
   return (
-    <div className="gfh-portal-page" style={{ fontFamily: "'Inter', 'Segoe UI', system-ui, sans-serif" }}>
+    <div className="gfh-portal-page" style={{ fontFamily: "'Poppins', system-ui, sans-serif" }}>
       <style>{portalPageCss}</style>
 
       <div className="fade-in" style={heroStyle}>
@@ -200,28 +200,31 @@ export default function ServiceCharges() {
                       AED {Number(charge.amount).toLocaleString()}
                     </strong>
                     {charge.status === 'pending' && (
-                      <div style={{ display: 'flex', gap: 6 }}>
+                      <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
                         <button
                           className="gfh-portal-btn"
-                          style={{ padding: '6px 12px', fontSize: 12.5, fontWeight: 700, backgroundColor: btnTint.paid.bg, border: btnTint.paid.border, borderRadius: 0, color: btnTint.paid.color, cursor: 'pointer' }}
+                          style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '6px 12px', fontSize: 12.5, fontWeight: 700, backgroundColor: btnTint.paid.bg, border: btnTint.paid.border, borderRadius: 0, color: btnTint.paid.color, cursor: 'pointer' }}
                           onClick={() => markPaid(charge.id)}
                         >
+                          <Icon path={ICONS.check} size={13} />
                           Mark paid
                         </button>
                         <button
                           className="gfh-portal-btn"
-                          style={{ padding: '6px 12px', fontSize: 12.5, fontWeight: 700, borderRadius: 0, backgroundColor: btnTint.waive.bg, color: btnTint.waive.color, border: btnTint.waive.border, cursor: 'pointer' }}
+                          style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '6px 12px', fontSize: 12.5, fontWeight: 700, borderRadius: 0, backgroundColor: btnTint.waive.bg, color: btnTint.waive.color, border: btnTint.waive.border, cursor: 'pointer' }}
                           onClick={() => markWaived(charge.id)}
                         >
+                          <Icon path={ICONS.close} size={13} />
                           Waive
                         </button>
                       </div>
                     )}
                     <button
                       className="gfh-portal-btn"
-                      style={{ padding: '6px 12px', fontSize: 12.5, fontWeight: 700, borderRadius: 0, backgroundColor: btnTint.delete.bg, color: btnTint.delete.color, border: btnTint.delete.border, cursor: 'pointer' }}
+                      style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '6px 12px', fontSize: 12.5, fontWeight: 700, backgroundColor: btnTint.delete.bg, color: btnTint.delete.color, border: btnTint.delete.border, cursor: 'pointer' }}
                       onClick={() => deleteCharge(charge.id)}
                     >
+                      <Icon path={ICONS.trash} size={13} />
                       Delete
                     </button>
                   </div>

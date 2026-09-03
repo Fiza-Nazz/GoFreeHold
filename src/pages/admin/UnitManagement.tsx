@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import api from '../../api/axios'
 import BookingForm from './BookingForm'
-import { THEME, CornerBrackets, portalPageCss, heroStyle, panelStyle, ghostBtnStyle } from '../../components/gfh/adminTheme'
+import { THEME, CornerBrackets, portalPageCss, heroStyle, panelStyle, ghostBtnStyle, Icon, ICONS } from '../../components/gfh/adminTheme'
 
 interface Unit {
   id: number
@@ -145,7 +145,7 @@ export default function UnitManagement() {
       case 'AVAILABLE': return { bg: '#f0fdf4', color: '#065f46' }
       case 'BOOKED':    return { bg: '#fffbeb', color: '#b45309' }
       case 'OCCUPIED':  return { bg: '#f0f9ff', color: '#075985' }
-      case 'SOLD':      return { bg: '#f5f3ff', color: '#1e1b4b' }
+      case 'SOLD':      return { bg: '#f5f3ff', color: '#6B21A8' }
       default:          return { bg: '#f3f4f6', color: '#374151' }
     }
   }
@@ -159,7 +159,7 @@ export default function UnitManagement() {
   }
 
   return (
-    <div className="gfh-portal-page" style={{ fontFamily: "'Inter', 'Segoe UI', system-ui, sans-serif" }}>
+    <div className="gfh-portal-page" style={{ fontFamily: "'Poppins', system-ui, sans-serif" }}>
       <style>{portalPageCss}</style>
       <style>{`
         .gfh-um-card { transition: transform 0.2s cubic-bezier(.2,.8,.2,1), box-shadow 0.2s cubic-bezier(.2,.8,.2,1); }
@@ -197,7 +197,8 @@ export default function UnitManagement() {
             <option value="SOLD">SOLD</option>
           </select>
           <button className="gfh-portal-btn" onClick={() => setIsModalOpen(true)} style={ghostBtnStyle}>
-            + Add Unit
+            <Icon path={ICONS.plus} size={15} />
+            Add Unit
           </button>
         </div>
       </div>
@@ -294,6 +295,9 @@ export default function UnitManagement() {
                       className="gfh-portal-btn"
                       onClick={() => setBookingUnit(unit)}
                       style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: 6,
                         padding: '8px 14px',
                         borderRadius: 0,
                         border: 'none',
@@ -304,12 +308,16 @@ export default function UnitManagement() {
                         cursor: 'pointer',
                       }}
                     >
+                      <Icon path={ICONS.check} size={14} />
                       Book
                     </button>
                   )}
                   <button
                     onClick={() => handleDelete(unit.id)}
                     style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: 6,
                       padding: '8px 14px',
                       borderRadius: 0,
                       border: 'none',
@@ -320,6 +328,7 @@ export default function UnitManagement() {
                       cursor: 'pointer',
                     }}
                   >
+                    <Icon path={ICONS.trash} size={14} />
                     Delete
                   </button>
                 </div>
