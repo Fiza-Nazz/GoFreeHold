@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import api from '../../api/axios'
 import { formatDate } from '../../utils/formatDate'
-import { THEME, ADMIN_COLORS, portalPageCss, heroStyle, panelStyle, thStyle, tdStyle } from '../../components/gfh/adminTheme'
+import { THEME, ADMIN_COLORS, Icon, portalPageCss, heroStyle, panelStyle, thStyle, tdStyle } from '../../components/gfh/adminTheme'
 
 interface LedgerEntry {
   id: number
@@ -9,6 +9,12 @@ interface LedgerEntry {
   description?: string
   debit: number
   credit: number
+}
+
+const icons = {
+  debit: 'M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0-1 14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2L4 6h16z',
+  credit: 'M12 5v14M5 12h14',
+  balance: 'M21 12V7H5a2 2 0 0 1 0-4h14v4M3 5v14a2 2 0 0 0 2 2h16v-5M18 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4z',
 }
 
 export default function TenantDues() {
@@ -45,7 +51,7 @@ export default function TenantDues() {
   }, [])
 
   return (
-    <div className="gfh-portal-page" style={{ fontFamily: "'Inter', 'Segoe UI', system-ui, sans-serif", background: THEME.pageBg }}>
+    <div className="gfh-portal-page" style={{ fontFamily: "'Poppins', system-ui, sans-serif", background: THEME.pageBg }}>
       <style>{portalPageCss}</style>
 
       <div className="fade-in" style={heroStyle}>
@@ -57,39 +63,93 @@ export default function TenantDues() {
       </div>
 
       {!isLoading && summary && (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 16, marginBottom: 22 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 16, marginBottom: 22 }}>
           {[
-            { label: 'Total debit', value: `AED ${summary.total_debit.toLocaleString()}`, bg: '#991b1b', sub: 'Debit' },
-            { label: 'Total credit', value: `AED ${summary.total_credit.toLocaleString()}`, bg: '#065f46', sub: 'Credit' },
-            { label: 'Balance', value: `AED ${summary.total_balance.toLocaleString()}`, bg: '#b45309', sub: 'Balance' },
+            {
+              label: 'Total Debit',
+              value: `AED ${summary.total_debit.toLocaleString()}`,
+              icon: icons.debit,
+              iconBg: '#FEF2F2',
+              iconColor: '#DC2626',
+              badgeBg: '#FEF2F2',
+              badgeColor: '#991B1B',
+              badgeBorder: '#FECACA',
+              sub: 'Debit',
+            },
+            {
+              label: 'Total Credit',
+              value: `AED ${summary.total_credit.toLocaleString()}`,
+              icon: icons.credit,
+              iconBg: '#F0FDF4',
+              iconColor: '#0F8A67',
+              badgeBg: '#F0FDF4',
+              badgeColor: '#065F46',
+              badgeBorder: '#BBF7D0',
+              sub: 'Credit',
+            },
+            {
+              label: 'Balance Due',
+              value: `AED ${summary.total_balance.toLocaleString()}`,
+              icon: icons.balance,
+              iconBg: '#FFFBEB',
+              iconColor: '#D97706',
+              badgeBg: '#FFFBEB',
+              badgeColor: '#B45309',
+              badgeBorder: '#FDE68A',
+              sub: 'Balance',
+            },
           ].map((card, i) => (
             <div
               key={card.label}
               className="gfh-portal-stat"
               style={{
-                background: card.bg,
-                color: '#fff',
-                borderRadius: 0,
-                padding: '20px 18px',
-                minHeight: 110,
-                boxShadow: '0 8px 20px -10px rgba(15,23,42,0.45)',
+                background: '#FFFFFF',
+                borderRadius: 14,
+                padding: '20px 22px',
+                border: '1px solid #E2E8F0',
+                boxShadow: '0 1px 3px rgba(16,24,40,0.04)',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'space-between',
+                minHeight: 124,
                 animationDelay: `${i * 0.06}s`,
               }}
             >
-              <div style={{ fontSize: 22, fontWeight: 800 }}>{card.value}</div>
-              <div style={{ fontSize: 13.5, fontWeight: 700, marginTop: 8 }}>{card.label}</div>
-              <div style={{
-                display: 'inline-block',
-                marginTop: 8,
-                fontSize: 10.5,
-                fontWeight: 700,
-                letterSpacing: '0.3px',
-                textTransform: 'uppercase',
-                background: 'rgba(255,255,255,0.18)',
-                padding: '3px 8px',
-                borderRadius: 0,
-              }}>
-                {card.sub}
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
+                <div style={{
+                  width: 42,
+                  height: 42,
+                  borderRadius: 10,
+                  background: card.iconBg,
+                  color: card.iconColor,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  flexShrink: 0,
+                }}>
+                  <Icon path={card.icon} size={20} />
+                </div>
+                <span style={{
+                  fontSize: 11,
+                  fontWeight: 700,
+                  letterSpacing: '0.4px',
+                  textTransform: 'uppercase',
+                  background: card.badgeBg,
+                  color: card.badgeColor,
+                  border: `1px solid ${card.badgeBorder}`,
+                  padding: '3px 9px',
+                  borderRadius: 999,
+                }}>
+                  {card.sub}
+                </span>
+              </div>
+              <div>
+                <div style={{ fontSize: 22, fontWeight: 800, color: '#0F172A', lineHeight: 1.15, letterSpacing: '-0.02em' }}>
+                  {card.value}
+                </div>
+                <div style={{ fontSize: 13, fontWeight: 600, color: '#64748B', marginTop: 4 }}>
+                  {card.label}
+                </div>
               </div>
             </div>
           ))}

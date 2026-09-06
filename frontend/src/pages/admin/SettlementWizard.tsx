@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+﻿import { useEffect, useState } from 'react'
 import api from '../../api/axios'
 import { formatDate } from '../../utils/formatDate'
 import { THEME, Icon, ICONS, CornerBrackets, portalPageCss, heroStyle, panelStyle, thStyle, tdStyle, ghostBtnStyle } from '../../components/gfh/adminTheme'
@@ -48,7 +48,7 @@ const icons = {
 const inputStyle: React.CSSProperties = {
   background: '#ffffff',
   border: `1px solid ${THEME.border}`,
-  borderRadius: 0,
+  borderRadius: 8,
   color: THEME.ink,
   fontSize: 14,
   fontWeight: 600,
@@ -292,13 +292,13 @@ export default function SettlementWizard() {
                     <td style={{ ...tdStyle, color: '#065f46', fontWeight: 800 }}>AED {Number(s.receivable).toLocaleString()}</td>
                     <td style={{ ...tdStyle, fontWeight: 700 }}>
                       {s.on_case ? (
-                        <span style={{ backgroundColor: '#fee2e2', color: '#991b1b', border: '1px solid #fecaca', padding: '3px 8px', fontSize: 11, fontWeight: 700, borderRadius: 0 }}>LEGAL CASE ACTIVE</span>
+                        <span style={{ backgroundColor: '#fee2e2', color: '#991b1b', border: '1px solid #fecaca', padding: '3px 8px', fontSize: 11, fontWeight: 700, borderRadius: 8 }}>LEGAL CASE ACTIVE</span>
                       ) : (
                         <span style={{ color: THEME.textMuted }}>No</span>
                       )}
                     </td>
                     <td style={tdStyle}>
-                      <span style={{ backgroundColor: s.status === 'completed' ? '#f0fdf4' : '#fffbeb', color: s.status === 'completed' ? '#065f46' : '#b45309', border: `1px solid ${s.status === 'completed' ? '#bbf7d0' : '#fde68a'}`, padding: '4px 11px', borderRadius: 0, fontSize: 11.5, fontWeight: 700, letterSpacing: '0.3px' }}>
+                      <span style={{ backgroundColor: s.status === 'completed' ? '#f0fdf4' : '#fffbeb', color: s.status === 'completed' ? '#065f46' : '#b45309', border: `1px solid ${s.status === 'completed' ? '#bbf7d0' : '#fde68a'}`, padding: '4px 11px', borderRadius: 8, fontSize: 11.5, fontWeight: 700, letterSpacing: '0.3px' }}>
                         {(s.status || '—').toString().toUpperCase()}
                       </span>
                     </td>
@@ -308,7 +308,7 @@ export default function SettlementWizard() {
                           className="gfh-portal-btn"
                           disabled={busy}
                           onClick={() => markCompleted(s.id)}
-                          style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '6px 10px', fontSize: 12, fontWeight: 700, borderRadius: 0, border: 'none', background: '#065f46', color: '#fff', cursor: 'pointer' }}
+                          style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '6px 10px', fontSize: 12, fontWeight: 700, borderRadius: 8, border: 'none', background: '#065f46', color: '#fff', cursor: 'pointer' }}
                         >
                           <Icon path={ICONS.check} size={13} />
                           Mark Completed
@@ -325,7 +325,7 @@ export default function SettlementWizard() {
 
       {isModalOpen && (
         <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(15,61,58,0.55)', backdropFilter: 'blur(3px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
-          <div className="fade-in" style={{ position: 'relative', width: 560, padding: 30, maxHeight: '92vh', overflowY: 'auto', background: '#ffffff', borderRadius: 0, border: `1px solid ${THEME.border}`, boxShadow: '0 24px 55px -18px rgba(15,61,58,0.35)' }}>
+          <div className="fade-in" style={{ position: 'relative', width: 560, padding: 30, maxHeight: '92vh', overflowY: 'auto', background: '#ffffff', borderRadius: 8, border: `1px solid ${THEME.border}`, boxShadow: '0 24px 55px -18px rgba(15,61,58,0.35)' }}>
             <CornerBrackets />
             <h2 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 22, fontWeight: 800, marginBottom: 6, color: THEME.ink }}>
               {createdSettlement ? `Settlement #${createdSettlement.id}` : 'New Settlement'}
@@ -402,7 +402,7 @@ export default function SettlementWizard() {
                 </label>
 
                 <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 10 }}>
-                  <button type="button" className="gfh-portal-btn" onClick={closeModal} style={{ display: 'inline-flex', alignItems: 'center', gap: 7, borderRadius: 0, fontWeight: 700, fontSize: 13.5, padding: '10px 18px', backgroundColor: '#f0fdfa', color: THEME.purple, border: `1px solid ${THEME.border}`, cursor: 'pointer' }}>
+                  <button type="button" className="gfh-portal-btn" onClick={closeModal} style={{ display: 'inline-flex', alignItems: 'center', gap: 7, borderRadius: 8, fontWeight: 700, fontSize: 13.5, padding: '10px 18px', backgroundColor: '#f0fdfa', color: THEME.purple, border: `1px solid ${THEME.border}`, cursor: 'pointer' }}>
                     Cancel
                   </button>
                   <button type="submit" disabled={busy} className="gfh-portal-btn" style={ghostBtnStyle}>
@@ -412,7 +412,7 @@ export default function SettlementWizard() {
               </form>
             ) : (
               <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
-                <div style={{ padding: 12, background: '#faf8ff', border: `1px solid ${THEME.border}`, borderRadius: 0, fontSize: 13, fontWeight: 600, color: THEME.ink }}>
+                <div style={{ padding: 12, background: '#faf8ff', border: `1px solid ${THEME.border}`, borderRadius: 8, fontSize: 13, fontWeight: 600, color: THEME.ink }}>
                   Contract GFH-{String(createdSettlement.contract_id).padStart(5, '0')} · Status: {(createdSettlement.status || '').toUpperCase()}
                   <br />
                   Docs: {(createdSettlement.docs || []).length} · Payments: {(createdSettlement.payments || []).length}
@@ -421,7 +421,7 @@ export default function SettlementWizard() {
                 <div>
                   <label style={labelStyle}>Upload Settlement Document</label>
                   <input type="file" onChange={e => setDocFile(e.target.files?.[0] || null)} />
-                  <button type="button" className="gfh-portal-btn" disabled={!docFile || busy} onClick={uploadDoc} style={{ marginTop: 8, padding: '8px 12px', fontWeight: 700, fontSize: 13, borderRadius: 0, border: `1px solid ${THEME.border}`, background: '#ccfbf1', color: THEME.purple, cursor: 'pointer' }}>
+                  <button type="button" className="gfh-portal-btn" disabled={!docFile || busy} onClick={uploadDoc} style={{ marginTop: 8, padding: '8px 12px', fontWeight: 700, fontSize: 13, borderRadius: 8, border: `1px solid ${THEME.border}`, background: '#ccfbf1', color: THEME.purple, cursor: 'pointer' }}>
                     Upload Document
                   </button>
                   <ul style={{ marginTop: 8, paddingLeft: 18, fontSize: 12.5 }}>
@@ -441,7 +441,7 @@ export default function SettlementWizard() {
                     </select>
                     <input type="date" style={inputStyle} value={payForm.payment_date} onChange={e => setPayForm({ ...payForm, payment_date: e.target.value })} required />
                   </div>
-                  <button type="submit" disabled={busy} className="gfh-portal-btn" style={{ alignSelf: 'flex-start', padding: '8px 12px', fontWeight: 700, fontSize: 13, borderRadius: 0, border: `1px solid ${THEME.border}`, background: '#ccfbf1', color: THEME.purple, cursor: 'pointer' }}>
+                  <button type="submit" disabled={busy} className="gfh-portal-btn" style={{ alignSelf: 'flex-start', padding: '8px 12px', fontWeight: 700, fontSize: 13, borderRadius: 8, border: `1px solid ${THEME.border}`, background: '#ccfbf1', color: THEME.purple, cursor: 'pointer' }}>
                     Save Payment
                   </button>
                   <ul style={{ margin: 0, paddingLeft: 18, fontSize: 12.5 }}>
@@ -453,11 +453,11 @@ export default function SettlementWizard() {
 
                 <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 6 }}>
                   {createdSettlement.status !== 'completed' && (
-                    <button type="button" disabled={busy} className="gfh-portal-btn" onClick={() => markCompleted(createdSettlement.id)} style={{ padding: '10px 16px', fontWeight: 700, fontSize: 13.5, borderRadius: 0, border: 'none', background: '#059669', color: '#fff', cursor: 'pointer' }}>
+                    <button type="button" disabled={busy} className="gfh-portal-btn" onClick={() => markCompleted(createdSettlement.id)} style={{ padding: '10px 16px', fontWeight: 700, fontSize: 13.5, borderRadius: 8, border: 'none', background: '#059669', color: '#fff', cursor: 'pointer' }}>
                       Mark as Completed
                     </button>
                   )}
-                  <button type="button" className="gfh-portal-btn" onClick={closeModal} style={{ padding: '10px 16px', fontWeight: 700, fontSize: 13.5, borderRadius: 0, backgroundColor: '#f0fdfa', color: THEME.purple, border: `1px solid ${THEME.border}`, cursor: 'pointer' }}>
+                  <button type="button" className="gfh-portal-btn" onClick={closeModal} style={{ padding: '10px 16px', fontWeight: 700, fontSize: 13.5, borderRadius: 8, backgroundColor: '#f0fdfa', color: THEME.purple, border: `1px solid ${THEME.border}`, cursor: 'pointer' }}>
                     Done
                   </button>
                 </div>

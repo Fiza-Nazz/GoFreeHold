@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+﻿import { useEffect, useState } from 'react'
 import api from '../../api/axios'
 import { formatDate } from '../../utils/formatDate'
 import { THEME, Icon, ICONS, CornerBrackets, portalPageCss, heroStyle, panelStyle, ghostBtnStyle } from '../../components/gfh/adminTheme'
@@ -25,7 +25,7 @@ const STATUS_STYLE: Record<string, { bg: string; color: string; border: string }
 const inputStyle: React.CSSProperties = {
   background: '#ffffff',
   border: `1px solid ${THEME.border}`,
-  borderRadius: 0,
+  borderRadius: 8,
   color: THEME.ink,
   fontSize: 14,
   fontWeight: 600,
@@ -119,7 +119,7 @@ export default function ServiceCharges() {
             value={statusFilter}
             onChange={e => setStatusFilter(e.target.value)}
             style={{
-              borderRadius: 0,
+              borderRadius: 8,
               border: `1px solid ${THEME.border}`,
               background: '#ffffff',
               color: THEME.ink,
@@ -166,7 +166,7 @@ export default function ServiceCharges() {
                     position: 'relative',
                     padding: 20,
                     backgroundColor: '#fff',
-                    borderRadius: 0,
+                    borderRadius: 8,
                     border: `1px solid ${THEME.border}`,
                     display: 'flex',
                     justifyContent: 'space-between',
@@ -181,7 +181,7 @@ export default function ServiceCharges() {
                       <strong style={{ fontSize: 14.5, fontWeight: 800, letterSpacing: '0.3px', color: THEME.ink }}>
                         {(charge.charge_type || '—').toString().replace(/_/g, ' ').toUpperCase()}
                       </strong>
-                      <span style={{ backgroundColor: st.bg, color: st.color, border: `1px solid ${st.border}`, padding: '3px 11px', borderRadius: 0, fontSize: 11.5, fontWeight: 700, letterSpacing: '0.3px' }}>
+                      <span style={{ backgroundColor: st.bg, color: st.color, border: `1px solid ${st.border}`, padding: '3px 11px', borderRadius: 8, fontSize: 11.5, fontWeight: 700, letterSpacing: '0.3px' }}>
                         {(charge.status || '—').toString().toUpperCase()}
                       </span>
                     </div>
@@ -203,7 +203,7 @@ export default function ServiceCharges() {
                       <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
                         <button
                           className="gfh-portal-btn"
-                          style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '6px 12px', fontSize: 12.5, fontWeight: 700, backgroundColor: btnTint.paid.bg, border: btnTint.paid.border, borderRadius: 0, color: btnTint.paid.color, cursor: 'pointer' }}
+                          style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '6px 12px', fontSize: 12.5, fontWeight: 700, backgroundColor: btnTint.paid.bg, border: btnTint.paid.border, borderRadius: 8, color: btnTint.paid.color, cursor: 'pointer' }}
                           onClick={() => markPaid(charge.id)}
                         >
                           <Icon path={ICONS.check} size={13} />
@@ -211,7 +211,7 @@ export default function ServiceCharges() {
                         </button>
                         <button
                           className="gfh-portal-btn"
-                          style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '6px 12px', fontSize: 12.5, fontWeight: 700, borderRadius: 0, backgroundColor: btnTint.waive.bg, color: btnTint.waive.color, border: btnTint.waive.border, cursor: 'pointer' }}
+                          style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '6px 12px', fontSize: 12.5, fontWeight: 700, borderRadius: 8, backgroundColor: btnTint.waive.bg, color: btnTint.waive.color, border: btnTint.waive.border, cursor: 'pointer' }}
                           onClick={() => markWaived(charge.id)}
                         >
                           <Icon path={ICONS.close} size={13} />
@@ -244,7 +244,7 @@ export default function ServiceCharges() {
               width: 480,
               padding: 30,
               background: '#ffffff',
-              borderRadius: 0,
+              borderRadius: 8,
               border: `1px solid ${THEME.border}`,
               boxShadow: '0 20px 50px rgba(15,61,58,0.3)',
             }}
@@ -301,7 +301,7 @@ export default function ServiceCharges() {
                   type="button"
                   className="gfh-portal-btn"
                   onClick={() => setIsModalOpen(false)}
-                  style={{ borderRadius: 0, fontWeight: 700, fontSize: 13.5, padding: '10px 18px', backgroundColor: btnTint.cancel.bg, color: btnTint.cancel.color, border: btnTint.cancel.border, cursor: 'pointer' }}
+                  style={{ borderRadius: 8, fontWeight: 700, fontSize: 13.5, padding: '10px 18px', backgroundColor: btnTint.cancel.bg, color: btnTint.cancel.color, border: btnTint.cancel.border, cursor: 'pointer' }}
                 >
                   Cancel
                 </button>

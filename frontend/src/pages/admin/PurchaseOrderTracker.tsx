@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+﻿import { useEffect, useState } from 'react'
 import api from '../../api/axios'
 import { safeUpper } from '../../utils/safeLabel'
 import { THEME, Icon, CornerBrackets, portalPageCss, heroStyle, panelStyle, thStyle, tdStyle, ghostBtnStyle } from '../../components/gfh/adminTheme'
@@ -39,7 +39,7 @@ const icons = {
 const inputStyle: React.CSSProperties = {
   background: '#ffffff',
   border: `1px solid ${THEME.border}`,
-  borderRadius: 0,
+  borderRadius: 8,
   color: THEME.ink,
   fontSize: 14,
   fontWeight: 500,
@@ -168,27 +168,27 @@ export default function PurchaseOrderTracker() {
 
       {/* Summary stats — derived from real orders data */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 18, marginBottom: 22 }}>
-        <div className="gfh-portal-stat" style={{ position: 'relative', background: '#fff', border: `1px solid ${THEME.border}`, borderRadius: 0, padding: 20 }}>
+        <div className="gfh-portal-stat" style={{ position: 'relative', background: '#fff', border: `1px solid ${THEME.border}`, borderRadius: 8, padding: 20 }}>
           <CornerBrackets />
-          <div style={{ width: 40, height: 40, borderRadius: 0, background: `linear-gradient(135deg, ${THEME.violetLight}, ${THEME.purple})`, color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 10 }}>
+          <div style={{ width: 40, height: 40, borderRadius: 8, background: `linear-gradient(135deg, ${THEME.violetLight}, ${THEME.purple})`, color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 10 }}>
             <Icon path={icons.cart} size={18} />
           </div>
           <div style={{ fontFamily: "'Playfair Display', serif", fontSize: 24, fontWeight: 700, color: THEME.ink }}>{orders.length}</div>
           <div style={{ fontSize: 12, color: THEME.textMuted, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.3px', marginTop: 2 }}>Total Purchases</div>
         </div>
 
-        <div className="gfh-portal-stat" style={{ position: 'relative', background: '#fff', border: `1px solid ${THEME.border}`, borderRadius: 0, padding: 20, animationDelay: '0.06s' }}>
+        <div className="gfh-portal-stat" style={{ position: 'relative', background: '#fff', border: `1px solid ${THEME.border}`, borderRadius: 8, padding: 20, animationDelay: '0.06s' }}>
           <CornerBrackets />
-          <div style={{ width: 40, height: 40, borderRadius: 0, background: `linear-gradient(135deg, ${THEME.violetLight}, ${THEME.purple})`, color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 10 }}>
+          <div style={{ width: 40, height: 40, borderRadius: 8, background: `linear-gradient(135deg, ${THEME.violetLight}, ${THEME.purple})`, color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 10 }}>
             <Icon path={icons.wallet} size={18} />
           </div>
           <div style={{ fontFamily: "'Playfair Display', serif", fontSize: 24, fontWeight: 700, color: THEME.ink }}>AED {totalSpend.toLocaleString()}</div>
           <div style={{ fontSize: 12, color: THEME.textMuted, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.3px', marginTop: 2 }}>Total Spend</div>
         </div>
 
-        <div className="gfh-portal-stat" style={{ position: 'relative', background: '#fff', border: `1px solid ${THEME.border}`, borderRadius: 0, padding: 20, animationDelay: '0.12s' }}>
+        <div className="gfh-portal-stat" style={{ position: 'relative', background: '#fff', border: `1px solid ${THEME.border}`, borderRadius: 8, padding: 20, animationDelay: '0.12s' }}>
           <CornerBrackets />
-          <div style={{ width: 40, height: 40, borderRadius: 0, background: 'linear-gradient(135deg, #f59e0b, #b45309)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 10 }}>
+          <div style={{ width: 40, height: 40, borderRadius: 8, background: 'linear-gradient(135deg, #f59e0b, #b45309)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 10 }}>
             <Icon path={icons.clock} size={18} />
           </div>
           <div style={{ fontFamily: "'Playfair Display', serif", fontSize: 24, fontWeight: 700, color: '#b45309' }}>{pendingCount}</div>
@@ -226,7 +226,7 @@ export default function PurchaseOrderTracker() {
                       <td style={{ ...tdStyle, fontWeight: 700, color: THEME.violetLight }}>{Number(po.total_amount || 0).toLocaleString()}</td>
                       <td style={tdStyle}>{String(po.purchase_date || '').slice(0, 10)}</td>
                       <td style={tdStyle}>
-                        <span style={{ backgroundColor: st.bg, color: st.color, padding: '4px 10px', borderRadius: 0, fontSize: 12, fontWeight: 700 }}>
+                        <span style={{ backgroundColor: st.bg, color: st.color, padding: '4px 10px', borderRadius: 8, fontSize: 12, fontWeight: 700 }}>
                           {safeUpper(po.status)}
                         </span>
                       </td>
@@ -236,7 +236,7 @@ export default function PurchaseOrderTracker() {
                             <button
                               type="button"
                               className="gfh-portal-btn"
-                              style={{ display: 'inline-flex', alignItems: 'center', gap: 5, padding: '5px 10px', fontSize: 12, fontWeight: 700, borderRadius: 0, background: 'linear-gradient(135deg, #22c55e, #15803d)', color: '#fff', border: 'none', cursor: 'pointer' }}
+                              style={{ display: 'inline-flex', alignItems: 'center', gap: 5, padding: '5px 10px', fontSize: 12, fontWeight: 700, borderRadius: 8, background: 'linear-gradient(135deg, #22c55e, #15803d)', color: '#fff', border: 'none', cursor: 'pointer' }}
                               onClick={() => updateStatus(po.id, 'received')}
                             >
                               <Icon path={icons.check} size={12} />
@@ -246,7 +246,7 @@ export default function PurchaseOrderTracker() {
                           <button
                             type="button"
                             className="gfh-portal-btn"
-                            style={{ display: 'inline-flex', alignItems: 'center', gap: 5, padding: '5px 10px', fontSize: 12, fontWeight: 700, borderRadius: 0, background: '#991b1b', color: '#fff', border: 'none', cursor: 'pointer' }}
+                            style={{ display: 'inline-flex', alignItems: 'center', gap: 5, padding: '5px 10px', fontSize: 12, fontWeight: 700, borderRadius: 8, background: '#991b1b', color: '#fff', border: 'none', cursor: 'pointer' }}
                             onClick={() => handleDelete(po.id)}
                           >
                             <Icon path={icons.trash} size={12} />
@@ -265,7 +265,7 @@ export default function PurchaseOrderTracker() {
 
       {isModalOpen && (
         <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(27,14,51,0.55)', backdropFilter: 'blur(3px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
-          <div className="fade-in" style={{ position: 'relative', width: 480, padding: 30, background: '#ffffff', borderRadius: 0, border: `1px solid ${THEME.border}`, boxShadow: '0 24px 55px -18px rgba(27,14,51,0.35)' }}>
+          <div className="fade-in" style={{ position: 'relative', width: 480, padding: 30, background: '#ffffff', borderRadius: 8, border: `1px solid ${THEME.border}`, boxShadow: '0 24px 55px -18px rgba(27,14,51,0.35)' }}>
             <CornerBrackets />
             <h2 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 22, fontWeight: 700, marginBottom: 20, color: THEME.violetLight }}>
               Create Purchase

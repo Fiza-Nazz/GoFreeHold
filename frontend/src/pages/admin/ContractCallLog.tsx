@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+﻿import { useEffect, useState } from 'react'
 import api from '../../api/axios'
 import { formatDate } from '../../utils/formatDate'
 import { THEME, Icon, ICONS, CornerBrackets, portalPageCss, heroStyle, panelStyle, ghostBtnStyle } from '../../components/gfh/adminTheme'
@@ -52,7 +52,7 @@ export default function ContractCallLogPage() {
   }
 
   const inputStyle: React.CSSProperties = {
-    borderRadius: 0,
+    borderRadius: 8,
     background: '#faf8ff',
     color: THEME.ink,
     border: `1px solid ${THEME.border}`,
@@ -94,7 +94,7 @@ export default function ContractCallLogPage() {
             style={{
               width: 150,
               padding: '10px 12px',
-              borderRadius: 0,
+              borderRadius: 8,
               border: `1px solid ${THEME.border}`,
               background: '#ffffff',
               color: THEME.ink,
@@ -124,7 +124,7 @@ export default function ContractCallLogPage() {
                   position: 'relative',
                   padding: 14,
                   backgroundColor: '#fff',
-                  borderRadius: 0,
+                  borderRadius: 8,
                   border: `1px solid ${THEME.border}`,
                   borderLeft: '4px solid #075985',
                   display: 'flex',
@@ -151,7 +151,7 @@ export default function ContractCallLogPage() {
                     fontSize: 11.5,
                     fontWeight: 700,
                     alignSelf: 'flex-start',
-                    borderRadius: 0,
+                    borderRadius: 8,
                     border: 'none',
                     background: '#991b1b',
                     color: '#fff',
@@ -169,7 +169,7 @@ export default function ContractCallLogPage() {
 
       {isFormOpen && (
         <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(20,5,40,0.55)', backdropFilter: 'blur(2px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
-          <div style={{ position: 'relative', width: 420, padding: 24, background: '#fff', borderRadius: 0, border: `1px solid ${THEME.border}` }}>
+          <div style={{ position: 'relative', width: 420, padding: 24, background: '#fff', borderRadius: 8, border: `1px solid ${THEME.border}` }}>
             <CornerBrackets />
             <h2 style={{ fontFamily: "'Playfair Display', Georgia, serif", color: THEME.purple, fontSize: 19, fontWeight: 700, marginBottom: 16 }}>Log a Call</h2>
             <form onSubmit={handleCreate} style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
@@ -192,7 +192,7 @@ export default function ContractCallLogPage() {
                   type="button"
                   className="gfh-portal-btn"
                   onClick={() => setIsFormOpen(false)}
-                  style={{ padding: '8px 15px', borderRadius: 0, border: `1px solid ${THEME.border}`, background: '#fff', color: THEME.textMuted, cursor: 'pointer', fontWeight: 700, fontSize: 12.5 }}
+                  style={{ padding: '8px 15px', borderRadius: 8, border: `1px solid ${THEME.border}`, background: '#fff', color: THEME.textMuted, cursor: 'pointer', fontWeight: 700, fontSize: 12.5 }}
                 >
                   Cancel
                 </button>

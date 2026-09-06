@@ -28,7 +28,7 @@ export default function TenantProfile() {
   ]
 
   return (
-    <div className="gfh-portal-page" style={{ fontFamily: "'Inter', 'Segoe UI', system-ui, sans-serif", background: THEME.pageBg }}>
+    <div className="gfh-portal-page" style={{ fontFamily: "'Poppins', system-ui, sans-serif", background: THEME.pageBg }}>
       <style>{portalPageCss}</style>
 
       <div className="fade-in" style={heroStyle}>
@@ -40,30 +40,32 @@ export default function TenantProfile() {
       </div>
 
       <div
-        className="fade-in gfh-portal-stat"
+        className="fade-in"
         style={{
           position: 'relative',
           background: '#fff',
           border: `1px solid ${THEME.border}`,
-          borderRadius: 0,
-          padding: 24,
+          borderRadius: 16,
+          padding: 26,
           maxWidth: 560,
+          boxShadow: '0 1px 3px rgba(16,24,40,0.04)',
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 22, paddingBottom: 20, borderBottom: `1px solid ${THEME.border}` }}>
           <div
             style={{
-              width: 56,
-              height: 56,
+              width: 58,
+              height: 58,
               flexShrink: 0,
-              borderRadius: 0,
-              background: '#1e1b4b',
+              borderRadius: 14,
+              background: '#0E5E48',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               color: '#fff',
-              fontSize: 20,
+              fontSize: 22,
               fontWeight: 800,
+              boxShadow: '0 2px 8px rgba(14, 94, 72, 0.25)',
             }}
           >
             {initials}
@@ -77,12 +79,12 @@ export default function TenantProfile() {
               style={{
                 display: 'inline-block',
                 marginTop: 10,
-                padding: '4px 10px',
-                borderRadius: 0,
+                padding: '3px 11px',
+                borderRadius: 999,
                 background: '#f0fdf4',
                 color: '#065f46',
                 border: '1px solid #bbf7d0',
-                fontSize: 11.5,
+                fontSize: 11,
                 fontWeight: 700,
                 letterSpacing: '0.4px',
                 textTransform: 'uppercase',
@@ -105,13 +107,13 @@ export default function TenantProfile() {
                 gap: 12,
                 padding: '14px 16px',
                 border: `1px solid ${THEME.border}`,
-                borderRadius: 0,
+                borderRadius: 12,
                 background: '#fff',
               }}
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                <div style={{ width: 36, height: 36, borderRadius: 0, background: '#075985', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <Icon path={row.icon} size={16} />
+                <div style={{ width: 38, height: 38, borderRadius: 8, background: '#ECFDF8', color: '#0E5E48', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <Icon path={row.icon} size={18} />
                 </div>
                 <div>
                   <div style={{ fontSize: 12, color: THEME.textMuted, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.3px' }}>
@@ -136,27 +138,28 @@ export default function TenantProfile() {
             alignItems: 'center',
             justifyContent: 'center',
             gap: 8,
-            borderRadius: 0,
+            borderRadius: 8,
             fontSize: 14,
             fontWeight: 700,
             padding: '12px 18px',
-            background: '#075985',
+            background: '#0E5E48',
             border: 'none',
             color: '#fff',
             cursor: 'pointer',
             marginBottom: 14,
+            boxShadow: '0 1px 3px rgba(14, 94, 72, 0.2)',
           }}
         >
           <Icon path={icons.save} size={16} />
           Update Profile
         </button>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '14px 16px', border: `1px solid ${THEME.border}`, borderRadius: 0, background: '#f9fafb' }}>
-          <div style={{ width: 36, height: 36, borderRadius: 0, background: '#1e1b4b', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-            <Icon path={icons.shield} size={16} />
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '14px 16px', border: '1px solid #A7F3DC', borderRadius: 12, background: '#ECFDF8' }}>
+          <div style={{ width: 38, height: 38, borderRadius: 8, background: '#0E5E48', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+            <Icon path={icons.shield} size={18} />
           </div>
-          <div style={{ fontSize: 12.5, color: THEME.textMuted, lineHeight: 1.45 }}>
-            <strong style={{ color: THEME.ink }}>Your data is protected.</strong> Profile fields are currently read-only and managed by your administrator.
+          <div style={{ fontSize: 12.5, color: '#06382C', lineHeight: 1.45 }}>
+            <strong style={{ color: '#06382C' }}>Your data is protected.</strong> Profile fields are currently read-only and managed by your administrator.
           </div>
         </div>
       </div>

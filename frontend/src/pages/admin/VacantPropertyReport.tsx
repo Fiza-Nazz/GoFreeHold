@@ -219,16 +219,34 @@ export default function VacantPropertyReport() {
           </p>
         </div>
         <button
-          className="gfh-portal-btn"
           onClick={() => window.print()}
           style={{
-            ...ghostBtnStyle,
-            background: 'rgba(255,255,255,0.15)',
-            border: '1px solid rgba(255,255,255,0.35)',
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: 8,
+            background: '#0E5E48',
+            color: '#FFFFFF',
+            border: 'none',
+            borderRadius: 10,
+            padding: '10px 20px',
+            fontSize: 13.5,
+            fontWeight: 700,
+            cursor: 'pointer',
+            boxShadow: '0 1px 3px rgba(14, 94, 72, 0.25)',
+            transition: 'background 0.15s ease, transform 0.15s ease',
+            fontFamily: "'Poppins', sans-serif",
+          }}
+          onMouseEnter={e => {
+            e.currentTarget.style.background = '#094535'
+            e.currentTarget.style.transform = 'translateY(-1px)'
+          }}
+          onMouseLeave={e => {
+            e.currentTarget.style.background = '#0E5E48'
+            e.currentTarget.style.transform = 'translateY(0)'
           }}
         >
           <Icon path={icons.printer} size={16} />
-          Print Report
+          <span>Print Report</span>
         </button>
       </div>
 

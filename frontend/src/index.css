@@ -484,53 +484,49 @@ h1, h2, h3, h4, h5, h6 {
   background-color: #F8F7FD !important;
 }
 
-/* Sharp Corners Rule across all non-auth portal pages */
+/* Modern Rounded Corners Rule across all portal pages */
 .gfh-app-layout button,
+.gfh-portal-page button {
+  border-radius: 10px;
+}
 .gfh-app-layout input,
 .gfh-app-layout select,
 .gfh-app-layout textarea,
-.gfh-app-layout a,
-.gfh-app-layout table,
-.gfh-app-layout th,
-.gfh-app-layout td,
-.gfh-app-layout modal,
-.gfh-app-layout .card,
-.gfh-app-layout .panel,
-.gfh-portal-page button,
 .gfh-portal-page input,
 .gfh-portal-page select,
-.gfh-portal-page textarea,
-.gfh-portal-page a,
-.gfh-portal-page table,
-.gfh-portal-page th,
-.gfh-portal-page td,
-.gfh-portal-page .gfh-portal-stat,
-.gfh-portal-page .gfh-portal-row,
+.gfh-portal-page textarea {
+  border-radius: 10px;
+}
+.gfh-app-layout .card,
+.gfh-app-layout .panel,
+.gfh-portal-page .gfh-portal-stat {
+  border-radius: 16px;
+}
 .gfh-portal-page .gfh-portal-btn {
-  border-radius: 0px !important;
+  border-radius: 10px;
 }
 
 /* Action & Status Color Coding Utilities */
 .badge-danger, .btn-danger, .status-overdue, .status-vacant, .status-failed {
   background-color: #991b1b !important;
   color: #ffffff !important;
-  border-radius: 0px !important;
+  border-radius: 8px;
 }
 
 .badge-success, .btn-success, .status-paid, .status-resolved, .status-active, .status-occupied {
   background-color: #065f46 !important;
   color: #ffffff !important;
-  border-radius: 0px !important;
+  border-radius: 8px;
 }
 
 .badge-warning, .btn-warning, .status-pending, .status-in-progress, .status-booked {
   background-color: #b45309 !important;
   color: #ffffff !important;
-  border-radius: 0px !important;
+  border-radius: 8px;
 }
 
 .badge-info, .btn-info, .status-view, .status-edit, .status-pdf {
   background-color: #075985 !important;
   color: #ffffff !important;
-  border-radius: 0px !important;
+  border-radius: 8px;
 }

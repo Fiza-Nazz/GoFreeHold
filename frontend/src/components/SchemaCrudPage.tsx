@@ -162,7 +162,7 @@ export default function SchemaCrudPage({
           color: #115e59;
           font-size: 12px;
           font-weight: 700;
-          border-radius: 0;
+          border-radius: 8px;
         }
       `}</style>
 
@@ -170,7 +170,7 @@ export default function SchemaCrudPage({
         <CornerBrackets />
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
-            <h1 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 30, fontWeight: 700, color: THEME.ink, margin: 0 }}>
+            <h1 style={{ fontFamily: "'Poppins', sans-serif", fontSize: 28, fontWeight: 800, color: THEME.ink, margin: 0, letterSpacing: '-0.01em' }}>
               {title}
             </h1>
             {!loading && (
@@ -179,19 +179,34 @@ export default function SchemaCrudPage({
               </span>
             )}
           </div>
-          <p style={{ fontSize: 14, color: THEME.textMuted, marginTop: 8, marginBottom: 0 }}>
+          <p style={{ fontSize: 14, color: THEME.textMuted, marginTop: 8, marginBottom: 0, fontWeight: 500 }}>
             {subtitle}
           </p>
         </div>
         <button
           type="button"
           onClick={() => setShowForm(s => !s)}
-          className="gfh-portal-btn"
           style={{
-            ...ghostBtnStyle,
-            background: showForm ? '#f3f4f6' : THEME.violetLight,
-            border: showForm ? '1px solid #e5e7eb' : 'none',
-            color: showForm ? THEME.ink : '#fff',
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: 8,
+            background: showForm ? '#f1f5f9' : '#0E5E48',
+            border: showForm ? '1px solid #cbd5e1' : 'none',
+            color: showForm ? '#0F172A' : '#ffffff',
+            borderRadius: 10,
+            padding: '10px 20px',
+            fontSize: 13.5,
+            fontWeight: 700,
+            cursor: 'pointer',
+            boxShadow: showForm ? 'none' : '0 1px 3px rgba(14, 94, 72, 0.25)',
+            transition: 'all 0.15s ease',
+            fontFamily: "'Poppins', sans-serif",
+          }}
+          onMouseEnter={e => {
+            if (!showForm) e.currentTarget.style.background = '#06382C'
+          }}
+          onMouseLeave={e => {
+            if (!showForm) e.currentTarget.style.background = '#0E5E48'
           }}
         >
           {showForm ? 'Cancel' : addNewLabel}
@@ -272,9 +287,24 @@ export default function SchemaCrudPage({
             )}
             <button
               type="submit"
-              className="gfh-portal-btn"
               disabled={saving}
-              style={{ ...ghostBtnStyle, marginTop: 20, opacity: saving ? 0.6 : 1 }}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 8,
+                background: '#0E5E48',
+                color: '#ffffff',
+                border: 'none',
+                borderRadius: 8,
+                padding: '10px 22px',
+                fontSize: 13.5,
+                fontWeight: 700,
+                cursor: 'pointer',
+                boxShadow: '0 1px 3px rgba(14, 94, 72, 0.25)',
+                marginTop: 20,
+                opacity: saving ? 0.6 : 1,
+                fontFamily: "'Poppins', sans-serif",
+              }}
             >
               {saving ? 'Saving…' : 'Save'}
             </button>
@@ -322,7 +352,7 @@ export default function SchemaCrudPage({
                       type="button"
                       className="gfh-portal-btn"
                       onClick={() => handleDelete(row.id)}
-                      style={{ background: '#fee2e2', border: '1px solid #fca5a5', color: '#991b1b', borderRadius: 0, padding: '6px 13px', cursor: 'pointer', fontSize: 12, fontWeight: 700 }}
+                      style={{ background: '#fee2e2', border: '1px solid #fca5a5', color: '#991b1b', borderRadius: 8, padding: '6px 13px', cursor: 'pointer', fontSize: 12, fontWeight: 700 }}
                     >
                       Delete
                     </button>

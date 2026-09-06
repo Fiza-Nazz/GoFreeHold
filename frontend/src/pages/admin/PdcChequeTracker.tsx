@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+﻿import { useEffect, useState } from 'react'
 import api from '../../api/axios'
 import { formatDate } from '../../utils/formatDate'
 import { THEME, Icon, ICONS, CornerBrackets, portalPageCss, heroStyle, panelStyle, thStyle, tdStyle, ghostBtnStyle } from '../../components/gfh/adminTheme'
@@ -23,7 +23,7 @@ const STATUS_STYLE: Record<string, { bg: string; color: string; label: string; b
 const inputStyle: React.CSSProperties = {
   background: '#ffffff',
   border: `1px solid ${THEME.border}`,
-  borderRadius: 0,
+  borderRadius: 8,
   color: THEME.ink,
   fontSize: 14,
   fontWeight: 500,
@@ -46,7 +46,7 @@ const actionBtnBase: React.CSSProperties = {
   padding: '5px 10px',
   fontSize: 11,
   fontWeight: 700,
-  borderRadius: 0,
+  borderRadius: 8,
   background: '#fff',
 }
 
@@ -56,7 +56,7 @@ const sectionStyle: React.CSSProperties = {
   borderLeft: `3px solid ${THEME.violetLight}`,
   padding: '18px 20px',
   marginBottom: 16,
-  borderRadius: 0,
+  borderRadius: 8,
 }
 
 export default function PdcChequeTracker() {
@@ -121,7 +121,7 @@ export default function PdcChequeTracker() {
             value={statusFilter}
             onChange={e => setStatusFilter(e.target.value)}
             style={{
-              borderRadius: 0,
+              borderRadius: 8,
               border: `1px solid ${THEME.border}`,
               background: '#ffffff',
               color: THEME.ink,
@@ -169,7 +169,7 @@ export default function PdcChequeTracker() {
                       <td style={{ ...tdStyle, fontWeight: 700, color: THEME.violet }}>AED {Number(cheque.amount).toLocaleString()}</td>
                       <td style={tdStyle}>{formatDate(cheque.due_date)}</td>
                       <td style={tdStyle}>
-                        <span style={{ padding: '4px 10px', borderRadius: 0, fontSize: 11, fontWeight: 700, letterSpacing: '0.3px', backgroundColor: st.bg, color: st.color, border: `1px solid ${st.border}` }}>
+                        <span style={{ padding: '4px 10px', borderRadius: 8, fontSize: 11, fontWeight: 700, letterSpacing: '0.3px', backgroundColor: st.bg, color: st.color, border: `1px solid ${st.border}` }}>
                           {st.label}
                         </span>
                       </td>
@@ -179,7 +179,7 @@ export default function PdcChequeTracker() {
                             <button
                               type="button"
                               className="gfh-portal-btn"
-                              style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '5px 10px', fontSize: 11, fontWeight: 700, borderRadius: 0, border: 'none', background: '#065f46', color: '#fff', cursor: 'pointer' }}
+                              style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '5px 10px', fontSize: 11, fontWeight: 700, borderRadius: 8, border: 'none', background: '#065f46', color: '#fff', cursor: 'pointer' }}
                               onClick={() => updateStatus(cheque, 'cleared')}
                             >
                               <Icon path={ICONS.check} size={12} />
@@ -188,7 +188,7 @@ export default function PdcChequeTracker() {
                             <button
                               type="button"
                               className="gfh-portal-btn"
-                              style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '5px 10px', fontSize: 11, fontWeight: 700, borderRadius: 0, border: 'none', background: '#991b1b', color: '#fff', cursor: 'pointer' }}
+                              style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '5px 10px', fontSize: 11, fontWeight: 700, borderRadius: 8, border: 'none', background: '#991b1b', color: '#fff', cursor: 'pointer' }}
                               onClick={() => updateStatus(cheque, 'bounced')}
                             >
                               <Icon path={ICONS.alert} size={12} />
@@ -198,7 +198,7 @@ export default function PdcChequeTracker() {
                           <button
                             type="button"
                             className="gfh-portal-btn"
-                            style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '5px 10px', fontSize: 11, fontWeight: 700, borderRadius: 0, border: 'none', background: '#fef2f2', color: '#991b1b', cursor: 'pointer' }}
+                            style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '5px 10px', fontSize: 11, fontWeight: 700, borderRadius: 8, border: 'none', background: '#fef2f2', color: '#991b1b', cursor: 'pointer' }}
                             onClick={() => deleteCheque(cheque)}
                           >
                             <Icon path={ICONS.trash} size={12} />
@@ -217,7 +217,7 @@ export default function PdcChequeTracker() {
 
       {isModalOpen && (
         <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(15,61,58,0.55)', backdropFilter: 'blur(2px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
-          <div style={{ position: 'relative', width: 520, padding: 0, maxHeight: '90vh', overflowY: 'auto', background: '#ffffff', borderRadius: 0, border: `1px solid ${THEME.border}`, boxShadow: '0 20px 60px rgba(15,61,58,0.35)' }}>
+          <div style={{ position: 'relative', width: 520, padding: 0, maxHeight: '90vh', overflowY: 'auto', background: '#ffffff', borderRadius: 8, border: `1px solid ${THEME.border}`, boxShadow: '0 20px 60px rgba(15,61,58,0.35)' }}>
             <CornerBrackets />
             <div style={{ background: `linear-gradient(135deg, ${THEME.purpleDark}, ${THEME.purpleMid})`, padding: '22px 28px' }}>
               <h2 style={{ fontFamily: "'Playfair Display', Georgia, serif", color: '#fff', margin: 0, fontSize: 22, fontWeight: 700 }}>Add PDC Cheque</h2>
@@ -274,7 +274,7 @@ export default function PdcChequeTracker() {
                   type="button"
                   className="gfh-portal-btn"
                   onClick={() => setIsModalOpen(false)}
-                  style={{ padding: '11px 20px', border: `1.5px solid ${THEME.border}`, background: '#fff', color: THEME.textMuted, cursor: 'pointer', fontWeight: 700, fontSize: 13, borderRadius: 0 }}
+                  style={{ padding: '11px 20px', border: `1.5px solid ${THEME.border}`, background: '#fff', color: THEME.textMuted, cursor: 'pointer', fontWeight: 700, fontSize: 13, borderRadius: 8 }}
                 >
                   Cancel
                 </button>

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import api from '../../api/axios'
 import { THEME, Icon, ICONS, CornerBrackets, portalPageCss, heroStyle, panelStyle, thStyle, tdStyle, ghostBtnStyle } from '../../components/gfh/adminTheme'
 
@@ -24,7 +25,7 @@ const icons = {
 const inputStyle: React.CSSProperties = {
   background: '#ffffff',
   border: `1px solid ${THEME.border}`,
-  borderRadius: 0,
+  borderRadius: 8,
   color: THEME.ink,
   fontSize: 14,
   fontWeight: 500,
@@ -35,7 +36,7 @@ const inputStyle: React.CSSProperties = {
 const labelStyle: React.CSSProperties = {
   fontSize: 12.5,
   fontWeight: 700,
-  color: THEME.purple,
+  color: '#0F172A',
   letterSpacing: '0.4px',
   textTransform: 'uppercase',
   display: 'block',
@@ -43,11 +44,12 @@ const labelStyle: React.CSSProperties = {
 }
 
 export default function InventoryManagement() {
+  const [searchParams] = useSearchParams()
+  const searchQuery = (searchParams.get('q') || '').trim().toLowerCase()
   const [tab, setTab] = useState<'warehouse' | 'unit'>('warehouse')
   const [items, setItems] = useState<InventoryItem[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const [searchTerm, setSearchTerm] = useState('')
   const [formData, setFormData] = useState({
     name: '',
     category: '',
@@ -88,11 +90,16 @@ export default function InventoryManagement() {
     }
   }
 
-  // Client-side search filter over already-fetched items — no new data source, no hallucinated fields
-  const filteredItems = items.filter(item =>
-    item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    item.category.toLowerCase().includes(searchTerm.toLowerCase())
-  )
+  // Real-time search filter connected to topbar search query
+  const filteredItems = items.filter(item => {
+    if (!searchQuery) return true
+    return (
+      (item.name && item.name.toLowerCase().includes(searchQuery)) ||
+      (item.category && item.category.toLowerCase().includes(searchQuery)) ||
+      (item.unit?.number && item.unit.number.toLowerCase().includes(searchQuery)) ||
+      (item.unit?.property?.name && item.unit.property.name.toLowerCase().includes(searchQuery))
+    )
+  })
   const lowStockCount = items.filter(i => i.min_stock_alert && i.quantity <= i.min_stock_alert).length
   const totalQuantity = items.reduce((sum, i) => sum + Number(i.quantity || 0), 0)
   const warehouseItemsCount = items.filter(i => i.location_type === 'warehouse').length
@@ -105,77 +112,127 @@ export default function InventoryManagement() {
         <CornerBrackets />
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
-            <h1 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 30, fontWeight: 700, color: THEME.ink, margin: 0 }}>
+            <h1 style={{ fontFamily: "'Poppins', sans-serif", fontSize: 28, fontWeight: 800, color: THEME.ink, margin: 0, letterSpacing: '-0.01em' }}>
               Inventory & stock management
             </h1>
-            <span style={{ fontSize: 12.5, fontWeight: 700, color: '#fff', background: 'rgba(255,255,255,0.15)', border: '1px solid rgba(255,255,255,0.3)', borderRadius: 0, padding: '5px 12px' }}>
+            <span style={{
+              fontSize: 12.5,
+              fontWeight: 700,
+              color: '#334155',
+              background: '#F1F5F9',
+              border: '1px solid #CBD5E1',
+              borderRadius: 8,
+              padding: '5px 12px',
+            }}>
               {items.length} {items.length === 1 ? 'item' : 'items'}
             </span>
             {lowStockCount > 0 && (
-              <span style={{ fontSize: 12.5, fontWeight: 700, color: '#fff', background: 'rgba(239,68,68,0.25)', border: '1px solid rgba(239,68,68,0.5)', borderRadius: 0, padding: '5px 12px' }}>
+              <span style={{
+                fontSize: 12.5,
+                fontWeight: 700,
+                color: '#FFFFFF',
+                background: '#DC2626',
+                border: '1px solid #B91C1C',
+                borderRadius: 8,
+                padding: '5px 14px',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 6,
+                boxShadow: '0 1px 3px rgba(220, 38, 38, 0.3)',
+              }}>
+                <Icon path={icons.alert} size={13} />
                 {lowStockCount} low stock
               </span>
             )}
           </div>
-          <p style={{ fontSize: 14, color: THEME.textMuted, marginTop: 10, marginBottom: 0 }}>
+          <p style={{ fontSize: 14, color: THEME.textMuted, marginTop: 8, marginBottom: 0, fontWeight: 500 }}>
             Track warehouse stock and unit-level assigned inventory
           </p>
         </div>
         <button
-          className="gfh-portal-btn"
           onClick={() => { setFormData(prev => ({ ...prev, location_type: tab })); setIsModalOpen(true); }}
-          style={ghostBtnStyle}
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: 8,
+            background: '#0E5E48',
+            color: '#FFFFFF',
+            border: 'none',
+            borderRadius: 10,
+            padding: '10px 20px',
+            fontSize: 13.5,
+            fontWeight: 700,
+            cursor: 'pointer',
+            boxShadow: '0 1px 3px rgba(14, 94, 72, 0.25)',
+            transition: 'background 0.15s ease, transform 0.15s ease',
+            fontFamily: "'Poppins', sans-serif",
+          }}
+          onMouseEnter={e => { e.currentTarget.style.background = '#06382C'; }}
+          onMouseLeave={e => { e.currentTarget.style.background = '#0E5E48'; }}
         >
           <Icon path={icons.plus} size={16} />
           Add inventory item
         </button>
       </div>
 
-      <div style={{ display: 'flex', gap: 12, marginBottom: 20, flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center' }}>
-        <div style={{ display: 'flex', gap: 12 }}>
-          {([
-            { key: 'warehouse' as const, label: 'Warehouse stock' },
-            { key: 'unit' as const, label: 'Unit-level inventory' },
-          ]).map(t => (
+      {/* Tabs Row matching Add Inventory Item styling with 10px rounded corners */}
+      <div style={{ display: 'flex', gap: 10, marginBottom: 22, alignItems: 'center' }}>
+        {([
+          { key: 'warehouse' as const, label: 'Warehouse stock' },
+          { key: 'unit' as const, label: 'Unit-level inventory' },
+        ]).map(t => {
+          const isActive = tab === t.key
+          return (
             <button
               key={t.key}
-              className="gfh-portal-btn"
               onClick={() => setTab(t.key)}
               style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 6,
                 padding: '9px 18px',
                 fontSize: 13,
                 fontWeight: 700,
-                borderRadius: 0,
-                border: tab === t.key ? 'none' : `1px solid ${THEME.border}`,
-                background: tab === t.key ? THEME.violetLight : '#f6f1fe',
-                color: tab === t.key ? '#fff' : THEME.purple,
+                borderRadius: 10,
+                border: isActive ? 'none' : '1px solid #CBD5E1',
+                background: isActive ? '#0E5E48' : '#FFFFFF',
+                color: isActive ? '#FFFFFF' : '#334155',
                 cursor: 'pointer',
+                boxShadow: isActive ? '0 1px 3px rgba(14, 94, 72, 0.25)' : 'none',
+                transition: 'all 0.15s ease',
+                fontFamily: "'Poppins', sans-serif",
+              }}
+              onMouseEnter={e => {
+                if (!isActive) {
+                  e.currentTarget.style.borderColor = '#0E5E48'
+                  e.currentTarget.style.color = '#0E5E48'
+                }
+              }}
+              onMouseLeave={e => {
+                if (!isActive) {
+                  e.currentTarget.style.borderColor = '#CBD5E1'
+                  e.currentTarget.style.color = '#334155'
+                }
               }}
             >
               {t.label}
             </button>
-          ))}
-        </div>
-        <input
-          placeholder="Search by name or category..."
-          value={searchTerm}
-          onChange={e => setSearchTerm(e.target.value)}
-          style={{ ...inputStyle, width: 240 }}
-        />
+          )
+        })}
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 18, marginBottom: 22 }}>
         {[
-          { value: totalQuantity, label: 'Total Quantity', color: THEME.ink, icon: icons.box, iconBg: `linear-gradient(135deg, ${THEME.violetLight}, ${THEME.purple})` },
-          { value: lowStockCount, label: 'Low Stock', color: '#ef4444', icon: icons.alert, iconBg: 'linear-gradient(135deg, #ef4444, #b91c1c)' },
-          { value: warehouseItemsCount, label: 'Warehouse Items', color: THEME.ink, icon: icons.building, iconBg: `linear-gradient(135deg, ${THEME.violetLight}, ${THEME.purple})` },
+          { value: totalQuantity, label: 'Total Quantity', color: THEME.ink, icon: icons.box, iconBg: '#0E5E48' },
+          { value: lowStockCount, label: 'Low Stock', color: '#ef4444', icon: icons.alert, iconBg: '#ef4444' },
+          { value: warehouseItemsCount, label: 'Warehouse Items', color: THEME.ink, icon: icons.building, iconBg: '#0E5E48' },
         ].map((card, i) => (
-          <div key={card.label} className="gfh-portal-stat fade-in" style={{ position: 'relative', background: '#fff', border: `1px solid ${THEME.border}`, borderRadius: 0, padding: 20, animationDelay: `${i * 0.06}s` }}>
+          <div key={card.label} className="gfh-portal-stat fade-in" style={{ position: 'relative', background: '#fff', border: `1px solid ${THEME.border}`, borderRadius: 12, padding: 20, animationDelay: `${i * 0.06}s` }}>
             <CornerBrackets />
-            <div style={{ width: 40, height: 40, borderRadius: 0, background: card.iconBg, color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 10 }}>
+            <div style={{ width: 40, height: 40, borderRadius: 10, background: card.iconBg, color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 10 }}>
               <Icon path={card.icon} size={18} />
             </div>
-            <div style={{ fontFamily: "'Playfair Display', serif", fontSize: 24, fontWeight: 700, color: card.color }}>{card.value}</div>
+            <div style={{ fontFamily: "'Poppins', sans-serif", fontSize: 24, fontWeight: 700, color: card.color }}>{card.value}</div>
             <div style={{ fontSize: 12, color: THEME.textMuted, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.3px', marginTop: 2 }}>{card.label}</div>
           </div>
         ))}
@@ -188,7 +245,7 @@ export default function InventoryManagement() {
         ) : filteredItems.length === 0 ? (
           <div style={{ textAlign: 'center', padding: 40 }}>
             <p style={{ fontSize: 14, color: THEME.textMuted, fontWeight: 500 }}>
-              {searchTerm ? `No items matching "${searchTerm}".` : `No items in ${tab} inventory.`}
+              {searchQuery ? `No items matching "${searchQuery}".` : `No items in ${tab} inventory.`}
             </p>
           </div>
         ) : (
@@ -209,8 +266,8 @@ export default function InventoryManagement() {
                       <td style={{ ...tdStyle, fontWeight: 700 }}>{item.name}</td>
                       <td style={tdStyle}>{item.category}</td>
                       <td style={tdStyle}>
-                        <span style={{ fontWeight: 700, color: isLow ? '#ef4444' : THEME.ink }}>{item.quantity}</span>
-                        {isLow && <span style={{ marginLeft: 8, fontSize: 11, fontWeight: 700, color: '#ef4444', background: '#fef2f2', border: '1px solid #fecaca', padding: '2px 8px', borderRadius: 0 }}>LOW</span>}
+                        <span style={{ fontWeight: 700, color: isLow ? '#dc2626' : THEME.ink }}>{item.quantity}</span>
+                        {isLow && <span style={{ marginLeft: 8, fontSize: 11, fontWeight: 700, color: '#dc2626', background: '#fee2e2', border: '1px solid #fca5a5', padding: '2px 8px', borderRadius: 6 }}>LOW</span>}
                       </td>
                       <td style={tdStyle}>{Number(item.unit_price).toLocaleString()}</td>
                       <td style={tdStyle}>
@@ -223,7 +280,7 @@ export default function InventoryManagement() {
                       <td style={tdStyle}>
                         <button
                           className="gfh-portal-btn"
-                          style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '5px 10px', fontSize: 12, fontWeight: 700, borderRadius: 0, background: '#991b1b', color: '#fff', border: 'none', cursor: 'pointer' }}
+                          style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '5px 10px', fontSize: 12, fontWeight: 700, borderRadius: 8, background: '#991b1b', color: '#fff', border: 'none', cursor: 'pointer' }}
                           onClick={() => handleDelete(item.id)}
                         >
                           <Icon path={ICONS.trash} size={12} />
@@ -248,12 +305,12 @@ export default function InventoryManagement() {
               width: 480,
               padding: 30,
               background: '#ffffff',
-              borderRadius: 0,
+              borderRadius: 8,
               border: `1px solid ${THEME.border}`,
             }}
           >
             <CornerBrackets />
-            <h2 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 22, fontWeight: 700, marginBottom: 20, color: THEME.purple }}>
+            <h2 style={{ fontFamily: "'Poppins', sans-serif", fontSize: 20, fontWeight: 700, marginBottom: 20, color: '#0F172A' }}>
               Add inventory item
             </h2>
             <form onSubmit={handleCreate} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
@@ -304,11 +361,24 @@ export default function InventoryManagement() {
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  style={{ borderRadius: 0, fontWeight: 700, fontSize: 13, padding: '9px 16px', background: '#f6f1fe', color: THEME.purple, border: `1px solid ${THEME.border}`, cursor: 'pointer' }}
+                  style={{ borderRadius: 8, fontWeight: 700, fontSize: 13, padding: '9px 16px', background: '#f1f5f9', color: '#64748b', border: '1px solid #cbd5e1', cursor: 'pointer' }}
                 >
                   Cancel
                 </button>
-                <button type="submit" className="gfh-portal-btn" style={ghostBtnStyle}>
+                <button
+                  type="submit"
+                  style={{
+                    borderRadius: 8,
+                    fontWeight: 700,
+                    fontSize: 13,
+                    padding: '9px 18px',
+                    background: '#0E5E48',
+                    color: '#ffffff',
+                    border: 'none',
+                    cursor: 'pointer',
+                    boxShadow: '0 1px 3px rgba(14, 94, 72, 0.25)',
+                  }}
+                >
                   Save item
                 </button>
               </div>

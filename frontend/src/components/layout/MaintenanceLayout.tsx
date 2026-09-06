@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Outlet, NavLink, useNavigate, useLocation } from 'react-router-dom'
+import { Outlet, NavLink, useNavigate, useLocation, useSearchParams } from 'react-router-dom'
 import { useAuthStore } from '../../store/authStore'
 
 const Icon = ({ path, size = 18 }: { path: string; size?: number }) => (
@@ -46,8 +46,10 @@ export default function MaintenanceLayout() {
   const { user, logout } = useAuthStore()
   const navigate = useNavigate()
   const location = useLocation()
+  const [searchParams, setSearchParams] = useSearchParams()
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const pageTitle = resolveTitle(location.pathname)
+  const searchQuery = searchParams.get('q') || ''
 
   const handleLogout = async () => {
     await logout()
@@ -57,19 +59,19 @@ export default function MaintenanceLayout() {
   return (
     <div className="gfh-app-layout">
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
 
         .gfh-app-layout {
           display: flex;
           min-height: 100vh;
-          background: #ffffff;
-          font-family: 'Inter', -apple-system, sans-serif;
+          background: #F8F7FD;
+          font-family: 'Poppins', system-ui, sans-serif;
         }
 
         .gfh-sidebar {
-          width: 260px;
-          flex-shrink: 0;
-          background: #0f172a;
+          width: 250px;
+          min-width: 250px;
+          background: #06382C;
           display: flex;
           flex-direction: column;
           height: 100vh;
@@ -79,7 +81,7 @@ export default function MaintenanceLayout() {
         }
 
         .gfh-sidebar::-webkit-scrollbar { width: 5px; }
-        .gfh-sidebar::-webkit-scrollbar-thumb { background: #334155; border-radius: 0; }
+        .gfh-sidebar::-webkit-scrollbar-thumb { background: #0E5E48; border-radius: 4px; }
 
         .gfh-sidebar-logo {
           display: flex;
@@ -87,57 +89,62 @@ export default function MaintenanceLayout() {
           gap: 12px;
           padding: 22px 20px;
           border-bottom: 1px solid rgba(255,255,255,0.08);
+          background: #042B22;
         }
 
         .gfh-logo-icon {
-          width: 40px;
-          height: 40px;
-          border-radius: 0;
-          background: #991b1b;
+          width: 42px;
+          height: 42px;
+          border-radius: 8px;
+          background: rgba(52, 211, 165, 0.12);
+          border: 1px solid rgba(52, 211, 165, 0.35);
           display: flex;
           align-items: center;
           justify-content: center;
-          color: #fff;
+          color: #34D3A5;
           flex-shrink: 0;
         }
 
         .gfh-logo-text {
-          font-size: 17px;
+          font-size: 18px;
           font-weight: 800;
           color: #ffffff;
-          line-height: 1.2;
+          line-height: 1.15;
+          letter-spacing: -0.01em;
         }
 
         .gfh-logo-sub {
           font-size: 10px;
-          font-weight: 600;
-          letter-spacing: 1.1px;
-          color: #94a3b8;
+          font-weight: 700;
+          letter-spacing: 1.2px;
+          color: #A7F3DC;
           text-transform: uppercase;
+          margin-top: 3px;
         }
 
         .gfh-sidebar-nav {
           flex: 1;
-          padding: 14px 10px 20px;
+          padding: 14px 12px 20px;
         }
 
         .gfh-nav-section-label {
-          font-size: 10px;
+          font-size: 11px;
           font-weight: 700;
-          letter-spacing: 1.1px;
+          letter-spacing: 1.2px;
           text-transform: uppercase;
-          color: #64748b;
-          padding: 16px 12px 8px;
+          color: #6EE7C4;
+          opacity: 0.9;
+          padding: 18px 12px 8px;
         }
 
         .gfh-nav-item {
           display: flex;
           align-items: center;
-          gap: 11px;
-          padding: 10px 12px;
-          margin: 2px 0;
-          border-radius: 0;
-          color: #cbd5e1;
+          gap: 12px;
+          padding: 10px 14px;
+          margin: 3px 0;
+          border-radius: 8px;
+          color: #D1FAEE;
           font-size: 13.5px;
           font-weight: 500;
           text-decoration: none;
@@ -145,14 +152,20 @@ export default function MaintenanceLayout() {
         }
 
         .gfh-nav-item:hover {
-          background: rgba(255,255,255,0.06);
+          background: rgba(255, 255, 255, 0.08);
           color: #ffffff;
         }
 
         .gfh-nav-item.active {
-          background: #991b1b;
+          background: #0E5E48;
           color: #ffffff;
           font-weight: 700;
+          border-radius: 8px;
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .gfh-nav-item.active .gfh-nav-icon {
+          color: #34D3A5;
         }
 
         .gfh-nav-icon {
@@ -160,27 +173,28 @@ export default function MaintenanceLayout() {
           align-items: center;
           justify-content: center;
           flex-shrink: 0;
-          opacity: 0.95;
+          color: inherit;
         }
 
         .gfh-sidebar-footer {
-          padding: 14px 12px;
+          padding: 14px 14px;
           border-top: 1px solid rgba(255,255,255,0.08);
+          background: #042B22;
         }
 
         .gfh-user-row {
           display: flex;
           align-items: center;
           gap: 10px;
-          padding: 8px 10px;
-          border-radius: 0;
+          padding: 6px 8px;
+          border-radius: 8px;
         }
 
         .gfh-user-avatar {
           width: 34px;
           height: 34px;
           border-radius: 50%;
-          background: #334155;
+          background: #18A77A;
           display: flex;
           align-items: center;
           justify-content: center;
@@ -191,9 +205,9 @@ export default function MaintenanceLayout() {
         }
 
         .gfh-user-name {
-          font-size: 12.5px;
+          font-size: 13px;
           font-weight: 600;
-          color: #f1f5f9;
+          color: #ffffff;
           overflow: hidden;
           text-overflow: ellipsis;
           white-space: nowrap;
@@ -201,24 +215,26 @@ export default function MaintenanceLayout() {
 
         .gfh-user-role {
           font-size: 10px;
-          color: #94a3b8;
+          color: #A7F3DC;
           text-transform: uppercase;
-          letter-spacing: 0.4px;
+          letter-spacing: 0.5px;
+          font-weight: 600;
         }
 
         .gfh-logout-btn {
           background: none;
           border: none;
-          color: #94a3b8;
+          color: #A7F3DC;
           cursor: pointer;
           padding: 6px;
-          border-radius: 0;
+          border-radius: 6px;
           display: flex;
+          transition: background 0.15s ease, color 0.15s ease;
         }
 
         .gfh-logout-btn:hover {
-          background: rgba(248,113,113,0.15);
-          color: #f87171;
+          background: rgba(239, 68, 68, 0.2);
+          color: #FCA5A5;
         }
 
         .gfh-main-content {
@@ -226,7 +242,7 @@ export default function MaintenanceLayout() {
           display: flex;
           flex-direction: column;
           min-width: 0;
-          background: #ffffff;
+          background: #F8F7FD;
         }
 
         .gfh-topbar {
@@ -272,7 +288,7 @@ export default function MaintenanceLayout() {
         .gfh-page-content {
           flex: 1;
           padding: 24px 28px;
-          background: #ffffff;
+          background: #F8F7FD;
           animation: gfhFadeIn 0.35s ease;
         }
 
@@ -306,7 +322,7 @@ export default function MaintenanceLayout() {
       <aside className={`gfh-sidebar ${sidebarOpen ? 'open' : ''}`}>
         <div className="gfh-sidebar-logo">
           <div className="gfh-logo-icon">
-            <Icon path="M3 12 12 3l9 9M5 10v10h14V10" size={18} />
+            <Icon path={icons.wrench} size={20} />
           </div>
           <div>
             <div className="gfh-logo-text">GoFreeHold</div>
@@ -351,18 +367,85 @@ export default function MaintenanceLayout() {
 
       <div className="gfh-main-content">
         <header className="gfh-topbar">
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
             <button
               onClick={() => setSidebarOpen(!sidebarOpen)}
-              className="gfh-mobile-menu-btn"
+              style={{
+                width: 32,
+                height: 32,
+                borderRadius: '50%',
+                background: '#0F8A67',
+                color: '#FFFFFF',
+                border: 'none',
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                cursor: 'pointer',
+                boxShadow: '0 1px 3px rgba(15, 138, 103, 0.25)',
+                flexShrink: 0,
+              }}
+              title="Toggle Sidebar"
             >
-              <Icon path={icons.menu} size={22} />
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="15 18 9 12 15 6" />
+              </svg>
             </button>
-            <h1 className="gfh-page-title">{pageTitle}</h1>
+            <h1 className="gfh-page-title" style={{ fontSize: 24, fontWeight: 800, color: '#0F172A', margin: 0, letterSpacing: '-0.01em' }}>
+              {pageTitle}
+            </h1>
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-            <span className="gfh-welcome-text">Welcome back,</span>
-            <span className="gfh-welcome-name">{user?.name}</span>
+
+          <div style={{ display: 'flex', alignItems: 'center', gap: 16, flexWrap: 'wrap' }}>
+            {/* Search bar — shown on Complaints page */}
+            {location.pathname === '/maintenance/complaints' && (
+              <div style={{ position: 'relative', width: 260, maxWidth: '100%' }}>
+                <svg
+                  style={{ position: 'absolute', left: 11, top: '50%', transform: 'translateY(-50%)', color: '#94A3B8', pointerEvents: 'none' }}
+                  width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+                >
+                  <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
+                </svg>
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={e => {
+                    const val = e.target.value
+                    setSearchParams(val ? { q: val } : {}, { replace: true })
+                  }}
+                  placeholder="Search complaints..."
+                  style={{
+                    width: '100%',
+                    padding: '7px 12px 7px 32px',
+                    borderRadius: 8,
+                    border: '1px solid #E2E8F0',
+                    background: '#FFFFFF',
+                    fontSize: 13,
+                    color: '#0F172A',
+                    outline: 'none',
+                    boxSizing: 'border-box',
+                    fontFamily: "'Poppins', system-ui, sans-serif",
+                  }}
+                />
+              </div>
+            )}
+
+            {/* User Profile */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 9 }}>
+              <div style={{
+                width: 36, height: 36, borderRadius: '50%',
+                background: '#0F8A67', color: '#FFFFFF',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                fontWeight: 700, fontSize: 13,
+              }}>
+                {user?.name ? user.name.split(' ').map((w: string) => w[0]).join('').slice(0, 2).toUpperCase() : 'MT'}
+              </div>
+              <div>
+                <div style={{ fontSize: 11, color: '#64748B', lineHeight: 1 }}>Welcome back,</div>
+                <div style={{ fontSize: 13, fontWeight: 700, color: '#0F172A', marginTop: 2 }}>
+                  {user?.name || 'Maintenance User'}
+                </div>
+              </div>
+            </div>
           </div>
         </header>
 

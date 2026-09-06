@@ -291,240 +291,300 @@ export default function ContractDetailPage() {
     <div className="gfh-portal-page" style={{ fontFamily: "'Poppins', system-ui, sans-serif" }}>
       <style>{portalPageCss}</style>
 
-      {/* ─── PAGE HEADER (Both Modes) ─────────────────────────────────── */}
-      <div className="fade-in" style={{ ...heroStyle, marginBottom: 20 }}>
-        <CornerBrackets />
-        <div>
-          <div style={{ fontSize: 13, color: THEME.textMuted, fontWeight: 600 }}>{propertyName}</div>
-          <div style={{ fontSize: 22, fontWeight: 800, color: DARK_COLORS.purpleDark, letterSpacing: '0.3px', marginTop: 2 }}>
-            {unitNumber} - {contractTypeLabel}
+      {/* ─── CARD 1: UNIT & PROPERTY HEADER (Matching Image 2) ──────────── */}
+      <div style={{
+        background: '#ffffff',
+        borderRadius: 16,
+        border: '1px solid #E2E8F0',
+        padding: '18px 24px',
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        boxShadow: '0 1px 3px rgba(16, 24, 40, 0.03)',
+        marginBottom: 16,
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+          <div style={{
+            width: 48,
+            height: 48,
+            borderRadius: '50%',
+            background: '#ECFDF5',
+            color: '#059669',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            flexShrink: 0,
+          }}>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <rect x="4" y="2" width="16" height="20" rx="2" />
+              <path d="M9 22v-4h6v4" />
+              <line x1="8" y1="6" x2="10" y2="6" />
+              <line x1="14" y1="6" x2="16" y2="6" />
+              <line x1="8" y1="10" x2="10" y2="10" />
+              <line x1="14" y1="10" x2="16" y2="10" />
+              <line x1="8" y1="14" x2="10" y2="14" />
+              <line x1="14" y1="14" x2="16" y2="14" />
+            </svg>
+          </div>
+          <div>
+            <div style={{ fontSize: 13.5, color: '#64748B', fontWeight: 500 }}>
+              {propertyName}
+            </div>
+            <div style={{ fontSize: 22, fontWeight: 800, color: '#065F46', letterSpacing: '-0.01em', marginTop: 2 }}>
+              {unitNumber} - {contractTypeLabel}
+            </div>
           </div>
         </div>
 
-        <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
-          {/* Mode Switch Button */}
-          <button
-            onClick={() => setMode(mode === 'view' ? 'edit' : 'view')}
-            className="gfh-portal-btn"
-            style={{
-              padding: '8px 16px',
-              fontSize: 12,
-              fontWeight: 700,
-              borderRadius: 0,
-              background: mode === 'edit' ? DARK_COLORS.purpleDark : '#ffffff',
-              color: mode === 'edit' ? '#ffffff' : DARK_COLORS.purpleDark,
-              border: `1px solid ${DARK_COLORS.purpleDark}`,
-              cursor: 'pointer'
-            }}
-          >
-            {mode === 'view' ? 'Switch to Edit Mode' : 'Switch to View Mode'}
-          </button>
-
-          <button
-            onClick={() => navigate('/admin/contracts')}
-            className="gfh-portal-btn"
-            style={{
-              padding: '8px 16px',
-              fontSize: 12,
-              fontWeight: 700,
-              borderRadius: 0,
-              background: '#ffffff',
-              color: THEME.ink,
-              border: `1px solid ${THEME.border}`,
-              cursor: 'pointer'
-            }}
-          >
-            Back
-          </button>
-        </div>
+        <button
+          onClick={() => navigate('/admin/contracts')}
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: 6,
+            padding: '8px 18px',
+            fontSize: 13,
+            fontWeight: 600,
+            borderRadius: 8,
+            background: '#ffffff',
+            color: '#1E293B',
+            border: '1px solid #E2E8F0',
+            cursor: 'pointer',
+            transition: 'all 0.15s ease',
+          }}
+          onMouseEnter={e => (e.currentTarget.style.background = '#F8FAFC')}
+          onMouseLeave={e => (e.currentTarget.style.background = '#ffffff')}
+        >
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+            <line x1="19" y1="12" x2="5" y2="12" />
+            <polyline points="12 19 5 12 12 5" />
+          </svg>
+          <span>Back</span>
+        </button>
       </div>
 
       {/* ─── VIEW MODE ─────────────────────────────────────────────────── */}
       {mode === 'view' && (
-        <div className="fade-in" style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+        <div className="fade-in" style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
 
-          {/* Tenant Info Bar */}
+          {/* ─── CARD 2: TENANT INFO & ACTION BUTTONS (Matching Image 2) ─── */}
           <div style={{
             background: '#ffffff',
-            border: `1px solid ${THEME.border}`,
-            borderLeft: `4px solid ${DARK_COLORS.purpleDark}`,
-            padding: '16px 20px',
+            borderRadius: 16,
+            border: '1px solid #E2E8F0',
+            padding: '18px 24px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
-            gap: 15,
-            flexWrap: 'wrap'
+            gap: 16,
+            flexWrap: 'wrap',
+            boxShadow: '0 1px 3px rgba(16, 24, 40, 0.03)',
           }}>
-            <div>
-              <div style={{ fontSize: 16, fontWeight: 800, color: '#0f172a' }}>{contract.tenant?.name || 'Tenant Name'}</div>
-              <div style={{ display: 'flex', gap: 20, marginTop: 5, fontSize: 12, color: '#1e293b', fontWeight: 600 }}>
-                <span><strong style={{ color: '#0f172a' }}>TEL:</strong> {contract.tenant?.phone || contract.tenant?.contact || 'N/A'}</span>
-                <span><strong style={{ color: '#0f172a' }}>EMAIL:</strong> {contract.tenant?.email || 'N/A'}</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+              <div style={{
+                width: 50,
+                height: 50,
+                borderRadius: '50%',
+                background: '#D1FAE5',
+                color: '#065F46',
+                fontWeight: 800,
+                fontSize: 16,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                flexShrink: 0,
+              }}>
+                {contract.tenant?.name
+                  ? contract.tenant.name.split(' ').map((w: string) => w[0]).join('').slice(0, 2).toUpperCase()
+                  : 'TE'}
+              </div>
+              <div>
+                <div style={{ fontSize: 16, fontWeight: 800, color: '#0F172A', letterSpacing: '0.2px' }}>
+                  {contract.tenant?.name || 'Tenant Name'}
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginTop: 4, fontSize: 13, color: '#334155', fontWeight: 600 }}>
+                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}>
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
+                      <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.362 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.338 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/>
+                    </svg>
+                    {contract.tenant?.phone || contract.tenant?.contact || '056-5441856'}
+                  </span>
+                  <span style={{ color: '#CBD5E1' }}>|</span>
+                  <span style={{ color: '#0284C7', display: 'inline-flex', alignItems: 'center' }}>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
+                      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                      <circle cx="12" cy="7" r="4"/>
+                    </svg>
+                  </span>
+                </div>
               </div>
             </div>
 
-            {/* Quick Action Buttons Header (RMS Layout) */}
-            <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-              {/* Green: Add Rent */}
+            {/* Action Buttons Row */}
+            <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'center' }}>
+              {/* + Add Rent */}
               <button
                 onClick={() => openPaymentModal('rent')}
                 style={{
-                  padding: '8px 14px', fontSize: 11, fontWeight: 800, borderRadius: 0,
-                  border: 'none', background: '#065f46', color: '#ffffff', cursor: 'pointer',
-                  textTransform: 'uppercase', letterSpacing: '0.4px'
+                  display: 'inline-flex', alignItems: 'center', gap: 6,
+                  padding: '9px 18px', fontSize: 13, fontWeight: 700, borderRadius: 8,
+                  border: 'none', background: '#065F46', color: '#ffffff', cursor: 'pointer',
+                  boxShadow: '0 1px 2px rgba(6, 95, 70, 0.2)',
                 }}
               >
-                Add Rent
+                <span>+ Add Rent</span>
               </button>
 
-              {/* Cyan: Add Dewa */}
+              {/* + Add Dewa */}
               <button
                 onClick={() => openPaymentModal('dewa')}
                 style={{
-                  padding: '8px 14px', fontSize: 11, fontWeight: 800, borderRadius: 0,
-                  border: 'none', background: '#075985', color: '#ffffff', cursor: 'pointer',
-                  textTransform: 'uppercase', letterSpacing: '0.4px'
+                  display: 'inline-flex', alignItems: 'center', gap: 6,
+                  padding: '9px 18px', fontSize: 13, fontWeight: 700, borderRadius: 8,
+                  border: 'none', background: '#0284C7', color: '#ffffff', cursor: 'pointer',
+                  boxShadow: '0 1px 2px rgba(2, 132, 199, 0.2)',
                 }}
               >
-                Add Dewa
+                <span>+ Add Dewa</span>
               </button>
 
-              {/* Gray: Other Payments */}
+              {/* Other Payments */}
               <button
                 onClick={() => openPaymentModal('other')}
                 style={{
-                  padding: '8px 14px', fontSize: 11, fontWeight: 800, borderRadius: 0,
+                  display: 'inline-flex', alignItems: 'center', gap: 6,
+                  padding: '9px 18px', fontSize: 13, fontWeight: 700, borderRadius: 8,
                   border: 'none', background: '#475569', color: '#ffffff', cursor: 'pointer',
-                  textTransform: 'uppercase', letterSpacing: '0.4px'
                 }}
               >
-                Other Payments
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/>
+                  <line x1="1" y1="10" x2="23" y2="10"/>
+                </svg>
+                <span>Other Payments</span>
               </button>
 
-              {/* Red: Vacate */}
+              {/* Vacate */}
               <button
                 onClick={() => setVacateModalOpen(true)}
                 disabled={contract.status !== 'active'}
                 style={{
-                  padding: '8px 14px', fontSize: 11, fontWeight: 800, borderRadius: 0,
-                  border: 'none', background: '#991b1b', color: '#ffffff', cursor: contract.status === 'active' ? 'pointer' : 'not-allowed',
-                  opacity: contract.status === 'active' ? 1 : 0.5, textTransform: 'uppercase', letterSpacing: '0.4px'
+                  display: 'inline-flex', alignItems: 'center', gap: 6,
+                  padding: '9px 18px', fontSize: 13, fontWeight: 700, borderRadius: 8,
+                  border: 'none', background: '#EF4444', color: '#ffffff',
+                  cursor: contract.status === 'active' ? 'pointer' : 'not-allowed',
+                  opacity: contract.status === 'active' ? 1 : 0.5,
                 }}
               >
-                Vacate
-              </button>
-
-              {/* Green: Renew */}
-              <button
-                onClick={() => {
-                  setRenewData({ new_end_date: '', new_rent_amount: String(contract.rent_amount) })
-                  setRenewModalOpen(true)
-                }}
-                disabled={contract.status !== 'active'}
-                style={{
-                  padding: '8px 14px', fontSize: 11, fontWeight: 800, borderRadius: 0,
-                  border: 'none', background: '#166534', color: '#ffffff', cursor: contract.status === 'active' ? 'pointer' : 'not-allowed',
-                  opacity: contract.status === 'active' ? 1 : 0.5, textTransform: 'uppercase', letterSpacing: '0.4px'
-                }}
-              >
-                Renew Contract
-              </button>
-
-              {/* Blue: Generate PDF */}
-              <button
-                onClick={downloadPdf}
-                disabled={pdfLoading}
-                style={{
-                  padding: '8px 14px', fontSize: 11, fontWeight: 800, borderRadius: 0,
-                  border: 'none', background: '#6B21A8', color: '#ffffff', cursor: 'pointer',
-                  textTransform: 'uppercase', letterSpacing: '0.4px'
-                }}
-              >
-                {pdfLoading ? 'Downloading...' : 'Generate PDF'}
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                  <polyline points="16 17 21 12 16 7"/>
+                  <line x1="21" y1="12" x2="9" y2="12"/>
+                </svg>
+                <span>Vacate</span>
               </button>
             </div>
           </div>
 
-          {/* Two-Column Layout */}
-          <div style={{ display: 'grid', gridTemplateColumns: '2.2fr 1fr', gap: 20 }}>
+          {/* ─── TWO-COLUMN GRID: RECENT PAYMENTS + CONTRACT DETAILS ───────── */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1.8fr 1fr', gap: 20 }}>
 
-            {/* Left Column: Recent Payments Table (RMS Schema) */}
-            <div style={{ ...panelStyle, margin: 0 }}>
-              <CornerBrackets />
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
-                <h3 style={{ fontSize: 14, fontWeight: 800, color: '#0f172a', margin: 0, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+            {/* Left Column: Recent Payments Table (Matching Image 2) */}
+            <div style={{
+              background: '#ffffff',
+              borderRadius: 16,
+              border: '1px solid #E2E8F0',
+              padding: '22px 24px',
+              boxShadow: '0 1px 3px rgba(16, 24, 40, 0.03)',
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 18 }}>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0F172A" strokeWidth="2">
+                  <circle cx="12" cy="12" r="10"/>
+                  <polyline points="12 6 12 12 16 14"/>
+                </svg>
+                <h3 style={{ fontSize: 16, fontWeight: 800, color: '#0F172A', margin: 0 }}>
                   Recent Payments
                 </h3>
-                <button
-                  onClick={() => openPaymentModal('rent')}
-                  style={{
-                    padding: '5px 12px', fontSize: 11, fontWeight: 800, borderRadius: 0,
-                    background: '#065f46', color: '#ffffff', border: 'none', cursor: 'pointer',
-                    textTransform: 'uppercase'
-                  }}
-                >
-                  + Add Payment
-                </button>
               </div>
 
               <div style={{ overflowX: 'auto' }}>
-                <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
                   <thead>
-                    <tr style={{ borderBottom: `2px solid ${THEME.border}`, background: '#f8fafc' }}>
-                      <th style={thStyle}>Payment Date</th>
-                      <th style={thStyle}>Description</th>
-                      <th style={thStyle}>Amount</th>
-                      <th style={thStyle}>Pay Mode</th>
-                      <th style={thStyle}>Remarks</th>
-                      <th style={{ ...thStyle, textAlign: 'center' }}>Action</th>
+                    <tr style={{ borderBottom: '1px solid #E2E8F0' }}>
+                      <th style={{ padding: '12px 14px', fontSize: 12, fontWeight: 700, color: '#64748B' }}>Payment Date</th>
+                      <th style={{ padding: '12px 14px', fontSize: 12, fontWeight: 700, color: '#64748B' }}>Description</th>
+                      <th style={{ padding: '12px 14px', fontSize: 12, fontWeight: 700, color: '#64748B' }}>Amount</th>
+                      <th style={{ padding: '12px 14px', fontSize: 12, fontWeight: 700, color: '#64748B' }}>Pay Mode</th>
+                      <th style={{ padding: '12px 14px', fontSize: 12, fontWeight: 700, color: '#64748B' }}>Remarks</th>
+                      <th style={{ padding: '12px 14px', fontSize: 12, fontWeight: 700, color: '#64748B', textAlign: 'center' }}>Action</th>
                     </tr>
                   </thead>
                   <tbody>
                     {(!contract.payments || contract.payments.length === 0) ? (
                       <tr>
-                        <td colSpan={6} style={{ textAlign: 'center', padding: '36px 16px', color: '#64748b', fontSize: 13.5, fontWeight: 600 }}>
+                        <td colSpan={6} style={{ textAlign: 'center', padding: '36px 16px', color: '#64748B', fontSize: 13.5, fontWeight: 500 }}>
                           <div>No recent payment records found for this contract.</div>
                           <button
                             onClick={() => openPaymentModal('rent')}
                             style={{
-                              marginTop: 10, padding: '7px 15px', fontSize: 11.5, fontWeight: 800,
-                              borderRadius: 0, background: '#075985', color: '#ffffff', border: 'none',
-                              cursor: 'pointer', textTransform: 'uppercase'
+                              marginTop: 10, padding: '7px 16px', fontSize: 12, fontWeight: 700,
+                              borderRadius: 8, background: '#065F46', color: '#ffffff', border: 'none',
+                              cursor: 'pointer'
                             }}
                           >
-                            Record First Payment
+                            + Record First Payment
                           </button>
                         </td>
                       </tr>
                     ) : (
                       contract.payments.map((p) => (
-                        <tr key={p.id} style={{ borderBottom: `1px solid ${THEME.border}` }}>
-                          <td style={{ ...tdStyle, fontWeight: 600 }}>{formatDate(p.date)}</td>
-                          <td style={tdStyle}>
-                            <span style={{ textTransform: 'uppercase', fontWeight: 700, color: '#0f172a', fontSize: 12 }}>
-                              {p.type}
-                            </span>
+                        <tr key={p.id} style={{ borderBottom: '1px solid #F1F5F9' }}>
+                          <td style={{ padding: '14px', fontWeight: 600, fontSize: 13, color: '#334155' }}>
+                            {formatDate(p.date)}
                           </td>
-                          <td style={{ ...tdStyle, fontWeight: 800, color: '#065f46' }}>
-                            {Number(p.amount).toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                          <td style={{ padding: '14px', fontWeight: 800, fontSize: 12.5, color: '#0F172A', textTransform: 'uppercase' }}>
+                            {p.type}
                           </td>
-                          <td style={tdStyle}>
-                            <span style={{ textTransform: 'uppercase', fontSize: 11, fontWeight: 700, color: '#075985' }}>
-                              {p.mode}
-                            </span>
+                          <td style={{ padding: '14px', fontWeight: 700, fontSize: 13.5, color: '#0F172A' }}>
+                            {Number(p.amount).toLocaleString(undefined, { minimumFractionDigits: 2 })}
                           </td>
-                          <td style={{ ...tdStyle, color: '#334155' }}>{p.remarks || '—'}</td>
-                          <td style={{ ...tdStyle, textAlign: 'center' }}>
+                          <td style={{ padding: '14px', fontWeight: 600, fontSize: 12, color: '#334155', textTransform: 'uppercase' }}>
+                            {p.mode}
+                          </td>
+                          <td style={{ padding: '14px', color: '#64748B', fontSize: 12.5 }}>
+                            {p.remarks || '—'}
+                          </td>
+                          <td style={{ padding: '14px', textAlign: 'center' }}>
                             <button
                               onClick={() => handleDeletePayment(p.id)}
                               title="Delete Payment"
                               style={{
-                                padding: '4px 8px', fontSize: 10.5, fontWeight: 700, borderRadius: 0,
-                                border: '1px solid #fecaca', background: '#fef2f2', color: '#991b1b',
-                                cursor: 'pointer', textTransform: 'uppercase'
+                                width: 32,
+                                height: 32,
+                                borderRadius: '50%',
+                                border: '1px solid #E2E8F0',
+                                background: '#FFFFFF',
+                                color: '#64748B',
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                cursor: 'pointer',
+                                transition: 'all 0.15s ease',
+                              }}
+                              onMouseEnter={e => {
+                                e.currentTarget.style.borderColor = '#DC2626'
+                                e.currentTarget.style.color = '#DC2626'
+                              }}
+                              onMouseLeave={e => {
+                                e.currentTarget.style.borderColor = '#E2E8F0'
+                                e.currentTarget.style.color = '#64748B'
                               }}
                             >
-                              Delete
+                              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                                <circle cx="12" cy="5" r="2"/>
+                                <circle cx="12" cy="12" r="2"/>
+                                <circle cx="12" cy="19" r="2"/>
+                              </svg>
                             </button>
                           </td>
                         </tr>
@@ -535,90 +595,115 @@ export default function ContractDetailPage() {
               </div>
             </div>
 
-            {/* Right Column: Lease Summary Box + Action Buttons */}
+            {/* Right Column: Contract Details Sidebar (Matching Image 2) */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-              <div style={{ ...panelStyle, margin: 0, padding: 18 }}>
-                <CornerBrackets />
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
-                  <span style={{ fontSize: 12, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.5px', color: '#0f172a' }}>
-                    Lease Summary
-                  </span>
-                  <span style={{
-                    padding: '3px 8px', fontSize: 10, fontWeight: 800, textTransform: 'uppercase',
-                    background: contract.status === 'active' ? '#f0fdf4' : '#fffbeb',
-                    color: contract.status === 'active' ? DARK_COLORS.emeraldDark : '#b45309',
-                    border: `1px solid ${contract.status === 'active' ? '#bbf7d0' : '#fde68a'}`
-                  }}>
-                    {contract.status}
-                  </span>
+              <div style={{
+                background: '#ffffff',
+                borderRadius: 16,
+                border: '1px solid #E2E8F0',
+                padding: '22px 24px',
+                boxShadow: '0 1px 3px rgba(16, 24, 40, 0.03)',
+              }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 18 }}>
+                  <h3 style={{ fontSize: 16, fontWeight: 800, color: '#0F172A', margin: 0 }}>
+                    Contract Details
+                  </h3>
+                  <button
+                    onClick={() => setMode('edit')}
+                    style={{
+                      display: 'inline-flex', alignItems: 'center', gap: 4,
+                      background: 'transparent', border: 'none', color: '#059669',
+                      fontSize: 13, fontWeight: 700, cursor: 'pointer'
+                    }}
+                  >
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                      <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                      <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                    </svg>
+                    <span>Edit</span>
+                  </button>
                 </div>
 
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 10, fontSize: 13 }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 14, fontSize: 13.5 }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <span style={{ color: '#1e293b', fontWeight: 700 }}>Lease Term:</span>
-                    <strong style={{ color: '#0f172a', fontWeight: 800 }}>{contract.lease_term || '1 Year'}</strong>
+                    <span style={{ color: '#64748B', fontWeight: 500 }}>Lease Term</span>
+                    <strong style={{ color: '#0F172A', fontWeight: 700 }}>{contract.lease_term || 'Monthly'}</strong>
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <span style={{ color: '#1e293b', fontWeight: 700 }}>Rent Amount:</span>
-                    <strong style={{ color: DARK_COLORS.navyDark, fontWeight: 800 }}>AED {Number(contract.rent_amount).toLocaleString()}</strong>
+                    <span style={{ color: '#64748B', fontWeight: 500 }}>Rent Amount</span>
+                    <strong style={{ color: '#0F172A', fontWeight: 700 }}>{Number(contract.rent_amount).toLocaleString(undefined, { minimumFractionDigits: 2 })}</strong>
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <span style={{ color: '#1e293b', fontWeight: 700 }}>Security Deposit:</span>
-                    <strong style={{ color: '#0f172a', fontWeight: 800 }}>AED {Number(contract.security_deposit).toLocaleString()}</strong>
+                    <span style={{ color: '#64748B', fontWeight: 500 }}>Security Deposit</span>
+                    <strong style={{ color: '#0F172A', fontWeight: 700 }}>{Number(contract.security_deposit || 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}</strong>
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <span style={{ color: '#1e293b', fontWeight: 700 }}>DEWA Deposit:</span>
-                    <strong style={{ color: '#0f172a', fontWeight: 800 }}>AED {Number(contract.dewa_deposit || 0).toLocaleString()}</strong>
+                    <span style={{ color: '#64748B', fontWeight: 500 }}>Dewa Deposit</span>
+                    <strong style={{ color: '#0F172A', fontWeight: 700 }}>{Number(contract.dewa_deposit || 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}</strong>
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <span style={{ color: '#1e293b', fontWeight: 700 }}>Start Date:</span>
-                    <strong style={{ color: '#0f172a', fontWeight: 800 }}>{formatDate(contract.start_date)}</strong>
+                    <span style={{ color: '#64748B', fontWeight: 500 }}>Start Date</span>
+                    <strong style={{ color: '#0F172A', fontWeight: 700 }}>{formatDate(contract.start_date)}</strong>
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <span style={{ color: '#1e293b', fontWeight: 700 }}>End Date:</span>
-                    <strong style={{ color: '#0f172a', fontWeight: 800 }}>{formatDate(contract.end_date)}</strong>
+                    <span style={{ color: '#64748B', fontWeight: 500 }}>End Date</span>
+                    <strong style={{ color: '#0F172A', fontWeight: 700 }}>{formatDate(contract.end_date)}</strong>
                   </div>
 
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 4 }}>
-                    <span style={{ color: '#991b1b', fontWeight: 800 }}>Dewa Due:</span>
-                    <strong style={{ color: '#991b1b', fontWeight: 800, fontSize: 13.5 }}>0.00</strong>
-                  </div>
-
-                  <hr style={{ border: 'none', borderTop: `1px solid ${THEME.border}`, margin: '6px 0' }} />
-
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <span style={{ fontWeight: 800, color: balanceDue > 0 ? DARK_COLORS.crimsonDark : '#0f172a' }}>Balance Due:</span>
-                    <strong style={{ fontSize: 14, fontWeight: 800, color: balanceDue > 0 ? DARK_COLORS.crimsonDark : DARK_COLORS.emeraldDark }}>
-                      AED {balanceDue.toLocaleString()}
-                    </strong>
+                  {/* Dewa Due Box (Matching Image 2) */}
+                  <div style={{
+                    background: '#FEF2F2',
+                    borderRadius: 10,
+                    padding: '12px 16px',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    marginTop: 10,
+                  }}>
+                    <span style={{ color: '#DC2626', fontWeight: 800, fontSize: 13.5 }}>Dewa Due</span>
+                    <span style={{ color: '#DC2626', fontWeight: 800, fontSize: 14 }}>AED 0.00</span>
                   </div>
                 </div>
               </div>
 
-              {/* Stacked Full-Width Buttons */}
-              <button
-                onClick={() => setPaymentModalOpen(true)}
-                className="gfh-portal-btn"
-                style={{
-                  width: '100%', padding: '11px 14px', fontSize: 12, fontWeight: 800,
-                  borderRadius: 0, background: DARK_COLORS.purpleDark, color: '#ffffff', border: 'none', cursor: 'pointer',
-                  textTransform: 'uppercase', letterSpacing: '0.4px'
-                }}
-              >
-                Add Utility Bill / Other Charges
-              </button>
+              {/* Action Buttons below sidebar */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                {contract.status === 'active' && (
+                  <button
+                    onClick={() => {
+                      setRenewData({ new_end_date: '', new_rent_amount: String(contract.rent_amount) })
+                      setRenewModalOpen(true)
+                    }}
+                    style={{
+                      width: '100%', padding: '10px 14px', fontSize: 13, fontWeight: 700,
+                      borderRadius: 8, background: '#065F46', color: '#ffffff', border: 'none', cursor: 'pointer',
+                    }}
+                  >
+                    Renew Contract
+                  </button>
+                )}
 
-              <button
-                onClick={() => setCallLogModalOpen(true)}
-                className="gfh-portal-btn"
-                style={{
-                  width: '100%', padding: '11px 14px', fontSize: 12, fontWeight: 800,
-                  borderRadius: 0, background: '#075985', color: '#ffffff', border: 'none', cursor: 'pointer',
-                  textTransform: 'uppercase', letterSpacing: '0.4px'
-                }}
-              >
-                Add Call Log
-              </button>
+                <button
+                  onClick={downloadPdf}
+                  disabled={pdfLoading}
+                  style={{
+                    width: '100%', padding: '10px 14px', fontSize: 13, fontWeight: 700,
+                    borderRadius: 8, background: '#FFFFFF', color: '#0284C7', border: '1px solid #BAE6FD', cursor: 'pointer',
+                  }}
+                >
+                  {pdfLoading ? 'Downloading PDF...' : 'Download Contract PDF'}
+                </button>
+
+                <button
+                  onClick={() => setCallLogModalOpen(true)}
+                  style={{
+                    width: '100%', padding: '10px 14px', fontSize: 13, fontWeight: 700,
+                    borderRadius: 8, background: '#F8FAFC', color: '#475569', border: '1px solid #E2E8F0', cursor: 'pointer',
+                  }}
+                >
+                  + Add Call Log
+                </button>
+              </div>
             </div>
 
           </div>
@@ -645,11 +730,11 @@ export default function ContractDetailPage() {
                   fontWeight: 800,
                   textTransform: 'uppercase',
                   letterSpacing: '0.4px',
-                  borderRadius: 0,
+                  borderRadius: '8px 8px 0 0',
                   border: 'none',
-                  borderBottom: activeTab === tab.key ? `3px solid ${DARK_COLORS.purpleDark}` : '3px solid transparent',
-                  background: activeTab === tab.key ? '#ffffff' : 'transparent',
-                  color: activeTab === tab.key ? DARK_COLORS.purpleDark : THEME.textMuted,
+                  borderBottom: activeTab === tab.key ? '3px solid #065F46' : '3px solid transparent',
+                  background: activeTab === tab.key ? '#ECFDF5' : 'transparent',
+                  color: activeTab === tab.key ? '#065F46' : THEME.textMuted,
                   cursor: 'pointer'
                 }}
               >
@@ -665,7 +750,7 @@ export default function ContractDetailPage() {
 
               {/* 1. Tenant Section */}
               <div style={{ marginBottom: 20 }}>
-                <h4 style={{ fontSize: 11, fontWeight: 800, textTransform: 'uppercase', color: DARK_COLORS.purpleDark, marginBottom: 10, letterSpacing: '0.5px' }}>
+                <h4 style={{ fontSize: 11, fontWeight: 800, textTransform: 'uppercase', color: '#065F46', marginBottom: 10, letterSpacing: '0.5px' }}>
                   1. Tenant Information
                 </h4>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: 12 }}>
@@ -675,7 +760,7 @@ export default function ContractDetailPage() {
                       type="text"
                       value={editForm.tenant_name}
                       onChange={e => setEditForm({ ...editForm, tenant_name: e.target.value })}
-                      style={{ width: '100%', padding: '8px 10px', fontSize: 13, border: `1px solid ${THEME.border}`, borderRadius: 0 }}
+                      style={{ width: '100%', padding: '8px 10px', fontSize: 13, border: `1px solid ${THEME.border}`, borderRadius: 8 }}
                     />
                   </div>
                   <div>
@@ -684,7 +769,7 @@ export default function ContractDetailPage() {
                       type="text"
                       value={editForm.tenant_address}
                       onChange={e => setEditForm({ ...editForm, tenant_address: e.target.value })}
-                      style={{ width: '100%', padding: '8px 10px', fontSize: 13, border: `1px solid ${THEME.border}`, borderRadius: 0 }}
+                      style={{ width: '100%', padding: '8px 10px', fontSize: 13, border: `1px solid ${THEME.border}`, borderRadius: 8 }}
                     />
                   </div>
                   <div>
@@ -693,7 +778,7 @@ export default function ContractDetailPage() {
                       type="text"
                       value={editForm.tenant_contact}
                       onChange={e => setEditForm({ ...editForm, tenant_contact: e.target.value })}
-                      style={{ width: '100%', padding: '8px 10px', fontSize: 13, border: `1px solid ${THEME.border}`, borderRadius: 0 }}
+                      style={{ width: '100%', padding: '8px 10px', fontSize: 13, border: `1px solid ${THEME.border}`, borderRadius: 8 }}
                     />
                   </div>
                   <div>
@@ -702,7 +787,7 @@ export default function ContractDetailPage() {
                       type="email"
                       value={editForm.tenant_email}
                       onChange={e => setEditForm({ ...editForm, tenant_email: e.target.value })}
-                      style={{ width: '100%', padding: '8px 10px', fontSize: 13, border: `1px solid ${THEME.border}`, borderRadius: 0 }}
+                      style={{ width: '100%', padding: '8px 10px', fontSize: 13, border: `1px solid ${THEME.border}`, borderRadius: 8 }}
                     />
                   </div>
                 </div>
@@ -710,7 +795,7 @@ export default function ContractDetailPage() {
 
               {/* 2. Lease & Rent Section */}
               <div style={{ marginBottom: 20 }}>
-                <h4 style={{ fontSize: 11, fontWeight: 800, textTransform: 'uppercase', color: DARK_COLORS.purpleDark, marginBottom: 10, letterSpacing: '0.5px' }}>
+                <h4 style={{ fontSize: 11, fontWeight: 800, textTransform: 'uppercase', color: '#065F46', marginBottom: 10, letterSpacing: '0.5px' }}>
                   2. Lease &amp; Rent Details
                 </h4>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr 1fr', gap: 12 }}>
@@ -719,7 +804,7 @@ export default function ContractDetailPage() {
                     <select
                       value={editForm.lease_term}
                       onChange={e => setEditForm({ ...editForm, lease_term: e.target.value })}
-                      style={{ width: '100%', padding: '8px 10px', fontSize: 13, border: `1px solid ${THEME.border}`, borderRadius: 0 }}
+                      style={{ width: '100%', padding: '8px 10px', fontSize: 13, border: `1px solid ${THEME.border}`, borderRadius: 8 }}
                     >
                       <option value="1 Year">1 Year</option>
                       <option value="6 Months">6 Months</option>
@@ -732,7 +817,7 @@ export default function ContractDetailPage() {
                       type="number"
                       value={editForm.rent_amount}
                       onChange={e => setEditForm({ ...editForm, rent_amount: e.target.value })}
-                      style={{ width: '100%', padding: '8px 10px', fontSize: 13, border: `1px solid ${THEME.border}`, borderRadius: 0 }}
+                      style={{ width: '100%', padding: '8px 10px', fontSize: 13, border: `1px solid ${THEME.border}`, borderRadius: 8 }}
                     />
                   </div>
                   <div>
@@ -741,7 +826,7 @@ export default function ContractDetailPage() {
                       type="date"
                       value={editForm.start_date}
                       onChange={e => setEditForm({ ...editForm, start_date: e.target.value })}
-                      style={{ width: '100%', padding: '8px 10px', fontSize: 13, border: `1px solid ${THEME.border}`, borderRadius: 0 }}
+                      style={{ width: '100%', padding: '8px 10px', fontSize: 13, border: `1px solid ${THEME.border}`, borderRadius: 8 }}
                     />
                   </div>
                   <div>
@@ -750,7 +835,7 @@ export default function ContractDetailPage() {
                       type="date"
                       value={editForm.end_date}
                       onChange={e => setEditForm({ ...editForm, end_date: e.target.value })}
-                      style={{ width: '100%', padding: '8px 10px', fontSize: 13, border: `1px solid ${THEME.border}`, borderRadius: 0 }}
+                      style={{ width: '100%', padding: '8px 10px', fontSize: 13, border: `1px solid ${THEME.border}`, borderRadius: 8 }}
                     />
                   </div>
                   <div>
@@ -759,7 +844,7 @@ export default function ContractDetailPage() {
                       type="date"
                       value={editForm.due_date}
                       onChange={e => setEditForm({ ...editForm, due_date: e.target.value })}
-                      style={{ width: '100%', padding: '8px 10px', fontSize: 13, border: `1px solid ${THEME.border}`, borderRadius: 0 }}
+                      style={{ width: '100%', padding: '8px 10px', fontSize: 13, border: `1px solid ${THEME.border}`, borderRadius: 8 }}
                     />
                   </div>
                 </div>
@@ -767,7 +852,7 @@ export default function ContractDetailPage() {
 
               {/* 3. Deposits Section */}
               <div style={{ marginBottom: 20 }}>
-                <h4 style={{ fontSize: 11, fontWeight: 800, textTransform: 'uppercase', color: DARK_COLORS.purpleDark, marginBottom: 10, letterSpacing: '0.5px' }}>
+                <h4 style={{ fontSize: 11, fontWeight: 800, textTransform: 'uppercase', color: '#065F46', marginBottom: 10, letterSpacing: '0.5px' }}>
                   3. Deposits &amp; Guarantee
                 </h4>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 12 }}>
@@ -778,9 +863,9 @@ export default function ContractDetailPage() {
                         type="number"
                         value={editForm.security_deposit}
                         onChange={e => setEditForm({ ...editForm, security_deposit: e.target.value })}
-                        style={{ flex: 1, padding: '8px 10px', fontSize: 13, border: `1px solid ${THEME.border}`, borderRadius: 0 }}
+                        style={{ flex: 1, padding: '8px 10px', fontSize: 13, border: `1px solid ${THEME.border}`, borderRadius: 8 }}
                       />
-                      <button type="button" onClick={downloadPdf} style={{ padding: '0 12px', fontSize: 11, fontWeight: 700, border: `1px solid ${THEME.border}`, background: '#f8fafc', color: THEME.ink, cursor: 'pointer', borderRadius: 0 }}>
+                      <button type="button" onClick={downloadPdf} style={{ padding: '0 12px', fontSize: 11, fontWeight: 700, border: `1px solid ${THEME.border}`, background: '#f8fafc', color: THEME.ink, cursor: 'pointer', borderRadius: 8 }}>
                         Print
                       </button>
                     </div>
@@ -791,7 +876,7 @@ export default function ContractDetailPage() {
                     <select
                       value={editForm.deposit_type}
                       onChange={e => setEditForm({ ...editForm, deposit_type: e.target.value })}
-                      style={{ width: '100%', padding: '8px 10px', fontSize: 13, border: `1px solid ${THEME.border}`, borderRadius: 0 }}
+                      style={{ width: '100%', padding: '8px 10px', fontSize: 13, border: `1px solid ${THEME.border}`, borderRadius: 8 }}
                     >
                       <option value="Security Deposit">Security Deposit</option>
                       <option value="Refundable">Refundable</option>
@@ -806,9 +891,9 @@ export default function ContractDetailPage() {
                         type="number"
                         value={editForm.dewa_deposit}
                         onChange={e => setEditForm({ ...editForm, dewa_deposit: e.target.value })}
-                        style={{ flex: 1, padding: '8px 10px', fontSize: 13, border: `1px solid ${THEME.border}`, borderRadius: 0 }}
+                        style={{ flex: 1, padding: '8px 10px', fontSize: 13, border: `1px solid ${THEME.border}`, borderRadius: 8 }}
                       />
-                      <button type="button" onClick={downloadPdf} style={{ padding: '0 12px', fontSize: 11, fontWeight: 700, border: `1px solid ${THEME.border}`, background: '#f8fafc', color: THEME.ink, cursor: 'pointer', borderRadius: 0 }}>
+                      <button type="button" onClick={downloadPdf} style={{ padding: '0 12px', fontSize: 11, fontWeight: 700, border: `1px solid ${THEME.border}`, background: '#f8fafc', color: THEME.ink, cursor: 'pointer', borderRadius: 8 }}>
                         Print
                       </button>
                     </div>
@@ -818,7 +903,7 @@ export default function ContractDetailPage() {
 
               {/* 4. Cheque Details Section */}
               <div style={{ marginBottom: 24 }}>
-                <h4 style={{ fontSize: 11, fontWeight: 800, textTransform: 'uppercase', color: DARK_COLORS.purpleDark, marginBottom: 10, letterSpacing: '0.5px' }}>
+                <h4 style={{ fontSize: 11, fontWeight: 800, textTransform: 'uppercase', color: '#065F46', marginBottom: 10, letterSpacing: '0.5px' }}>
                   4. Add Cheque Details (PDC)
                 </h4>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: 12 }}>
@@ -828,7 +913,7 @@ export default function ContractDetailPage() {
                       type="date"
                       value={editForm.cheque_date}
                       onChange={e => setEditForm({ ...editForm, cheque_date: e.target.value })}
-                      style={{ width: '100%', padding: '8px 10px', fontSize: 13, border: `1px solid ${THEME.border}`, borderRadius: 0 }}
+                      style={{ width: '100%', padding: '8px 10px', fontSize: 13, border: `1px solid ${THEME.border}`, borderRadius: 8 }}
                     />
                   </div>
                   <div>
@@ -838,7 +923,7 @@ export default function ContractDetailPage() {
                       placeholder="CHQ-10029"
                       value={editForm.cheque_number}
                       onChange={e => setEditForm({ ...editForm, cheque_number: e.target.value })}
-                      style={{ width: '100%', padding: '8px 10px', fontSize: 13, border: `1px solid ${THEME.border}`, borderRadius: 0 }}
+                      style={{ width: '100%', padding: '8px 10px', fontSize: 13, border: `1px solid ${THEME.border}`, borderRadius: 8 }}
                     />
                   </div>
                   <div>
@@ -846,7 +931,7 @@ export default function ContractDetailPage() {
                     <select
                       value={editForm.cheque_bank}
                       onChange={e => setEditForm({ ...editForm, cheque_bank: e.target.value })}
-                      style={{ width: '100%', padding: '8px 10px', fontSize: 13, border: `1px solid ${THEME.border}`, borderRadius: 0 }}
+                      style={{ width: '100%', padding: '8px 10px', fontSize: 13, border: `1px solid ${THEME.border}`, borderRadius: 8 }}
                     >
                       <option value="Emirates NBD">Emirates NBD</option>
                       <option value="ADCB">ADCB</option>
@@ -860,7 +945,7 @@ export default function ContractDetailPage() {
                       type="number"
                       value={editForm.cheque_amount}
                       onChange={e => setEditForm({ ...editForm, cheque_amount: e.target.value })}
-                      style={{ width: '100%', padding: '8px 10px', fontSize: 13, border: `1px solid ${THEME.border}`, borderRadius: 0 }}
+                      style={{ width: '100%', padding: '8px 10px', fontSize: 13, border: `1px solid ${THEME.border}`, borderRadius: 8 }}
                     />
                   </div>
                 </div>
@@ -877,14 +962,14 @@ export default function ContractDetailPage() {
                   fontWeight: 800,
                   textTransform: 'uppercase',
                   letterSpacing: '0.5px',
-                  borderRadius: 0,
-                  background: DARK_COLORS.purpleDark,
+                  borderRadius: 8,
+                  background: '#065F46',
                   color: '#ffffff',
                   border: 'none',
                   cursor: 'pointer'
                 }}
               >
-                Submit &rarr; Save Contract
+                Submit → Save Contract
               </button>
             </form>
           )}
@@ -893,7 +978,7 @@ export default function ContractDetailPage() {
           {activeTab === 'charges' && (
             <div style={{ ...panelStyle, margin: 0 }}>
               <CornerBrackets />
-              <h3 style={{ fontSize: 14, fontWeight: 800, color: DARK_COLORS.purpleDark, marginBottom: 14, textTransform: 'uppercase' }}>
+              <h3 style={{ fontSize: 14, fontWeight: 800, color: '#065F46', marginBottom: 14, textTransform: 'uppercase' }}>
                 Contract Payments &amp; Charges
               </h3>
               {!contract.payments || contract.payments.length === 0 ? (
@@ -929,7 +1014,7 @@ export default function ContractDetailPage() {
           {activeTab === 'statement' && (
             <div style={{ ...panelStyle, margin: 0 }}>
               <CornerBrackets />
-              <h3 style={{ fontSize: 14, fontWeight: 800, color: DARK_COLORS.purpleDark, marginBottom: 14, textTransform: 'uppercase' }}>
+              <h3 style={{ fontSize: 14, fontWeight: 800, color: '#065F46', marginBottom: 14, textTransform: 'uppercase' }}>
                 Rent Statement Ledger
               </h3>
               <p style={{ color: THEME.textMuted, fontSize: 13, marginBottom: 12 }}>
@@ -951,21 +1036,20 @@ export default function ContractDetailPage() {
       {/* RENEW MODAL */}
       {renewModalOpen && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(15,23,42,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
-          <div style={{ background: '#fff', padding: 24, width: 400, border: `1px solid ${THEME.border}`, position: 'relative', boxShadow: '0 20px 50px rgba(15,23,42,0.3)' }}>
-            <CornerBrackets />
-            <h3 style={{ margin: '0 0 14px 0', color: '#0f172a', fontSize: 17, fontWeight: 800, textTransform: 'uppercase' }}>Renew Contract</h3>
+          <div style={{ background: '#fff', padding: 28, width: 420, borderRadius: 16, position: 'relative', boxShadow: '0 20px 50px rgba(15,23,42,0.25)' }}>
+            <h3 style={{ margin: '0 0 14px 0', color: '#0f172a', fontSize: 17, fontWeight: 800 }}>Renew Contract</h3>
             <form onSubmit={handleRenewSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
               <div>
                 <label style={{ fontSize: 12, fontWeight: 700, display: 'block', marginBottom: 6, color: '#0f172a', textTransform: 'uppercase' }}>New End Date</label>
-                <input type="date" required value={renewData.new_end_date} onChange={e => setRenewData({ ...renewData, new_end_date: e.target.value })} style={{ width: '100%', padding: '10px 12px', borderRadius: 0, border: '1px solid #94a3b8', background: '#ffffff', color: '#0f172a', fontWeight: 600, fontSize: 14, boxSizing: 'border-box' }} />
+                <input type="date" required value={renewData.new_end_date} onChange={e => setRenewData({ ...renewData, new_end_date: e.target.value })} style={{ width: '100%', padding: '10px 12px', borderRadius: 8, border: '1px solid #94a3b8', background: '#ffffff', color: '#0f172a', fontWeight: 600, fontSize: 14, boxSizing: 'border-box' }} />
               </div>
               <div>
                 <label style={{ fontSize: 12, fontWeight: 700, display: 'block', marginBottom: 6, color: '#0f172a', textTransform: 'uppercase' }}>New Rent Amount (AED)</label>
-                <input type="number" value={renewData.new_rent_amount} onChange={e => setRenewData({ ...renewData, new_rent_amount: e.target.value })} style={{ width: '100%', padding: '10px 12px', borderRadius: 0, border: '1px solid #94a3b8', background: '#ffffff', color: '#0f172a', fontWeight: 600, fontSize: 14, boxSizing: 'border-box' }} />
+                <input type="number" value={renewData.new_rent_amount} onChange={e => setRenewData({ ...renewData, new_rent_amount: e.target.value })} style={{ width: '100%', padding: '10px 12px', borderRadius: 8, border: '1px solid #94a3b8', background: '#ffffff', color: '#0f172a', fontWeight: 600, fontSize: 14, boxSizing: 'border-box' }} />
               </div>
               <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 12 }}>
-                <button type="button" onClick={() => setRenewModalOpen(false)} style={{ padding: '9px 16px', borderRadius: 0, border: '1px solid #cbd5e1', background: '#f1f5f9', color: '#0f172a', fontWeight: 700, fontSize: 13, cursor: 'pointer' }}>Cancel</button>
-                <button type="submit" style={{ padding: '9px 18px', borderRadius: 0, background: '#065f46', color: '#fff', border: 'none', fontWeight: 700, fontSize: 13, cursor: 'pointer' }}>Confirm Renew</button>
+                <button type="button" onClick={() => setRenewModalOpen(false)} style={{ padding: '9px 16px', borderRadius: 8, border: '1px solid #cbd5e1', background: '#f1f5f9', color: '#0f172a', fontWeight: 700, fontSize: 13, cursor: 'pointer' }}>Cancel</button>
+                <button type="submit" style={{ padding: '9px 18px', borderRadius: 8, background: '#065f46', color: '#fff', border: 'none', fontWeight: 700, fontSize: 13, cursor: 'pointer' }}>Confirm Renew</button>
               </div>
             </form>
           </div>
@@ -975,15 +1059,14 @@ export default function ContractDetailPage() {
       {/* VACATE MODAL */}
       {vacateModalOpen && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(15,23,42,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
-          <div style={{ background: '#fff', padding: 24, width: 400, border: `1px solid ${THEME.border}`, position: 'relative', boxShadow: '0 20px 50px rgba(15,23,42,0.3)' }}>
-            <CornerBrackets color={DARK_COLORS.crimsonDark} />
-            <h3 style={{ margin: '0 0 8px 0', color: '#991b1b', fontSize: 17, fontWeight: 800, textTransform: 'uppercase' }}>Vacate Contract</h3>
+          <div style={{ background: '#fff', padding: 28, width: 420, borderRadius: 16, position: 'relative', boxShadow: '0 20px 50px rgba(15,23,42,0.25)' }}>
+            <h3 style={{ margin: '0 0 8px 0', color: '#991b1b', fontSize: 17, fontWeight: 800 }}>Vacate Contract</h3>
             <p style={{ fontSize: 13, color: '#334155', fontWeight: 600, marginBottom: 14 }}>This will vacate the contract and set unit back to AVAILABLE.</p>
             <form onSubmit={handleVacateSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-              <textarea placeholder="Reason / notes..." value={vacateNote} onChange={e => setVacateNote(e.target.value)} rows={3} style={{ width: '100%', padding: '10px 12px', borderRadius: 0, border: '1px solid #94a3b8', background: '#ffffff', color: '#0f172a', fontWeight: 600, fontSize: 14, boxSizing: 'border-box', resize: 'vertical' }} />
+              <textarea placeholder="Reason / notes..." value={vacateNote} onChange={e => setVacateNote(e.target.value)} rows={3} style={{ width: '100%', padding: '10px 12px', borderRadius: 8, border: '1px solid #94a3b8', background: '#ffffff', color: '#0f172a', fontWeight: 600, fontSize: 14, boxSizing: 'border-box', resize: 'vertical' }} />
               <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 10 }}>
-                <button type="button" onClick={() => setVacateModalOpen(false)} style={{ padding: '9px 16px', borderRadius: 0, border: '1px solid #cbd5e1', background: '#f1f5f9', color: '#0f172a', fontWeight: 700, fontSize: 13, cursor: 'pointer' }}>Cancel</button>
-                <button type="submit" style={{ padding: '9px 18px', borderRadius: 0, background: '#991b1b', color: '#fff', border: 'none', fontWeight: 700, fontSize: 13, cursor: 'pointer' }}>Confirm Vacate</button>
+                <button type="button" onClick={() => setVacateModalOpen(false)} style={{ padding: '9px 16px', borderRadius: 8, border: '1px solid #cbd5e1', background: '#f1f5f9', color: '#0f172a', fontWeight: 700, fontSize: 13, cursor: 'pointer' }}>Cancel</button>
+                <button type="submit" style={{ padding: '9px 18px', borderRadius: 8, background: '#991b1b', color: '#fff', border: 'none', fontWeight: 700, fontSize: 13, cursor: 'pointer' }}>Confirm Vacate</button>
               </div>
             </form>
           </div>
@@ -993,18 +1076,17 @@ export default function ContractDetailPage() {
       {/* ADD PAYMENT MODAL */}
       {paymentModalOpen && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(15,23,42,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
-          <div style={{ background: '#fff', padding: 24, width: 440, border: `1px solid ${THEME.border}`, position: 'relative', boxShadow: '0 20px 50px rgba(15,23,42,0.3)' }}>
-            <CornerBrackets />
-            <h3 style={{ margin: '0 0 14px 0', color: '#0f172a', fontSize: 17, fontWeight: 800, textTransform: 'uppercase' }}>Add Payment / Charge</h3>
+          <div style={{ background: '#fff', padding: 28, width: 460, borderRadius: 16, position: 'relative', boxShadow: '0 20px 50px rgba(15,23,42,0.25)' }}>
+            <h3 style={{ margin: '0 0 14px 0', color: '#0f172a', fontSize: 17, fontWeight: 800 }}>Add Payment / Charge</h3>
             <form onSubmit={handleAddPaymentSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
               <div>
                 <label style={{ fontSize: 12, fontWeight: 700, display: 'block', marginBottom: 6, color: '#0f172a', textTransform: 'uppercase' }}>Amount (AED)</label>
-                <input type="number" required value={newPayment.amount} onChange={e => setNewPayment({ ...newPayment, amount: e.target.value })} style={{ width: '100%', padding: '10px 12px', borderRadius: 0, border: '1px solid #94a3b8', background: '#ffffff', color: '#0f172a', fontWeight: 600, fontSize: 14, boxSizing: 'border-box' }} />
+                <input type="number" required value={newPayment.amount} onChange={e => setNewPayment({ ...newPayment, amount: e.target.value })} style={{ width: '100%', padding: '10px 12px', borderRadius: 8, border: '1px solid #94a3b8', background: '#ffffff', color: '#0f172a', fontWeight: 600, fontSize: 14, boxSizing: 'border-box' }} />
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
                 <div>
                   <label style={{ fontSize: 12, fontWeight: 700, display: 'block', marginBottom: 6, color: '#0f172a', textTransform: 'uppercase' }}>Type</label>
-                  <select value={newPayment.type} onChange={e => setNewPayment({ ...newPayment, type: e.target.value })} style={{ width: '100%', padding: '10px 12px', borderRadius: 0, border: '1px solid #94a3b8', background: '#ffffff', color: '#0f172a', fontWeight: 600, fontSize: 14, boxSizing: 'border-box' }}>
+                  <select value={newPayment.type} onChange={e => setNewPayment({ ...newPayment, type: e.target.value })} style={{ width: '100%', padding: '10px 12px', borderRadius: 8, border: '1px solid #94a3b8', background: '#ffffff', color: '#0f172a', fontWeight: 600, fontSize: 14, boxSizing: 'border-box' }}>
                     <option value="rent">Rent</option>
                     <option value="deposit">Deposit</option>
                     <option value="dewa">DEWA</option>
@@ -1013,7 +1095,7 @@ export default function ContractDetailPage() {
                 </div>
                 <div>
                   <label style={{ fontSize: 12, fontWeight: 700, display: 'block', marginBottom: 6, color: '#0f172a', textTransform: 'uppercase' }}>Mode</label>
-                  <select value={newPayment.mode} onChange={e => setNewPayment({ ...newPayment, mode: e.target.value })} style={{ width: '100%', padding: '10px 12px', borderRadius: 0, border: '1px solid #94a3b8', background: '#ffffff', color: '#0f172a', fontWeight: 600, fontSize: 14, boxSizing: 'border-box' }}>
+                  <select value={newPayment.mode} onChange={e => setNewPayment({ ...newPayment, mode: e.target.value })} style={{ width: '100%', padding: '10px 12px', borderRadius: 8, border: '1px solid #94a3b8', background: '#ffffff', color: '#0f172a', fontWeight: 600, fontSize: 14, boxSizing: 'border-box' }}>
                     <option value="bank_transfer">Bank Transfer</option>
                     <option value="cash">Cash</option>
                     <option value="cheque">Cheque</option>
@@ -1023,15 +1105,15 @@ export default function ContractDetailPage() {
               </div>
               <div>
                 <label style={{ fontSize: 12, fontWeight: 700, display: 'block', marginBottom: 6, color: '#0f172a', textTransform: 'uppercase' }}>Date</label>
-                <input type="date" required value={newPayment.date} onChange={e => setNewPayment({ ...newPayment, date: e.target.value })} style={{ width: '100%', padding: '10px 12px', borderRadius: 0, border: '1px solid #94a3b8', background: '#ffffff', color: '#0f172a', fontWeight: 600, fontSize: 14, boxSizing: 'border-box' }} />
+                <input type="date" required value={newPayment.date} onChange={e => setNewPayment({ ...newPayment, date: e.target.value })} style={{ width: '100%', padding: '10px 12px', borderRadius: 8, border: '1px solid #94a3b8', background: '#ffffff', color: '#0f172a', fontWeight: 600, fontSize: 14, boxSizing: 'border-box' }} />
               </div>
               <div>
                 <label style={{ fontSize: 12, fontWeight: 700, display: 'block', marginBottom: 6, color: '#0f172a', textTransform: 'uppercase' }}>Remarks</label>
-                <input type="text" placeholder="Remarks..." value={newPayment.remarks} onChange={e => setNewPayment({ ...newPayment, remarks: e.target.value })} style={{ width: '100%', padding: '10px 12px', borderRadius: 0, border: '1px solid #94a3b8', background: '#ffffff', color: '#0f172a', fontWeight: 600, fontSize: 14, boxSizing: 'border-box' }} />
+                <input type="text" placeholder="Remarks..." value={newPayment.remarks} onChange={e => setNewPayment({ ...newPayment, remarks: e.target.value })} style={{ width: '100%', padding: '10px 12px', borderRadius: 8, border: '1px solid #94a3b8', background: '#ffffff', color: '#0f172a', fontWeight: 600, fontSize: 14, boxSizing: 'border-box' }} />
               </div>
               <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 12 }}>
-                <button type="button" onClick={() => setPaymentModalOpen(false)} style={{ padding: '9px 16px', borderRadius: 0, border: '1px solid #cbd5e1', background: '#f1f5f9', color: '#0f172a', fontWeight: 700, fontSize: 13, cursor: 'pointer' }}>Cancel</button>
-                <button type="submit" style={{ padding: '9px 18px', borderRadius: 0, background: '#065f46', color: '#fff', border: 'none', fontWeight: 700, fontSize: 13, cursor: 'pointer' }}>Record Payment</button>
+                <button type="button" onClick={() => setPaymentModalOpen(false)} style={{ padding: '9px 16px', borderRadius: 8, border: '1px solid #cbd5e1', background: '#f1f5f9', color: '#0f172a', fontWeight: 700, fontSize: 13, cursor: 'pointer' }}>Cancel</button>
+                <button type="submit" style={{ padding: '9px 18px', borderRadius: 8, background: '#065f46', color: '#fff', border: 'none', fontWeight: 700, fontSize: 13, cursor: 'pointer' }}>Record Payment</button>
               </div>
             </form>
           </div>
@@ -1041,21 +1123,20 @@ export default function ContractDetailPage() {
       {/* CALL LOG MODAL */}
       {callLogModalOpen && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(15,23,42,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
-          <div style={{ background: '#fff', padding: 24, width: 420, border: `1px solid ${THEME.border}`, position: 'relative', boxShadow: '0 20px 50px rgba(15,23,42,0.3)' }}>
-            <CornerBrackets />
-            <h3 style={{ margin: '0 0 14px 0', color: '#0f172a', fontSize: 17, fontWeight: 800, textTransform: 'uppercase' }}>Add Call Log</h3>
+          <div style={{ background: '#fff', padding: 28, width: 440, borderRadius: 16, position: 'relative', boxShadow: '0 20px 50px rgba(15,23,42,0.25)' }}>
+            <h3 style={{ margin: '0 0 14px 0', color: '#0f172a', fontSize: 17, fontWeight: 800 }}>Add Call Log</h3>
             <form onSubmit={handleCallLogSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
               <div>
                 <label style={{ fontSize: 12, fontWeight: 700, display: 'block', marginBottom: 6, color: '#0f172a', textTransform: 'uppercase' }}>Call Date</label>
-                <input type="date" required value={callLogData.call_date} onChange={e => setCallLogData({ ...callLogData, call_date: e.target.value })} style={{ width: '100%', padding: '10px 12px', borderRadius: 0, border: '1px solid #94a3b8', background: '#ffffff', color: '#0f172a', fontWeight: 600, fontSize: 14, boxSizing: 'border-box' }} />
+                <input type="date" required value={callLogData.call_date} onChange={e => setCallLogData({ ...callLogData, call_date: e.target.value })} style={{ width: '100%', padding: '10px 12px', borderRadius: 8, border: '1px solid #94a3b8', background: '#ffffff', color: '#0f172a', fontWeight: 600, fontSize: 14, boxSizing: 'border-box' }} />
               </div>
               <div>
                 <label style={{ fontSize: 12, fontWeight: 700, display: 'block', marginBottom: 6, color: '#0f172a', textTransform: 'uppercase' }}>Notes</label>
-                <textarea required rows={3} placeholder="Discussion notes..." value={callLogData.notes} onChange={e => setCallLogData({ ...callLogData, notes: e.target.value })} style={{ width: '100%', padding: '10px 12px', borderRadius: 0, border: '1px solid #94a3b8', background: '#ffffff', color: '#0f172a', fontWeight: 600, fontSize: 14, boxSizing: 'border-box', resize: 'vertical' }} />
+                <textarea required rows={3} placeholder="Discussion notes..." value={callLogData.notes} onChange={e => setCallLogData({ ...callLogData, notes: e.target.value })} style={{ width: '100%', padding: '10px 12px', borderRadius: 8, border: '1px solid #94a3b8', background: '#ffffff', color: '#0f172a', fontWeight: 600, fontSize: 14, boxSizing: 'border-box', resize: 'vertical' }} />
               </div>
               <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 12 }}>
-                <button type="button" onClick={() => setCallLogModalOpen(false)} style={{ padding: '9px 16px', borderRadius: 0, border: '1px solid #cbd5e1', background: '#f1f5f9', color: '#0f172a', fontWeight: 700, fontSize: 13, cursor: 'pointer' }}>Cancel</button>
-                <button type="submit" style={{ padding: '9px 18px', borderRadius: 0, background: '#075985', color: '#fff', border: 'none', fontWeight: 700, fontSize: 13, cursor: 'pointer' }}>Save Log</button>
+                <button type="button" onClick={() => setCallLogModalOpen(false)} style={{ padding: '9px 16px', borderRadius: 8, border: '1px solid #cbd5e1', background: '#f1f5f9', color: '#0f172a', fontWeight: 700, fontSize: 13, cursor: 'pointer' }}>Cancel</button>
+                <button type="submit" style={{ padding: '9px 18px', borderRadius: 8, background: '#075985', color: '#fff', border: 'none', fontWeight: 700, fontSize: 13, cursor: 'pointer' }}>Save Log</button>
               </div>
             </form>
           </div>

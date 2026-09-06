@@ -32,19 +32,21 @@ const icons = {
 }
 
 const filterInputStyle: React.CSSProperties = {
-  padding: '10px 13px',
-  border: `1px solid ${THEME.border}`,
-  borderRadius: 0,
+  padding: '8px 14px',
+  border: '1px solid #CBD5E1',
+  borderRadius: 8,
   background: '#ffffff',
-  color: THEME.ink,
+  color: '#0F172A',
   fontSize: 13,
+  fontWeight: 500,
+  fontFamily: "'Poppins', sans-serif",
 }
 
 const inputStyle: React.CSSProperties = {
   width: '100%',
   padding: '10px 13px',
   border: `1px solid ${THEME.border}`,
-  borderRadius: 0,
+  borderRadius: 8,
   fontSize: 13.5,
   color: THEME.ink,
   background: '#ffffff',
@@ -56,7 +58,7 @@ const labelStyle: React.CSSProperties = {
   display: 'block',
   fontSize: 12,
   fontWeight: 700,
-  color: THEME.purple,
+  color: '#0E5E48',
   textTransform: 'uppercase',
   letterSpacing: '0.3px',
   marginBottom: 6,
@@ -64,9 +66,9 @@ const labelStyle: React.CSSProperties = {
 
 function StatCard({ label, value, color, icon, iconBg }: { label: string; value: string; color: string; icon: string; iconBg: string }) {
   return (
-    <div className="gfh-portal-stat" style={{ position: 'relative', flex: '1 1 200px', padding: 20, background: '#fff', border: `1px solid ${THEME.border}`, borderRadius: 0 }}>
+    <div className="gfh-portal-stat" style={{ position: 'relative', flex: '1 1 200px', padding: 20, background: '#fff', border: `1px solid ${THEME.border}`, borderRadius: 8 }}>
       <CornerBrackets />
-      <div style={{ width: 40, height: 40, borderRadius: 0, background: iconBg, color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 10 }}>
+      <div style={{ width: 40, height: 40, borderRadius: 8, background: iconBg, color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 10 }}>
         <Icon path={icon} size={18} />
       </div>
       <div style={{ fontFamily: "'Poppins', sans-serif", fontSize: 22, fontWeight: 700, color: color || THEME.ink }}>{value}</div>
@@ -82,6 +84,15 @@ export default function RentLedger() {
   const [filters, setFilters] = useState({ contract_id: '', month: '', property_id: '', tenant_id: '' })
   const [deleteModal, setDeleteModal] = useState<LedgerEntry | null>(null)
   const [deleteReason, setDeleteReason] = useState('')
+  const [properties, setProperties] = useState<{ id: number; name: string }[]>([])
+  const [tenants, setTenants] = useState<{ id: number; name: string }[]>([])
+  const [contracts, setContracts] = useState<{ id: number; unit?: { number: string } }[]>([])
+
+  useEffect(() => {
+    api.get('/admin/properties').then(res => setProperties(res.data?.data?.properties || [])).catch(() => {})
+    api.get('/admin/tenants').then(res => setTenants(res.data?.data?.tenants || [])).catch(() => {})
+    api.get('/admin/contracts').then(res => setContracts(res.data?.data?.contracts || [])).catch(() => {})
+  }, [])
 
   useEffect(() => { fetchLedger() }, [filters])
 
@@ -117,49 +128,153 @@ export default function RentLedger() {
       <style>{`
         @keyframes gfhOverlayFade { from { opacity: 0; } to { opacity: 1; } }
         @keyframes gfhModalPop { from { opacity: 0; transform: scale(0.94) translateY(14px); } to { opacity: 1; transform: scale(1) translateY(0); } }
-        .gfh-portal-page .gfh-filter-input::placeholder { color: rgba(255,255,255,0.55); }
-        .gfh-portal-page .gfh-filter-input:focus { outline: none; background: rgba(255,255,255,0.16); border-color: ${THEME.violetLight}; }
+        .gfh-portal-page .gfh-filter-input {
+          background: #FFFFFF !important;
+          border: 1px solid #CBD5E1 !important;
+          border-radius: 8px !important;
+          color: #0F172A !important;
+          font-size: 13px !important;
+          font-weight: 500 !important;
+          font-family: 'Poppins', system-ui, sans-serif !important;
+          padding: 8px 14px !important;
+          transition: border-color 0.15s ease, box-shadow 0.15s ease !important;
+          outline: none !important;
+        }
+        .gfh-portal-page .gfh-filter-input::placeholder {
+          color: #94A3B8 !important;
+          font-weight: 500 !important;
+          opacity: 1 !important;
+        }
+        .gfh-portal-page .gfh-filter-input:focus {
+          outline: none !important;
+          border-color: #0E5E48 !important;
+          box-shadow: 0 0 0 3px rgba(14, 94, 72, 0.15) !important;
+        }
       `}</style>
 
       <div className="fade-in" style={heroStyle}>
         <CornerBrackets />
         <div>
-          <h1 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 30, fontWeight: 700, color: THEME.ink, margin: 0 }}>
+          <h1 style={{ fontFamily: "'Poppins', sans-serif", fontSize: 28, fontWeight: 800, color: THEME.ink, margin: 0, letterSpacing: '-0.01em' }}>
             Rent Ledger
           </h1>
-          <p style={{ fontSize: 14, color: THEME.textMuted, marginTop: 8, marginBottom: 0 }}>
+          <p style={{ fontSize: 14, color: THEME.textMuted, marginTop: 8, marginBottom: 0, fontWeight: 500 }}>
             Double-entry rent transactions (debit / credit)
           </p>
         </div>
-        <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
-          <input
-            className="gfh-filter-input"
-            placeholder="Contract ID"
-            value={filters.contract_id}
-            onChange={e => setFilters({ ...filters, contract_id: e.target.value })}
-            style={{ ...filterInputStyle, width: 120 }}
-          />
-          <input
-            className="gfh-filter-input"
-            placeholder="Property ID"
-            value={filters.property_id}
-            onChange={e => setFilters({ ...filters, property_id: e.target.value })}
-            style={{ ...filterInputStyle, width: 120 }}
-          />
-          <input
-            className="gfh-filter-input"
-            placeholder="Tenant ID"
-            value={filters.tenant_id}
-            onChange={e => setFilters({ ...filters, tenant_id: e.target.value })}
-            style={{ ...filterInputStyle, width: 110 }}
-          />
+        <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'center' }}>
+          {/* Contract Filter */}
+          {contracts.length > 0 ? (
+            <select
+              className="gfh-filter-input"
+              value={filters.contract_id}
+              onChange={e => setFilters({ ...filters, contract_id: e.target.value })}
+              style={{ ...filterInputStyle, minWidth: 140 }}
+            >
+              <option value="">All Contracts</option>
+              {contracts.map(c => (
+                <option key={c.id} value={c.id}>
+                  Contract #{c.id}{c.unit?.number ? ` (Unit ${c.unit.number})` : ''}
+                </option>
+              ))}
+            </select>
+          ) : (
+            <input
+              className="gfh-filter-input"
+              placeholder="Contract ID"
+              value={filters.contract_id}
+              onChange={e => setFilters({ ...filters, contract_id: e.target.value })}
+              style={{ ...filterInputStyle, width: 130 }}
+            />
+          )}
+
+          {/* Property Filter */}
+          {properties.length > 0 ? (
+            <select
+              className="gfh-filter-input"
+              value={filters.property_id}
+              onChange={e => setFilters({ ...filters, property_id: e.target.value })}
+              style={{ ...filterInputStyle, minWidth: 140 }}
+            >
+              <option value="">All Properties</option>
+              {properties.map(p => (
+                <option key={p.id} value={p.id}>{p.name}</option>
+              ))}
+            </select>
+          ) : (
+            <input
+              className="gfh-filter-input"
+              placeholder="Property ID"
+              value={filters.property_id}
+              onChange={e => setFilters({ ...filters, property_id: e.target.value })}
+              style={{ ...filterInputStyle, width: 130 }}
+            />
+          )}
+
+          {/* Tenant Filter */}
+          {tenants.length > 0 ? (
+            <select
+              className="gfh-filter-input"
+              value={filters.tenant_id}
+              onChange={e => setFilters({ ...filters, tenant_id: e.target.value })}
+              style={{ ...filterInputStyle, minWidth: 130 }}
+            >
+              <option value="">All Tenants</option>
+              {tenants.map(t => (
+                <option key={t.id} value={t.id}>{t.name}</option>
+              ))}
+            </select>
+          ) : (
+            <input
+              className="gfh-filter-input"
+              placeholder="Tenant ID"
+              value={filters.tenant_id}
+              onChange={e => setFilters({ ...filters, tenant_id: e.target.value })}
+              style={{ ...filterInputStyle, width: 120 }}
+            />
+          )}
+
+          {/* Month Filter */}
           <input
             type="month"
             className="gfh-filter-input"
             value={filters.month}
             onChange={e => setFilters({ ...filters, month: e.target.value })}
-            style={{ ...filterInputStyle, width: 150 }}
+            style={{ ...filterInputStyle, width: 140 }}
+            title="Filter by Month"
           />
+
+          {/* Reset Filters */}
+          {(filters.contract_id || filters.property_id || filters.tenant_id || filters.month) && (
+            <button
+              type="button"
+              onClick={() => setFilters({ contract_id: '', month: '', property_id: '', tenant_id: '' })}
+              style={{
+                padding: '8px 14px',
+                fontSize: 12.5,
+                fontWeight: 700,
+                borderRadius: 8,
+                background: '#F1F5F9',
+                color: '#64748B',
+                border: '1px solid #CBD5E1',
+                cursor: 'pointer',
+                fontFamily: "'Poppins', sans-serif",
+                transition: 'all 0.15s ease',
+              }}
+              onMouseEnter={e => {
+                e.currentTarget.style.background = '#FEE2E2'
+                e.currentTarget.style.color = '#DC2626'
+                e.currentTarget.style.borderColor = '#FCA5A5'
+              }}
+              onMouseLeave={e => {
+                e.currentTarget.style.background = '#F1F5F9'
+                e.currentTarget.style.color = '#64748B'
+                e.currentTarget.style.borderColor = '#CBD5E1'
+              }}
+            >
+              Reset
+            </button>
+          )}
         </div>
       </div>
 
@@ -233,7 +348,7 @@ export default function RentLedger() {
                           style={{
                             display: 'inline-flex', alignItems: 'center', gap: 6, padding: '6px 12px',
                           background: '#991b1b', border: 'none', color: '#fff',
-                          borderRadius: 0, fontWeight: 700, fontSize: 11, cursor: 'pointer',
+                          borderRadius: 8, fontWeight: 700, fontSize: 11, cursor: 'pointer',
                           }}
                         >
                           <Icon path={icons.trash} size={13} />
@@ -254,20 +369,20 @@ export default function RentLedger() {
 
       {deleteModal && (
         <div style={{
-          position: 'fixed', inset: 0, background: 'rgba(27, 14, 51, 0.55)', backdropFilter: 'blur(3px)',
+          position: 'fixed', inset: 0, background: 'rgba(6, 56, 44, 0.55)', backdropFilter: 'blur(3px)',
           display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000,
           animation: 'gfhOverlayFade 0.2s ease',
         }}>
           <div style={{
-            position: 'relative', width: 440, maxWidth: '92vw', background: '#ffffff', borderRadius: 0,
+            position: 'relative', width: 440, maxWidth: '92vw', background: '#ffffff', borderRadius: 10,
             padding: 28, border: `1px solid ${THEME.border}`,
-            boxShadow: '0 24px 60px -12px rgba(27, 14, 51, 0.5)',
+            boxShadow: '0 24px 60px -12px rgba(6, 56, 44, 0.3)',
             animation: 'gfhModalPop 0.28s cubic-bezier(.2,.8,.2,1)',
           }}>
             <CornerBrackets />
             <h2 style={{
               display: 'flex', alignItems: 'center', gap: 8,
-              fontFamily: "'Playfair Display', Georgia, serif", fontSize: 19, fontWeight: 700,
+              fontFamily: "'Poppins', sans-serif", fontSize: 19, fontWeight: 700,
               color: '#dc2626', margin: '0 0 8px 0',
             }}>
               <Icon path={icons.alert} size={19} />
@@ -276,7 +391,7 @@ export default function RentLedger() {
             <p style={{ fontSize: 13, color: THEME.textMuted, marginBottom: 16, lineHeight: 1.5 }}>
               This entry will be marked as deleted and an audit log will be created. It can never be permanently erased.
               <br />
-              <strong style={{ color: THEME.purple }}>
+              <strong style={{ color: '#0E5E48' }}>
                 Date: {formatDate(deleteModal.date)} | Debit: AED {Number(deleteModal.debit).toLocaleString()} | Credit: AED {Number(deleteModal.credit).toLocaleString()}
               </strong>
             </p>
@@ -296,7 +411,7 @@ export default function RentLedger() {
                 style={{
                   display: 'inline-flex', alignItems: 'center', gap: 8, padding: '10px 18px',
                   background: '#f1f5f9', border: `1px solid ${THEME.border}`, color: THEME.textMuted,
-                  borderRadius: 0, fontWeight: 700, fontSize: 13.5, cursor: 'pointer',
+                  borderRadius: 8, fontWeight: 700, fontSize: 13.5, cursor: 'pointer',
                 }}
               >
                 <Icon path={icons.close} size={15} />

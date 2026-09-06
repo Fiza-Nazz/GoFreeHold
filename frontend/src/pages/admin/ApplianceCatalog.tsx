@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+﻿import { useEffect, useState } from 'react'
 import api from '../../api/axios'
 import { THEME, Icon, ICONS, CornerBrackets, portalPageCss, heroStyle, panelStyle, thStyle, tdStyle, ghostBtnStyle } from '../../components/gfh/adminTheme'
 
@@ -30,7 +30,7 @@ const icons = {
 const inputStyle: React.CSSProperties = {
   background: '#ffffff',
   border: `1px solid ${THEME.border}`,
-  borderRadius: 0,
+  borderRadius: 8,
   color: THEME.ink,
   fontSize: 14,
   fontWeight: 500,
@@ -115,7 +115,7 @@ export default function ApplianceCatalog() {
             onChange={e => setUnitFilter(e.target.value)}
             style={{
               width: 140,
-              borderRadius: 0,
+              borderRadius: 8,
               border: '1px solid rgba(255,255,255,0.3)',
               background: 'rgba(255,255,255,0.1)',
               color: '#fff',
@@ -161,7 +161,7 @@ export default function ApplianceCatalog() {
                     </td>
                     <td style={{ ...tdStyle, fontSize: 12.5, fontFamily: 'monospace', color: THEME.textMuted }}>{app.serial_number || 'N/A'}</td>
                     <td style={tdStyle}>
-                      <span style={{ backgroundColor: (CONDITION_COLOR[app.condition] || '#888') + '22', color: CONDITION_COLOR[app.condition] || '#888', padding: '4px 10px', borderRadius: 0, fontSize: 12, fontWeight: 700, letterSpacing: '0.3px' }}>
+                      <span style={{ backgroundColor: (CONDITION_COLOR[app.condition] || '#888') + '22', color: CONDITION_COLOR[app.condition] || '#888', padding: '4px 10px', borderRadius: 8, fontSize: 12, fontWeight: 700, letterSpacing: '0.3px' }}>
                         {(app.condition || '—').toString().replace(/_/g, ' ').toUpperCase()}
                       </span>
                     </td>
@@ -169,7 +169,7 @@ export default function ApplianceCatalog() {
                     <td style={tdStyle}>
                       <button
                         className="gfh-portal-btn"
-                        style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '5px 10px', fontSize: 12, fontWeight: 700, borderRadius: 0, background: '#991b1b', color: '#fff', border: 'none', cursor: 'pointer' }}
+                        style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '5px 10px', fontSize: 12, fontWeight: 700, borderRadius: 8, background: '#991b1b', color: '#fff', border: 'none', cursor: 'pointer' }}
                         onClick={() => handleDelete(app.id)}
                       >
                         <Icon path={ICONS.trash} size={12} />
@@ -193,7 +193,7 @@ export default function ApplianceCatalog() {
               width: 480,
               padding: 30,
               background: '#ffffff',
-              borderRadius: 0,
+              borderRadius: 8,
               border: `1px solid ${THEME.border}`,
             }}
           >
@@ -251,7 +251,7 @@ export default function ApplianceCatalog() {
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  style={{ borderRadius: 0, fontWeight: 700, fontSize: 13, padding: '9px 16px', background: '#f6f1fe', color: THEME.purple, border: `1px solid ${THEME.border}`, cursor: 'pointer' }}
+                  style={{ borderRadius: 8, fontWeight: 700, fontSize: 13, padding: '9px 16px', background: '#f6f1fe', color: THEME.purple, border: `1px solid ${THEME.border}`, cursor: 'pointer' }}
                 >
                   Cancel
                 </button>

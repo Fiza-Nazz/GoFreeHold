@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+﻿import { useEffect, useState } from 'react'
 import api from '../../api/axios'
 import { formatDate } from '../../utils/formatDate'
 import { THEME, Icon, ICONS, CornerBrackets, portalPageCss, heroStyle, panelStyle, ghostBtnStyle } from '../../components/gfh/adminTheme'
@@ -13,7 +13,7 @@ interface PaymentFormProps {
 const inputStyle: React.CSSProperties = {
   background: '#ffffff',
   border: `1px solid ${THEME.border}`,
-  borderRadius: 0,
+  borderRadius: 8,
   color: THEME.ink,
   fontSize: 14,
   fontWeight: 500,
@@ -36,7 +36,7 @@ const sectionStyle: React.CSSProperties = {
   background: '#ffffff',
   border: `1px solid ${THEME.border}`,
   borderLeft: `3px solid ${THEME.violetLight}`,
-  borderRadius: 0,
+  borderRadius: 8,
   padding: '18px 20px',
 }
 
@@ -118,7 +118,7 @@ export default function PaymentForm({ onSuccess }: PaymentFormProps) {
                     className="gfh-portal-btn"
                     style={{
                       padding: '10px 8px',
-                      borderRadius: 0,
+                      borderRadius: 8,
                       border: `1.5px solid ${formData.type === cat ? '#6B21A8' : THEME.border}`,
                       background: formData.type === cat ? '#6B21A8' : '#ffffff',
                       color: formData.type === cat ? '#fff' : THEME.ink,
@@ -146,7 +146,7 @@ export default function PaymentForm({ onSuccess }: PaymentFormProps) {
                     className="gfh-portal-btn"
                     style={{
                       padding: '6px 14px',
-                      borderRadius: 0,
+                      borderRadius: 8,
                       border: `1.5px solid ${formData.mode === mode ? '#075985' : THEME.border}`,
                       background: formData.mode === mode ? '#075985' : 'transparent',
                       color: formData.mode === mode ? '#fff' : THEME.ink,
@@ -217,7 +217,7 @@ export default function PaymentForm({ onSuccess }: PaymentFormProps) {
             {message && (
               <div style={{
                 padding: '12px 14px',
-                borderRadius: 0,
+                borderRadius: 8,
                 fontSize: 13,
                 fontWeight: 600,
                 border: '1.5px solid',

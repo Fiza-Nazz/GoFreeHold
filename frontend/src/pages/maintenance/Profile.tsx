@@ -26,7 +26,7 @@ export default function MaintenanceProfile() {
   ]
 
   return (
-    <div className="gfh-portal-page" style={{ fontFamily: "'Inter', 'Segoe UI', system-ui, sans-serif", background: THEME.pageBg }}>
+    <div className="gfh-portal-page" style={{ fontFamily: "'Poppins', system-ui, sans-serif", background: THEME.pageBg }}>
       <style>{portalPageCss}</style>
 
       <div className="fade-in" style={heroStyle}>
@@ -38,30 +38,32 @@ export default function MaintenanceProfile() {
       </div>
 
       <div
-        className="fade-in gfh-portal-stat"
+        className="fade-in"
         style={{
           position: 'relative',
           background: '#fff',
           border: `1px solid ${THEME.border}`,
-          borderRadius: RADIUS,
-          padding: 24,
+          borderRadius: 16,
+          padding: 26,
           maxWidth: 560,
+          boxShadow: '0 1px 3px rgba(16,24,40,0.04)',
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 22, paddingBottom: 20, borderBottom: `1px solid ${THEME.border}` }}>
           <div
             style={{
-              width: 56,
-              height: 56,
+              width: 58,
+              height: 58,
               flexShrink: 0,
-              borderRadius: 0,
-              background: '#1e1b4b',
+              borderRadius: 14,
+              background: '#0E5E48',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               color: '#fff',
-              fontSize: 20,
+              fontSize: 22,
               fontWeight: 800,
+              boxShadow: '0 2px 8px rgba(14, 94, 72, 0.25)',
             }}
           >
             {initials}
@@ -75,12 +77,12 @@ export default function MaintenanceProfile() {
               style={{
                 display: 'inline-block',
                 marginTop: 10,
-                padding: '4px 10px',
-                borderRadius: 0,
+                padding: '3px 11px',
+                borderRadius: 999,
                 background: '#f0fdf4',
                 color: '#065f46',
                 border: '1px solid #bbf7d0',
-                fontSize: 11.5,
+                fontSize: 11,
                 fontWeight: 700,
                 letterSpacing: '0.4px',
                 textTransform: 'uppercase',
@@ -103,13 +105,13 @@ export default function MaintenanceProfile() {
                 gap: 12,
                 padding: '14px 16px',
                 border: `1px solid ${THEME.border}`,
-                borderRadius: RADIUS,
+                borderRadius: 12,
                 background: '#fff',
               }}
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                <div style={{ width: 36, height: 36, borderRadius: 0, background: '#075985', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <Icon path={row.icon} size={16} />
+                <div style={{ width: 38, height: 38, borderRadius: 8, background: '#ECFDF8', color: '#0E5E48', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <Icon path={row.icon} size={18} />
                 </div>
                 <div style={{ fontSize: 12, color: THEME.textMuted, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.3px' }}>
                   {row.label}

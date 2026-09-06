@@ -47,7 +47,7 @@ export default function UnitDetailPage() {
   }, [unitId])
 
   return (
-    <div className="gfh-portal-page" style={{ fontFamily: "'Inter', 'Segoe UI', system-ui, sans-serif" }}>
+    <div className="gfh-portal-page" style={{ fontFamily: "'Poppins', system-ui, sans-serif" }}>
       <style>{portalPageCss}</style>
 
       <div className="fade-in" style={heroStyle}>
@@ -55,7 +55,7 @@ export default function UnitDetailPage() {
           <div style={{ fontSize: 22, fontWeight: 800, color: THEME.ink, margin: 0 }}>Unit details</div>
           <div style={{ fontSize: 12, color: '#9ca3af', marginTop: 6 }}>Full unit information for your portfolio</div>
         </div>
-        <Link to="/owner/properties" className="gfh-portal-btn" style={{ ...ghostBtnStyle, background: '#075985' }}>
+        <Link to="/owner/properties" className="gfh-portal-btn" style={{ ...ghostBtnStyle, background: '#0E5E48', borderRadius: 8 }}>
           ← Back to properties
         </Link>
       </div>
@@ -100,7 +100,7 @@ export default function UnitDetailPage() {
 
 function Detail({ label, value }: { label: string; value: string }) {
   return (
-    <div className="gfh-portal-stat" style={{ padding: 14, border: `1px solid ${THEME.border}`, borderRadius: 0, background: '#fff' }}>
+    <div className="gfh-portal-stat" style={{ padding: 14, border: `1px solid ${THEME.border}`, borderRadius: 12, background: '#fff' }}>
       <div style={{ fontSize: 11, color: THEME.textMuted, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.4px' }}>{label}</div>
       <div style={{ fontSize: 16, fontWeight: 700, color: THEME.ink, marginTop: 6 }}>{value}</div>
     </div>
