@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+﻿import { useEffect, useState } from 'react'
 import api from '../../api/axios'
 import { THEME, Icon, ICONS, CornerBrackets, portalPageCss, heroStyle, panelStyle, thStyle, tdStyle, ghostBtnStyle } from '../../components/gfh/adminTheme'
 
@@ -28,7 +28,7 @@ const TYPE_STYLE: Record<string, { bg: string; color: string; prefix: string; bo
 const inputStyle: React.CSSProperties = {
   background: '#ffffff',
   border: `1px solid ${THEME.border}`,
-  borderRadius: 0,
+  borderRadius: 8,
   color: THEME.ink,
   fontSize: 14,
   fontWeight: 600,
@@ -53,9 +53,9 @@ const btnTint = {
 
 function StatCard({ label, value, color, icon, iconBg, delay }: { label: string; value: string; color: string; icon: string; iconBg: string; delay?: string }) {
   return (
-    <div className="gfh-portal-stat" style={{ position: 'relative', background: '#fff', border: `1px solid ${THEME.border}`, borderRadius: 0, padding: 20, animationDelay: delay }}>
+    <div className="gfh-portal-stat" style={{ position: 'relative', background: '#fff', border: `1px solid ${THEME.border}`, borderRadius: 8, padding: 20, animationDelay: delay }}>
       <CornerBrackets />
-      <div style={{ width: 40, height: 40, borderRadius: 0, background: iconBg, color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 10 }}>
+      <div style={{ width: 40, height: 40, borderRadius: 8, background: iconBg, color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 10 }}>
         <Icon path={icon} size={18} />
       </div>
       <div style={{ fontFamily: "'Poppins', sans-serif", fontSize: 22, fontWeight: 700, color: color || THEME.ink }}>{value}</div>
@@ -133,7 +133,7 @@ export default function FinancialTracking() {
             value={typeFilter}
             onChange={e => setTypeFilter(e.target.value)}
             style={{
-              borderRadius: 0,
+              borderRadius: 8,
               border: `1px solid ${THEME.border}`,
               background: '#ffffff',
               color: THEME.ink,
@@ -219,7 +219,7 @@ export default function FinancialTracking() {
                     <tr key={entry.id} className="gfh-portal-row" style={{ borderBottom: `1px solid ${THEME.border}` }}>
                       <td style={tdStyle}>{entry.entry_date}</td>
                       <td style={tdStyle}>
-                        <span style={{ backgroundColor: st.bg, color: st.color, border: `1px solid ${st.border}`, padding: '4px 11px', borderRadius: 0, fontSize: 11.5, fontWeight: 700, letterSpacing: '0.3px' }}>
+                        <span style={{ backgroundColor: st.bg, color: st.color, border: `1px solid ${st.border}`, padding: '4px 11px', borderRadius: 8, fontSize: 11.5, fontWeight: 700, letterSpacing: '0.3px' }}>
                           {(entry.type || '—').toString().toUpperCase()}
                         </span>
                       </td>
@@ -232,7 +232,7 @@ export default function FinancialTracking() {
                       <td style={tdStyle}>
                         <button
                           className="gfh-portal-btn"
-                          style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '6px 12px', fontSize: 12, fontWeight: 700, borderRadius: 0, backgroundColor: btnTint.delete.bg, color: btnTint.delete.color, border: btnTint.delete.border, cursor: 'pointer' }}
+                          style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '6px 12px', fontSize: 12, fontWeight: 700, borderRadius: 8, backgroundColor: btnTint.delete.bg, color: btnTint.delete.color, border: btnTint.delete.border, cursor: 'pointer' }}
                           onClick={() => handleDelete(entry.id)}
                         >
                           <Icon path={ICONS.trash} size={12} />
@@ -257,7 +257,7 @@ export default function FinancialTracking() {
               width: 480,
               padding: 30,
               background: '#ffffff',
-              borderRadius: 0,
+              borderRadius: 8,
               border: `1px solid ${THEME.border}`,
               boxShadow: '0 20px 50px rgba(15,61,58,0.3)',
             }}
@@ -311,7 +311,7 @@ export default function FinancialTracking() {
                   type="button"
                   className="gfh-portal-btn"
                   onClick={() => setIsModalOpen(false)}
-                  style={{ borderRadius: 0, fontWeight: 700, fontSize: 13.5, padding: '10px 18px', backgroundColor: btnTint.cancel.bg, color: btnTint.cancel.color, border: btnTint.cancel.border, cursor: 'pointer' }}
+                  style={{ borderRadius: 8, fontWeight: 700, fontSize: 13.5, padding: '10px 18px', backgroundColor: btnTint.cancel.bg, color: btnTint.cancel.color, border: btnTint.cancel.border, cursor: 'pointer' }}
                 >
                   Cancel
                 </button>

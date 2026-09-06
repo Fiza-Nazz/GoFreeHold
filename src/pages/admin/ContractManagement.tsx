@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import React, { useEffect, useState, useMemo } from 'react'
+import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import ReactDOM from 'react-dom/client'
 import api from '../../api/axios'
 import { formatDate } from '../../utils/formatDate'
@@ -21,37 +21,39 @@ interface Contract {
   notes?: string
   on_case?: boolean
   last_renewed_at?: string | null
-  unit?: { id: number; number: string; property?: { name: string } }
+  unit?: { id: number; number: string; property?: { id: number; name: string } }
   tenant?: { id: number; name: string; email: string }
   owner?: { id: number; name: string }
 }
 
-interface Unit { id: number; number: string; property?: { name: string } }
+interface Unit { id: number; number: string; property?: { id: number; name: string } }
 interface Tenant { id: number; name: string; email: string }
 interface Owner { id: number; name: string }
 
-/** Status badge styles — semantic color coding for contract lifecycle. */
-const STATUS_BADGE: Record<string, { bg: string; color: string; border: string }> = {
-  active:  { bg: '#f0fdf4', color: '#065f46', border: '#bbf7d0' },
-  vacated: { bg: '#fffbeb', color: '#b45309', border: '#fde68a' },
-  settled: { bg: '#f0f9ff', color: '#075985', border: '#bae6fd' },
-  expired: { bg: '#fef2f2', color: '#991b1b', border: '#fecaca' },
-}
-
-const icons = {
-  plus: 'M12 5v14M5 12h14',
-}
-
 export default function ContractManagement() {
+  const navigate = useNavigate()
   const [contracts, setContracts] = useState<Contract[]>([])
   const [units, setUnits] = useState<Unit[]>([])
   const [tenants, setTenants] = useState<Tenant[]>([])
   const [owners, setOwners] = useState<Owner[]>([])
+  const [properties, setProperties] = useState<{ id: number; name: string }[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [pdfLoading, setPdfLoading] = useState<number | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [renewModal, setRenewModal] = useState<Contract | null>(null)
   const [vacateContract, setVacateContract] = useState<Contract | null>(null)
+
+  // Filters
+  const [selectedPropertyId, setSelectedPropertyId] = useState<string>('')
+  const [selectedUnitId, setSelectedUnitId] = useState<string>('')
+  const [statusFilter, setStatusFilter] = useState<string>('')
+  const [startDateFilter, setStartDateFilter] = useState<string>('')
+  const [searchParams, setSearchParams] = useSearchParams()
+  const searchQuery = (searchParams.get('q') || '').trim()
+
+  // Pagination (default 5 items per page as requested)
+  const [currentPage, setCurrentPage] = useState<number>(1)
+  const [pageSize, setPageSize] = useState<number>(5)
 
   const [formData, setFormData] = useState({ 
     unit_id: '', tenant_id: '', owner_id: '', start_date: '', end_date: '', 
@@ -68,16 +70,18 @@ export default function ContractManagement() {
   const fetchAll = async () => {
     setIsLoading(true)
     try {
-      const [cRes, uRes, oRes, tRes] = await Promise.all([
+      const [cRes, uRes, oRes, tRes, pRes] = await Promise.all([
         api.get('/admin/contracts'),
         api.get('/admin/units'),
         api.get('/admin/properties/owners'),
         api.get('/admin/tenants'),
+        api.get('/admin/properties'),
       ])
       setContracts(cRes.data?.data?.contracts || [])
       setUnits(uRes.data?.data?.units || [])
       setOwners(oRes.data?.data?.owners || [])
       setTenants(tRes.data?.data?.tenants || [])
+      setProperties(pRes.data?.data?.properties || [])
     } catch (err) { console.error(err) }
     finally { setIsLoading(false) }
   }
@@ -179,7 +183,7 @@ export default function ContractManagement() {
       background-color: #ffffff !important;
       color: #0f172a !important;
       border: 1px solid #94a3b8 !important;
-      border-radius: 0 !important;
+      border-radius: 8px !important;
       width: 100%;
       padding: 10px 12px;
       font-size: 13.5px;
@@ -197,7 +201,7 @@ export default function ContractManagement() {
   `
 
   const inputInline: React.CSSProperties = {
-    borderRadius: 0,
+    borderRadius: 8,
     background: '#ffffff',
     color: '#0f172a',
     border: '1px solid #94a3b8',
@@ -218,316 +222,886 @@ export default function ContractManagement() {
     display: 'block',
   }
 
+  // Filtered contracts
+  const filteredContracts = useMemo(() => {
+    const q = searchQuery.toLowerCase()
+    return contracts.filter(c => {
+      if (q) {
+        const refStr = `gfh-${String(c.id).padStart(5, '0')}`.toLowerCase()
+        const unitNum = (c.unit?.number || '').toLowerCase()
+        const propName = (c.unit?.property?.name || '').toLowerCase()
+        const tenantName = (c.tenant?.name || '').toLowerCase()
+        const tenantEmail = (c.tenant?.email || '').toLowerCase()
+        const ownerName = (c.owner?.name || '').toLowerCase()
+        const statusStr = (c.status || '').toLowerCase()
+        const rentStr = String(c.rent_amount || '')
+        const match = refStr.includes(q) ||
+          unitNum.includes(q) ||
+          propName.includes(q) ||
+          tenantName.includes(q) ||
+          tenantEmail.includes(q) ||
+          ownerName.includes(q) ||
+          statusStr.includes(q) ||
+          rentStr.includes(q)
+        if (!match) return false
+      }
+      if (selectedPropertyId && String(c.unit?.property?.id || '') !== String(selectedPropertyId)) {
+        return false
+      }
+      if (selectedUnitId && String(c.unit_id) !== String(selectedUnitId)) {
+        return false
+      }
+      if (statusFilter && c.status?.toLowerCase() !== statusFilter.toLowerCase()) {
+        return false
+      }
+      if (startDateFilter && c.start_date < startDateFilter) {
+        return false
+      }
+      return true
+    })
+  }, [contracts, searchQuery, selectedPropertyId, selectedUnitId, statusFilter, startDateFilter])
+
+  // Paginated contracts (5 per page default as requested)
+  const totalContracts = filteredContracts.length
+  const totalPages = Math.max(1, Math.ceil(totalContracts / pageSize))
+  const paginatedContracts = useMemo(() => {
+    const start = (currentPage - 1) * pageSize
+    return filteredContracts.slice(start, start + pageSize)
+  }, [filteredContracts, currentPage, pageSize])
+
+  const getStatusBadge = (status: string) => {
+    const s = (status || '').toLowerCase()
+    if (s === 'active') {
+      return {
+        bg: '#ECFDF8',
+        color: '#0F8A67',
+        border: '#A7F3DC',
+        dot: '#10B981',
+        label: 'Active'
+      }
+    }
+    if (s === 'vacated') {
+      return {
+        bg: '#FFFBEB',
+        color: '#D97706',
+        border: '#FDE68A',
+        dot: '#F59E0B',
+        label: 'Vacated'
+      }
+    }
+    if (s === 'settled') {
+      return {
+        bg: '#EFF6FF',
+        color: '#2563EB',
+        border: '#BFDBFE',
+        dot: '#3B82F6',
+        label: 'Settled'
+      }
+    }
+    return {
+      bg: '#FEF2F2',
+      color: '#DC2626',
+      border: '#FECACA',
+      dot: '#EF4444',
+      label: status ? status.charAt(0).toUpperCase() + status.slice(1) : 'Expired'
+    }
+  }
+
   return (
-    <div className="gfh-portal-page" style={{ fontFamily: "'Poppins', system-ui, sans-serif" }}>
+    <div className="gfh-portal-page" style={{ fontFamily: "'Poppins', system-ui, sans-serif", padding: '20px 24px' }}>
       <style>{portalPageCss}</style>
+      <style>{`
+        .gfh-contract-filter {
+          font-family: 'Poppins', system-ui, sans-serif;
+          font-size: 13.5px;
+          border: 1px solid #E2E8F0;
+          border-radius: 10px;
+          padding: 8px 14px;
+          background: #FFFFFF;
+          color: #334155;
+          font-weight: 500;
+          cursor: pointer;
+          outline: none;
+          transition: border-color 0.15s ease, box-shadow 0.15s ease;
+        }
+        .gfh-contract-filter:focus {
+          border-color: #0F8A67;
+          box-shadow: 0 0 0 3px rgba(15, 138, 103, 0.12);
+        }
+        .gfh-contract-row {
+          transition: background-color 0.15s ease;
+        }
+        .gfh-contract-row:hover {
+          background-color: #F8FAFC;
+        }
+        .gfh-page-btn {
+          min-width: 34px;
+          height: 34px;
+          border-radius: 8px;
+          border: 1px solid #E2E8F0;
+          background: #FFFFFF;
+          color: #334155;
+          font-size: 13px;
+          font-weight: 600;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          transition: all 0.15s ease;
+        }
+        .gfh-page-btn:hover:not(:disabled) {
+          border-color: #0F8A67;
+          color: #0F8A67;
+        }
+        .gfh-page-btn.active {
+          background: #0F8A67 !important;
+          border-color: #0F8A67 !important;
+          color: #FFFFFF !important;
+        }
+        .gfh-page-btn:disabled {
+          opacity: 0.4;
+          cursor: not-allowed;
+        }
+        .gfh-action-pill {
+          display: inline-flex;
+          align-items: center;
+          gap: 5px;
+          padding: 6px 12px;
+          border-radius: 8px;
+          font-size: 12px;
+          font-weight: 700;
+          cursor: pointer;
+          transition: all 0.15s ease;
+          text-decoration: none;
+        }
+      `}</style>
 
-      <div className="fade-in" style={heroStyle}>
-        <CornerBrackets />
-        <div>
-          <h1 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 30, fontWeight: 700, color: THEME.ink, margin: 0 }}>
-            Contract Management
-          </h1>
-          <p style={{ fontSize: 14, color: THEME.textMuted, marginTop: 8, marginBottom: 0 }}>
-            Full contract lifecycle: create, renew, vacate, settle
-          </p>
+      {/* Main Single Card Container matching media_1788523948275.png */}
+      <div style={{
+        background: '#FFFFFF',
+        borderRadius: 16,
+        border: '1px solid #E2E8F0',
+        padding: '24px 28px',
+        boxShadow: '0 1px 3px rgba(0, 0, 0, 0.03)',
+      }}>
+        {/* Top Header Row with Title, Subtitle, and + New Contract Button */}
+        <div style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          flexWrap: 'wrap',
+          gap: 16,
+          marginBottom: 20,
+        }}>
+          <div>
+            <h2 style={{ fontSize: 22, fontWeight: 800, color: '#0F172A', margin: 0, letterSpacing: '-0.01em' }}>
+              Contract Management
+            </h2>
+            <p style={{ fontSize: 13.5, color: '#64748B', margin: '4px 0 0', fontWeight: 500 }}>
+              Full contract lifecycle: create, renew, vacate, settle
+            </p>
+          </div>
+
+          {/* + New Contract Button matching media_1788524086753.png */}
+          <button
+            onClick={() => setIsModalOpen(true)}
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 8,
+              background: '#0E5E48',
+              color: '#FFFFFF',
+              border: 'none',
+              borderRadius: 10,
+              padding: '10px 20px',
+              fontSize: 13.5,
+              fontWeight: 700,
+              cursor: 'pointer',
+              boxShadow: '0 1px 3px rgba(14, 94, 72, 0.25)',
+              transition: 'background 0.15s ease, transform 0.15s ease',
+              fontFamily: "'Poppins', sans-serif",
+            }}
+            onMouseEnter={e => {
+              e.currentTarget.style.background = '#094535'
+              e.currentTarget.style.transform = 'translateY(-1px)'
+            }}
+            onMouseLeave={e => {
+              e.currentTarget.style.background = '#0E5E48'
+              e.currentTarget.style.transform = 'translateY(0)'
+            }}
+          >
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="12" y1="5" x2="12" y2="19" />
+              <line x1="5" y1="12" x2="19" y2="12" />
+            </svg>
+            <span>New Contract</span>
+          </button>
         </div>
-        <button className="gfh-portal-btn" onClick={() => setIsModalOpen(true)} style={ghostBtnStyle}>
-          <Icon path={icons.plus} size={16} />
-          New Contract
-        </button>
-      </div>
 
-      <div className="fade-in" style={{ ...panelStyle, minHeight: 320 }}>
-        <CornerBrackets />
+        {/* Filter Row matching screenshot */}
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          gap: 12,
+          flexWrap: 'wrap',
+          marginBottom: 22,
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
+            {/* Properties Dropdown */}
+            <select
+              value={selectedPropertyId}
+              onChange={e => { setSelectedPropertyId(e.target.value); setCurrentPage(1); }}
+              className="gfh-contract-filter"
+              style={{ minWidth: 160 }}
+            >
+              <option value="">All Properties</option>
+              {properties.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
+            </select>
+
+            {/* Units Dropdown */}
+            <select
+              value={selectedUnitId}
+              onChange={e => { setSelectedUnitId(e.target.value); setCurrentPage(1); }}
+              className="gfh-contract-filter"
+              style={{ minWidth: 140 }}
+            >
+              <option value="">All Units</option>
+              {units.map(u => <option key={u.id} value={u.id}>{u.number}</option>)}
+            </select>
+
+            {/* Status Dropdown */}
+            <select
+              value={statusFilter}
+              onChange={e => { setStatusFilter(e.target.value); setCurrentPage(1); }}
+              className="gfh-contract-filter"
+              style={{ minWidth: 140 }}
+            >
+              <option value="">All Statuses</option>
+              <option value="active">Active</option>
+              <option value="vacated">Vacated</option>
+              <option value="settled">Settled</option>
+              <option value="expired">Expired</option>
+            </select>
+
+            {/* Date Filter */}
+            <div style={{ position: 'relative', display: 'inline-flex', alignItems: 'center' }}>
+              <input
+                type="date"
+                value={startDateFilter}
+                onChange={e => { setStartDateFilter(e.target.value); setCurrentPage(1); }}
+                className="gfh-contract-filter"
+                style={{ padding: '8px 36px 8px 12px', fontSize: 13, minWidth: 170 }}
+                title="Select Date Range"
+              />
+              <svg
+                style={{ position: 'absolute', right: 12, pointerEvents: 'none', color: '#64748B' }}
+                width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+              >
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                <line x1="16" y1="2" x2="16" y2="6" />
+                <line x1="8" y1="2" x2="8" y2="6" />
+                <line x1="3" y1="10" x2="21" y2="10" />
+              </svg>
+            </div>
+
+            {(selectedPropertyId || selectedUnitId || statusFilter || startDateFilter || searchQuery) && (
+              <button
+                onClick={() => {
+                  setSelectedPropertyId('')
+                  setSelectedUnitId('')
+                  setStatusFilter('')
+                  setStartDateFilter('')
+                  setSearchParams({})
+                  setCurrentPage(1)
+                }}
+                style={{
+                  background: 'transparent',
+                  border: 'none',
+                  color: '#0F8A67',
+                  fontSize: 12.5,
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  padding: '4px 8px',
+                }}
+              >
+                Reset Filters
+              </button>
+            )}
+          </div>
+
+          {/* Right side: Filters button matching screenshot */}
+          <button
+            onClick={() => {
+              setSelectedPropertyId('')
+              setSelectedUnitId('')
+              setStatusFilter('')
+              setStartDateFilter('')
+              setSearchParams({})
+              setCurrentPage(1)
+            }}
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 8,
+              padding: '8px 16px',
+              borderRadius: 8,
+              background: '#FFFFFF',
+              border: '1px solid #E2E8F0',
+              color: '#334155',
+              fontSize: 13,
+              fontWeight: 600,
+              cursor: 'pointer',
+            }}
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="3" y1="6" x2="21" y2="6" />
+              <line x1="7" y1="12" x2="17" y2="12" />
+              <line x1="10" y1="18" x2="14" y2="18" />
+            </svg>
+            <span>Filters</span>
+          </button>
+        </div>
+
+        {/* Contracts Table */}
         {isLoading ? (
-          <div style={{ textAlign: 'center', padding: 32 }}><span className="spinner" /></div>
-        ) : contracts.length === 0 ? (
-          <div style={{ textAlign: 'center', padding: 32, color: THEME.textMuted, fontWeight: 600, fontSize: 13.5 }}>No contracts found.</div>
+          <div style={{ textAlign: 'center', padding: '60px 20px', color: '#64748B', fontWeight: 600 }}>
+            Loading contracts…
+          </div>
+        ) : filteredContracts.length === 0 ? (
+          <div style={{ textAlign: 'center', padding: '60px 20px', color: '#64748B', fontWeight: 600 }}>
+            No contracts found matching your filters.
+          </div>
         ) : (
           <div style={{ overflowX: 'auto' }}>
-            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
               <thead>
-                <tr style={{ borderBottom: `2px solid ${THEME.border}` }}>
-                  {['Ref #', 'Unit', 'Tenant', 'Owner', 'Duration', 'Rent (AED)', 'Status', 'Actions'].map(h => (
-                    <th key={h} style={thStyle}>{h}</th>
-                  ))}
+                <tr style={{ borderBottom: '1px solid #E2E8F0' }}>
+                  <th style={{ padding: '12px 14px', fontSize: 11.5, fontWeight: 700, color: '#64748B', textTransform: 'uppercase', letterSpacing: '0.5px' }}>REF #</th>
+                  <th style={{ padding: '12px 14px', fontSize: 11.5, fontWeight: 700, color: '#64748B', textTransform: 'uppercase', letterSpacing: '0.5px' }}>UNIT ⇅</th>
+                  <th style={{ padding: '12px 14px', fontSize: 11.5, fontWeight: 700, color: '#64748B', textTransform: 'uppercase', letterSpacing: '0.5px' }}>TENANT</th>
+                  <th style={{ padding: '12px 14px', fontSize: 11.5, fontWeight: 700, color: '#64748B', textTransform: 'uppercase', letterSpacing: '0.5px' }}>OWNER</th>
+                  <th style={{ padding: '12px 14px', fontSize: 11.5, fontWeight: 700, color: '#64748B', textTransform: 'uppercase', letterSpacing: '0.5px' }}>DURATION</th>
+                  <th style={{ padding: '12px 14px', fontSize: 11.5, fontWeight: 700, color: '#64748B', textTransform: 'uppercase', letterSpacing: '0.5px' }}>RENT (AED)</th>
+                  <th style={{ padding: '12px 14px', fontSize: 11.5, fontWeight: 700, color: '#64748B', textTransform: 'uppercase', letterSpacing: '0.5px' }}>STATUS</th>
+                  <th style={{ padding: '12px 14px', fontSize: 11.5, fontWeight: 700, color: '#64748B', textTransform: 'uppercase', letterSpacing: '0.5px' }}>ACTIONS</th>
                 </tr>
               </thead>
               <tbody>
-                {contracts.map(c => (
-                  <tr key={c.id} className="gfh-portal-row" style={{ borderBottom: `1px solid ${THEME.border}` }}>
-                    <td style={tdStyle}>
-                      <Link to={`/admin/contracts/${c.id}`} style={{ textDecoration: 'none' }}>
-                        <strong style={{ color: THEME.purple, fontSize: 13, textDecoration: 'underline' }}>
-                          GFH-{String(c.id).padStart(5,'0')}
-                        </strong>
-                      </Link>
-                    </td>
-                    <td style={tdStyle}>{c.unit?.number}<br /><span style={{ fontSize: 11, color: THEME.textMuted, fontWeight: 500 }}>{c.unit?.property?.name}</span></td>
-                    <td style={tdStyle}>{c.tenant?.name}</td>
-                    <td style={tdStyle}>{c.owner?.name}</td>
-                    <td style={{ ...tdStyle, fontSize: 11 }}>{formatDate(c.start_date)}<br />→ {formatDate(c.end_date)}</td>
-                    <td style={{ ...tdStyle, fontWeight: 700, color: THEME.violet }}>AED {Number(c.rent_amount).toLocaleString()}</td>
-                    <td style={tdStyle}>
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: 5, alignItems: 'flex-start' }}>
-                        <span style={{
-                          backgroundColor: (STATUS_BADGE[c.status] || { bg: '#f3f4f6' }).bg,
-                          color: (STATUS_BADGE[c.status] || { color: '#374151' }).color,
-                          border: `1px solid ${(STATUS_BADGE[c.status] || { border: '#d1d5db' }).border}`,
-                          padding: '3px 8px',
-                          borderRadius: 0,
-                          fontSize: 10.5,
-                          fontWeight: 800,
-                          letterSpacing: 0.3,
-                        }}>
-                          {(c.status || '—').toString().toUpperCase()}
-                        </span>
-                        {c.last_renewed_at && (
-                          <span style={{
-                            backgroundColor: '#eff6ff',
-                            color: '#1d4ed8',
-                            border: '1px solid #bfdbfe',
-                            padding: '2px 7px',
-                            fontSize: 10,
-                            fontWeight: 700,
-                            borderRadius: 0,
-                          }}>
-                            Renewed on {formatDate(c.last_renewed_at)}
+                {paginatedContracts.map(c => {
+                  const isActive = c.status?.toLowerCase() === 'active'
+                  return (
+                    <tr key={c.id} className="gfh-contract-row" style={{ borderBottom: '1px solid #F1F5F9' }}>
+                      {/* REF # Link */}
+                      <td style={{ padding: '16px 14px' }}>
+                        <Link to={`/admin/contracts/${c.id}`} style={{ textDecoration: 'none' }}>
+                          <span style={{ color: '#0F8A67', fontWeight: 700, fontSize: 13.5, textDecoration: 'underline' }}>
+                            GFH-{String(c.id).padStart(5, '0')}
                           </span>
-                        )}
-                        {c.on_case && (
-                          <span style={{
-                            backgroundColor: '#fee2e2',
-                            color: '#991b1b',
-                            border: '1px solid #fecaca',
-                            padding: '2px 7px',
-                            fontSize: 10,
-                            fontWeight: 800,
-                            letterSpacing: 0.3,
-                            borderRadius: 0,
-                          }}>
-                            LEGAL CASE ACTIVE
-                          </span>
-                        )}
-                      </div>
-                    </td>
-                    <td style={tdStyle}>
-                      <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', alignItems: 'center' }}>
-                        <Link
-                          to={`/admin/contracts/${c.id}`}
-                          className="gfh-portal-btn"
-                          style={{
-                            padding: '5px 10px', fontSize: 10.5, fontWeight: 700,
-                            borderRadius: 0, border: 'none',
-                            background: '#075985', color: '#fff', textDecoration: 'none',
-                            display: 'inline-flex', alignItems: 'center', gap: 4,
-                          }}
-                        >
-                          <Icon path={ICONS.eye} size={13} />
-                          Details
                         </Link>
-                        <button
-                          className="gfh-portal-btn"
-                          onClick={() => downloadPdf(c.id)}
-                          disabled={pdfLoading !== null}
-                          style={{
-                            padding: '5px 10px', fontSize: 10.5, fontWeight: 700,
-                            borderRadius: 0, border: 'none',
-                            background: pdfLoading === c.id ? '#0e7490' : '#0e7490',
-                            color: '#fff',
-                            cursor: pdfLoading !== null ? 'not-allowed' : 'pointer',
-                            opacity: pdfLoading !== null && pdfLoading !== c.id ? 0.5 : 1,
-                            display: 'inline-flex', alignItems: 'center', gap: 4, transition: 'all 0.2s',
-                          }}
-                        >
-                          {pdfLoading === c.id ? (
-                            <>
-                              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{ animation: 'spin 0.8s linear infinite' }}>
-                                <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
-                              </svg>
-                              Generating...
-                            </>
-                          ) : (
-                            <>
-                              <Icon path={ICONS.download} size={13} />
-                              PDF
-                            </>
-                          )}
-                        </button>
+                      </td>
 
-                        {c.status === 'active' && <>
+                      {/* UNIT */}
+                      <td style={{ padding: '16px 14px' }}>
+                        <div style={{ fontWeight: 800, fontSize: 14, color: '#0F172A' }}>
+                          {c.unit?.number || '—'}
+                        </div>
+                        {c.unit?.property?.name && (
+                          <div style={{ fontSize: 12, color: '#64748B', display: 'flex', alignItems: 'center', gap: 4, marginTop: 3 }}>
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#64748B" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+                              <circle cx="12" cy="10" r="3" />
+                            </svg>
+                            <span>{c.unit.property.name}</span>
+                          </div>
+                        )}
+                      </td>
+
+                      {/* TENANT */}
+                      <td style={{ padding: '16px 14px', fontWeight: 700, fontSize: 13.5, color: '#0F172A' }}>
+                        {c.tenant?.name || '—'}
+                      </td>
+
+                      {/* OWNER */}
+                      <td style={{ padding: '16px 14px', fontWeight: 600, fontSize: 13.5, color: '#334155' }}>
+                        {c.owner?.name || '—'}
+                      </td>
+
+                      {/* DURATION */}
+                      <td style={{ padding: '16px 14px' }}>
+                        <div style={{ fontSize: 12.5, color: '#334155', display: 'flex', alignItems: 'center', gap: 6, fontWeight: 500 }}>
+                          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#64748B" strokeWidth="2">
+                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                            <line x1="16" y1="2" x2="16" y2="6" />
+                            <line x1="8" y1="2" x2="8" y2="6" />
+                            <line x1="3" y1="10" x2="21" y2="10" />
+                          </svg>
+                          <span>{formatDate(c.start_date)}</span>
+                        </div>
+                        <div style={{ fontSize: 12, color: '#64748B', marginLeft: 19, marginTop: 2 }}>
+                          – {formatDate(c.end_date)}
+                        </div>
+                      </td>
+
+                      {/* RENT (AED) — PURPLE COLOR AS USER REQUESTED */}
+                      <td style={{ padding: '16px 14px' }}>
+                        <div style={{ fontSize: 11, color: '#64748B', fontWeight: 600 }}>AED</div>
+                        <div style={{ fontSize: 15, fontWeight: 800, color: '#6B21A8' }}>
+                          {Number(c.rent_amount).toLocaleString()}
+                        </div>
+                      </td>
+
+                      {/* STATUS (Clean rounded pill with dot) */}
+                      <td style={{ padding: '16px 14px' }}>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: 4, alignItems: 'flex-start' }}>
+                          <span style={{
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: 6,
+                            padding: '4px 12px',
+                            borderRadius: 999,
+                            background: isActive ? '#ECFDF5' : '#FFFBEB',
+                            color: isActive ? '#065F46' : '#D97706',
+                            border: isActive ? '1px solid #D1FAE5' : '1px solid #FEF3C7',
+                            fontSize: 12,
+                            fontWeight: 700,
+                          }}>
+                            <span style={{ width: 6, height: 6, borderRadius: '50%', background: isActive ? '#10B981' : '#F59E0B' }} />
+                            {isActive ? 'Active' : (c.status === 'vacated' ? 'Vacated' : c.status || 'Active')}
+                          </span>
+                          {c.last_renewed_at && (
+                            <span style={{ fontSize: 10.5, color: '#2563EB', fontWeight: 600 }}>
+                              Renewed {formatDate(c.last_renewed_at)}
+                            </span>
+                          )}
+                          {c.on_case && (
+                            <span style={{ fontSize: 10.5, color: '#DC2626', fontWeight: 700 }}>
+                              ● Legal Case Active
+                            </span>
+                          )}
+                        </div>
+                      </td>
+
+                      {/* ACTIONS (Matching reference image) */}
+                      <td style={{ padding: '14px 14px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6, width: 176 }}>
+                            {/* Details button */}
+                            <Link
+                              to={`/admin/contracts/${c.id}`}
+                              style={{
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                gap: 5,
+                                padding: '6px 10px',
+                                borderRadius: 8,
+                                border: '1px solid #CBD5E1',
+                                background: '#FFFFFF',
+                                color: '#1E293B',
+                                fontSize: 12,
+                                fontWeight: 600,
+                                textDecoration: 'none',
+                                boxShadow: '0 1px 2px rgba(0,0,0,0.03)',
+                              }}
+                            >
+                              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                <circle cx="12" cy="12" r="3" />
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                              </svg>
+                              <span>Details</span>
+                            </Link>
+
+                            {/* PDF button */}
+                            <button
+                              onClick={() => downloadPdf(c.id)}
+                              disabled={pdfLoading === c.id}
+                              style={{
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                gap: 5,
+                                padding: '6px 10px',
+                                borderRadius: 8,
+                                border: '1px solid #CBD5E1',
+                                background: '#FFFFFF',
+                                color: '#1E293B',
+                                fontSize: 12,
+                                fontWeight: 600,
+                                cursor: 'pointer',
+                                boxShadow: '0 1px 2px rgba(0,0,0,0.03)',
+                              }}
+                            >
+                              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                                <polyline points="7 10 12 15 17 10" />
+                                <line x1="12" y1="15" x2="12" y2="3" />
+                              </svg>
+                              <span>{pdfLoading === c.id ? '...' : 'PDF'}</span>
+                            </button>
+
+                            {/* Renew button */}
+                            {c.status?.toLowerCase() === 'active' ? (
+                              <button
+                                onClick={() => {
+                                  setRenewModal(c)
+                                  setRenewData({ new_end_date: '', new_rent_amount: String(c.rent_amount) })
+                                }}
+                                style={{
+                                  display: 'inline-flex',
+                                  alignItems: 'center',
+                                  justifyContent: 'center',
+                                  gap: 5,
+                                  padding: '6px 10px',
+                                  borderRadius: 8,
+                                  border: 'none',
+                                  background: '#065F46',
+                                  color: '#FFFFFF',
+                                  fontSize: 12,
+                                  fontWeight: 700,
+                                  cursor: 'pointer',
+                                }}
+                              >
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                                  <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l6.07-1.19" />
+                                </svg>
+                                <span>Renew</span>
+                              </button>
+                            ) : <div />}
+
+                            {/* Vacate button */}
+                            {c.status?.toLowerCase() === 'active' ? (
+                              <button
+                                onClick={() => setVacateContract(c)}
+                                style={{
+                                  display: 'inline-flex',
+                                  alignItems: 'center',
+                                  justifyContent: 'center',
+                                  gap: 5,
+                                  padding: '6px 10px',
+                                  borderRadius: 8,
+                                  border: '1px solid #FECACA',
+                                  background: '#FFFFFF',
+                                  color: '#DC2626',
+                                  fontSize: 12,
+                                  fontWeight: 700,
+                                  cursor: 'pointer',
+                                }}
+                              >
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                                  <line x1="18" y1="6" x2="6" y2="18" />
+                                  <line x1="6" y1="6" x2="18" y2="18" />
+                                </svg>
+                                <span>Vacate</span>
+                              </button>
+                            ) : <div />}
+                          </div>
+
+                          {/* 3-dot vertical menu button */}
                           <button
-                            className="gfh-portal-btn"
-                            onClick={() => { setRenewModal(c); setRenewData({ new_end_date: '', new_rent_amount: String(c.rent_amount) }) }}
-                            style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '5px 10px', fontSize: 10.5, fontWeight: 700, borderRadius: 0, border: 'none', background: '#065f46', color: '#fff', cursor: 'pointer' }}
+                            onClick={() => navigate(`/admin/contracts/${c.id}`)}
+                            title="More Options"
+                            style={{
+                              width: 30,
+                              height: 30,
+                              borderRadius: '50%',
+                              border: 'none',
+                              background: 'transparent',
+                              color: '#94A3B8',
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              cursor: 'pointer',
+                              flexShrink: 0,
+                            }}
                           >
-                            <Icon path={ICONS.refresh} size={13} />
-                            Renew
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
+                              <circle cx="12" cy="5" r="2" />
+                              <circle cx="12" cy="12" r="2" />
+                              <circle cx="12" cy="19" r="2" />
+                            </svg>
                           </button>
-                          <button
-                            className="gfh-portal-btn"
-                            onClick={() => setVacateContract(c)}
-                            style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '5px 10px', fontSize: 10.5, fontWeight: 700, borderRadius: 0, border: 'none', background: '#991b1b', color: '#fff', cursor: 'pointer' }}
-                          >
-                            <Icon path={ICONS.close} size={13} />
-                            Vacate
-                          </button>
-                        </>}
-                      </div>
-                    </td>
-                  </tr>
-                ))}
+                        </div>
+                      </td>
+                    </tr>
+                  )
+                })}
               </tbody>
             </table>
           </div>
         )}
+
+        {/* Pagination Row matching reference image */}
+        <div style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          flexWrap: 'wrap',
+          gap: 14,
+          marginTop: 22,
+          paddingTop: 16,
+          borderTop: '1px solid #F1F5F9',
+        }}>
+          {/* Showing X to Y of Z contracts */}
+          <div style={{ fontSize: 13, color: '#64748B', fontWeight: 500 }}>
+            Showing {totalContracts === 0 ? 0 : (currentPage - 1) * pageSize + 1} to {Math.min(currentPage * pageSize, totalContracts)} of {totalContracts} contracts
+          </div>
+
+          {/* Page Buttons & Page Size Selector */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            {/* Prev Button */}
+            <button
+              onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+              disabled={currentPage === 1}
+              className="gfh-page-btn"
+              title="Previous Page"
+            >
+              &lt;
+            </button>
+
+            {/* Numeric Page Buttons */}
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map(p => (
+              <button
+                key={p}
+                onClick={() => setCurrentPage(p)}
+                className={`gfh-page-btn ${currentPage === p ? 'active' : ''}`}
+                style={{
+                  background: currentPage === p ? '#065F46' : '#FFFFFF',
+                  borderColor: currentPage === p ? '#065F46' : '#E2E8F0',
+                  color: currentPage === p ? '#FFFFFF' : '#334155',
+                }}
+              >
+                {p}
+              </button>
+            ))}
+
+            {/* Next Button */}
+            <button
+              onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+              disabled={currentPage === totalPages}
+              className="gfh-page-btn"
+              title="Next Page"
+            >
+              &gt;
+            </button>
+
+            {/* Page Size Select */}
+            <select
+              value={pageSize}
+              onChange={e => { setPageSize(Number(e.target.value)); setCurrentPage(1); }}
+              className="gfh-contract-filter"
+              style={{ padding: '6px 10px', fontSize: 12.5 }}
+            >
+              <option value={5}>5 / page</option>
+              <option value={10}>10 / page</option>
+              <option value={20}>20 / page</option>
+            </select>
+          </div>
+        </div>
       </div>
 
-      {/* Create Modal */}
+      {/* Modern Rounded Modal: Create New Contract */}
       {isModalOpen && (
-        <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(15,61,58,0.55)', backdropFilter: 'blur(2px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
-          <style>{formCss}</style>
-          <div style={{ position: 'relative', width: 540, padding: 0, maxHeight: '90vh', overflowY: 'auto', background: '#ffffff', borderRadius: 0, border: `1px solid ${THEME.border}`, boxShadow: '0 20px 50px rgba(15,61,58,0.35)' }}>
-            <CornerBrackets />
-            <div style={{ background: `linear-gradient(135deg, ${THEME.purpleDark}, ${THEME.purpleMid})`, padding: '18px 24px' }}>
-              <h2 style={{ fontFamily: "'Playfair Display', Georgia, serif", color: '#fff', margin: 0, fontSize: 19, fontWeight: 700 }}>New Contract</h2>
-              <p style={{ color: THEME.textMuted, fontSize: 12.5, margin: '4px 0 0' }}>Fill in the details to create a lease agreement</p>
+        <div style={{
+          position: 'fixed', inset: 0,
+          backgroundColor: 'rgba(15, 23, 42, 0.45)',
+          backdropFilter: 'blur(3px)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          zIndex: 1000,
+          padding: 16,
+        }}>
+          <div style={{
+            width: '100%',
+            maxWidth: 580,
+            padding: '28px 32px',
+            maxHeight: '90vh',
+            overflowY: 'auto',
+            backgroundColor: '#FFFFFF',
+            borderRadius: 16,
+            boxShadow: '0 20px 45px -10px rgba(15, 23, 42, 0.22)',
+            border: '1px solid #E2E8F0',
+          }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 18 }}>
+              <div>
+                <h2 style={{ fontSize: 20, fontWeight: 800, color: '#0F172A', margin: 0 }}>
+                  New Contract
+                </h2>
+                <p style={{ fontSize: 13, color: '#64748B', margin: '3px 0 0' }}>
+                  Fill in the details to create a lease agreement
+                </p>
+              </div>
+              <button
+                onClick={() => setIsModalOpen(false)}
+                style={{ background: 'transparent', border: 'none', color: '#64748B', cursor: 'pointer', fontSize: 18 }}
+              >
+                ✕
+              </button>
             </div>
 
-            <form onSubmit={handleCreate} className="gfh-form" style={{ display: 'flex', flexDirection: 'column', padding: '20px 24px 24px' }}>
-
-              <div className="gfh-section">
-                <p className="gfh-section-title">Property &amp; Ownership</p>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
-                  <div>
-                    <label className="gfh-label">Unit</label>
-                    <select className="gfh-input" value={formData.unit_id} onChange={e => setFormData({...formData, unit_id: e.target.value})} required>
-                      <option value="">Select Unit</option>
-                      {units.filter(u => (u as any).status === 'AVAILABLE' || (u as any).status === 'BOOKED').map(u => (
-                        <option key={u.id} value={u.id}>{u.number} — {u.property?.name}</option>
-                      ))}
-                    </select>
-                  </div>
-                  <div>
-                    <label className="gfh-label">Owner</label>
-                    <select className="gfh-input" value={formData.owner_id} onChange={e => setFormData({...formData, owner_id: e.target.value})} required>
-                      <option value="">Select Owner</option>
-                      {owners.map(o => <option key={o.id} value={o.id}>{o.name}</option>)}
-                    </select>
-                  </div>
-                </div>
-                <div style={{ marginTop: 12 }}>
-                  <label className="gfh-label">Tenant</label>
-                  <select className="gfh-input" value={formData.tenant_id} onChange={e => setFormData({...formData, tenant_id: e.target.value})} required>
-                    <option value="">Select tenant</option>
-                    {tenants.map(t => (
-                      <option key={t.id} value={t.id}>{t.name}{t.email ? ` (${t.email})` : ''}</option>
+            <form onSubmit={handleCreate} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+              {/* Unit & Owner */}
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+                <div>
+                  <label style={{ fontSize: 12, fontWeight: 700, color: '#334155', display: 'block', marginBottom: 5 }}>Unit</label>
+                  <select
+                    value={formData.unit_id}
+                    onChange={e => setFormData({ ...formData, unit_id: e.target.value })}
+                    required
+                    className="gfh-contract-filter"
+                    style={{ width: '100%' }}
+                  >
+                    <option value="">Select Unit</option>
+                    {units.map(u => (
+                      <option key={u.id} value={u.id}>{u.number} {u.property?.name ? `(${u.property.name})` : ''}</option>
                     ))}
+                  </select>
+                </div>
+                <div>
+                  <label style={{ fontSize: 12, fontWeight: 700, color: '#334155', display: 'block', marginBottom: 5 }}>Owner</label>
+                  <select
+                    value={formData.owner_id}
+                    onChange={e => setFormData({ ...formData, owner_id: e.target.value })}
+                    required
+                    className="gfh-contract-filter"
+                    style={{ width: '100%' }}
+                  >
+                    <option value="">Select Owner</option>
+                    {owners.map(o => <option key={o.id} value={o.id}>{o.name}</option>)}
                   </select>
                 </div>
               </div>
 
-              <div className="gfh-section">
-                <p className="gfh-section-title">Contract Duration</p>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
-                  <div>
-                    <label className="gfh-label">Start Date</label>
-                    <input type="date" className="gfh-input" value={formData.start_date} onChange={e => setFormData({...formData, start_date: e.target.value})} required />
-                  </div>
-                  <div>
-                    <label className="gfh-label">End Date</label>
-                    <input type="date" className="gfh-input" value={formData.end_date} onChange={e => setFormData({...formData, end_date: e.target.value})} required />
-                  </div>
+              {/* Tenant */}
+              <div>
+                <label style={{ fontSize: 12, fontWeight: 700, color: '#334155', display: 'block', marginBottom: 5 }}>Tenant</label>
+                <select
+                  value={formData.tenant_id}
+                  onChange={e => setFormData({ ...formData, tenant_id: e.target.value })}
+                  required
+                  className="gfh-contract-filter"
+                  style={{ width: '100%' }}
+                >
+                  <option value="">Select Tenant</option>
+                  {tenants.map(t => (
+                    <option key={t.id} value={t.id}>{t.name}{t.email ? ` (${t.email})` : ''}</option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Dates */}
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+                <div>
+                  <label style={{ fontSize: 12, fontWeight: 700, color: '#334155', display: 'block', marginBottom: 5 }}>Start Date</label>
+                  <input
+                    type="date"
+                    required
+                    value={formData.start_date}
+                    onChange={e => setFormData({ ...formData, start_date: e.target.value })}
+                    className="gfh-contract-filter"
+                    style={{ width: '100%' }}
+                  />
+                </div>
+                <div>
+                  <label style={{ fontSize: 12, fontWeight: 700, color: '#334155', display: 'block', marginBottom: 5 }}>End Date</label>
+                  <input
+                    type="date"
+                    required
+                    value={formData.end_date}
+                    onChange={e => setFormData({ ...formData, end_date: e.target.value })}
+                    className="gfh-contract-filter"
+                    style={{ width: '100%' }}
+                  />
                 </div>
               </div>
 
-              <div className="gfh-section">
-                <p className="gfh-section-title">Financial Terms</p>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 12, marginBottom: 12 }}>
-                  <div>
-                    <label className="gfh-label">Rent (AED)</label>
-                    <input type="number" className="gfh-input" value={formData.rent_amount} onChange={e => setFormData({...formData, rent_amount: e.target.value})} required />
-                  </div>
-                  <div>
-                    <label className="gfh-label">Security Deposit (AED)</label>
-                    <input type="number" className="gfh-input" value={formData.security_deposit} onChange={e => setFormData({...formData, security_deposit: e.target.value})} required />
-                  </div>
-                  <div>
-                    <label className="gfh-label">Type</label>
-                    <select className="gfh-input" value={formData.type} onChange={e => setFormData({...formData, type: e.target.value})}>
-                      <option value="residential">Residential</option>
-                      <option value="commercial">Commercial</option>
-                      <option value="industrial">Industrial</option>
-                    </select>
-                  </div>
+              {/* Rent & Deposit */}
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+                <div>
+                  <label style={{ fontSize: 12, fontWeight: 700, color: '#334155', display: 'block', marginBottom: 5 }}>Rent Amount (AED)</label>
+                  <input
+                    type="number"
+                    required
+                    placeholder="e.g. 95000"
+                    value={formData.rent_amount}
+                    onChange={e => setFormData({ ...formData, rent_amount: e.target.value })}
+                    className="gfh-contract-filter"
+                    style={{ width: '100%' }}
+                  />
                 </div>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
-                  <div>
-                    <label className="gfh-label">Mode of Payment</label>
-                    <select className="gfh-input" value={formData.mode_of_payment} onChange={e => setFormData({...formData, mode_of_payment: e.target.value})}>
-                      <option value="cash">Cash</option>
-                      <option value="cheque">Cheque</option>
-                      <option value="bank_transfer">Bank Transfer</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label className="gfh-label">Contract Value (AED)</label>
-                    <input type="number" className="gfh-input" value={formData.contract_value} onChange={e => setFormData({...formData, contract_value: e.target.value})} />
-                  </div>
+                <div>
+                  <label style={{ fontSize: 12, fontWeight: 700, color: '#334155', display: 'block', marginBottom: 5 }}>Security Deposit (AED)</label>
+                  <input
+                    type="number"
+                    required
+                    placeholder="e.g. 5000"
+                    value={formData.security_deposit}
+                    onChange={e => setFormData({ ...formData, security_deposit: e.target.value })}
+                    className="gfh-contract-filter"
+                    style={{ width: '100%' }}
+                  />
                 </div>
               </div>
 
-              <div className="gfh-section">
-                <p className="gfh-section-title">Discount Information</p>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: 12 }}>
-                  <div>
-                    <label className="gfh-label">Discount Type</label>
-                    <select className="gfh-input" value={formData.discount_type} onChange={e => setFormData({...formData, discount_type: e.target.value})}>
-                      <option value="">No Discount</option>
-                      <option value="Period Rent Discount">Period Rent Discount</option>
-                      <option value="Amount Discount">Amount Discount</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label className="gfh-label">Discount Details</label>
-                    <input type="text" className="gfh-input" placeholder="e.g. 1 month free" value={formData.discount_info} onChange={e => setFormData({...formData, discount_info: e.target.value})} />
-                  </div>
+              {/* Payment Mode & Type */}
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+                <div>
+                  <label style={{ fontSize: 12, fontWeight: 700, color: '#334155', display: 'block', marginBottom: 5 }}>Payment Mode</label>
+                  <select
+                    value={formData.mode_of_payment}
+                    onChange={e => setFormData({ ...formData, mode_of_payment: e.target.value })}
+                    className="gfh-contract-filter"
+                    style={{ width: '100%' }}
+                  >
+                    <option value="cash">Cash</option>
+                    <option value="cheque">Cheque</option>
+                    <option value="bank_transfer">Bank Transfer</option>
+                  </select>
+                </div>
+                <div>
+                  <label style={{ fontSize: 12, fontWeight: 700, color: '#334155', display: 'block', marginBottom: 5 }}>Contract Type</label>
+                  <select
+                    value={formData.type}
+                    onChange={e => setFormData({ ...formData, type: e.target.value })}
+                    className="gfh-contract-filter"
+                    style={{ width: '100%' }}
+                  >
+                    <option value="residential">Residential</option>
+                    <option value="commercial">Commercial</option>
+                    <option value="industrial">Industrial</option>
+                  </select>
                 </div>
               </div>
 
-              <div className="gfh-section">
-                <p className="gfh-section-title">Tenant Documents</p>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
-                  <div>
-                    <label className="gfh-label">Passport Image</label>
-                    <input type="file" className="gfh-input" accept="image/*,.pdf" onChange={e => setFormData({...formData, passport_image: e.target.files?.[0] || null})} />
-                  </div>
-                  <div>
-                    <label className="gfh-label">Visa Page</label>
-                    <input type="file" className="gfh-input" accept="image/*,.pdf" onChange={e => setFormData({...formData, visa_page: e.target.files?.[0] || null})} />
-                  </div>
-                  <div>
-                    <label className="gfh-label">ID Front</label>
-                    <input type="file" className="gfh-input" accept="image/*,.pdf" onChange={e => setFormData({...formData, tenant_id_image: e.target.files?.[0] || null})} />
-                  </div>
-                  <div>
-                    <label className="gfh-label">ID Back</label>
-                    <input type="file" className="gfh-input" accept="image/*,.pdf" onChange={e => setFormData({...formData, tenant_id_back_image: e.target.files?.[0] || null})} />
-                  </div>
-                </div>
-              </div>
-
-              <div className="gfh-section" style={{ marginBottom: 18 }}>
-                <p className="gfh-section-title">Additional Notes</p>
-                <textarea className="gfh-input" style={{ resize: 'vertical' }} rows={2} placeholder="Any special terms or remarks for this contract..." value={formData.notes} onChange={e => setFormData({...formData, notes: e.target.value})} />
-              </div>
-
-              <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
-                <button type="button" className="gfh-portal-btn" onClick={() => setIsModalOpen(false)} style={{ padding: '9px 17px', border: `1px solid ${THEME.border}`, background: '#fff', color: THEME.textMuted, cursor: 'pointer', fontWeight: 700, fontSize: 12.5, borderRadius: 0 }}>
+              {/* Action buttons */}
+              <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 12 }}>
+                <button
+                  type="button"
+                  onClick={() => setIsModalOpen(false)}
+                  style={{
+                    padding: '9px 18px',
+                    borderRadius: 8,
+                    border: '1px solid #E2E8F0',
+                    backgroundColor: '#F8FAFC',
+                    color: '#475569',
+                    fontWeight: 600,
+                    cursor: 'pointer',
+                  }}
+                >
                   Cancel
                 </button>
-                <button type="submit" className="gfh-portal-btn" style={{ ...ghostBtnStyle, padding: '9px 19px', fontSize: 12.5 }}>
+                <button
+                  type="submit"
+                  style={{
+                    padding: '9px 20px',
+                    borderRadius: 8,
+                    border: 'none',
+                    background: '#0E5E48',
+                    color: '#FFFFFF',
+                    fontWeight: 700,
+                    cursor: 'pointer',
+                    boxShadow: '0 1px 3px rgba(14, 94, 72, 0.25)',
+                  }}
+                >
                   Create Contract
                 </button>
               </div>
@@ -536,35 +1110,87 @@ export default function ContractManagement() {
         </div>
       )}
 
-      {/* Renew Modal */}
+      {/* Modern Rounded Modal: Renew Contract */}
       {renewModal && (
-        <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(15,23,42,0.6)', backdropFilter: 'blur(2px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
-          <div style={{ position: 'relative', width: 400, padding: 24, background: '#ffffff', borderRadius: 0, border: `1px solid ${THEME.border}`, boxShadow: '0 20px 50px rgba(15,23,42,0.3)' }}>
-            <CornerBrackets />
-            <h2 style={{ fontFamily: "'Playfair Display', Georgia, serif", color: '#0f172a', fontSize: 18, fontWeight: 800, textTransform: 'uppercase', marginBottom: 5 }}>Renew Contract</h2>
-            <p style={{ color: '#334155', marginBottom: 16, fontSize: 13, fontWeight: 700 }}>GFH-{String(renewModal.id).padStart(5,'0')}</p>
-            <form onSubmit={handleRenew} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+        <div style={{
+          position: 'fixed', inset: 0,
+          backgroundColor: 'rgba(15, 23, 42, 0.45)',
+          backdropFilter: 'blur(3px)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          zIndex: 1000,
+          padding: 16,
+        }}>
+          <div style={{
+            width: '100%',
+            maxWidth: 420,
+            padding: '24px 28px',
+            backgroundColor: '#FFFFFF',
+            borderRadius: 16,
+            boxShadow: '0 20px 45px -10px rgba(15, 23, 42, 0.22)',
+            border: '1px solid #E2E8F0',
+          }}>
+            <h2 style={{ fontSize: 18, fontWeight: 800, color: '#0F172A', margin: 0 }}>
+              Renew Contract
+            </h2>
+            <p style={{ fontSize: 13, color: '#0F8A67', fontWeight: 700, margin: '4px 0 16px' }}>
+              GFH-{String(renewModal.id).padStart(5, '0')}
+            </p>
+
+            <form onSubmit={handleRenew} style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
               <div>
-                <label style={labelInline}>New End Date (must be after {formatDate(renewModal.end_date)})</label>
-                <input type="date" style={inputInline} value={renewData.new_end_date} onChange={e => setRenewData({...renewData, new_end_date: e.target.value})} required />
+                <label style={{ fontSize: 12, fontWeight: 700, color: '#334155', display: 'block', marginBottom: 5 }}>
+                  New End Date (after {formatDate(renewModal.end_date)})
+                </label>
+                <input
+                  type="date"
+                  required
+                  value={renewData.new_end_date}
+                  onChange={e => setRenewData({ ...renewData, new_end_date: e.target.value })}
+                  className="gfh-contract-filter"
+                  style={{ width: '100%' }}
+                />
               </div>
+
               <div>
-                <label style={labelInline}>New Rent Amount (AED)</label>
-                <input type="number" style={inputInline} value={renewData.new_rent_amount} onChange={e => setRenewData({...renewData, new_rent_amount: e.target.value})} />
+                <label style={{ fontSize: 12, fontWeight: 700, color: '#334155', display: 'block', marginBottom: 5 }}>
+                  New Rent Amount (AED)
+                </label>
+                <input
+                  type="number"
+                  value={renewData.new_rent_amount}
+                  onChange={e => setRenewData({ ...renewData, new_rent_amount: e.target.value })}
+                  className="gfh-contract-filter"
+                  style={{ width: '100%' }}
+                />
               </div>
-              <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 10 }}>
+
+              <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 8 }}>
                 <button
                   type="button"
-                  className="gfh-portal-btn"
                   onClick={() => setRenewModal(null)}
-                  style={{ padding: '9px 16px', borderRadius: 0, border: '1px solid #cbd5e1', background: '#f1f5f9', color: '#0f172a', cursor: 'pointer', fontWeight: 700, fontSize: 13 }}
+                  style={{
+                    padding: '8px 16px',
+                    borderRadius: 8,
+                    border: '1px solid #E2E8F0',
+                    background: '#F8FAFC',
+                    color: '#475569',
+                    fontWeight: 600,
+                    cursor: 'pointer',
+                  }}
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="gfh-portal-btn"
-                  style={{ padding: '9px 18px', borderRadius: 0, border: 'none', background: '#065f46', color: '#ffffff', cursor: 'pointer', fontWeight: 700, fontSize: 13 }}
+                  style={{
+                    padding: '8px 18px',
+                    borderRadius: 8,
+                    border: 'none',
+                    background: '#0E5E48',
+                    color: '#FFFFFF',
+                    fontWeight: 700,
+                    cursor: 'pointer',
+                  }}
                 >
                   Confirm Renewal
                 </button>
@@ -574,32 +1200,69 @@ export default function ContractManagement() {
         </div>
       )}
 
-      {/* Vacate Modal */}
+      {/* Modern Rounded Modal: Vacate Contract */}
       {vacateContract && (
-        <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(20,5,40,0.55)', backdropFilter: 'blur(2px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
-          <div style={{ position: 'relative', width: 380, padding: 24, background: '#fff', borderRadius: 0, border: `1px solid ${THEME.border}` }}>
-            <CornerBrackets color="#f59e0b" />
-            <h2 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 18, fontWeight: 700, marginBottom: 5, color: '#d97706' }}>Vacate Contract</h2>
-            <p style={{ color: THEME.textMuted, marginBottom: 16, fontSize: 12.5, fontWeight: 500 }}>Unit will be set back to AVAILABLE after vacating.</p>
+        <div style={{
+          position: 'fixed', inset: 0,
+          backgroundColor: 'rgba(15, 23, 42, 0.45)',
+          backdropFilter: 'blur(3px)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          zIndex: 1000,
+          padding: 16,
+        }}>
+          <div style={{
+            width: '100%',
+            maxWidth: 420,
+            padding: '24px 28px',
+            backgroundColor: '#FFFFFF',
+            borderRadius: 16,
+            boxShadow: '0 20px 45px -10px rgba(15, 23, 42, 0.22)',
+            border: '1px solid #E2E8F0',
+          }}>
+            <h2 style={{ fontSize: 18, fontWeight: 800, color: '#D97706', margin: 0 }}>
+              Vacate Contract
+            </h2>
+            <p style={{ fontSize: 13, color: '#64748B', margin: '4px 0 14px' }}>
+              Unit will be marked as AVAILABLE upon vacating.
+            </p>
+
             <textarea
               rows={3}
-              placeholder="Reason / notes for vacating..."
+              placeholder="Reason / remarks for vacating..."
               value={vacateNote}
               onChange={e => setVacateNote(e.target.value)}
-              style={{ ...inputInline, marginBottom: 14, resize: 'vertical' }}
+              className="gfh-contract-filter"
+              style={{ width: '100%', marginBottom: 14, resize: 'vertical' }}
             />
-            <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
+
+            <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end' }}>
               <button
-                className="gfh-portal-btn"
+                type="button"
                 onClick={() => setVacateContract(null)}
-                style={{ padding: '8px 15px', borderRadius: 0, border: `1px solid ${THEME.border}`, background: '#fff', color: THEME.textMuted, cursor: 'pointer', fontWeight: 700, fontSize: 12.5 }}
+                style={{
+                  padding: '8px 16px',
+                  borderRadius: 8,
+                  border: '1px solid #E2E8F0',
+                  background: '#F8FAFC',
+                  color: '#475569',
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                }}
               >
                 Cancel
               </button>
               <button
-                className="gfh-portal-btn"
+                type="button"
                 onClick={handleVacate}
-                style={{ padding: '8px 15px', borderRadius: 0, border: 'none', background: '#f59e0b', color: '#fff', cursor: 'pointer', fontWeight: 700, fontSize: 12.5 }}
+                style={{
+                  padding: '8px 18px',
+                  borderRadius: 8,
+                  border: 'none',
+                  background: '#D97706',
+                  color: '#FFFFFF',
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                }}
               >
                 Confirm Vacate
               </button>

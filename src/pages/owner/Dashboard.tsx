@@ -53,14 +53,54 @@ export default function OwnerDashboard() {
   ].filter(item => item.value > 0)
 
   const stats = [
-    { value: summary?.total_properties ?? 0, label: 'Total properties', sub: 'Portfolio', bg: '#1e1b4b', icon: icons.building },
-    { value: summary?.total_units ?? 0, label: 'Total units', sub: 'Units', bg: '#075985', icon: icons.door },
-    { value: summary?.occupied_units ?? 0, label: 'Occupied units', sub: 'Occupied', bg: '#065f46', icon: icons.check },
-    { value: summary?.vacant_units ?? 0, label: 'Vacant units', sub: 'Available', bg: '#991b1b', icon: icons.alert },
+    {
+      value: summary?.total_properties ?? 0,
+      label: 'Total properties',
+      sub: 'Portfolio',
+      icon: icons.building,
+      iconBg: '#ECFDF8',
+      iconColor: '#0E5E48',
+      badgeBg: '#ECFDF8',
+      badgeColor: '#065F46',
+      badgeBorder: '#A7F3DC',
+    },
+    {
+      value: summary?.total_units ?? 0,
+      label: 'Total units',
+      sub: 'Units',
+      icon: icons.door,
+      iconBg: '#F0F9FF',
+      iconColor: '#0284C7',
+      badgeBg: '#F0F9FF',
+      badgeColor: '#075985',
+      badgeBorder: '#BAE6FD',
+    },
+    {
+      value: summary?.occupied_units ?? 0,
+      label: 'Occupied units',
+      sub: 'Occupied',
+      icon: icons.check,
+      iconBg: '#F0FDF4',
+      iconColor: '#0F8A67',
+      badgeBg: '#F0FDF4',
+      badgeColor: '#065F46',
+      badgeBorder: '#BBF7D0',
+    },
+    {
+      value: summary?.vacant_units ?? 0,
+      label: 'Vacant units',
+      sub: 'Available',
+      icon: icons.alert,
+      iconBg: (summary?.vacant_units ?? 0) > 0 ? '#FEF2F2' : '#F0F9FF',
+      iconColor: (summary?.vacant_units ?? 0) > 0 ? '#DC2626' : '#0284C7',
+      badgeBg: (summary?.vacant_units ?? 0) > 0 ? '#FEF2F2' : '#F0F9FF',
+      badgeColor: (summary?.vacant_units ?? 0) > 0 ? '#991B1B' : '#075985',
+      badgeBorder: (summary?.vacant_units ?? 0) > 0 ? '#FECACA' : '#BAE6FD',
+    },
   ]
 
   return (
-    <div className="gfh-portal-page" style={{ fontFamily: "'Inter', 'Segoe UI', system-ui, sans-serif", background: THEME.pageBg }}>
+    <div className="gfh-portal-page" style={{ fontFamily: "'Poppins', system-ui, sans-serif", background: THEME.pageBg }}>
       <style>{portalPageCss}</style>
 
       <div className="fade-in" style={heroStyle}>
@@ -70,51 +110,67 @@ export default function OwnerDashboard() {
           <div style={{ fontSize: 12, color: '#9ca3af', marginTop: 4 }}>Live occupancy and portfolio counts</div>
         </div>
         <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
-          <Link to="/owner/properties" className="gfh-portal-btn" style={{ ...ghostBtnStyle, background: '#1e1b4b' }}>
+          <Link to="/owner/properties" className="gfh-portal-btn" style={{ ...ghostBtnStyle, background: '#0E5E48', borderRadius: 8 }}>
             View properties
           </Link>
-          <Link to="/owner/vacant-units" className="gfh-portal-btn" style={{ ...ghostBtnStyle, background: '#b45309' }}>
+          <Link to="/owner/vacant-units" className="gfh-portal-btn" style={{ ...ghostBtnStyle, background: '#0284C7', borderRadius: 8 }}>
             Vacant units
           </Link>
         </div>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 16, marginBottom: 22 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 16, marginBottom: 22 }}>
         {stats.map((card, i) => (
           <div
             key={card.label}
             className="gfh-portal-stat"
             style={{
-              background: card.bg,
-              color: '#fff',
-              borderRadius: 0,
-              padding: '20px 18px',
-              minHeight: 118,
+              background: '#FFFFFF',
+              borderRadius: 14,
+              padding: '20px 22px',
+              border: '1px solid #E2E8F0',
+              boxShadow: '0 1px 3px rgba(16,24,40,0.04)',
               display: 'flex',
               flexDirection: 'column',
               justifyContent: 'space-between',
-              boxShadow: '0 8px 20px -10px rgba(15,23,42,0.45)',
+              minHeight: 124,
               animationDelay: `${i * 0.06}s`,
             }}
           >
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-              <div style={{ fontSize: 28, fontWeight: 800 }}>{card.value}</div>
-              <Icon path={card.icon} size={18} />
-            </div>
-            <div>
-              <div style={{ fontSize: 13.5, fontWeight: 700, marginTop: 8 }}>{card.label}</div>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
               <div style={{
-                display: 'inline-block',
-                marginTop: 8,
-                fontSize: 10.5,
+                width: 42,
+                height: 42,
+                borderRadius: 10,
+                background: card.iconBg,
+                color: card.iconColor,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                flexShrink: 0,
+              }}>
+                <Icon path={card.icon} size={20} />
+              </div>
+              <span style={{
+                fontSize: 11,
                 fontWeight: 700,
-                letterSpacing: '0.3px',
+                letterSpacing: '0.4px',
                 textTransform: 'uppercase',
-                background: 'rgba(255,255,255,0.18)',
-                padding: '3px 8px',
-                borderRadius: 0,
+                background: card.badgeBg,
+                color: card.badgeColor,
+                border: `1px solid ${card.badgeBorder}`,
+                padding: '3px 9px',
+                borderRadius: 999,
               }}>
                 {card.sub}
+              </span>
+            </div>
+            <div>
+              <div style={{ fontSize: 28, fontWeight: 800, color: '#0F172A', lineHeight: 1.15, letterSpacing: '-0.02em' }}>
+                {card.value}
+              </div>
+              <div style={{ fontSize: 13, fontWeight: 600, color: '#64748B', marginTop: 4 }}>
+                {card.label}
               </div>
             </div>
           </div>
@@ -168,7 +224,7 @@ export default function OwnerDashboard() {
                   padding: 16,
                   background: '#fff',
                   border: `1px solid ${THEME.border}`,
-                  borderRadius: 0,
+                  borderRadius: 12,
                   textDecoration: 'none',
                   color: 'inherit',
                 }}
@@ -177,7 +233,7 @@ export default function OwnerDashboard() {
                   <strong style={{ fontSize: 14, fontWeight: 700, color: THEME.ink }}>{item.title}</strong>
                   <p style={{ fontSize: 13, color: THEME.textMuted, fontWeight: 500, marginTop: 2, marginBottom: 0 }}>{item.desc}</p>
                 </div>
-                <span style={{ color: '#075985', fontWeight: 700 }}>→</span>
+                <span style={{ color: '#0E5E48', fontWeight: 700 }}>→</span>
               </Link>
             ))}
           </div>

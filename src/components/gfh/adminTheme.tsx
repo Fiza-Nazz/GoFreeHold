@@ -1,57 +1,57 @@
-/** Admin design tokens — Deep Midnight Purple Theme (matches user reference).
+/** Admin design tokens — Modern Forest/Emerald Green Theme with Rounded Corners Pattern.
  *  Source of truth for Admin + Tenant + Owner portal visual consistency.
  */
 import type { CSSProperties } from 'react'
 
-/** Shared sharp-corner radius used across Admin / Owner / Tenant. */
-export const RADIUS = 0
+/** Shared modern rounded radius used across Admin / Owner / Tenant. */
+export const RADIUS = 14
 
-// Exact Dark Purple palette from user's uploaded image
+// Forest Green / Emerald palette matching reference
 export const THEME = {
-  navy: '#240046',          // Deep Midnight Purple primary brand
-  navyDeep: '#18002E',      // Darkest Purple for sidebar & hero
-  navyMid: '#240046',       // Deep Purple
-  navyLight: '#3C096C',     // Accent Dark Purple
-  purpleDark: '#18002E',    // Darkest Midnight Purple
-  purple: '#240046',        // Primary Dark Purple
-  purpleMid: '#3C096C',     // Mid Dark Purple
-  violet: '#3C096C',        // Accent
-  violetLight: '#5A189A',   // Accent
+  navy: '#0F8A67',          // Forest Emerald primary brand
+  navyDeep: '#06382C',      // Dark Forest Green
+  navyMid: '#0E5E48',       // Forest Mid
+  navyLight: '#18A77A',     // Brand Emerald
+  purpleDark: '#06382C',    // Replaced with Dark Forest
+  purple: '#0E5E48',        // Replaced with Forest Mid
+  purpleMid: '#18A77A',     // Brand Emerald
+  violet: '#10B981',        // Emerald Accent
+  violetLight: '#34D3A5',   // Light Emerald Accent
   border: '#E2E8F0',
-  textMuted: '#475569',
+  textMuted: '#64748B',
   ink: '#0F172A',
   pageBg: '#F8F7FD',        // Clean subtle off-white canvas
 }
 
 export const ADMIN_COLORS = {
-  navy: '#240046',          // Primary Dark Purple
-  navyDeep: '#18002E',      // Darkest Midnight Purple
-  navyLight: '#3C096C',     // Accent Purple
-  purple: '#240046',
-  purpleDark: '#18002E',
-  purpleLight: '#F3E8FF',
-  purpleBorder: '#E9D5FF',
-  green: '#065f46',         // Positive / Active / Paid / Occupied
-  greenDeep: '#044e38',
-  greenLight: '#f0fdf4',
-  greenBorder: '#bbf7d0',
-  blue: '#075985',          // PDF / Download / Export / View
-  blueLight: '#f0f9ff',
-  blueBorder: '#bae6fd',
-  cyan: '#0e7490',          // Legal / Category / Neutral Action
-  cyanLight: '#ecfeff',
-  cyanBorder: '#a5f3fc',
-  amber: '#b45309',         // Pending / Booked / Attention Needed
-  amberDeep: '#92400e',
-  amberLight: '#fffbeb',
-  amberBorder: '#fde68a',
-  red: '#991b1b',           // Destructive / Overdue / Vacate / Delete
-  redDeep: '#7f1d1d',
-  redLight: '#fef2f2',
-  redBorder: '#fecaca',
-  gray: '#374151',
-  grayDeep: '#1f2937',
-  slate: '#1e293b',
+  navy: '#06382C',          // Primary Dark Forest Green
+  navyDeep: '#04281E',      // Darkest Forest Green
+  navyLight: '#0E5E48',     // Mid Forest
+  purple: '#0E5E48',
+  purpleDark: '#06382C',
+  purpleLight: '#ECFDF8',
+  purpleBorder: '#A7F3DC',
+  green: '#0F8A67',         // Positive / Active / Paid / Occupied
+  greenDeep: '#06382C',
+  greenLight: '#ECFDF8',
+  greenBorder: '#A7F3DC',
+  blue: '#0284C7',          // PDF / Download / Export / View
+  blueLight: '#F0F9FF',
+  blueBorder: '#BAE6FD',
+  cyan: '#0891B2',          // Legal / Category / Neutral Action
+  cyanLight: '#ECFEFF',
+  cyanBorder: '#A5F3FC',
+  amber: '#D97706',         // Pending / Booked / Attention Needed
+  amberDeep: '#B45309',
+  amberLight: '#FFFBEB',
+  amberBorder: '#FDE68A',
+  red: '#DC2626',           // Destructive / Overdue / Vacate / Delete
+  redDeep: '#991B1B',
+  redLight: '#FEF2F2',
+  redBorder: '#FECACA',
+  gray: '#475569',
+  grayDeep: '#1E293B',
+  slate: '#334155',
 }
 
 // Global SVG Icons dictionary for consistent action icons everywhere
@@ -83,17 +83,8 @@ export const Icon = ({ path, size = 15 }: { path: string; size?: number }) => (
   </svg>
 )
 
-export const CornerBrackets = ({ color = '#240046' }: { color?: string }) => {
-  const glow = `0 0 6px ${color}44`
-  return (
-    <>
-      <span style={{ position: 'absolute', top: -1, left: -1, width: 12, height: 12, borderTop: `2px solid ${color}`, borderLeft: `2px solid ${color}`, boxShadow: glow, zIndex: 2 }} />
-      <span style={{ position: 'absolute', top: -1, right: -1, width: 12, height: 12, borderTop: `2px solid ${color}`, borderRight: `2px solid ${color}`, boxShadow: glow, zIndex: 2 }} />
-      <span style={{ position: 'absolute', bottom: -1, left: -1, width: 12, height: 12, borderBottom: `2px solid ${color}`, borderLeft: `2px solid ${color}`, boxShadow: glow, zIndex: 2 }} />
-      <span style={{ position: 'absolute', bottom: -1, right: -1, width: 12, height: 12, borderBottom: `2px solid ${color}`, borderRight: `2px solid ${color}`, boxShadow: glow, zIndex: 2 }} />
-    </>
-  )
-}
+/** Returns null to eliminate sharp sci-fi brackets in favor of clean modern rounded cards */
+export const CornerBrackets = (_props?: { color?: string }) => null
 
 export const portalPageCss = `
   @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
@@ -105,48 +96,43 @@ export const portalPageCss = `
     font-weight: 700 !important;
   }
 
-  /* Sharp corners everywhere across Admin UI */
-  .gfh-portal-page button,
-  .gfh-portal-page input,
-  .gfh-portal-page select,
-  .gfh-portal-page textarea,
-  .gfh-portal-page a,
-  .gfh-portal-page table,
-  .gfh-portal-page th,
-  .gfh-portal-page td,
-  .gfh-portal-page div,
-  .gfh-portal-page .gfh-portal-stat,
-  .gfh-portal-page .gfh-portal-row,
-  .gfh-portal-page .gfh-portal-btn {
-    border-radius: 0px !important;
+  /* Modern rounded corners pattern across Admin UI */
+  .gfh-portal-page button { border-radius: 8px !important; }
+  .gfh-portal-page input, .gfh-portal-page select, .gfh-portal-page textarea { border-radius: 8px !important; }
+  .gfh-portal-page .gfh-portal-stat {
+    border-radius: 16px !important;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    box-shadow: 0 1px 3px rgba(16,24,40,0.05);
   }
-
-  .gfh-portal-stat { transition: transform 0.15s ease, box-shadow 0.15s ease; border-radius: 0px !important; }
-  .gfh-portal-stat:hover { transform: translateY(-2px); box-shadow: 0 8px 20px -6px rgba(36, 0, 70, 0.22); }
+  .gfh-portal-stat:hover { transform: translateY(-2px); box-shadow: 0 6px 18px -4px rgba(15, 23, 42, 0.12); }
   .gfh-portal-row { transition: background 0.15s ease; }
-  .gfh-portal-row:hover { background: #F3E8FF; }
-  .gfh-portal-btn { transition: background 0.15s ease, transform 0.15s ease; border-radius: 0px !important; text-transform: uppercase; font-weight: 700; letter-spacing: 0.4px; }
+  .gfh-portal-row:hover { background: #F0FDF4; }
+  .gfh-portal-btn {
+    transition: background 0.15s ease, transform 0.15s ease;
+    border-radius: 8px !important;
+    font-weight: 600;
+  }
   .gfh-portal-btn:hover { transform: translateY(-1px); }
-  .gfh-portal-link { color: #240046 !important; text-decoration: none; font-weight: 600; }
-  .gfh-portal-link:hover { color: #3C096C !important; }
+  .gfh-portal-link { color: #0F8A67 !important; text-decoration: none; font-weight: 600; }
+  .gfh-portal-link:hover { color: #06382C !important; }
 
-  /* Standardized Status Badges */
-  .status-badge-green  { background-color: #f0fdf4 !important; color: #065f46 !important; border: 1px solid #bbf7d0 !important; border-radius: 0px !important; font-weight: 800; text-transform: uppercase; font-size: 10px; padding: 3px 8px; }
-  .status-badge-blue   { background-color: #f0f9ff !important; color: #075985 !important; border: 1px solid #bae6fd !important; border-radius: 0px !important; font-weight: 800; text-transform: uppercase; font-size: 10px; padding: 3px 8px; }
-  .status-badge-amber  { background-color: #fffbeb !important; color: #b45309 !important; border: 1px solid #fde68a !important; border-radius: 0px !important; font-weight: 800; text-transform: uppercase; font-size: 10px; padding: 3px 8px; }
-  .status-badge-red    { background-color: #fef2f2 !important; color: #991b1b !important; border: 1px solid #fecaca !important; border-radius: 0px !important; font-weight: 800; text-transform: uppercase; font-size: 10px; padding: 3px 8px; }
-  .status-badge-purple { background-color: #f3e8ff !important; color: #240046 !important; border: 1px solid #e9d5ff !important; border-radius: 0px !important; font-weight: 800; text-transform: uppercase; font-size: 10px; padding: 3px 8px; }
-  .status-badge-cyan   { background-color: #ecfeff !important; color: #0e7490 !important; border: 1px solid #a5f3fc !important; border-radius: 0px !important; font-weight: 800; text-transform: uppercase; font-size: 10px; padding: 3px 8px; }
+  /* Standardized Rounded Pill Status Badges */
+  .status-badge-green  { background-color: #f0fdf4 !important; color: #065f46 !important; border: 1px solid #bbf7d0 !important; border-radius: 999px !important; font-weight: 700; text-transform: uppercase; font-size: 10.5px; padding: 3px 10px; }
+  .status-badge-blue   { background-color: #f0f9ff !important; color: #075985 !important; border: 1px solid #bae6fd !important; border-radius: 999px !important; font-weight: 700; text-transform: uppercase; font-size: 10.5px; padding: 3px 10px; }
+  .status-badge-amber  { background-color: #fffbeb !important; color: #b45309 !important; border: 1px solid #fde68a !important; border-radius: 999px !important; font-weight: 700; text-transform: uppercase; font-size: 10.5px; padding: 3px 10px; }
+  .status-badge-red    { background-color: #fef2f2 !important; color: #991b1b !important; border: 1px solid #fecaca !important; border-radius: 999px !important; font-weight: 700; text-transform: uppercase; font-size: 10.5px; padding: 3px 10px; }
+  .status-badge-purple { background-color: #ecfdf8 !important; color: #065f46 !important; border: 1px solid #a7f3dc !important; border-radius: 999px !important; font-weight: 700; text-transform: uppercase; font-size: 10.5px; padding: 3px 10px; }
+  .status-badge-cyan   { background-color: #ecfeff !important; color: #0e7490 !important; border: 1px solid #a5f3fc !important; border-radius: 999px !important; font-weight: 700; text-transform: uppercase; font-size: 10.5px; padding: 3px 10px; }
 `
 
 export const heroStyle: CSSProperties = {
   position: 'relative',
   background: '#FFFFFF',
-  borderRadius: 0,
+  borderRadius: 14,
   padding: '20px 24px',
   marginBottom: 20,
   border: `1px solid ${THEME.border}`,
-  boxShadow: 'none',
+  boxShadow: '0 1px 3px rgba(16,24,40,0.04)',
   display: 'flex',
   justifyContent: 'space-between',
   alignItems: 'center',
@@ -158,14 +144,15 @@ export const panelStyle: CSSProperties = {
   position: 'relative',
   background: '#FFFFFF',
   border: `1px solid ${THEME.border}`,
-  borderRadius: 0,
+  borderRadius: 16,
   padding: 22,
   minHeight: 240,
+  boxShadow: '0 1px 3px rgba(16,24,40,0.04)',
 }
 
 export const thStyle: CSSProperties = {
   padding: '12px 14px',
-  fontWeight: 800,
+  fontWeight: 700,
   textAlign: 'left',
   fontSize: 11,
   textTransform: 'uppercase',
@@ -186,15 +173,14 @@ export const ghostBtnStyle: CSSProperties = {
   display: 'inline-flex',
   alignItems: 'center',
   gap: 8,
-  borderRadius: 0,
-  fontSize: 12,
-  fontWeight: 800,
-  letterSpacing: '0.4px',
-  textTransform: 'uppercase',
-  padding: '10px 18px',
-  background: '#240046',
+  borderRadius: 8,
+  fontSize: 13,
+  fontWeight: 600,
+  padding: '9px 18px',
+  background: '#0F8A67',
   border: 'none',
   color: '#ffffff',
   cursor: 'pointer',
   textDecoration: 'none',
+  boxShadow: '0 1px 3px rgba(15, 138, 103, 0.2)',
 }

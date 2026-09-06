@@ -49,7 +49,7 @@ export default function TenantComplaintDetail() {
   }, [id])
 
   return (
-    <div className="gfh-portal-page" style={{ fontFamily: "'Inter', 'Segoe UI', system-ui, sans-serif", background: THEME.pageBg }}>
+    <div className="gfh-portal-page" style={{ fontFamily: "'Poppins', system-ui, sans-serif", background: THEME.pageBg }}>
       <style>{portalPageCss}</style>
 
       <div className="fade-in" style={heroStyle}>
@@ -58,7 +58,15 @@ export default function TenantComplaintDetail() {
           <div style={{ fontSize: 22, fontWeight: 800, color: THEME.ink, marginTop: 4 }}>Complaint #{id}</div>
           <div style={{ fontSize: 12, color: '#9ca3af', marginTop: 4 }}>Maintenance request details</div>
         </div>
-        <Link to="/tenant/complaints" className="gfh-portal-btn" style={{ ...ghostBtnStyle, background: '#075985' }}>
+        <Link
+          to="/tenant/complaints"
+          className="gfh-portal-btn"
+          style={{
+            ...ghostBtnStyle,
+            background: '#0E5E48',
+            borderRadius: 8,
+          }}
+        >
           ← Back to Complaints
         </Link>
       </div>
@@ -102,7 +110,7 @@ export default function TenantComplaintDetail() {
 
 function Detail({ label, value }: { label: string; value: string }) {
   return (
-    <div className="gfh-portal-stat" style={{ padding: 14, border: `1px solid ${THEME.border}`, borderRadius: 0, background: '#fff' }}>
+    <div className="gfh-portal-stat" style={{ padding: 14, border: `1px solid ${THEME.border}`, borderRadius: 12, background: '#fff' }}>
       <div style={{ fontSize: 11, color: THEME.textMuted, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.4px' }}>{label}</div>
       <div style={{ fontSize: 15, fontWeight: 700, color: THEME.ink, marginTop: 6 }}>{value}</div>
     </div>

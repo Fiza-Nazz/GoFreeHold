@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+﻿import { useEffect, useState } from 'react'
 import api from '../../api/axios'
 import { THEME, Icon, ICONS, CornerBrackets, portalPageCss, heroStyle, panelStyle, ghostBtnStyle } from '../../components/gfh/adminTheme'
 
@@ -46,7 +46,7 @@ const icons = {
 const inputStyle: React.CSSProperties = {
   background: '#ffffff',
   border: `1px solid ${THEME.border}`,
-  borderRadius: 0,
+  borderRadius: 8,
   color: THEME.ink,
   fontSize: 14,
   fontWeight: 500,
@@ -156,7 +156,7 @@ export default function ComplaintDashboard() {
                   position: 'relative',
                   padding: 20,
                   backgroundColor: '#fff',
-                  borderRadius: 0,
+                  borderRadius: 8,
                   border: `1px solid ${THEME.border}`,
                   display: 'flex',
                   justifyContent: 'space-between',
@@ -168,10 +168,10 @@ export default function ComplaintDashboard() {
                 <div style={{ flex: 1 }}>
                   <div style={{ display: 'flex', gap: 10, alignItems: 'center', marginBottom: 9, flexWrap: 'wrap' }}>
                     <strong style={{ fontSize: 15.5, fontWeight: 700, color: THEME.ink }}>#{item.id} — {item.title}</strong>
-                    <span style={{ backgroundColor: (PRIORITY_BADGE[item.priority] || PRIORITY_BADGE.low).bg, color: (PRIORITY_BADGE[item.priority] || PRIORITY_BADGE.low).color, border: `1px solid ${(PRIORITY_BADGE[item.priority] || PRIORITY_BADGE.low).border}`, padding: '3px 11px', borderRadius: 0, fontSize: 11, fontWeight: 700, letterSpacing: '0.3px' }}>
+                    <span style={{ backgroundColor: (PRIORITY_BADGE[item.priority] || PRIORITY_BADGE.low).bg, color: (PRIORITY_BADGE[item.priority] || PRIORITY_BADGE.low).color, border: `1px solid ${(PRIORITY_BADGE[item.priority] || PRIORITY_BADGE.low).border}`, padding: '3px 11px', borderRadius: 8, fontSize: 11, fontWeight: 700, letterSpacing: '0.3px' }}>
                       {(item.priority || '—').toString().toUpperCase()}
                     </span>
-                    <span style={{ backgroundColor: (STATUS_BADGE[item.status] || STATUS_BADGE.closed).bg, color: (STATUS_BADGE[item.status] || STATUS_BADGE.closed).color, border: `1px solid ${(STATUS_BADGE[item.status] || STATUS_BADGE.closed).border}`, padding: '3px 11px', borderRadius: 0, fontSize: 11, fontWeight: 700, letterSpacing: '0.3px' }}>
+                    <span style={{ backgroundColor: (STATUS_BADGE[item.status] || STATUS_BADGE.closed).bg, color: (STATUS_BADGE[item.status] || STATUS_BADGE.closed).color, border: `1px solid ${(STATUS_BADGE[item.status] || STATUS_BADGE.closed).border}`, padding: '3px 11px', borderRadius: 8, fontSize: 11, fontWeight: 700, letterSpacing: '0.3px' }}>
                       {(item.status || '—').toString().replace(/_/g, ' ').toUpperCase()}
                     </span>
                   </div>
@@ -191,7 +191,7 @@ export default function ComplaintDashboard() {
                 <div style={{ display: 'flex', gap: 8, flexShrink: 0, alignItems: 'center' }}>
                   <button
                     className="gfh-portal-btn"
-                    style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '7px 15px', fontSize: 12.5, fontWeight: 700, borderRadius: 0, backgroundColor: '#075985', color: '#fff', border: 'none', cursor: 'pointer' }}
+                    style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '7px 15px', fontSize: 12.5, fontWeight: 700, borderRadius: 8, backgroundColor: '#075985', color: '#fff', border: 'none', cursor: 'pointer' }}
                     onClick={() => { setAssignModal(item); setSelectedTech(String(item.job?.assigned_to ?? item.job?.assignedTo?.id ?? '')); }}
                   >
                     <Icon path={ICONS.wrench} size={14} />
@@ -199,7 +199,7 @@ export default function ComplaintDashboard() {
                   </button>
                   <button
                     className="gfh-portal-btn"
-                    style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '7px 15px', fontSize: 12.5, fontWeight: 700, borderRadius: 0, backgroundColor: '#b45309', color: '#fff', border: 'none', cursor: 'pointer' }}
+                    style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '7px 15px', fontSize: 12.5, fontWeight: 700, borderRadius: 8, backgroundColor: '#b45309', color: '#fff', border: 'none', cursor: 'pointer' }}
                     onClick={() => { setStatusModal(item); setNewStatus(item.status); }}
                   >
                     <Icon path={ICONS.edit} size={14} />
@@ -221,7 +221,7 @@ export default function ComplaintDashboard() {
               width: 440,
               padding: 28,
               background: '#ffffff',
-              borderRadius: 0,
+              borderRadius: 8,
               border: `1px solid ${THEME.border}`,
             }}
           >
@@ -252,7 +252,7 @@ export default function ComplaintDashboard() {
                   type="button"
                   className="gfh-portal-btn"
                   onClick={() => setAssignModal(null)}
-                  style={{ borderRadius: 0, fontWeight: 700, fontSize: 13.5, padding: '10px 18px', backgroundColor: '#f1f5f9', color: THEME.textMuted, border: `1px solid ${THEME.border}`, cursor: 'pointer' }}
+                  style={{ borderRadius: 8, fontWeight: 700, fontSize: 13.5, padding: '10px 18px', backgroundColor: '#f1f5f9', color: THEME.textMuted, border: `1px solid ${THEME.border}`, cursor: 'pointer' }}
                 >
                   Cancel
                 </button>
@@ -274,7 +274,7 @@ export default function ComplaintDashboard() {
               width: 440,
               padding: 28,
               background: '#ffffff',
-              borderRadius: 0,
+              borderRadius: 8,
               border: `1px solid ${THEME.border}`,
             }}
           >
@@ -302,7 +302,7 @@ export default function ComplaintDashboard() {
                   type="button"
                   className="gfh-portal-btn"
                   onClick={() => setStatusModal(null)}
-                  style={{ borderRadius: 0, fontWeight: 700, fontSize: 13.5, padding: '10px 18px', backgroundColor: '#f1f5f9', color: THEME.textMuted, border: `1px solid ${THEME.border}`, cursor: 'pointer' }}
+                  style={{ borderRadius: 8, fontWeight: 700, fontSize: 13.5, padding: '10px 18px', backgroundColor: '#f1f5f9', color: THEME.textMuted, border: `1px solid ${THEME.border}`, cursor: 'pointer' }}
                 >
                   Cancel
                 </button>

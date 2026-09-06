@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import api from '../../api/axios'
 import { formatDate } from '../../utils/formatDate'
-import { THEME, ADMIN_COLORS, portalPageCss, heroStyle, panelStyle, ghostBtnStyle, thStyle, tdStyle, RADIUS } from '../../components/gfh/adminTheme'
+import { THEME, ADMIN_COLORS, Icon, portalPageCss, heroStyle, panelStyle, ghostBtnStyle, thStyle, tdStyle, RADIUS } from '../../components/gfh/adminTheme'
 import { safeUpper } from '../../utils/safeLabel'
 
 type FinanceKind = 'ledger' | 'receivables' | 'payments'
@@ -22,15 +22,78 @@ const copy: Record<FinanceKind, { title: string; subtitle: string }> = {
   },
 }
 
+const icons = {
+  debit: 'M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0-1 14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2L4 6h16z',
+  credit: 'M12 5v14M5 12h14',
+  balance: 'M21 12V7H5a2 2 0 0 1 0-4h14v4M3 5v14a2 2 0 0 0 2 2h16v-5M18 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4z',
+}
+
 const gfhRef = (id: number) => `GFH-${String(id).padStart(5, '0')}`
 const aed = (v: unknown) => `AED ${Number(v ?? 0).toLocaleString()}`
 
-function StatCard({ label, value, bg, sub }: { label: string; value: string; bg: string; sub: string }) {
+function StatCard({ label, value, sub, icon, iconBg, iconColor, badgeBg, badgeColor, badgeBorder }: {
+  label: string
+  value: string
+  sub: string
+  icon: string
+  iconBg: string
+  iconColor: string
+  badgeBg: string
+  badgeColor: string
+  badgeBorder: string
+}) {
   return (
-    <div className="gfh-portal-stat" style={{ flex: '1 1 200px', padding: '20px 18px', background: bg, color: '#fff', borderRadius: 0, minHeight: 110, boxShadow: '0 8px 20px -10px rgba(15,23,42,0.45)' }}>
-      <div style={{ fontSize: 22, fontWeight: 800 }}>{value}</div>
-      <div style={{ fontSize: 13.5, fontWeight: 700, marginTop: 8 }}>{label}</div>
-      <div style={{ display: 'inline-block', marginTop: 8, fontSize: 10.5, fontWeight: 700, letterSpacing: '0.3px', textTransform: 'uppercase', background: 'rgba(255,255,255,0.18)', padding: '3px 8px', borderRadius: 0 }}>{sub}</div>
+    <div
+      className="gfh-portal-stat"
+      style={{
+        flex: '1 1 220px',
+        background: '#FFFFFF',
+        borderRadius: 14,
+        padding: '20px 22px',
+        border: '1px solid #E2E8F0',
+        boxShadow: '0 1px 3px rgba(16,24,40,0.04)',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'space-between',
+        minHeight: 124,
+      }}
+    >
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
+        <div style={{
+          width: 42,
+          height: 42,
+          borderRadius: 10,
+          background: iconBg,
+          color: iconColor,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          flexShrink: 0,
+        }}>
+          <Icon path={icon} size={20} />
+        </div>
+        <span style={{
+          fontSize: 11,
+          fontWeight: 700,
+          letterSpacing: '0.4px',
+          textTransform: 'uppercase',
+          background: badgeBg,
+          color: badgeColor,
+          border: `1px solid ${badgeBorder}`,
+          padding: '3px 9px',
+          borderRadius: 999,
+        }}>
+          {sub}
+        </span>
+      </div>
+      <div>
+        <div style={{ fontSize: 22, fontWeight: 800, color: '#0F172A', lineHeight: 1.15, letterSpacing: '-0.02em' }}>
+          {value}
+        </div>
+        <div style={{ fontSize: 13, fontWeight: 600, color: '#64748B', marginTop: 4 }}>
+          {label}
+        </div>
+      </div>
     </div>
   )
 }
@@ -55,7 +118,7 @@ export default function OwnerFinancePage({ kind }: { kind: FinanceKind }) {
   }, [kind])
 
   return (
-    <div className="gfh-portal-page" style={{ fontFamily: "'Inter', 'Segoe UI', system-ui, sans-serif" }}>
+    <div className="gfh-portal-page" style={{ fontFamily: "'Poppins', system-ui, sans-serif" }}>
       <style>{portalPageCss}</style>
 
       <div className="fade-in" style={heroStyle}>
@@ -63,7 +126,7 @@ export default function OwnerFinancePage({ kind }: { kind: FinanceKind }) {
           <div style={{ fontSize: 22, fontWeight: 800, color: THEME.ink, margin: 0 }}>{meta.title}</div>
           <div style={{ fontSize: 12, color: '#9ca3af', marginTop: 6 }}>{meta.subtitle}</div>
         </div>
-        <Link to="/owner/dashboard" className="gfh-portal-btn" style={{ ...ghostBtnStyle, background: '#075985' }}>
+        <Link to="/owner/dashboard" className="gfh-portal-btn" style={{ ...ghostBtnStyle, background: '#0E5E48', borderRadius: 8 }}>
           ← Back to dashboard
         </Link>
       </div>
@@ -72,16 +135,66 @@ export default function OwnerFinancePage({ kind }: { kind: FinanceKind }) {
         <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', marginBottom: 22 }}>
           {kind === 'ledger' && (
             <>
-              <StatCard label="Total debit (due)" value={aed(data.total_debit)} bg="#991b1b" sub="Debit" />
-              <StatCard label="Total credit (paid)" value={aed(data.total_credit)} bg="#065f46" sub="Credit" />
-              <StatCard label="Outstanding balance" value={aed(Number(data.total_debit ?? 0) - Number(data.total_credit ?? 0))} bg="#b45309" sub="Balance" />
+              <StatCard
+                label="Total debit (due)"
+                value={aed(data.total_debit)}
+                sub="Debit"
+                icon={icons.debit}
+                iconBg="#FEF2F2"
+                iconColor="#DC2626"
+                badgeBg="#FEF2F2"
+                badgeColor="#991B1B"
+                badgeBorder="#FECACA"
+              />
+              <StatCard
+                label="Total credit (paid)"
+                value={aed(data.total_credit)}
+                sub="Credit"
+                icon={icons.credit}
+                iconBg="#F0FDF4"
+                iconColor="#0F8A67"
+                badgeBg="#F0FDF4"
+                badgeColor="#065F46"
+                badgeBorder="#BBF7D0"
+              />
+              <StatCard
+                label="Outstanding balance"
+                value={aed(Number(data.total_debit ?? 0) - Number(data.total_credit ?? 0))}
+                sub="Balance"
+                icon={icons.balance}
+                iconBg="#FFFBEB"
+                iconColor="#D97706"
+                badgeBg="#FFFBEB"
+                badgeColor="#B45309"
+                badgeBorder="#FDE68A"
+              />
             </>
           )}
           {kind === 'receivables' && (
-            <StatCard label="Total outstanding" value={aed(data.total_outstanding)} bg="#991b1b" sub="Due" />
+            <StatCard
+              label="Total outstanding"
+              value={aed(data.total_outstanding)}
+              sub="Due"
+              icon={icons.balance}
+              iconBg="#FEF2F2"
+              iconColor="#DC2626"
+              badgeBg="#FEF2F2"
+              badgeColor="#991B1B"
+              badgeBorder="#FECACA"
+            />
           )}
           {kind === 'payments' && (
-            <StatCard label="Total received" value={aed(data.total_amount)} bg="#065f46" sub="Paid" />
+            <StatCard
+              label="Total received"
+              value={aed(data.total_amount)}
+              sub="Paid"
+              icon={icons.credit}
+              iconBg="#F0FDF4"
+              iconColor="#0F8A67"
+              badgeBg="#F0FDF4"
+              badgeColor="#065F46"
+              badgeBorder="#BBF7D0"
+            />
           )}
         </div>
       )}
@@ -141,7 +254,7 @@ export default function OwnerFinancePage({ kind }: { kind: FinanceKind }) {
                         <td style={tdStyle}>{c.unit?.number} ({c.unit?.property?.name})</td>
                         <td style={tdStyle}>{c.tenant?.name || '—'}</td>
                         <td style={tdStyle}>
-                          <span style={{ fontSize: 12, fontWeight: 700, padding: '4px 10px', borderRadius: 0, background: c.status === 'active' ? '#f0fdf4' : '#f3f4f6', color: c.status === 'active' ? '#065f46' : '#374151', border: `1px solid ${c.status === 'active' ? '#bbf7d0' : '#d1d5db'}` }}>
+                          <span style={{ fontSize: 11.5, fontWeight: 700, padding: '3px 10px', borderRadius: 999, display: 'inline-block', background: c.status === 'active' ? '#f0fdf4' : '#f3f4f6', color: c.status === 'active' ? '#065f46' : '#374151', border: `1px solid ${c.status === 'active' ? '#bbf7d0' : '#d1d5db'}` }}>
                             {safeUpper(c.status)}
                           </span>
                         </td>

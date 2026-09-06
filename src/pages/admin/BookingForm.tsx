@@ -1,4 +1,4 @@
-import { useState } from 'react'
+﻿import { useState } from 'react'
 import api from '../../api/axios'
 import { THEME, Icon, CornerBrackets, portalPageCss, ghostBtnStyle } from '../../components/gfh/adminTheme'
 
@@ -24,7 +24,7 @@ const inputStyle: React.CSSProperties = {
   width: '100%',
   padding: '11px 13px',
   border: `1px solid ${THEME.border}`,
-  borderRadius: 0,
+  borderRadius: 8,
   fontSize: 14,
   fontWeight: 500,
   background: '#fff',
@@ -91,7 +91,7 @@ export default function BookingForm({ unit, onClose, onSuccess }: BookingFormPro
           maxWidth: '100%',
           background: '#fff',
           border: `1px solid ${THEME.border}`,
-          borderRadius: 0,
+          borderRadius: 8,
           padding: 28,
           fontFamily: "'Poppins', system-ui, sans-serif",
         }}

@@ -192,24 +192,64 @@ export default function ReportsDashboard() {
         </div>
         <div style={{ display: 'flex', gap: 10 }}>
           <button
-            className="gfh-portal-btn"
             onClick={handlePrint}
             style={{
-              ...ghostBtnStyle,
-              background: '#3C096C',
-              color: '#ffffff',
-              border: 'none',
               display: 'inline-flex',
               alignItems: 'center',
-              gap: 6,
+              gap: 8,
+              background: '#0E5E48',
+              color: '#FFFFFF',
+              border: 'none',
+              borderRadius: 10,
+              padding: '10px 20px',
+              fontSize: 13.5,
+              fontWeight: 700,
+              cursor: 'pointer',
+              boxShadow: '0 1px 3px rgba(14, 94, 72, 0.25)',
+              transition: 'background 0.15s ease, transform 0.15s ease',
+              fontFamily: "'Poppins', sans-serif",
+            }}
+            onMouseEnter={e => {
+              e.currentTarget.style.background = '#094535'
+              e.currentTarget.style.transform = 'translateY(-1px)'
+            }}
+            onMouseLeave={e => {
+              e.currentTarget.style.background = '#0E5E48'
+              e.currentTarget.style.transform = 'translateY(0)'
             }}
           >
             <Icon path={icons.printer} size={15} />
-            Print Report
+            <span>Print Report</span>
           </button>
-          <button className="gfh-portal-btn" onClick={exportExcel} style={{ ...ghostBtnStyle, background: '#240046', display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+          <button
+            onClick={exportExcel}
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 8,
+              background: '#0E5E48',
+              color: '#FFFFFF',
+              border: 'none',
+              borderRadius: 10,
+              padding: '10px 20px',
+              fontSize: 13.5,
+              fontWeight: 700,
+              cursor: 'pointer',
+              boxShadow: '0 1px 3px rgba(14, 94, 72, 0.25)',
+              transition: 'background 0.15s ease, transform 0.15s ease',
+              fontFamily: "'Poppins', sans-serif",
+            }}
+            onMouseEnter={e => {
+              e.currentTarget.style.background = '#094535'
+              e.currentTarget.style.transform = 'translateY(-1px)'
+            }}
+            onMouseLeave={e => {
+              e.currentTarget.style.background = '#0E5E48'
+              e.currentTarget.style.transform = 'translateY(0)'
+            }}
+          >
             <Icon path={icons.download} size={15} />
-            Export to Excel
+            <span>Export to Excel</span>
           </button>
         </div>
       </div>
@@ -225,18 +265,31 @@ export default function ReportsDashboard() {
         ].map(t => (
           <button
             key={t.key}
-            className="gfh-portal-btn"
             onClick={() => setActiveTab(t.key as ReportType)}
             style={{
               fontSize: 13,
               fontWeight: 700,
-              padding: '9px 16px',
-              borderRadius: 0,
+              padding: '9px 18px',
+              borderRadius: 10,
               border: activeTab === t.key ? 'none' : '1px solid #CBD5E1',
-              background: activeTab === t.key ? '#240046' : '#F8FAFC',
-              color: activeTab === t.key ? '#ffffff' : '#0F172A',
+              background: activeTab === t.key ? '#0E5E48' : '#FFFFFF',
+              color: activeTab === t.key ? '#FFFFFF' : '#334155',
               cursor: 'pointer',
-              transition: 'background 0.15s ease, color 0.15s ease',
+              transition: 'all 0.15s ease',
+              boxShadow: activeTab === t.key ? '0 1px 3px rgba(14, 94, 72, 0.25)' : 'none',
+              fontFamily: "'Poppins', sans-serif",
+            }}
+            onMouseEnter={e => {
+              if (activeTab !== t.key) {
+                e.currentTarget.style.borderColor = '#0E5E48'
+                e.currentTarget.style.color = '#0E5E48'
+              }
+            }}
+            onMouseLeave={e => {
+              if (activeTab !== t.key) {
+                e.currentTarget.style.borderColor = '#CBD5E1'
+                e.currentTarget.style.color = '#334155'
+              }
             }}
           >
             {t.label}
@@ -275,7 +328,7 @@ export default function ReportsDashboard() {
               {activeTab === 'revenue' && (
                 <div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
-                    <h3 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 18, fontWeight: 700, color: THEME.purple, margin: 0 }}>
+                    <h3 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 18, fontWeight: 700, color: THEME.ink, margin: 0 }}>
                       Total revenue ({reportData.year}): <span style={{ color: '#10b981' }}>AED {Number(reportData.total_revenue).toLocaleString()}</span>
                     </h3>
                   </div>
@@ -303,7 +356,7 @@ export default function ReportsDashboard() {
               {/* Receivables Tab */}
               {activeTab === 'receivables' && (
                 <div>
-                  <h3 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 18, fontWeight: 700, color: THEME.purple, marginBottom: 20, marginTop: 0 }}>
+                  <h3 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 18, fontWeight: 700, color: THEME.ink, marginBottom: 20, marginTop: 0 }}>
                     Total outstanding: <span style={{ color: '#ef4444' }}>AED {Number(reportData.total_outstanding ?? 0).toLocaleString()}</span>
                   </h3>
                   <table style={{ width: '100%', borderCollapse: 'collapse' }}>
@@ -331,7 +384,7 @@ export default function ReportsDashboard() {
               {/* Expiring Contracts Tab */}
               {activeTab === 'expired-contracts' && (
                 <div>
-                  <h3 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 18, fontWeight: 700, color: THEME.purple, marginBottom: 20, marginTop: 0 }}>
+                  <h3 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 18, fontWeight: 700, color: THEME.ink, marginBottom: 20, marginTop: 0 }}>
                     Contracts expiring within ~100 days ({reportData.total_count} found)
                   </h3>
                   <table style={{ width: '100%', borderCollapse: 'collapse' }}>
@@ -366,7 +419,7 @@ export default function ReportsDashboard() {
                       { value: reportData.total_unit_items, label: 'Unit-assigned items', color: THEME.ink },
                       { value: reportData.low_stock_count, label: 'Low stock alerts', color: '#ef4444' },
                     ].map(card => (
-                      <div key={card.label} className="gfh-portal-stat" style={{ position: 'relative', padding: 18, background: '#fff', border: `1px solid ${THEME.border}`, borderRadius: 0, textAlign: 'center' }}>
+                      <div key={card.label} className="gfh-portal-stat" style={{ position: 'relative', padding: 18, background: '#fff', border: `1px solid ${THEME.border}`, borderRadius: 8, textAlign: 'center' }}>
                         <span className="gfh-rp-noprint"><CornerBrackets /></span>
                         <div style={{ fontFamily: "'Playfair Display', serif", fontSize: 24, fontWeight: 700, color: card.color }}>{card.value}</div>
                         <div style={{ fontSize: 12, color: THEME.textMuted, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.3px', marginTop: 4 }}>{card.label}</div>
@@ -374,7 +427,7 @@ export default function ReportsDashboard() {
                     ))}
                   </div>
 
-                  <h3 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 17, fontWeight: 700, color: THEME.purple }}>Low stock warning items</h3>
+                  <h3 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 17, fontWeight: 700, color: THEME.ink }}>Low stock warning items</h3>
                   <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: 10 }}>
                     <thead>
                       <tr style={{ borderBottom: `2px solid ${THEME.border}` }}>
@@ -400,7 +453,7 @@ export default function ReportsDashboard() {
               {/* Historical Ledgers Tab */}
               {activeTab === 'historical-ledgers' && (
                 <div>
-                  <h3 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 18, fontWeight: 700, color: THEME.purple, marginBottom: 20, marginTop: 0 }}>
+                  <h3 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 18, fontWeight: 700, color: THEME.ink, marginBottom: 20, marginTop: 0 }}>
                     Historical ledger entries
                   </h3>
                   <table style={{ width: '100%', borderCollapse: 'collapse' }}>

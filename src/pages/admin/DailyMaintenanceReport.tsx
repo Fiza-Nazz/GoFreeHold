@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+﻿import { useEffect, useState } from 'react'
 import api from '../../api/axios'
 import { THEME, Icon, CornerBrackets, portalPageCss, heroStyle, panelStyle, thStyle, tdStyle } from '../../components/gfh/adminTheme'
 
@@ -78,7 +78,7 @@ export default function DailyMaintenanceReport() {
             onChange={e => setSelectedDate(e.target.value)}
             style={{
               width: 170,
-              borderRadius: 0,
+              borderRadius: 8,
               border: '1px solid rgba(255,255,255,0.35)',
               background: 'rgba(255,255,255,0.12)',
               color: '#fff',
@@ -94,7 +94,7 @@ export default function DailyMaintenanceReport() {
             style={{
               width: 38,
               height: 38,
-              borderRadius: 0,
+              borderRadius: 8,
               border: '1px solid rgba(255,255,255,0.35)',
               background: 'rgba(255,255,255,0.1)',
               color: '#fff',
@@ -118,9 +118,9 @@ export default function DailyMaintenanceReport() {
       ) : report && (
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 18, marginBottom: 22 }}>
           {statCards.map((card, i) => (
-            <div key={card.label} className="gfh-portal-stat fade-in" style={{ position: 'relative', background: '#fff', border: `1px solid ${THEME.border}`, borderRadius: 0, padding: 20, animationDelay: `${i * 0.06}s` }}>
+            <div key={card.label} className="gfh-portal-stat fade-in" style={{ position: 'relative', background: '#fff', border: `1px solid ${THEME.border}`, borderRadius: 8, padding: 20, animationDelay: `${i * 0.06}s` }}>
               <CornerBrackets />
-              <div style={{ width: 40, height: 40, borderRadius: 0, background: card.iconBg, color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 10 }}>
+              <div style={{ width: 40, height: 40, borderRadius: 8, background: card.iconBg, color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 10 }}>
                 <Icon path={card.icon} size={18} />
               </div>
               <div style={{ fontFamily: "'Playfair Display', serif", fontSize: 24, fontWeight: 700, color: card.color }}>{card.value}</div>

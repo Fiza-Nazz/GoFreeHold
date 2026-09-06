@@ -159,26 +159,40 @@ export default function AdminSettings() {
         <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
           <button
             type="button"
-            className="gfh-portal-btn"
             onClick={handleRunAllSchedulers}
             disabled={isTriggering}
             style={{
               display: 'inline-flex',
               alignItems: 'center',
-              gap: 7,
-              background: '#240046',
-              color: '#fff',
-              padding: '10px 18px',
-              fontSize: 13,
+              gap: 8,
+              background: '#0E5E48',
+              color: '#FFFFFF',
+              padding: '10px 20px',
+              fontSize: 13.5,
               fontWeight: 700,
-              borderRadius: 0,
+              borderRadius: 10,
               border: 'none',
               cursor: isTriggering ? 'not-allowed' : 'pointer',
               opacity: isTriggering ? 0.7 : 1,
+              boxShadow: '0 1px 3px rgba(14, 94, 72, 0.25)',
+              transition: 'background 0.15s ease, transform 0.15s ease',
+              fontFamily: "'Poppins', sans-serif",
+            }}
+            onMouseEnter={e => {
+              if (!isTriggering) {
+                e.currentTarget.style.background = '#094535'
+                e.currentTarget.style.transform = 'translateY(-1px)'
+              }
+            }}
+            onMouseLeave={e => {
+              if (!isTriggering) {
+                e.currentTarget.style.background = '#0E5E48'
+                e.currentTarget.style.transform = 'translateY(0)'
+              }
             }}
           >
             <Icon path={ICONS.refresh} size={15} />
-            {isTriggering ? 'Running Schedulers...' : 'Run All Schedulers Now'}
+            <span>{isTriggering ? 'Running Schedulers...' : 'Run All Schedulers Now'}</span>
           </button>
         </div>
       </div>
@@ -233,7 +247,7 @@ export default function AdminSettings() {
                     position: 'relative',
                     padding: 20,
                     background: '#fff',
-                    borderRadius: 0,
+                    borderRadius: 8,
                     border: `1px solid ${THEME.border}`,
                     display: 'flex',
                     justifyContent: 'space-between',
@@ -251,7 +265,7 @@ export default function AdminSettings() {
                           fontWeight: 700,
                           letterSpacing: '0.4px',
                           padding: '3px 10px',
-                          borderRadius: 0,
+                          borderRadius: 8,
                           backgroundColor: setting.enabled ? '#dcfce7' : '#f3f4f6',
                           color: setting.enabled ? '#166534' : THEME.textMuted,
                         }}
@@ -269,7 +283,7 @@ export default function AdminSettings() {
                           fontSize: 12.5,
                           fontWeight: 600,
                           width: 230,
-                          borderRadius: 0,
+                          borderRadius: 8,
                           border: `1px solid ${THEME.border}`,
                           background: '#faf8ff',
                           color: THEME.ink,
@@ -297,7 +311,7 @@ export default function AdminSettings() {
                         fontSize: 12,
                         fontWeight: 700,
                         padding: '8px 14px',
-                        borderRadius: 0,
+                        borderRadius: 8,
                         cursor: activeTrigger === setting.key ? 'not-allowed' : 'pointer',
                         backgroundColor: '#075985',
                         color: '#fff',
@@ -319,7 +333,7 @@ export default function AdminSettings() {
                         fontSize: 12,
                         fontWeight: 700,
                         padding: '8px 14px',
-                        borderRadius: 0,
+                        borderRadius: 8,
                         cursor: 'pointer',
                         backgroundColor: setting.enabled ? '#fee2e2' : '#dcfce7',
                         color: setting.enabled ? '#991b1b' : '#166534',
@@ -338,13 +352,13 @@ export default function AdminSettings() {
 
         <div className="fade-in" style={{ ...panelStyle, minHeight: 0, height: 'fit-content' }}>
           <CornerBrackets />
-          <div style={{ width: 40, height: 40, borderRadius: 0, background: `linear-gradient(135deg, ${THEME.violetLight}, ${THEME.purple})`, color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 14 }}>
+          <div style={{ width: 40, height: 40, borderRadius: 8, background: `linear-gradient(135deg, ${THEME.violetLight}, ${THEME.purple})`, color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 14 }}>
             <Icon path={icons.mail} size={18} />
           </div>
           <h3 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 17, fontWeight: 700, color: THEME.ink, marginTop: 0, marginBottom: 16 }}>
             Mail Server &amp; Scheduler Status
           </h3>
-          <div style={{ borderRadius: 0, border: `1px solid ${THEME.border}`, overflow: 'hidden' }}>
+          <div style={{ borderRadius: 8, border: `1px solid ${THEME.border}`, overflow: 'hidden' }}>
             <div className="gfh-portal-row" style={{ display: 'flex', justifyContent: 'space-between', padding: '12px 14px', borderBottom: `1px solid ${THEME.border}` }}>
               <span style={{ fontSize: 12.5, color: THEME.textMuted, fontWeight: 600 }}>Driver</span>
               <strong style={{ fontSize: 13, color: THEME.ink }}>Laravel Mail (SMTP)</strong>
@@ -428,7 +442,7 @@ export default function AdminSettings() {
                           padding: '3px 8px',
                           fontSize: 11,
                           fontWeight: 700,
-                          borderRadius: 0,
+                          borderRadius: 8,
                           backgroundColor: isSent ? '#dcfce7' : isChecked ? '#e0f2fe' : '#fee2e2',
                           color: isSent ? '#166534' : isChecked ? '#0369a1' : '#991b1b',
                         }}>

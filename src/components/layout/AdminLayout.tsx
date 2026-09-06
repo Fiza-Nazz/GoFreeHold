@@ -1,6 +1,7 @@
 import { useState } from 'react'
-import { Outlet, NavLink, useNavigate, useLocation } from 'react-router-dom'
+import { Outlet, NavLink, useNavigate, useLocation, useSearchParams } from 'react-router-dom'
 import { useAuthStore } from '../../store/authStore'
+import DubaiClock from '../gfh/DubaiClock'
 
 /* ── Simple inline SVG icon set (no external deps) ────────────────── */
 const Icon = ({ path, size = 18 }: { path: string; size?: number }) => (
@@ -10,7 +11,7 @@ const Icon = ({ path, size = 18 }: { path: string; size?: number }) => (
 )
 
 const icons = {
-  dashboard: 'M3 3h8v8H3V3zm10 0h8v5h-8V3zm0 9h8v9h-8v-9zM3 13h8v8H3v-8z',
+  dashboard: 'M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z M9 22V12h6v10',
   building: 'M3 21h18M5 21V5a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v16M13 21V9a1 1 0 0 1 1-1h5a1 1 0 0 1 1 1v12M8 7h1M8 11h1M8 15h1M16 12h1M16 16h1',
   door: 'M14 3h5v18h-5M14 3L6 4.5v15L14 21M9.5 12h.01',
   contracts: 'M9 3h6l4 4v14a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1zM9 9h6M9 13h6M9 17h4',
@@ -37,7 +38,7 @@ const icons = {
 
 /** Real Admin routes only — grouped like the reference Modules / Lease / Accounts pattern. */
 const adminNavItems = [
-  { section: 'Modules', items: [
+  { section: 'MAIN', items: [
     { to: '/admin/dashboard', icon: icons.dashboard, label: 'Dashboard' },
     { to: '/admin/properties', icon: icons.building, label: 'Properties' },
     { to: '/admin/units', icon: icons.door, label: 'Units' },
@@ -124,8 +125,10 @@ export default function AdminLayout() {
   const { user, logout } = useAuthStore()
   const navigate = useNavigate()
   const location = useLocation()
+  const [searchParams, setSearchParams] = useSearchParams()
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const pageTitle = resolveTitle(location.pathname)
+  const searchQuery = searchParams.get('q') || ''
 
   const handleLogout = async () => {
     await logout()
@@ -147,7 +150,7 @@ export default function AdminLayout() {
         .gfh-sidebar {
           width: 250px;
           min-width: 250px;
-          background: #18002E;
+          background: #06382C;
           display: flex;
           flex-direction: column;
           height: 100vh;
@@ -157,7 +160,7 @@ export default function AdminLayout() {
         }
 
         .gfh-sidebar::-webkit-scrollbar { width: 5px; }
-        .gfh-sidebar::-webkit-scrollbar-thumb { background: #3C096C; border-radius: 0; }
+        .gfh-sidebar::-webkit-scrollbar-thumb { background: #0E5E48; border-radius: 4px; }
 
         .gfh-sidebar-logo {
           display: flex;
@@ -165,59 +168,62 @@ export default function AdminLayout() {
           gap: 12px;
           padding: 22px 20px;
           border-bottom: 1px solid rgba(255,255,255,0.08);
-          background: #100020;
+          background: #042B22;
         }
 
         .gfh-logo-icon {
-          width: 40px;
-          height: 40px;
-          border-radius: 0;
-          background: #240046;
-          border: 1px solid rgba(255,255,255,0.2);
+          width: 42px;
+          height: 42px;
+          border-radius: 8px;
+          background: rgba(52, 211, 165, 0.12);
+          border: 1px solid rgba(52, 211, 165, 0.35);
           display: flex;
           align-items: center;
           justify-content: center;
-          color: #fff;
+          color: #34D3A5;
           flex-shrink: 0;
         }
 
         .gfh-logo-text {
-          font-size: 17px;
+          font-size: 18px;
           font-weight: 800;
           color: #ffffff;
-          line-height: 1.2;
+          line-height: 1.15;
+          letter-spacing: -0.01em;
         }
 
         .gfh-logo-sub {
           font-size: 10px;
-          font-weight: 600;
-          letter-spacing: 1.1px;
-          color: #C084FC;
+          font-weight: 700;
+          letter-spacing: 1.2px;
+          color: #A7F3DC;
           text-transform: uppercase;
+          margin-top: 3px;
         }
 
         .gfh-sidebar-nav {
           flex: 1;
-          padding: 14px 10px 20px;
+          padding: 14px 12px 20px;
         }
 
         .gfh-nav-section-label {
-          font-size: 10px;
+          font-size: 11px;
           font-weight: 700;
-          letter-spacing: 1.1px;
+          letter-spacing: 1.2px;
           text-transform: uppercase;
-          color: #A78BFA;
-          padding: 16px 12px 8px;
+          color: #6EE7C4;
+          opacity: 0.9;
+          padding: 18px 12px 8px;
         }
 
         .gfh-nav-item {
           display: flex;
           align-items: center;
-          gap: 11px;
-          padding: 10px 12px;
-          margin: 2px 0;
-          border-radius: 0;
-          color: #E9D5FF;
+          gap: 12px;
+          padding: 10px 14px;
+          margin: 3px 0;
+          border-radius: 8px;
+          color: #D1FAEE;
           font-size: 13.5px;
           font-weight: 500;
           text-decoration: none;
@@ -225,15 +231,20 @@ export default function AdminLayout() {
         }
 
         .gfh-nav-item:hover {
-          background: rgba(60, 9, 108, 0.45);
+          background: rgba(255, 255, 255, 0.08);
           color: #ffffff;
         }
 
         .gfh-nav-item.active {
-          background: #240046;
+          background: #0E5E48;
           color: #ffffff;
           font-weight: 700;
-          border-left: 3px solid #7B2CBF;
+          border-radius: 8px;
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .gfh-nav-item.active .gfh-nav-icon {
+          color: #34D3A5;
         }
 
         .gfh-nav-icon {
@@ -241,27 +252,28 @@ export default function AdminLayout() {
           align-items: center;
           justify-content: center;
           flex-shrink: 0;
-          opacity: 0.95;
+          color: inherit;
         }
 
         .gfh-sidebar-footer {
-          padding: 14px 12px;
+          padding: 14px 14px;
           border-top: 1px solid rgba(255,255,255,0.08);
+          background: #042B22;
         }
 
         .gfh-user-row {
           display: flex;
           align-items: center;
           gap: 10px;
-          padding: 8px 10px;
-          border-radius: 0;
+          padding: 6px 8px;
+          border-radius: 8px;
         }
 
         .gfh-user-avatar {
           width: 34px;
           height: 34px;
           border-radius: 50%;
-          background: #334155;
+          background: #18A77A;
           display: flex;
           align-items: center;
           justify-content: center;
@@ -272,9 +284,9 @@ export default function AdminLayout() {
         }
 
         .gfh-user-name {
-          font-size: 12.5px;
+          font-size: 13px;
           font-weight: 600;
-          color: #f1f5f9;
+          color: #ffffff;
           overflow: hidden;
           text-overflow: ellipsis;
           white-space: nowrap;
@@ -282,24 +294,26 @@ export default function AdminLayout() {
 
         .gfh-user-role {
           font-size: 10px;
-          color: #94a3b8;
+          color: #A7F3DC;
           text-transform: uppercase;
-          letter-spacing: 0.4px;
+          letter-spacing: 0.5px;
+          font-weight: 600;
         }
 
         .gfh-logout-btn {
           background: none;
           border: none;
-          color: #94a3b8;
+          color: #A7F3DC;
           cursor: pointer;
           padding: 6px;
-          border-radius: 0;
+          border-radius: 6px;
           display: flex;
+          transition: background 0.15s ease, color 0.15s ease;
         }
 
         .gfh-logout-btn:hover {
-          background: rgba(248,113,113,0.15);
-          color: #f87171;
+          background: rgba(239, 68, 68, 0.2);
+          color: #FCA5A5;
         }
 
         .gfh-main-content {
@@ -387,11 +401,16 @@ export default function AdminLayout() {
       <aside className={`gfh-sidebar ${sidebarOpen ? 'open' : ''}`}>
         <div className="gfh-sidebar-logo">
           <div className="gfh-logo-icon">
-            <Icon path="M3 12 12 3l9 9M5 10v10h14V10" size={18} />
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#34D3A5" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <rect x="7" y="2" width="10" height="20" rx="1" />
+              <rect x="2" y="8" width="5" height="14" rx="1" />
+              <rect x="17" y="8" width="5" height="14" rx="1" />
+              <path d="M10 6h4M10 10h4M10 14h4M10 18h4" />
+            </svg>
           </div>
           <div>
             <div className="gfh-logo-text">GoFreeHold</div>
-            <div className="gfh-logo-sub">Admin Portal</div>
+            <div className="gfh-logo-sub">ADMIN PORTAL</div>
           </div>
         </div>
 
@@ -432,18 +451,87 @@ export default function AdminLayout() {
 
       <div className="gfh-main-content">
         <header className="gfh-topbar">
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
             <button
               onClick={() => setSidebarOpen(!sidebarOpen)}
-              className="gfh-mobile-menu-btn"
+              style={{
+                width: 32,
+                height: 32,
+                borderRadius: '50%',
+                background: '#0F8A67',
+                color: '#FFFFFF',
+                border: 'none',
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                cursor: 'pointer',
+                boxShadow: '0 1px 3px rgba(15, 138, 103, 0.25)',
+                flexShrink: 0,
+              }}
+              title="Toggle Sidebar"
             >
-              <Icon path={icons.menu} size={22} />
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="15 18 9 12 15 6" />
+              </svg>
             </button>
-            <h1 className="gfh-page-title">{pageTitle}</h1>
+            <h1 className="gfh-page-title" style={{ fontSize: 24, fontWeight: 800, color: '#0F172A', margin: 0, letterSpacing: '-0.01em' }}>
+              {pageTitle}
+            </h1>
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-            <span className="gfh-welcome-text">Welcome back,</span>
-            <span className="gfh-welcome-name">{user?.name}</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 16, flexWrap: 'wrap' }}>
+            {/* Topbar Search Bar — on /admin/contracts and /admin/inventory */}
+            {(location.pathname === '/admin/contracts' || location.pathname === '/admin/inventory') && (
+              <div style={{ position: 'relative', width: 280, maxWidth: '100%' }}>
+                <svg style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: '#94A3B8', pointerEvents: 'none' }} width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
+                </svg>
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={e => {
+                    const val = e.target.value
+                    setSearchParams(val ? { q: val } : {}, { replace: true })
+                  }}
+                  placeholder={location.pathname === '/admin/inventory' ? 'Search inventory...' : 'Search contracts...'}
+                  style={{
+                    width: '100%',
+                    padding: '7px 34px 7px 34px',
+                    borderRadius: 8,
+                    border: '1px solid #E2E8F0',
+                    background: '#FFFFFF',
+                    fontSize: 13,
+                    color: '#0F172A',
+                    outline: 'none',
+                    boxSizing: 'border-box',
+                    fontFamily: "'Poppins', system-ui, sans-serif",
+                  }}
+                />
+                <svg style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', color: '#94A3B8', pointerEvents: 'none' }} width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
+                </svg>
+              </div>
+            )}
+
+            {/* User Profile */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 9 }}>
+              <div style={{
+                width: 36, height: 36, borderRadius: '50%',
+                background: '#0F8A67', color: '#FFFFFF',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                fontWeight: 700, fontSize: 13,
+              }}>
+                {user?.name ? user.name.split(' ').map((w: string) => w[0]).join('').slice(0, 2).toUpperCase() : 'AU'}
+              </div>
+              <div>
+                <div style={{ fontSize: 11, color: '#64748B', lineHeight: 1 }}>Welcome back,</div>
+                <div style={{ fontSize: 13, fontWeight: 700, color: '#0F172A', marginTop: 2, display: 'flex', alignItems: 'center', gap: 4 }}>
+                  {user?.name || 'Admin User'}
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                    <polyline points="6 9 12 15 18 9" />
+                  </svg>
+                </div>
+              </div>
+            </div>
           </div>
         </header>
 

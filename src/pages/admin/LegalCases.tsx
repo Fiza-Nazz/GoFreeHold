@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+﻿import { useEffect, useState } from 'react'
 import api from '../../api/axios'
 import { formatDate } from '../../utils/formatDate'
 import { THEME, Icon, ICONS, CornerBrackets, portalPageCss, heroStyle, panelStyle, ghostBtnStyle } from '../../components/gfh/adminTheme'
@@ -46,7 +46,7 @@ const icons = {
 const inputStyle: React.CSSProperties = {
   background: '#ffffff',
   border: `1px solid ${THEME.border}`,
-  borderRadius: 0,
+  borderRadius: 8,
   color: THEME.ink,
   fontSize: 14,
   fontWeight: 500,
@@ -76,7 +76,7 @@ const statusStyle = (status: string): React.CSSProperties => {
     color: tone.color,
     border: `1px solid ${tone.border}`,
     padding: '3px 10px',
-    borderRadius: 0,
+    borderRadius: 8,
     fontSize: 12,
     fontWeight: 700,
     letterSpacing: '0.3px',
@@ -273,7 +273,7 @@ export default function LegalCases() {
                     padding: 14,
                     background: selectedId === c.id ? '#f6f1fe' : '#fff',
                     border: `1px solid ${THEME.border}`,
-                    borderRadius: 0,
+                    borderRadius: 8,
                     cursor: 'pointer',
                   }}
                 >
@@ -379,7 +379,7 @@ export default function LegalCases() {
                         {doc.file_name}{' '}
                         <button
                           type="button"
-                          style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '3px 9px', fontSize: 11, fontWeight: 700, marginLeft: 8, borderRadius: 0, background: '#991b1b', color: '#fff', border: 'none', cursor: 'pointer' }}
+                          style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '3px 9px', fontSize: 11, fontWeight: 700, marginLeft: 8, borderRadius: 8, background: '#991b1b', color: '#fff', border: 'none', cursor: 'pointer' }}
                           onClick={() => deleteDoc(doc.id)}
                         >
                           <Icon path={ICONS.trash} size={12} />
@@ -411,7 +411,7 @@ export default function LegalCases() {
               width: 480,
               padding: 28,
               background: '#ffffff',
-              borderRadius: 0,
+              borderRadius: 8,
               border: `1px solid ${THEME.border}`,
             }}
           >
@@ -475,7 +475,7 @@ export default function LegalCases() {
                 <button
                   type="button"
                   onClick={() => setIsCreateOpen(false)}
-                  style={{ borderRadius: 0, fontWeight: 700, fontSize: 13, padding: '9px 16px', background: '#f1f5f9', color: THEME.textMuted, border: `1px solid ${THEME.border}`, cursor: 'pointer' }}
+                  style={{ borderRadius: 8, fontWeight: 700, fontSize: 13, padding: '9px 16px', background: '#f1f5f9', color: THEME.textMuted, border: `1px solid ${THEME.border}`, cursor: 'pointer' }}
                 >
                   Cancel
                 </button>

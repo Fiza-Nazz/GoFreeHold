@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+﻿import { useEffect, useState } from 'react'
 import api from '../../api/axios'
 import { THEME, Icon, CornerBrackets, portalPageCss, heroStyle, panelStyle, thStyle, tdStyle } from '../../components/gfh/adminTheme'
 
@@ -45,7 +45,7 @@ export default function ReceivablesSummary() {
         </div>
       </div>
 
-      <div className="fade-in gfh-portal-stat" style={{ position: 'relative', background: '#fff', border: `1px solid ${THEME.border}`, borderRadius: 0, padding: '26px 30px', marginBottom: 24, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <div className="fade-in gfh-portal-stat" style={{ position: 'relative', background: '#fff', border: `1px solid ${THEME.border}`, borderRadius: 8, padding: '26px 30px', marginBottom: 24, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <CornerBrackets />
         <div>
           <p style={{ fontSize: 12.5, fontWeight: 800, color: THEME.textMuted, margin: '0 0 8px', letterSpacing: '0.6px', textTransform: 'uppercase' }}>
@@ -55,7 +55,7 @@ export default function ReceivablesSummary() {
             AED {Number(grandTotal).toLocaleString()}
           </div>
         </div>
-        <div style={{ width: 44, height: 44, borderRadius: 0, background: '#991b1b', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+        <div style={{ width: 44, height: 44, borderRadius: 8, background: '#991b1b', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
           <Icon path="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" size={20} />
         </div>
       </div>

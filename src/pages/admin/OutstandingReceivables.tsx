@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+﻿import { useEffect, useState } from 'react'
 import api from '../../api/axios'
 import { THEME, Icon, CornerBrackets, portalPageCss, heroStyle, panelStyle, thStyle, tdStyle } from '../../components/gfh/adminTheme'
 
@@ -23,7 +23,7 @@ interface Summary {
 interface Owner { id: number; name: string }
 
 const selectStyle: React.CSSProperties = {
-  borderRadius: 0,
+  borderRadius: 8,
   border: '1px solid rgba(255,255,255,0.35)',
   background: 'rgba(255,255,255,0.15)',
   color: '#fff',
@@ -34,9 +34,9 @@ const selectStyle: React.CSSProperties = {
 
 function StatCard({ label, value, color, icon, iconBg, delay }: { label: string; value: string; color: string; icon: string; iconBg: string; delay?: string }) {
   return (
-    <div className="gfh-portal-stat" style={{ position: 'relative', background: '#fff', border: `1px solid ${THEME.border}`, borderRadius: 0, padding: 22, animationDelay: delay }}>
+    <div className="gfh-portal-stat" style={{ position: 'relative', background: '#fff', border: `1px solid ${THEME.border}`, borderRadius: 8, padding: 22, animationDelay: delay }}>
       <CornerBrackets />
-      <div style={{ width: 40, height: 40, borderRadius: 0, background: iconBg, color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 12 }}>
+      <div style={{ width: 40, height: 40, borderRadius: 8, background: iconBg, color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 12 }}>
         <Icon path={icon} size={18} />
       </div>
       <div style={{ fontFamily: "'Playfair Display', serif", fontSize: 24, fontWeight: 700, color }}>{value}</div>
@@ -165,7 +165,7 @@ export default function OutstandingReceivables() {
                       <span style={{
                         backgroundColor: item.tenant_type === 'current' ? '#dbeafe' : '#fef3c7',
                         color: item.tenant_type === 'current' ? '#1e40af' : '#92400e',
-                        padding: '4px 11px', borderRadius: 0, fontSize: 11.5, fontWeight: 700, letterSpacing: '0.3px'
+                        padding: '4px 11px', borderRadius: 8, fontSize: 11.5, fontWeight: 700, letterSpacing: '0.3px'
                       }}>
                         {(item.tenant_type || '—').toString().toUpperCase()}
                       </span>

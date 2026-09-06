@@ -33,14 +33,11 @@ export const CornerBrackets = ({ color = THEME.violetLight }: { color?: string }
 export const portalPageCss = `
   @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Inter:wght@400;500;600;700;800&display=swap');
   .gfh-portal-page * { font-family: 'Inter', 'Segoe UI', system-ui, sans-serif; }
-  .gfh-portal-page button,
+  .gfh-portal-page button { border-radius: 10px; }
   .gfh-portal-page input,
   .gfh-portal-page select,
-  .gfh-portal-page textarea,
-  .gfh-portal-page a,
-  .gfh-portal-page .gfh-portal-stat,
-  .gfh-portal-page .gfh-portal-row,
-  .gfh-portal-page .gfh-portal-btn { border-radius: 0 !important; }
+  .gfh-portal-page textarea { border-radius: 10px; }
+  .gfh-portal-page .gfh-portal-btn { border-radius: 10px; }
   @keyframes gfhPortalPop { from { opacity: 0; transform: scale(0.96) translateY(10px); } to { opacity: 1; transform: scale(1) translateY(0); } }
   .gfh-portal-stat { animation: gfhPortalPop 0.4s ease backwards; transition: transform 0.25s ease, box-shadow 0.25s ease; }
   .gfh-portal-stat:hover { transform: translateY(-4px); box-shadow: 0 16px 30px -8px rgba(30, 10, 60, 0.25); }

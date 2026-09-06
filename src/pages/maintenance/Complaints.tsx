@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import api from '../../api/axios'
 import { safeUpper, safeUpperLabel } from '../../utils/safeLabel'
 import { THEME, ADMIN_COLORS, Icon, portalPageCss, heroStyle, panelStyle, ghostBtnStyle, thStyle, tdStyle, RADIUS } from '../../components/gfh/adminTheme'
@@ -17,6 +18,9 @@ const icons = {
   refresh: 'M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15',
   check: 'M20 6 9 17l-5-5',
   play: 'M5 3l14 9-14 9V3z',
+  ticket: 'M15 5v2M15 11v2M15 17v2M5 5a2 2 0 0 0-2 2v3a2 2 0 1 1 0 4v3a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-3a2 2 0 1 1 0-4V7a2 2 0 0 0-2-2H5z',
+  inbox: 'M22 12h-6l-2 3h-4l-2-3H2M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z',
+  progress: 'M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83',
 }
 
 const PRIORITY_STYLE: Record<string, { bg: string; color: string; border: string }> = {
@@ -37,6 +41,8 @@ const STATUS_STYLE: Record<string, { bg: string; color: string; border: string }
 export default function MaintenanceComplaints() {
   const [complaints, setComplaints] = useState<Complaint[]>([])
   const [isLoading, setIsLoading] = useState(true)
+  const [searchParams] = useSearchParams()
+  const searchQuery = (searchParams.get('q') || '').toLowerCase().trim()
 
   const fetchComplaints = async () => {
     setIsLoading(true)
@@ -62,12 +68,72 @@ export default function MaintenanceComplaints() {
     }
   }
 
+  // Filter complaints by search query (title, description, unit, tenant, status, priority)
+  const filteredComplaints = searchQuery
+    ? complaints.filter(c =>
+        c.title?.toLowerCase().includes(searchQuery) ||
+        c.description?.toLowerCase().includes(searchQuery) ||
+        c.status?.toLowerCase().includes(searchQuery) ||
+        c.priority?.toLowerCase().includes(searchQuery) ||
+        c.unit?.number?.toLowerCase().includes(searchQuery) ||
+        c.unit?.property?.name?.toLowerCase().includes(searchQuery) ||
+        c.tenant?.name?.toLowerCase().includes(searchQuery)
+      )
+    : complaints
+
   const openCount = complaints.filter(c => c.status === 'open' || c.status === 'assigned').length
   const inProgressCount = complaints.filter(c => c.status === 'in_progress').length
   const resolvedCount = complaints.filter(c => c.status === 'resolved').length
 
+  const statCards = [
+    {
+      value: complaints.length,
+      label: 'Total complaints',
+      icon: icons.ticket,
+      iconBg: '#ECFDF8',
+      iconColor: '#0E5E48',
+      badgeBg: '#ECFDF8',
+      badgeColor: '#065F46',
+      badgeBorder: '#A7F3DC',
+      sub: 'Total',
+    },
+    {
+      value: openCount,
+      label: 'Open queue',
+      icon: icons.inbox,
+      iconBg: openCount > 0 ? '#FEF2F2' : '#F0F9FF',
+      iconColor: openCount > 0 ? '#DC2626' : '#0284C7',
+      badgeBg: openCount > 0 ? '#FEF2F2' : '#F0F9FF',
+      badgeColor: openCount > 0 ? '#991B1B' : '#075985',
+      badgeBorder: openCount > 0 ? '#FECACA' : '#BAE6FD',
+      sub: 'Open',
+    },
+    {
+      value: inProgressCount,
+      label: 'In progress',
+      icon: icons.progress,
+      iconBg: '#FFFBEB',
+      iconColor: '#D97706',
+      badgeBg: '#FFFBEB',
+      badgeColor: '#B45309',
+      badgeBorder: '#FDE68A',
+      sub: 'Active',
+    },
+    {
+      value: resolvedCount,
+      label: 'Resolved',
+      icon: icons.check,
+      iconBg: '#ECFDF8',
+      iconColor: '#0F8A67',
+      badgeBg: '#F0FDF4',
+      badgeColor: '#065F46',
+      badgeBorder: '#BBF7D0',
+      sub: 'Done',
+    },
+  ]
+
   return (
-    <div className="gfh-portal-page" style={{ fontFamily: "'Inter', 'Segoe UI', system-ui, sans-serif", background: THEME.pageBg }}>
+    <div className="gfh-portal-page" style={{ fontFamily: "'Poppins', system-ui, sans-serif", background: THEME.pageBg }}>
       <style>{portalPageCss}</style>
 
       <div className="fade-in" style={heroStyle}>
@@ -76,46 +142,76 @@ export default function MaintenanceComplaints() {
           <div style={{ fontSize: 22, fontWeight: 800, color: THEME.ink, marginTop: 4 }}>Live work queue</div>
           <div style={{ fontSize: 12, color: '#9ca3af', marginTop: 4 }}>From your maintenance assignments</div>
         </div>
-        <button className="gfh-portal-btn" onClick={fetchComplaints} disabled={isLoading} style={{ ...ghostBtnStyle, background: '#075985', opacity: isLoading ? 0.7 : 1, cursor: isLoading ? 'not-allowed' : 'pointer' }}>
+        <button
+          className="gfh-portal-btn"
+          onClick={fetchComplaints}
+          disabled={isLoading}
+          style={{
+            ...ghostBtnStyle,
+            background: '#0E5E48',
+            borderRadius: 8,
+            opacity: isLoading ? 0.7 : 1,
+            cursor: isLoading ? 'not-allowed' : 'pointer',
+          }}
+        >
           <Icon path={icons.refresh} size={16} />
           Refresh
         </button>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 16, marginBottom: 22 }}>
-        {[
-          { value: complaints.length, label: 'Total complaints', bg: '#1e1b4b', sub: 'Total' },
-          { value: openCount, label: 'Open queue', bg: openCount > 0 ? '#991b1b' : '#075985', sub: 'Open' },
-          { value: inProgressCount, label: 'In progress', bg: '#b45309', sub: 'Active' },
-          { value: resolvedCount, label: 'Resolved', bg: '#065f46', sub: 'Done' },
-        ].map((card, i) => (
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 16, marginBottom: 22 }}>
+        {statCards.map((card, i) => (
           <div
             key={card.label}
             className="gfh-portal-stat"
             style={{
-              background: card.bg,
-              color: '#fff',
-              borderRadius: 0,
-              padding: '20px 18px',
-              minHeight: 110,
-              boxShadow: '0 8px 20px -10px rgba(15,23,42,0.45)',
+              background: '#FFFFFF',
+              borderRadius: 14,
+              padding: '20px 22px',
+              border: '1px solid #E2E8F0',
+              boxShadow: '0 1px 3px rgba(16,24,40,0.04)',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'space-between',
+              minHeight: 124,
               animationDelay: `${i * 0.06}s`,
             }}
           >
-            <div style={{ fontSize: 28, fontWeight: 800 }}>{card.value}</div>
-            <div style={{ fontSize: 13.5, fontWeight: 700, marginTop: 8 }}>{card.label}</div>
-            <div style={{
-              display: 'inline-block',
-              marginTop: 8,
-              fontSize: 10.5,
-              fontWeight: 700,
-              letterSpacing: '0.3px',
-              textTransform: 'uppercase',
-              background: 'rgba(255,255,255,0.18)',
-              padding: '3px 8px',
-              borderRadius: 0,
-            }}>
-              {card.sub}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
+              <div style={{
+                width: 42,
+                height: 42,
+                borderRadius: 10,
+                background: card.iconBg,
+                color: card.iconColor,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                flexShrink: 0,
+              }}>
+                <Icon path={card.icon} size={20} />
+              </div>
+              <span style={{
+                fontSize: 11,
+                fontWeight: 700,
+                letterSpacing: '0.4px',
+                textTransform: 'uppercase',
+                background: card.badgeBg,
+                color: card.badgeColor,
+                border: `1px solid ${card.badgeBorder}`,
+                padding: '3px 9px',
+                borderRadius: 999,
+              }}>
+                {card.sub}
+              </span>
+            </div>
+            <div>
+              <div style={{ fontSize: 28, fontWeight: 800, color: '#0F172A', lineHeight: 1.15, letterSpacing: '-0.02em' }}>
+                {card.value}
+              </div>
+              <div style={{ fontSize: 13, fontWeight: 600, color: '#64748B', marginTop: 4 }}>
+                {card.label}
+              </div>
             </div>
           </div>
         ))}
@@ -124,9 +220,11 @@ export default function MaintenanceComplaints() {
       <div className="fade-in" style={{ ...panelStyle, minHeight: 320 }}>
         {isLoading ? (
           <div style={{ textAlign: 'center', padding: 40 }}><span className="spinner" /></div>
-        ) : complaints.length === 0 ? (
+        ) : filteredComplaints.length === 0 ? (
           <div style={{ textAlign: 'center', padding: 40 }}>
-            <p style={{ fontSize: 14, color: THEME.textMuted, fontWeight: 500 }}>No complaints assigned.</p>
+            <p style={{ fontSize: 14, color: THEME.textMuted, fontWeight: 500 }}>
+              {searchQuery ? `No complaints matching "${searchQuery}".` : 'No complaints assigned.'}
+            </p>
           </div>
         ) : (
           <div style={{ overflowX: 'auto' }}>
@@ -139,7 +237,7 @@ export default function MaintenanceComplaints() {
                 </tr>
               </thead>
               <tbody>
-                {complaints.map(c => {
+                {filteredComplaints.map(c => {
                   const pr = PRIORITY_STYLE[c.priority] || PRIORITY_STYLE.low
                   const st = STATUS_STYLE[c.status] || STATUS_STYLE.open
                   return (
@@ -156,12 +254,12 @@ export default function MaintenanceComplaints() {
                       </td>
                       <td style={{ ...tdStyle, fontWeight: 600 }}>{c.tenant?.name || '—'}</td>
                       <td style={tdStyle}>
-                        <span style={{ backgroundColor: pr.bg, color: pr.color, border: `1px solid ${pr.border}`, padding: '4px 10px', borderRadius: 0, fontSize: 12, fontWeight: 700 }}>
+                        <span style={{ backgroundColor: pr.bg, color: pr.color, border: `1px solid ${pr.border}`, padding: '3px 10px', borderRadius: 999, fontSize: 11.5, fontWeight: 700, display: 'inline-block' }}>
                           {safeUpper(c.priority)}
                         </span>
                       </td>
                       <td style={tdStyle}>
-                        <span style={{ backgroundColor: st.bg, color: st.color, border: `1px solid ${st.border}`, padding: '4px 10px', borderRadius: 0, fontSize: 12, fontWeight: 700 }}>
+                        <span style={{ backgroundColor: st.bg, color: st.color, border: `1px solid ${st.border}`, padding: '3px 10px', borderRadius: 999, fontSize: 11.5, fontWeight: 700, display: 'inline-block' }}>
                           {safeUpperLabel(c.status)}
                         </span>
                       </td>
@@ -171,7 +269,7 @@ export default function MaintenanceComplaints() {
                             <button
                               className="gfh-portal-btn"
                               onClick={() => handleStatusUpdate(c.id, 'in_progress')}
-                              style={{ display: 'inline-flex', alignItems: 'center', gap: 5, padding: '5px 10px', fontSize: 12, fontWeight: 700, borderRadius: 0, background: '#075985', color: '#fff', border: 'none', cursor: 'pointer' }}
+                              style={{ display: 'inline-flex', alignItems: 'center', gap: 5, padding: '6px 12px', fontSize: 12, fontWeight: 700, borderRadius: 8, background: '#0284C7', color: '#fff', border: 'none', cursor: 'pointer', boxShadow: '0 1px 2px rgba(2, 132, 199, 0.2)' }}
                             >
                               <Icon path={icons.play} size={12} />
                               Start
@@ -181,7 +279,7 @@ export default function MaintenanceComplaints() {
                             <button
                               className="gfh-portal-btn"
                               onClick={() => handleStatusUpdate(c.id, 'resolved')}
-                              style={{ display: 'inline-flex', alignItems: 'center', gap: 5, padding: '5px 10px', fontSize: 12, fontWeight: 700, borderRadius: 0, background: '#065f46', color: '#fff', border: 'none', cursor: 'pointer' }}
+                              style={{ display: 'inline-flex', alignItems: 'center', gap: 5, padding: '6px 12px', fontSize: 12, fontWeight: 700, borderRadius: 8, background: '#0E5E48', color: '#fff', border: 'none', cursor: 'pointer', boxShadow: '0 1px 2px rgba(14, 94, 72, 0.2)' }}
                             >
                               <Icon path={icons.check} size={12} />
                               Resolve

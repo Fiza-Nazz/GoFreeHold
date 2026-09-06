@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import api from '../../api/axios'
 import { formatDate } from '../../utils/formatDate'
-import { THEME, ADMIN_COLORS, portalPageCss, heroStyle, panelStyle, thStyle, tdStyle } from '../../components/gfh/adminTheme'
+import { THEME, ADMIN_COLORS, Icon, portalPageCss, heroStyle, panelStyle, thStyle, tdStyle } from '../../components/gfh/adminTheme'
 import { safeUpper } from '../../utils/safeLabel'
 
 interface TenantPayment {
@@ -14,6 +14,11 @@ interface TenantPayment {
   contract?: {
     unit?: { number?: string; property?: { name?: string } }
   }
+}
+
+const icons = {
+  receipt: 'M9 3h6l4 4v14a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1zM9 9h6M9 13h6M9 17h4',
+  card: 'M12 5v14M5 12h14',
 }
 
 export default function TenantPayments() {
@@ -48,7 +53,7 @@ export default function TenantPayments() {
   }, [])
 
   return (
-    <div className="gfh-portal-page" style={{ fontFamily: "'Inter', 'Segoe UI', system-ui, sans-serif", background: THEME.pageBg }}>
+    <div className="gfh-portal-page" style={{ fontFamily: "'Poppins', system-ui, sans-serif", background: THEME.pageBg }}>
       <style>{portalPageCss}</style>
 
       <div className="fade-in" style={heroStyle}>
@@ -60,60 +65,109 @@ export default function TenantPayments() {
       </div>
 
       {!isLoading && !error && (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 16, marginBottom: 22 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 16, marginBottom: 22 }}>
           <div
             className="gfh-portal-stat"
             style={{
-              background: '#065f46',
-              color: '#fff',
-              borderRadius: 0,
-              padding: '20px 18px',
-              minHeight: 110,
-              boxShadow: '0 8px 20px -10px rgba(15,23,42,0.45)',
+              background: '#FFFFFF',
+              borderRadius: 14,
+              padding: '20px 22px',
+              border: '1px solid #E2E8F0',
+              boxShadow: '0 1px 3px rgba(16,24,40,0.04)',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'space-between',
+              minHeight: 124,
             }}
           >
-            <div style={{ fontSize: 24, fontWeight: 800 }}>AED {totalAmount.toLocaleString()}</div>
-            <div style={{ fontSize: 13.5, fontWeight: 700, marginTop: 8 }}>Total paid</div>
-            <div style={{
-              display: 'inline-block',
-              marginTop: 8,
-              fontSize: 10.5,
-              fontWeight: 700,
-              letterSpacing: '0.3px',
-              textTransform: 'uppercase',
-              background: 'rgba(255,255,255,0.18)',
-              padding: '3px 8px',
-              borderRadius: 0,
-            }}>
-              AED
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
+              <div style={{
+                width: 42,
+                height: 42,
+                borderRadius: 10,
+                background: '#F0FDF4',
+                color: '#0F8A67',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                flexShrink: 0,
+              }}>
+                <Icon path={icons.card} size={20} />
+              </div>
+              <span style={{
+                fontSize: 11,
+                fontWeight: 700,
+                letterSpacing: '0.4px',
+                textTransform: 'uppercase',
+                background: '#F0FDF4',
+                color: '#065F46',
+                border: '1px solid #BBF7D0',
+                padding: '3px 9px',
+                borderRadius: 999,
+              }}>
+                AED
+              </span>
+            </div>
+            <div>
+              <div style={{ fontSize: 22, fontWeight: 800, color: '#0F172A', lineHeight: 1.15, letterSpacing: '-0.02em' }}>
+                AED {totalAmount.toLocaleString()}
+              </div>
+              <div style={{ fontSize: 13, fontWeight: 600, color: '#64748B', marginTop: 4 }}>
+                Total paid
+              </div>
             </div>
           </div>
+
           <div
             className="gfh-portal-stat"
             style={{
-              background: '#075985',
-              color: '#fff',
-              borderRadius: 0,
-              padding: '20px 18px',
-              minHeight: 110,
-              boxShadow: '0 8px 20px -10px rgba(15,23,42,0.45)',
+              background: '#FFFFFF',
+              borderRadius: 14,
+              padding: '20px 22px',
+              border: '1px solid #E2E8F0',
+              boxShadow: '0 1px 3px rgba(16,24,40,0.04)',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'space-between',
+              minHeight: 124,
               animationDelay: '0.06s',
             }}
           >
-            <div style={{ fontSize: 24, fontWeight: 800 }}>{payments.length}</div>
-            <div style={{ fontSize: 13.5, fontWeight: 700, marginTop: 8 }}>Payments</div>
-            <div style={{
-              display: 'inline-block',
-              marginTop: 8,
-              fontSize: 10.5,
-              fontWeight: 700,
-              letterSpacing: '0.3px',
-              textTransform: 'uppercase',
-              background: 'rgba(255,255,255,0.18)',
-              padding: '3px 8px',
-              borderRadius: 0,
-            }}>
-              Count
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
+              <div style={{
+                width: 42,
+                height: 42,
+                borderRadius: 10,
+                background: '#ECFDF8',
+                color: '#0E5E48',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                flexShrink: 0,
+              }}>
+                <Icon path={icons.receipt} size={20} />
+              </div>
+              <span style={{
+                fontSize: 11,
+                fontWeight: 700,
+                letterSpacing: '0.4px',
+                textTransform: 'uppercase',
+                background: '#ECFDF8',
+                color: '#065F46',
+                border: '1px solid #A7F3DC',
+                padding: '3px 9px',
+                borderRadius: 999,
+              }}>
+                Count
+              </span>
+            </div>
+            <div>
+              <div style={{ fontSize: 22, fontWeight: 800, color: '#0F172A', lineHeight: 1.15, letterSpacing: '-0.02em' }}>
+                {payments.length}
+              </div>
+              <div style={{ fontSize: 13, fontWeight: 600, color: '#64748B', marginTop: 4 }}>
+                Total payments
+              </div>
             </div>
           </div>
         </div>

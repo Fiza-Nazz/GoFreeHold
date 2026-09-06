@@ -118,7 +118,7 @@ export default function TenantDashboard() {
   const inputStyle: React.CSSProperties = {
     background: '#ffffff',
     border: `1px solid ${THEME.border}`,
-    borderRadius: 0,
+    borderRadius: 8,
     color: THEME.ink,
     fontSize: 14,
     fontWeight: 500,
@@ -137,33 +137,45 @@ export default function TenantDashboard() {
 
   const statCards = [
     {
-      value: 'Active Contract',
+      value: 'Active',
       label: 'My Tenancy Lease',
       sub: 'Lease',
-      bg: '#1e1b4b',
-      desc: 'Rent payable as per contract schedule',
       icon: icons.contract,
+      iconBg: '#ECFDF8',
+      iconColor: '#0E5E48',
+      badgeBg: '#ECFDF8',
+      badgeColor: '#065F46',
+      badgeBorder: '#A7F3DC',
+      desc: 'Rent payable as per contract schedule',
     },
     {
-      value: 'Direct Account',
+      value: 'Direct',
       label: 'Utilities / DEWA',
       sub: 'DEWA',
-      bg: '#065f46',
-      desc: 'Billed via Dubai Electricity & Water Authority',
       icon: icons.bolt,
+      iconBg: '#F0FDF4',
+      iconColor: '#0F8A67',
+      badgeBg: '#F0FDF4',
+      badgeColor: '#065F46',
+      badgeBorder: '#BBF7D0',
+      desc: 'Billed via Dubai Electricity & Water Authority',
     },
     {
       value: String(activeCount),
       label: 'Active Complaints',
       sub: 'Ops',
-      bg: activeCount > 0 ? '#991b1b' : '#075985',
-      desc: 'In progress by maintenance team',
       icon: icons.wrench,
+      iconBg: activeCount > 0 ? '#FEF2F2' : '#F0F9FF',
+      iconColor: activeCount > 0 ? '#DC2626' : '#0284C7',
+      badgeBg: activeCount > 0 ? '#FEF2F2' : '#F0F9FF',
+      badgeColor: activeCount > 0 ? '#991B1B' : '#075985',
+      badgeBorder: activeCount > 0 ? '#FECACA' : '#BAE6FD',
+      desc: 'In progress by maintenance team',
     },
   ]
 
   return (
-    <div className="gfh-portal-page" style={{ fontFamily: "'Inter', 'Segoe UI', system-ui, sans-serif", background: THEME.pageBg }}>
+    <div className="gfh-portal-page" style={{ fontFamily: "'Poppins', system-ui, sans-serif", background: THEME.pageBg }}>
       <style>{portalPageCss}</style>
 
       <div className="fade-in" style={heroStyle}>
@@ -172,52 +184,76 @@ export default function TenantDashboard() {
           <div style={{ fontSize: 22, fontWeight: 800, color: THEME.ink, marginTop: 4 }}>Welcome back, {user?.name}</div>
           <div style={{ fontSize: 12, color: '#9ca3af', marginTop: 4 }}>Manage your lease, dues, and maintenance requests</div>
         </div>
-        <button className="gfh-portal-btn" onClick={() => setIsFormOpen(true)} style={{ ...ghostBtnStyle, background: '#1e1b4b' }}>
+        <button
+          className="gfh-portal-btn"
+          onClick={() => setIsFormOpen(true)}
+          style={{
+            ...ghostBtnStyle,
+            background: '#0E5E48',
+            borderRadius: 8,
+          }}
+        >
           <Icon path={icons.plus} size={16} />
           Report Maintenance Issue
         </button>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 16, marginBottom: 22 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 16, marginBottom: 22 }}>
         {statCards.map((card, i) => (
           <div
             key={card.label}
             className="gfh-portal-stat"
             style={{
-              background: card.bg,
-              color: '#fff',
-              borderRadius: 0,
-              padding: '20px 18px',
-              minHeight: 118,
+              background: '#FFFFFF',
+              borderRadius: 14,
+              padding: '20px 22px',
+              border: '1px solid #E2E8F0',
+              boxShadow: '0 1px 3px rgba(16,24,40,0.04)',
               display: 'flex',
               flexDirection: 'column',
               justifyContent: 'space-between',
-              boxShadow: '0 8px 20px -10px rgba(15,23,42,0.45)',
+              minHeight: 130,
               animationDelay: `${i * 0.06}s`,
             }}
           >
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 10 }}>
-              <div style={{ fontSize: 20, fontWeight: 800, lineHeight: 1.2 }}>{card.value}</div>
-              <div style={{ opacity: 0.9 }}>
-                <Icon path={card.icon} size={18} />
-              </div>
-            </div>
-            <div>
-              <div style={{ fontSize: 13.5, fontWeight: 700, marginTop: 8 }}>{card.label}</div>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
               <div style={{
-                display: 'inline-block',
-                marginTop: 8,
-                fontSize: 10.5,
+                width: 42,
+                height: 42,
+                borderRadius: 10,
+                background: card.iconBg,
+                color: card.iconColor,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                flexShrink: 0,
+              }}>
+                <Icon path={card.icon} size={20} />
+              </div>
+              <span style={{
+                fontSize: 11,
                 fontWeight: 700,
-                letterSpacing: '0.3px',
+                letterSpacing: '0.4px',
                 textTransform: 'uppercase',
-                background: 'rgba(255,255,255,0.18)',
-                padding: '3px 8px',
-                borderRadius: 0,
+                background: card.badgeBg,
+                color: card.badgeColor,
+                border: `1px solid ${card.badgeBorder}`,
+                padding: '3px 9px',
+                borderRadius: 999,
               }}>
                 {card.sub}
+              </span>
+            </div>
+            <div>
+              <div style={{ fontSize: 24, fontWeight: 800, color: '#0F172A', lineHeight: 1.15, letterSpacing: '-0.02em' }}>
+                {card.value}
               </div>
-              <div style={{ fontSize: 11.5, opacity: 0.85, marginTop: 8 }}>{card.desc}</div>
+              <div style={{ fontSize: 13, fontWeight: 700, color: '#0F172A', marginTop: 4 }}>
+                {card.label}
+              </div>
+              <div style={{ fontSize: 11.5, color: '#64748B', marginTop: 3 }}>
+                {card.desc}
+              </div>
             </div>
           </div>
         ))}
@@ -245,7 +281,7 @@ export default function TenantDashboard() {
                     padding: 16,
                     background: '#fff',
                     border: `1px solid ${THEME.border}`,
-                    borderRadius: 0,
+                    borderRadius: 12,
                     borderLeft: `4px solid ${item.status === 'resolved' || item.status === 'closed' ? ADMIN_COLORS.green : ADMIN_COLORS.amber}`,
                     display: 'flex',
                     justifyContent: 'space-between',
@@ -257,7 +293,7 @@ export default function TenantDashboard() {
                   <div>
                     <div style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap', marginBottom: 6 }}>
                       <strong style={{ fontSize: 14, fontWeight: 700, color: THEME.ink }}>{item.title}</strong>
-                      <span style={{ background: st.bg, color: st.color, border: `1px solid ${st.border}`, padding: '4px 10px', borderRadius: 0, fontSize: 11.5, fontWeight: 700 }}>
+                      <span style={{ background: st.bg, color: st.color, border: `1px solid ${st.border}`, padding: '3px 10px', borderRadius: 999, fontSize: 11.5, fontWeight: 700 }}>
                         {safeUpperLabel(item.status)}
                       </span>
                     </div>
@@ -275,7 +311,7 @@ export default function TenantDashboard() {
 
       {isFormOpen && (
         <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(15,23,42,0.55)', backdropFilter: 'blur(3px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
-          <div className="fade-in" style={{ position: 'relative', width: 480, maxWidth: '92vw', padding: 30, background: '#ffffff', borderRadius: 0, border: `1px solid ${THEME.border}`, boxShadow: '0 24px 55px -18px rgba(15,23,42,0.35)' }}>
+          <div className="fade-in" style={{ position: 'relative', width: 480, maxWidth: '92vw', padding: 30, background: '#ffffff', borderRadius: 14, border: `1px solid ${THEME.border}`, boxShadow: '0 24px 55px -18px rgba(15,23,42,0.35)' }}>
             <h2 style={{ fontSize: 20, fontWeight: 800, marginBottom: 20, color: THEME.ink }}>
               Report Maintenance Issue
             </h2>
@@ -324,11 +360,11 @@ export default function TenantDashboard() {
                 <textarea style={{ ...inputStyle, resize: 'vertical' }} rows={3} placeholder="Describe the issue..." value={formData.description} onChange={e => setFormData({ ...formData, description: e.target.value })} required />
               </div>
               <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 10 }}>
-                <button type="button" onClick={() => setIsFormOpen(false)} style={{ display: 'inline-flex', alignItems: 'center', gap: 6, borderRadius: 0, fontWeight: 700, fontSize: 13, padding: '9px 16px', background: '#f1f5f9', color: THEME.textMuted, border: `1px solid ${THEME.border}`, cursor: 'pointer' }}>
+                <button type="button" onClick={() => setIsFormOpen(false)} style={{ display: 'inline-flex', alignItems: 'center', gap: 6, borderRadius: 8, fontWeight: 700, fontSize: 13, padding: '9px 16px', background: '#f1f5f9', color: THEME.textMuted, border: `1px solid ${THEME.border}`, cursor: 'pointer' }}>
                   <Icon path={icons.close} size={13} />
                   Cancel
                 </button>
-                <button type="submit" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, borderRadius: 0, fontWeight: 700, fontSize: 13, padding: '9px 16px', background: '#065f46', color: '#fff', border: 'none', cursor: 'pointer' }}>
+                <button type="submit" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, borderRadius: 8, fontWeight: 700, fontSize: 13, padding: '9px 16px', background: '#0E5E48', color: '#fff', border: 'none', cursor: 'pointer', boxShadow: '0 1px 3px rgba(14, 94, 72, 0.25)' }}>
                   <Icon path={icons.check} size={13} />
                   Submit Complaint
                 </button>
