@@ -220,7 +220,7 @@ export default function MaintenanceDashboard() {
                 <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                   <thead>
                     <tr style={{ borderBottom: `2px solid ${THEME.border}` }}>
-                      {['Ticket ID', 'Title / issue', 'Unit & building', 'Tenant', 'Issued (Dubai Time)', 'Priority', 'Status', 'Actions'].map(h => (
+                      {['Ticket ID', 'Title / issue', 'Unit & building', 'Tenant', 'Time', 'Priority', 'Status', 'Actions'].map(h => (
                         <th key={h} style={thStyle}>{h}</th>
                       ))}
                     </tr>

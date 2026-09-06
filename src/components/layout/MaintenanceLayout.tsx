@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Outlet, NavLink, useNavigate, useLocation, useSearchParams } from 'react-router-dom'
+import { Outlet, NavLink, useNavigate, useLocation } from 'react-router-dom'
 import { useAuthStore } from '../../store/authStore'
 
 const Icon = ({ path, size = 18 }: { path: string; size?: number }) => (
@@ -46,10 +46,8 @@ export default function MaintenanceLayout() {
   const { user, logout } = useAuthStore()
   const navigate = useNavigate()
   const location = useLocation()
-  const [searchParams, setSearchParams] = useSearchParams()
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const pageTitle = resolveTitle(location.pathname)
-  const searchQuery = searchParams.get('q') || ''
 
   const handleLogout = async () => {
     await logout()
@@ -395,42 +393,7 @@ export default function MaintenanceLayout() {
             </h1>
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: 16, flexWrap: 'wrap' }}>
-            {/* Search bar — shown on Complaints page */}
-            {location.pathname === '/maintenance/complaints' && (
-              <div style={{ position: 'relative', width: 260, maxWidth: '100%' }}>
-                <svg
-                  style={{ position: 'absolute', left: 11, top: '50%', transform: 'translateY(-50%)', color: '#94A3B8', pointerEvents: 'none' }}
-                  width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
-                >
-                  <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
-                </svg>
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={e => {
-                    const val = e.target.value
-                    setSearchParams(val ? { q: val } : {}, { replace: true })
-                  }}
-                  placeholder="Search complaints..."
-                  style={{
-                    width: '100%',
-                    padding: '7px 12px 7px 32px',
-                    borderRadius: 8,
-                    border: '1px solid #E2E8F0',
-                    background: '#FFFFFF',
-                    fontSize: 13,
-                    color: '#0F172A',
-                    outline: 'none',
-                    boxSizing: 'border-box',
-                    fontFamily: "'Poppins', system-ui, sans-serif",
-                  }}
-                />
-              </div>
-            )}
-
-            {/* User Profile */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: 9 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 9 }}>
               <div style={{
                 width: 36, height: 36, borderRadius: '50%',
                 background: '#0F8A67', color: '#FFFFFF',
@@ -446,7 +409,6 @@ export default function MaintenanceLayout() {
                 </div>
               </div>
             </div>
-          </div>
         </header>
 
         <main className="gfh-page-content">

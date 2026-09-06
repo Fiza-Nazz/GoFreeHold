@@ -179,7 +179,7 @@ export default function TenantComplaints() {
             <table style={{ width: '100%', borderCollapse: 'collapse' }}>
               <thead>
                 <tr style={{ borderBottom: `2px solid ${THEME.border}` }}>
-                  {['ID', 'Issue', 'Status', 'Issued (Dubai Time)', 'Actions'].map(h => (
+                  {['ID', 'Issue', 'Status', 'Time', 'Actions'].map(h => (
                     <th key={h} style={thStyle}>{h}</th>
                   ))}
                 </tr>
