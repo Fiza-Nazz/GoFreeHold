@@ -99,7 +99,7 @@ export default function TenantComplaintDetail() {
                 />
               )}
               {complaint.created_at && (
-                <Detail label="Issued (Dubai Time)" value={formatDubaiDateTime(complaint.created_at)} />
+                <Detail label="Time" value={formatDubaiDateTime(complaint.created_at)} />
               )}
             </div>
           </div>
