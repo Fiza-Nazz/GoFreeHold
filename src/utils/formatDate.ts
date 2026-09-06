@@ -31,3 +31,29 @@ function formatParts(d: Date): string {
 
 /** Alias kept for call sites that want an explicit name. */
 export const formatDisplayDate = formatDate
+
+/**
+ * Formats an API date / datetime string into Dubai local time (GST / UTC+4).
+ * Example: "06 Sep 2026, 09:52 PM GST"
+ */
+export function formatDubaiDateTime(value?: string | Date | null): string {
+  if (value === undefined || value === null || value === '') return '—'
+
+  const d = value instanceof Date ? value : new Date(String(value).trim())
+  if (Number.isNaN(d.getTime())) return String(value)
+
+  try {
+    const formatted = new Intl.DateTimeFormat('en-GB', {
+      timeZone: 'Asia/Dubai',
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true,
+    }).format(d)
+    return `${formatted.replace(',', '')} GST`
+  } catch {
+    return d.toLocaleString()
+  }
+}

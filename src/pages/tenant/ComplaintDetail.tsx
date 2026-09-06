@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 import api from '../../api/axios'
 import { THEME, ADMIN_COLORS, portalPageCss, heroStyle, panelStyle, ghostBtnStyle } from '../../components/gfh/adminTheme'
 import { safeUpper, safeUpperLabel } from '../../utils/safeLabel'
+import { formatDubaiDateTime } from '../../utils/formatDate'
 
 interface Complaint {
   id: number
@@ -98,7 +99,7 @@ export default function TenantComplaintDetail() {
                 />
               )}
               {complaint.created_at && (
-                <Detail label="Logged" value={new Date(complaint.created_at).toLocaleString()} />
+                <Detail label="Issued (Dubai Time)" value={formatDubaiDateTime(complaint.created_at)} />
               )}
             </div>
           </div>

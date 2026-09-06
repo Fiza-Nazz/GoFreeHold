@@ -4,6 +4,7 @@ import api from '../../api/axios'
 import { useAuthStore } from '../../store/authStore'
 import { THEME, ADMIN_COLORS, Icon, portalPageCss, heroStyle, panelStyle, ghostBtnStyle } from '../../components/gfh/adminTheme'
 import { safeUpperLabel } from '../../utils/safeLabel'
+import { formatDubaiDateTime } from '../../utils/formatDate'
 
 interface Complaint {
   id: number
@@ -299,8 +300,8 @@ export default function TenantDashboard() {
                     </div>
                     <p style={{ fontSize: 13, color: THEME.textMuted, margin: 0 }}>{item.description}</p>
                   </div>
-                  <div style={{ fontSize: 12, color: THEME.textMuted, whiteSpace: 'nowrap' }}>
-                    Logged: {new Date(item.created_at).toLocaleDateString()}
+                  <div style={{ fontSize: 12, color: '#475569', whiteSpace: 'nowrap', fontWeight: 600 }}>
+                    Issued: {formatDubaiDateTime(item.created_at)}
                   </div>
                 </div>
               )

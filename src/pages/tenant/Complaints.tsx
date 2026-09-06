@@ -3,6 +3,7 @@ import api from '../../api/axios'
 import { Link } from 'react-router-dom'
 import { THEME, ADMIN_COLORS, Icon, portalPageCss, heroStyle, panelStyle, ghostBtnStyle, thStyle, tdStyle } from '../../components/gfh/adminTheme'
 import { safeUpperLabel } from '../../utils/safeLabel'
+import { formatDubaiDateTime } from '../../utils/formatDate'
 
 interface Complaint {
   id: number
@@ -178,7 +179,7 @@ export default function TenantComplaints() {
             <table style={{ width: '100%', borderCollapse: 'collapse' }}>
               <thead>
                 <tr style={{ borderBottom: `2px solid ${THEME.border}` }}>
-                  {['ID', 'Issue', 'Status', 'Logged', 'Actions'].map(h => (
+                  {['ID', 'Issue', 'Status', 'Issued (Dubai Time)', 'Actions'].map(h => (
                     <th key={h} style={thStyle}>{h}</th>
                   ))}
                 </tr>
@@ -195,7 +196,9 @@ export default function TenantComplaints() {
                           {safeUpperLabel(item.status)}
                         </span>
                       </td>
-                      <td style={tdStyle}>{item.created_at ? new Date(item.created_at).toLocaleDateString() : '—'}</td>
+                      <td style={{ ...tdStyle, fontSize: 12, color: '#334155', whiteSpace: 'nowrap', fontWeight: 500 }}>
+                        {formatDubaiDateTime(item.created_at)}
+                      </td>
                       <td style={tdStyle}>
                         <Link to={`/tenant/complaints/${item.id}`} className="gfh-portal-link" style={{ color: '#0E5E48' }}>View details →</Link>
                       </td>

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import api from '../../api/axios'
 import { safeUpper, safeUpperLabel } from '../../utils/safeLabel'
+import { formatDubaiDateTime } from '../../utils/formatDate'
 import { THEME, ADMIN_COLORS, Icon, portalPageCss, heroStyle, panelStyle, ghostBtnStyle, thStyle, tdStyle, RADIUS } from '../../components/gfh/adminTheme'
 
 interface Complaint {
@@ -9,6 +10,7 @@ interface Complaint {
   description: string
   status: string
   priority: string
+  created_at?: string
   unit?: { number: string; property?: { name: string } }
   tenant?: { name: string; phone?: string }
 }
@@ -218,7 +220,7 @@ export default function MaintenanceDashboard() {
                 <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                   <thead>
                     <tr style={{ borderBottom: `2px solid ${THEME.border}` }}>
-                      {['Ticket ID', 'Title / issue', 'Unit & building', 'Tenant', 'Priority', 'Status', 'Actions'].map(h => (
+                      {['Ticket ID', 'Title / issue', 'Unit & building', 'Tenant', 'Issued (Dubai Time)', 'Priority', 'Status', 'Actions'].map(h => (
                         <th key={h} style={thStyle}>{h}</th>
                       ))}
                     </tr>
@@ -240,6 +242,9 @@ export default function MaintenanceDashboard() {
                             <span style={{ fontSize: 12, color: THEME.textMuted }}>{c.unit?.property?.name || ''}</span>
                           </td>
                           <td style={{ ...tdStyle, fontWeight: 600 }}>{c.tenant?.name || 'N/A'}</td>
+                          <td style={{ ...tdStyle, fontSize: 12, color: '#334155', whiteSpace: 'nowrap', fontWeight: 500 }}>
+                            {formatDubaiDateTime(c.created_at)}
+                          </td>
                           <td style={tdStyle}>
                             <span style={{ backgroundColor: pr.bg, color: pr.color, border: `1px solid ${pr.border}`, padding: '3px 10px', borderRadius: 999, fontSize: 11.5, fontWeight: 700, display: 'inline-block' }}>
                               {safeUpper(c.priority)}
