@@ -1,5 +1,6 @@
-﻿import { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import api from '../../api/axios'
+import { formatDubaiDateTime } from '../../utils/formatDate'
 import { THEME, Icon, ICONS, CornerBrackets, portalPageCss, heroStyle, panelStyle, ghostBtnStyle } from '../../components/gfh/adminTheme'
 
 interface Complaint {
@@ -179,6 +180,7 @@ export default function ComplaintDashboard() {
                   <p style={{ fontSize: 14, fontWeight: 500, color: THEME.ink, marginBottom: 9 }}>{item.description}</p>
 
                   <div style={{ display: 'flex', gap: 16, fontSize: 12.5, color: THEME.textMuted, flexWrap: 'wrap' }}>
+                    <span>Issued: <strong style={{ color: THEME.ink }}>{formatDubaiDateTime(item.created_at)}</strong></span>
                     <span>Category: <strong style={{ color: THEME.ink }}>{item.category}</strong></span>
                     <span>Unit: <strong style={{ color: THEME.ink }}>{item.unit?.number} ({item.unit?.property?.name})</strong></span>
                     <span>Tenant: <strong style={{ color: THEME.ink }}>{item.tenant?.name || 'N/A'}</strong></span>
