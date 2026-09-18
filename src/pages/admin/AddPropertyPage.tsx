@@ -45,9 +45,17 @@ export default function AddPropertyPage() {
     type: 'residential',
   })
 
+  const basePath = typeof window !== 'undefined' && window.location.pathname.startsWith('/owner') ? '/owner' : '/admin'
+
   useEffect(() => {
     api.get('/admin/properties/owners')
-      .then(response => setOwners(response.data?.data?.owners || []))
+      .then(response => {
+        const list = response.data?.data?.owners || []
+        setOwners(list)
+        if (list.length === 1) {
+          setFormData(prev => ({ ...prev, owner_id: String(list[0].id) }))
+        }
+      })
       .catch((err) => setError(err.response?.data?.message || 'Unable to load owners.'))
       .finally(() => setIsLoading(false))
   }, [])
@@ -59,7 +67,7 @@ export default function AddPropertyPage() {
     setError('')
     try {
       await api.post('/admin/properties', formData)
-      navigate('/admin/properties', { state: { message: 'Property created successfully.' } })
+      navigate(`${basePath}/properties`, { state: { message: 'Property created successfully.' } })
     } catch (err: any) {
       setError(err.response?.data?.message || 'Unable to create property.')
     } finally {
@@ -101,7 +109,7 @@ export default function AddPropertyPage() {
           <h1 style={{ margin: 0, color: THEME.ink, fontSize: 24, fontWeight: 800 }}>Add Property</h1>
           <p style={{ margin: '6px 0 0', color: THEME.textMuted, fontSize: 13 }}>Register a new property and assign its owner</p>
         </div>
-        <button type="button" className="gfh-portal-btn" onClick={() => navigate('/admin/properties')} style={{ border: '1px solid #A7F3DC', background: '#ECFDF8', color: '#065F46', padding: '10px 15px', cursor: 'pointer', fontWeight: 700 }}>
+        <button type="button" className="gfh-portal-btn" onClick={() => navigate(`${basePath}/properties`)} style={{ border: '1px solid #A7F3DC', background: '#ECFDF8', color: '#065F46', padding: '10px 15px', cursor: 'pointer', fontWeight: 700 }}>
           ← Back to Buildings
         </button>
       </div>
@@ -142,7 +150,7 @@ export default function AddPropertyPage() {
               <input id="property-city" style={inputStyle} value={formData.city} onChange={event => setFormData({ ...formData, city: event.target.value })} placeholder="e.g. Dubai" maxLength={255} required />
             </div>
             <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10, flexWrap: 'wrap' }}>
-              <button type="button" onClick={() => navigate('/admin/properties')} style={{ padding: '10px 18px', border: '1px solid #CBD5E1', background: '#FFFFFF', color: '#475569', cursor: 'pointer', fontWeight: 700 }}>Cancel</button>
+              <button type="button" onClick={() => navigate(`${basePath}/properties`)} style={{ padding: '10px 18px', border: '1px solid #CBD5E1', background: '#FFFFFF', color: '#475569', cursor: 'pointer', fontWeight: 700 }}>Cancel</button>
               <button type="submit" disabled={isSaving} style={{ display: 'inline-flex', alignItems: 'center', gap: 7, padding: '10px 20px', border: 'none', background: '#0F8A67', color: '#FFFFFF', cursor: isSaving ? 'wait' : 'pointer', fontWeight: 700, opacity: isSaving ? 0.7 : 1 }}>
                 <Icon path={ICONS.plus} size={16} />
                 {isSaving ? 'Saving…' : 'Save Property'}
