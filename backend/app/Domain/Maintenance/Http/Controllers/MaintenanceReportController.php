@@ -14,16 +14,24 @@ class MaintenanceReportController extends Controller
      */
     public function dailyReport(Request $request)
     {
+        $request->validate(['date' => 'nullable|date_format:Y-m-d']);
+        $complaints = Complaint::query();
+        $jobs = Job::query();
+        if ($request->user()->role === 'maintenance') {
+            $context = app(\App\Domain\Auth\Services\OwnerContextResolver::class);
+            $context->jobs($jobs, $request->user());
+            $complaints->whereHas('job', fn ($j) => $context->jobs($j, $request->user()));
+        }
         $date = $request->query('date', Carbon::today()->toDateString());
 
         // Live complaints table has no resolved_at — resolution date lives on jobs.completed_at
         // (set when a complaint is marked resolved; see ComplaintController::updateStatus).
-        $totalOpen = Complaint::where('status', 'open')->count();
-        $totalAssigned = Complaint::where('status', 'assigned')->count();
-        $totalInProgress = Complaint::where('status', 'in_progress')->count();
-        $totalResolvedToday = Job::whereDate('completed_at', $date)->count();
+        $totalOpen = (clone $complaints)->where('status', 'open')->count();
+        $totalAssigned = (clone $complaints)->where('status', 'assigned')->count();
+        $totalInProgress = (clone $complaints)->where('status', 'in_progress')->count();
+        $totalResolvedToday = (clone $jobs)->whereDate('completed_at', $date)->count();
 
-        $completedJobsToday = Job::with(['complaint.unit.property', 'assignedTo:id,name'])
+        $completedJobsToday = (clone $jobs)->with(['complaint:id,unit_id,title', 'complaint.unit:id,number,property_id', 'complaint.unit.property:id,name', 'assignedTo:id,name'])
             ->whereDate('completed_at', $date)
             ->get();
 

@@ -28,6 +28,14 @@ class CallLogController extends Controller
             'remark'      => 'required|string',
         ]);
 
+        $user = $request->user();
+        if ($user && in_array($user->role, ['owner', 'cashier', 'accountant'], true)) {
+            $ownerId = app(\App\Domain\Auth\Services\OwnerContextResolver::class)->ownerId($user);
+            $contract = \App\Domain\Contract\Models\Contract::findOrFail($validated['contract_id']);
+            $contractOwnerId = (int) ($contract->owner_id ?: $contract->unit?->property?->owner_id);
+            abort_unless($contractOwnerId === (int) $ownerId, 403, 'Unauthorized access to this contract.');
+        }
+
         $validated['logged_by'] = $request->user()->id;
         $log = CallLog::create($validated);
 

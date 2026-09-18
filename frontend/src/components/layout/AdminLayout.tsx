@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Outlet, NavLink, useNavigate, useLocation, useSearchParams } from 'react-router-dom'
 import { useAuthStore } from '../../store/authStore'
 import DubaiClock from '../gfh/DubaiClock'
@@ -34,18 +34,16 @@ const icons = {
   settings: 'M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM19.4 15a1.7 1.7 0 0 0 .34 1.87l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.7 1.7 0 0 0-1.87-.34 1.7 1.7 0 0 0-1.04 1.56V21a2 2 0 0 1-4 0v-.09A1.7 1.7 0 0 0 9 19.35a1.7 1.7 0 0 0-1.87.34l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.7 1.7 0 0 0 4.65 15a1.7 1.7 0 0 0-1.56-1.04H3a2 2 0 0 1 0-4h.09A1.7 1.7 0 0 0 4.65 9a1.7 1.7 0 0 0-.34-1.87l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.7 1.7 0 0 0 9 4.65a1.7 1.7 0 0 0 1.04-1.56V3a2 2 0 0 1 4 0v.09A1.7 1.7 0 0 0 15 4.65a1.7 1.7 0 0 0 1.87.34l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.7 1.7 0 0 0 19.35 9a1.7 1.7 0 0 0 1.56 1.04H21a2 2 0 0 1 0 4h-.09a1.7 1.7 0 0 0-1.51 1.96z',
   logout: 'M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9',
   menu: 'M3 12h18M3 6h18M3 18h18',
+  user: 'M20 21a8 8 0 0 0-16 0M12 13a4 4 0 1 0 0-8 4 4 0 0 0 0 8z',
+  chevron: 'M9 18l6-6-6-6',
 }
 
 /** Real Admin routes only — grouped like the reference Modules / Lease / Accounts pattern. */
 const adminNavItems = [
   { section: 'MAIN', items: [
     { to: '/admin/dashboard', icon: icons.dashboard, label: 'Dashboard' },
-    { to: '/admin/properties', icon: icons.building, label: 'Properties' },
-    { to: '/admin/units', icon: icons.door, label: 'Units' },
-    { to: '/admin/contracts', icon: icons.contracts, label: 'Contracts' },
   ]},
   { section: 'Lease & Expense', items: [
-    { to: '/admin/pdc', icon: icons.bank, label: 'PDC Cheques' },
     { to: '/admin/call-logs', icon: icons.phone, label: 'Call Logs' },
     { to: '/admin/payments', icon: icons.card, label: 'Payments' },
     { to: '/admin/ledger', icon: icons.ledger, label: 'Rent Ledger' },
@@ -70,7 +68,6 @@ const adminNavItems = [
     { to: '/admin/daily-maintenance', icon: icons.toolbox, label: 'Daily Maint. Report' },
     { to: '/admin/inventory', icon: icons.box, label: 'Inventory' },
     { to: '/admin/item-store', icon: icons.box, label: 'Item Store' },
-    { to: '/admin/appliances', icon: icons.tv, label: 'Appliances' },
     { to: '/admin/purchase-orders', icon: icons.cart, label: 'Purchase Orders' },
     { to: '/admin/legal', icon: icons.scale, label: 'Legal Cases' },
   ]},
@@ -81,10 +78,44 @@ const adminNavItems = [
   ]},
 ]
 
+const adminMenuGroups = [
+  {
+    key: 'properties',
+    label: 'Properties',
+    icon: icons.building,
+    paths: ['/admin/properties', '/admin/units', '/admin/appliances'],
+    items: [
+      { to: '/admin/properties/add', icon: icons.building, label: 'Add Property' },
+      { to: '/admin/properties', icon: icons.building, label: 'Buildings' },
+      { to: '/admin/units', icon: icons.door, label: 'Units' },
+      { to: '/admin/appliances', icon: icons.tv, label: 'Home Appliances' },
+    ],
+  },
+  {
+    key: 'contracts',
+    label: 'Contracts',
+    icon: icons.contracts,
+    paths: ['/admin/contracts', '/admin/pdc', '/admin/tenants'],
+    items: [
+      { to: '/admin/contracts?status=active', icon: icons.contracts, label: 'Current Contracts List' },
+      { to: '/admin/pdc', icon: icons.bank, label: 'Cheque Details' },
+      { to: '/admin/tenants/add', icon: icons.user, label: 'Add Tenant' },
+      { to: '/admin/tenants', icon: icons.user, label: 'Tenant List' },
+      { to: '/admin/tenants/previous', icon: icons.user, label: 'Previous Tenants List' },
+      { to: '/admin/contracts?action=add', icon: icons.contracts, label: 'Tenancy Contract' },
+      { to: '/admin/contracts?status=expired', icon: icons.contracts, label: 'Expired Contracts' },
+    ],
+  },
+]
+
 const PAGE_TITLES: Record<string, string> = {
   '/admin/dashboard': 'Dashboard',
   '/admin/properties': 'Properties',
+  '/admin/properties/add': 'Add Property',
   '/admin/units': 'Units',
+  '/admin/tenants': 'Tenant List',
+  '/admin/tenants/add': 'Add Tenant',
+  '/admin/tenants/previous': 'Previous Tenants',
   '/admin/contracts': 'Contracts',
   '/admin/pdc': 'PDC Cheques',
   '/admin/call-logs': 'Call Logs',
@@ -127,8 +158,30 @@ export default function AdminLayout() {
   const location = useLocation()
   const [searchParams, setSearchParams] = useSearchParams()
   const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({
+    properties: adminMenuGroups[0].paths.some(path => location.pathname.startsWith(path)),
+    contracts: adminMenuGroups[1].paths.some(path => location.pathname.startsWith(path)),
+  })
   const pageTitle = resolveTitle(location.pathname)
   const searchQuery = searchParams.get('q') || ''
+
+  useEffect(() => {
+    setOpenGroups(current => {
+      const next = { ...current }
+      adminMenuGroups.forEach(group => {
+        if (group.paths.some(path => location.pathname.startsWith(path))) next[group.key] = true
+      })
+      return next
+    })
+  }, [location.pathname])
+
+  const isMenuLinkActive = (target: string) => {
+    const [targetPath, targetQuery = ''] = target.split('?')
+    if (location.pathname !== targetPath) return false
+    const requiredParams = new URLSearchParams(targetQuery)
+    if ([...requiredParams].length === 0) return !location.search
+    return [...requiredParams].every(([key, value]) => searchParams.get(key) === value)
+  }
 
   const handleLogout = async () => {
     await logout()
@@ -245,6 +298,59 @@ export default function AdminLayout() {
 
         .gfh-nav-item.active .gfh-nav-icon {
           color: #34D3A5;
+        }
+
+        .gfh-nav-group-toggle {
+          width: 100%;
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          padding: 10px 14px;
+          margin: 3px 0;
+          border: 1px solid transparent;
+          border-radius: 8px;
+          background: transparent;
+          color: #D1FAEE;
+          font-size: 13.5px;
+          font-weight: 600;
+          text-align: left;
+          cursor: pointer;
+          transition: background 0.18s ease, color 0.18s ease, border-color 0.18s ease;
+        }
+
+        .gfh-nav-group-toggle:hover,
+        .gfh-nav-group-toggle.current {
+          background: rgba(255, 255, 255, 0.08);
+          color: #FFFFFF;
+        }
+
+        .gfh-nav-group-toggle.current {
+          border-color: rgba(167, 243, 220, 0.35);
+        }
+
+        .gfh-nav-group-chevron {
+          margin-left: auto;
+          display: flex;
+          transition: transform 0.18s ease;
+        }
+
+        .gfh-nav-group-chevron.open { transform: rotate(90deg); }
+
+        .gfh-nav-submenu {
+          margin: 2px 0 7px 17px;
+          padding-left: 10px;
+          border-left: 1px solid rgba(167, 243, 220, 0.22);
+        }
+
+        .gfh-nav-submenu .gfh-nav-item {
+          padding: 8px 10px;
+          gap: 9px;
+          font-size: 12.5px;
+        }
+
+        .gfh-nav-submenu .gfh-nav-item svg {
+          width: 15px;
+          height: 15px;
         }
 
         .gfh-nav-icon {
@@ -429,6 +535,40 @@ export default function AdminLayout() {
                   {item.label}
                 </NavLink>
               ))}
+              {section.section === 'MAIN' && adminMenuGroups.map(group => {
+                const isOpen = openGroups[group.key]
+                const isCurrent = group.paths.some(path => location.pathname.startsWith(path))
+                return (
+                  <div key={group.key}>
+                    <button
+                      type="button"
+                      className={`gfh-nav-group-toggle ${isCurrent ? 'current' : ''}`}
+                      aria-expanded={isOpen}
+                      aria-controls={`admin-${group.key}-submenu`}
+                      onClick={() => setOpenGroups(current => ({ ...current, [group.key]: !current[group.key] }))}
+                    >
+                      <span className="gfh-nav-icon"><Icon path={group.icon} /></span>
+                      <span>{group.label}</span>
+                      <span className={`gfh-nav-group-chevron ${isOpen ? 'open' : ''}`}><Icon path={icons.chevron} size={15} /></span>
+                    </button>
+                    {isOpen && (
+                      <div id={`admin-${group.key}-submenu`} className="gfh-nav-submenu">
+                        {group.items.map(item => (
+                          <NavLink
+                            key={item.to}
+                            to={item.to}
+                            className={() => `gfh-nav-item ${isMenuLinkActive(item.to) ? 'active' : ''}`}
+                            onClick={() => setSidebarOpen(false)}
+                          >
+                            <span className="gfh-nav-icon"><Icon path={item.icon} /></span>
+                            <span>{item.label}</span>
+                          </NavLink>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )
+              })}
             </div>
           ))}
         </nav>

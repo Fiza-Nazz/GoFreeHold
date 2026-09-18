@@ -23,6 +23,15 @@ class RentTransactionController extends Controller
             'contract.tenant:id,name',
         ]);
 
+        $user = $request->user();
+        if ($user && in_array($user->role, ['owner', 'cashier', 'accountant'], true)) {
+            $ownerId = app(\App\Domain\Auth\Services\OwnerContextResolver::class)->ownerId($user);
+            $query->whereHas('contract', function ($q) use ($ownerId) {
+                $q->where('contracts.owner_id', $ownerId)
+                  ->orWhereHas('unit.property', fn ($p) => $p->where('owner_id', $ownerId));
+            });
+        }
+
         if ($request->filled('contract_id')) {
             $query->where('contract_id', $request->contract_id);
         }

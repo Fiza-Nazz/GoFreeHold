@@ -3,12 +3,17 @@
 namespace App\Domain\Settlement\Http\Controllers;
 
 use App\Domain\Settlement\Models\SettlementPayment;
+use App\Domain\Settlement\Services\SettlementService;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class SettlementPaymentController extends Controller
 {
+    public function __construct(private readonly SettlementService $settlementService)
+    {
+    }
+
     public function index(Request $request): JsonResponse
     {
         $query = SettlementPayment::with('settlement:id,owner_id,status');
@@ -29,7 +34,7 @@ class SettlementPaymentController extends Controller
             'payment_date'   => 'required|date',
         ]);
 
-        $payment = SettlementPayment::create($validated);
+        $payment = $this->settlementService->recordPayment($validated);
 
         return response()->json(['status' => 'success', 'message' => 'Settlement payment recorded.', 'data' => ['payment' => $payment]], 201);
     }

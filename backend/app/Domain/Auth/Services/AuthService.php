@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Password;
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 
@@ -18,11 +19,11 @@ class AuthService
      */
     public function verifyRecaptcha(?string $token): void
     {
-        if (filter_var(env('RECAPTCHA_SKIP', false), FILTER_VALIDATE_BOOLEAN)) {
+        if (config('services.recaptcha.skip', false)) {
             return;
         }
 
-        $secret = env('RECAPTCHA_SECRET_KEY');
+        $secret = config('services.recaptcha.secret_key');
 
         if (empty($secret)) {
             throw ValidationException::withMessages([
@@ -36,13 +37,18 @@ class AuthService
             ]);
         }
 
-        $response = Http::withoutVerifying()
-            ->asForm()
-            ->post('https://www.google.com/recaptcha/api/siteverify', [
+        try {
+            $response = Http::asForm()->connectTimeout(5)->timeout(15)
+                ->post('https://www.google.com/recaptcha/api/siteverify', [
                 'secret'   => $secret,
                 'response' => $token,
                 'remoteip' => request()->ip(),
             ]);
+        } catch (ConnectionException $exception) {
+            throw ValidationException::withMessages([
+                'recaptcha_token' => ['Unable to verify reCAPTCHA. Please try again.'],
+            ]);
+        }
 
         $data = $response->json() ?? [];
 
@@ -80,6 +86,12 @@ class AuthService
     {
         $this->verifyRecaptcha($data['recaptcha_token'] ?? null);
 
+        if (! in_array($data['role'], ['owner', 'tenant'], true)) {
+            throw ValidationException::withMessages(['role' => ['This role requires an owner invitation.']]);
+        }
+
+        return \Illuminate\Support\Facades\DB::transaction(function () use ($data) {
+
         $user = User::create([
             'name'     => $data['name'],
             'email'    => $data['email'],
@@ -89,10 +101,15 @@ class AuthService
 
         $token = $user->createToken('auth_token')->plainTextToken;
 
+        if ($user->role === 'owner') {
+            \App\Domain\Auth\Models\Owner::create(['user_id' => $user->id, 'name' => $user->name, 'email' => $user->email]);
+        }
+
         return [
             'user'  => (new UserResource($user))->resolve(),
             'token' => $token,
         ];
+        });
     }
 
     /**
@@ -115,6 +132,7 @@ class AuthService
             ]);
         }
 
+        app(OwnerContextResolver::class)->assertActive($user);
         $token = $user->createToken('auth_token')->plainTextToken;
 
         return [
@@ -162,6 +180,7 @@ class AuthService
                 ])->setRememberToken(Str::random(60));
 
                 $user->save();
+                $user->revokeSessions();
             }
         );
 

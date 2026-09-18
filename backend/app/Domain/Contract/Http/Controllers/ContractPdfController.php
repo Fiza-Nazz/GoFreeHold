@@ -16,9 +16,16 @@ class ContractPdfController extends Controller
      */
     public function generate(Request $request, Contract $contract): Response
     {
+        $user = $request->user();
+        if ($user && in_array($user->role, ['owner', 'cashier', 'accountant'], true)) {
+            $ownerId = app(\App\Domain\Auth\Services\OwnerContextResolver::class)->ownerId($user);
+            $contractOwnerId = (int) ($contract->owner_id ?: $contract->unit?->property?->owner_id);
+            abort_unless($contractOwnerId === (int) $ownerId, 403, 'Unauthorized access to this contract.');
+        }
+
         $contract->load([
             'unit.property',
-            'unit.unitItems',
+            'unit.unitItems.item',
             'tenant',
             'owner',
             'tenancyRes',

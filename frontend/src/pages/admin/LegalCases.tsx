@@ -1,4 +1,5 @@
 ﻿import { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import api from '../../api/axios'
 import { formatDate } from '../../utils/formatDate'
 import { THEME, Icon, ICONS, CornerBrackets, portalPageCss, heroStyle, panelStyle, ghostBtnStyle } from '../../components/gfh/adminTheme'
@@ -20,6 +21,7 @@ interface LegalCase {
   contract?: {
     id: number
     status?: string
+    on_case?: boolean
     tenant?: { id: number; name: string }
     unit?: { id: number; number: string; property?: { id: number; name: string } }
   }
@@ -29,6 +31,7 @@ interface LegalCase {
 
 interface ContractOption {
   id: number
+  on_case?: boolean
   tenant?: { name: string }
   unit?: { number: string }
 }
@@ -84,6 +87,32 @@ const statusStyle = (status: string): React.CSSProperties => {
   }
 }
 
+const legalCaseBadgeStyle: React.CSSProperties = {
+  display: 'inline-flex',
+  alignItems: 'center',
+  gap: 6,
+  backgroundColor: '#fef2f2',
+  color: '#991b1b',
+  border: '1px solid #fecaca',
+  padding: '3px 10px',
+  borderRadius: 8,
+  fontSize: 11,
+  fontWeight: 800,
+  letterSpacing: '0.4px',
+  textTransform: 'uppercase',
+}
+
+const LegalCaseBadge = ({ active }: { active?: boolean }) => {
+  if (!active) return null
+
+  return (
+    <span style={legalCaseBadgeStyle}>
+      <span style={{ width: 6, height: 6, borderRadius: '50%', backgroundColor: '#dc2626' }} />
+      LEGAL CASE ACTIVE
+    </span>
+  )
+}
+
 /**
  * Legal case management — prompt.md Module 4:
  * cases linked to contracts/settlements, status, notes, related documents.
@@ -104,6 +133,7 @@ export default function LegalCases() {
     status: 'open',
     notes: '',
   })
+  const flaggedContracts = contracts.filter((contract) => contract.on_case)
 
   useEffect(() => {
     fetchCases()
@@ -279,7 +309,10 @@ export default function LegalCases() {
                 >
                   <div style={{ display: 'flex', justifyContent: 'space-between', gap: 8, marginBottom: 6 }}>
                     <strong style={{ color: THEME.ink }}>CASE-{String(c.id).padStart(4, '0')}</strong>
-                    <span style={statusStyle(c.status)}>{c.status.replace('_', ' ')}</span>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap', justifyContent: 'flex-end' }}>
+                      <LegalCaseBadge active={c.contract?.on_case} />
+                      <span style={statusStyle(c.status)}>{c.status.replace('_', ' ')}</span>
+                    </div>
                   </div>
                   <p style={{ margin: 0, fontSize: 13, color: THEME.textMuted }}>
                     Contract: {c.contract_id ? `GFH-${String(c.contract_id).padStart(5, '0')}` : '—'}
@@ -294,6 +327,37 @@ export default function LegalCases() {
               ))}
             </div>
           )}
+
+          {!isLoading && flaggedContracts.length > 0 ? (
+            <div style={{ borderTop: `1px solid ${THEME.border}`, marginTop: 18, paddingTop: 16 }}>
+              <h3 style={{ fontSize: 14, fontWeight: 800, margin: '0 0 10px', color: THEME.ink }}>Contracts on legal case</h3>
+              <div style={{ display: 'grid', gap: 8 }}>
+                {flaggedContracts.map((contract) => (
+                  <Link
+                    key={contract.id}
+                    to={`/admin/contracts/${contract.id}`}
+                    style={{
+                      display: 'block',
+                      padding: 12,
+                      background: '#fff',
+                      border: `1px solid ${THEME.border}`,
+                      borderRadius: 8,
+                      color: THEME.ink,
+                      textDecoration: 'none',
+                    }}
+                  >
+                    <div style={{ display: 'flex', justifyContent: 'space-between', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
+                      <strong>GFH-{String(contract.id).padStart(5, '0')}</strong>
+                      <LegalCaseBadge active={contract.on_case} />
+                    </div>
+                    <p style={{ margin: '6px 0 0', fontSize: 12.5, color: THEME.textMuted }}>
+                      {contract.tenant?.name || 'Tenant'} / Unit {contract.unit?.number || '?'}
+                    </p>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          ) : null}
         </div>
 
         <div className="fade-in" style={{ ...panelStyle, minHeight: 420 }}>
@@ -311,7 +375,10 @@ export default function LegalCases() {
                     Opened {formatDate(detail.created_at)}
                   </p>
                 </div>
-                <span style={statusStyle(detail.status)}>{detail.status.replace('_', ' ')}</span>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', justifyContent: 'flex-end' }}>
+                  <LegalCaseBadge active={detail.contract?.on_case} />
+                  <span style={statusStyle(detail.status)}>{detail.status.replace('_', ' ')}</span>
+                </div>
               </div>
 
               <div style={{ display: 'grid', gap: 8, marginBottom: 16, fontSize: 13, color: THEME.ink }}>

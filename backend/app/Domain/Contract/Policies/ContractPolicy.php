@@ -18,7 +18,9 @@ class ContractPolicy
             return true;
         }
         if ($user->role === 'owner') {
-            return $user->id === $contract->owner_id;
+            return $user->owner()->whereKey($contract->owner_id)->exists()
+                && (int) $contract->unit?->owner_id === (int) $contract->owner_id
+                && (int) $contract->unit?->property?->owner_id === (int) $contract->owner_id;
         }
         if ($user->role === 'tenant') {
             return $user->id === ($contract->tenant->user_id ?? null);

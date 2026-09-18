@@ -2,13 +2,16 @@
 // GoFreeHold — Global TypeScript Types (real schema aligned)
 // ============================================================
 
-export type UserRole = 'admin' | 'maintenance' | 'owner' | 'tenant'
+export type UserRole = 'admin' | 'maintenance' | 'owner' | 'tenant' | 'cashier' | 'accountant'
 
 export interface User {
   id: number
   name: string
   email: string
   role: UserRole
+  account_status?: 'pending' | 'active' | 'disabled'
+  owner_scope_id?: number | null
+  permissions?: string[]
   phone?: string
   avatar?: string
   created_at: string

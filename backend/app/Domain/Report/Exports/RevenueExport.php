@@ -17,26 +17,34 @@ class RevenueExport implements FromCollection, WithHeadings, WithMapping, Should
 
     public function collection()
     {
-        return Payment::whereYear('date', $this->year)->latest('date')->get();
+        return Payment::with([
+            'contract.tenant:id,name,email',
+            'contract.owner:id,name',
+            'contract.unit.property:id,name',
+            'contract.unit:id,number',
+        ])->whereYear('date', $this->year)->latest('date')->get();
     }
 
     public function headings(): array
     {
-        return ['ID', 'Contract ID', 'Type', 'Mode', 'Amount (AED)', 'Date', 'Due Date', 'Ref No', 'Remarks'];
+        return ['Payment ID', 'Contract ID', 'Category / Type', 'Tenant Name', 'Owner Name', 'Property', 'Unit', 'Amount (AED)', 'Date', 'Payment Mode', 'Ref No', 'Remarks'];
     }
 
     public function map($p): array
     {
         return [
             $p->id,
-            $p->contract_id,
-            $p->type,
-            $p->mode,
+            $p->contract_id ? 'GFH-' . str_pad($p->contract_id, 4, '0', STR_PAD_LEFT) : 'N/A',
+            strtoupper($p->type ?? 'N/A'),
+            $p->contract?->tenant?->name ?? 'N/A',
+            $p->contract?->owner?->name ?? 'N/A',
+            $p->contract?->unit?->property?->name ?? 'N/A',
+            $p->contract?->unit?->number ?? 'N/A',
             $p->amount,
             optional($p->date)->format('Y-m-d') ?? $p->date,
-            optional($p->due_date)->format('Y-m-d') ?? $p->due_date,
-            $p->reference_number,
-            $p->remarks,
+            strtoupper($p->mode ?? 'N/A'),
+            $p->reference_number ?? '',
+            $p->remarks ?? '',
         ];
     }
 }

@@ -13,6 +13,18 @@ use App\Domain\Payment\Http\Controllers\ServiceChargeController;
 use App\Domain\Payment\Http\Controllers\ServiceChargePaymentController;
 use Illuminate\Support\Facades\Route;
 
+Route::middleware(['auth:sanctum', 'role:cashier,accountant'])->prefix('staff/finance')->group(function () {
+    $c = \App\Domain\Payment\Http\Controllers\StaffFinanceController::class;
+    Route::get('/summary', [$c, 'summary']);
+    Route::get('/contracts', [$c, 'contracts']);
+    Route::get('/payments', [$c, 'index']);
+    Route::post('/payments', [$c, 'store']);
+    Route::get('/payments/{payment}/receipt', [$c, 'receipt']);
+    Route::get('/payments/{payment}', [$c, 'show']);
+    Route::get('/ledger', [$c, 'ledger']);
+    Route::get('/receivables', [$c, 'receivables']);
+});
+
 Route::middleware(['auth:sanctum', 'role:admin'])->prefix('admin')->group(function () {
     Route::apiResource('payments', PaymentController::class)->except(['update', 'create', 'edit']);
 
@@ -31,4 +43,11 @@ Route::middleware(['auth:sanctum', 'role:admin'])->prefix('admin')->group(functi
 
     Route::get('/payables/summary', [PayableController::class, 'summary']);
     Route::apiResource('contract-payables', ContractPayableController::class);
+});
+
+Route::middleware(['auth:sanctum', 'role:owner,cashier,accountant'])->prefix('owner')->group(function () {
+    Route::get('/payments', [PaymentController::class, 'index']);
+    Route::post('/payments', [PaymentController::class, 'store']);
+    Route::delete('/payments/{payment}', [PaymentController::class, 'destroy']);
+    Route::get('/rent-ledger', [RentTransactionController::class, 'index']);
 });

@@ -22,7 +22,6 @@ class ApplianceController extends Controller
 
     public function store(Request $request): JsonResponse
     {
-        // Real DB: model (not model_number). Draft fields accepted then stripped.
         $validated = $request->validate([
             'unit_id'         => 'required|exists:units,id',
             'name'            => 'required|string|max:255',
@@ -31,7 +30,6 @@ class ApplianceController extends Controller
             'model_number'    => 'nullable|string|max:255', // FE alias → model
             'serial_number'   => 'nullable|string|max:255',
             'purchase_date'   => 'nullable|date',
-            // FLAG: not in DB yet — accepted for UI compatibility, not persisted
             'warranty_expiry' => 'nullable|date',
             'condition'       => 'nullable|in:brand_new,good,needs_repair,replaced',
             'notes'           => 'nullable|string',
@@ -44,6 +42,9 @@ class ApplianceController extends Controller
             'model'         => $validated['model'] ?? $validated['model_number'] ?? null,
             'serial_number' => $validated['serial_number'] ?? null,
             'purchase_date' => $validated['purchase_date'] ?? null,
+            'warranty_expiry' => $validated['warranty_expiry'] ?? null,
+            'condition' => $validated['condition'] ?? null,
+            'notes' => $validated['notes'] ?? null,
         ];
 
         $appliance = Appliance::create($payload);
@@ -71,19 +72,16 @@ class ApplianceController extends Controller
             'model_number'  => 'nullable|string|max:255',
             'serial_number' => 'nullable|string|max:255',
             'purchase_date' => 'nullable|date',
-            // FLAG draft extras — not persisted
             'warranty_expiry' => 'nullable|date',
             'condition'       => 'nullable|in:brand_new,good,needs_repair,replaced',
             'notes'           => 'nullable|string',
         ]);
 
-        $payload = array_filter([
-            'name'          => $validated['name'] ?? null,
-            'brand'         => $validated['brand'] ?? null,
-            'model'         => $validated['model'] ?? $validated['model_number'] ?? null,
-            'serial_number' => $validated['serial_number'] ?? null,
-            'purchase_date' => $validated['purchase_date'] ?? null,
-        ], fn ($v) => $v !== null);
+        $payload = $validated;
+        if (array_key_exists('model_number', $payload)) {
+            if (!array_key_exists('model', $payload)) $payload['model'] = $payload['model_number'];
+            unset($payload['model_number']);
+        }
 
         $appliance->update($payload);
 

@@ -18,7 +18,8 @@ class UnitPolicy
             return true;
         }
         if ($user->role === 'owner') {
-            return (int) $user->id === (int) $unit->owner_id;
+            return $user->owner()->whereKey($unit->owner_id)->exists()
+                && (int) $unit->property?->owner_id === (int) $unit->owner_id;
         }
 
         return false;

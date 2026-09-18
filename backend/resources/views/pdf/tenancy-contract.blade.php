@@ -44,8 +44,8 @@ body { margin:0; padding:0; font-size:0; background:#fff; }
 .f {
   position: absolute;
   font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif;
-  font-size: 9.2pt;
-  font-weight: normal;
+  font-size: 8.8pt;
+  font-weight: bold;
   color: #000000;
   white-space: nowrap;
   overflow: hidden;
@@ -122,8 +122,12 @@ body { margin:0; padding:0; font-size:0; background:#fff; }
   $pToL    = $fmtLong($contract->end_date   ?? $res?->period_to   ?? null);
   $rentVal = (float)($contract->rent_amount ?? $res?->annual_rent ?? 0);
   $rent    = $num($rentVal);
-  $cVal    = $num($contract->contract_value ?? $contract->rent_amount ?? null);
-  $secDep  = $v($contract->security_deposit ?? null, $res?->security_deposit_amount ?? null, '');
+  $cValVal = (!empty($contract->contract_value) && (float)$contract->contract_value > 0)
+    ? (float)$contract->contract_value
+    : $rentVal;
+  $cVal    = $num($cValVal);
+  $secDepRaw = $v($contract->security_deposit ?? null, $res?->security_deposit_amount ?? null, '');
+  $secDep  = (is_numeric($secDepRaw) && $secDepRaw !== '') ? number_format((float)$secDepRaw, 0, '.', '') : $secDepRaw;
   $mop     = strtoupper($v($contract->mode_of_payment ?? null, 'MONTHLY'));
 
   $nw = function(int $n) use (&$nw): string {
@@ -138,11 +142,12 @@ body { margin:0; padding:0; font-size:0; background:#fff; }
     if($n<100) { $t=$ones[(int)($n/10)*10]; $o=$n%10?$ones[$n%10]:''; return $t.($o?' '.$o:''); }
     if($n<1000){ return $ones[(int)($n/100)].' HUNDRED'.(($n%100)?' AND '.$nw($n%100):''); }
     if($n<1000000){ return $nw((int)($n/1000)).' THOUSAND'.(($n%1000)?' '.$nw($n%1000):''); }
+    if($n<1000000000){ return $nw((int)($n/1000000)).' MILLION'.(($n%1000000)?' '.$nw($n%1000000):''); }
     return number_format($n);
   };
 
   $rentW = $nw((int)$rentVal).' DIRHAMS ONLY';
-  $cValW = $nw((int)($contract->contract_value ?? $rentVal)).' DIRHAMS ONLY';
+  $cValW = $nw((int)$cValVal).' DIRHAMS ONLY';
 
   $pg1 = public_path('images/tenancyres1.jpg');
   $pg2 = public_path('images/tenancyres2.jpg');
@@ -189,62 +194,62 @@ body { margin:0; padding:0; font-size:0; background:#fff; }
 {{-- ══════════════════════════ PAGE 1 ══════════════════════════ --}}<div class="page">
   <img class="page-bg" src="{{ $pg1 }}" alt="">
 
-  {{-- ── TITLE BOX: Date & Contract No (Exact match with Paul's Image 2 reference) ── --}}
-  <div class="f" style="top:78px; left:62px; width:26px; text-align:center;">{{ $dd }}</div>
-  <div class="f" style="top:78px; left:106px; width:26px; text-align:center;">{{ $mm }}</div>
-  <div class="f" style="top:78px; left:148px; width:36px; text-align:center;">{{ $yy }}</div>
-  <div class="f" style="top:100px; left:65px;">{{ $cNo }}</div>
+  {{-- ── TITLE BOX: Date & Contract No (Exact match with reference) ── --}}
+  <div class="f" style="top:78px; left:58px; width:26px; text-align:center;">{{ $dd }}</div>
+  <div class="f" style="top:78px; left:98px; width:26px; text-align:center;">{{ $mm }}</div>
+  <div class="f" style="top:78px; left:138px; width:42px; text-align:center;">{{ $yy }}</div>
+  <div class="f" style="top:98px; left:58px; font-size:10pt;">{{ $cNo }}</div>
 
   {{-- ── PROPERTY USAGE CHECKBOXES ── --}}
-  <div class="f" style="top:161px; left:265px; font-size:11pt;">{!! $isInd ? 'X' : '' !!}</div>
-  <div class="f" style="top:161px; left:413px; font-size:11pt;">{!! $isCom ? 'X' : '' !!}</div>
-  <div class="f" style="top:161px; left:563px; font-size:11pt;">{!! $isRes ? 'X' : '' !!}</div>
+  <div class="f" style="top:162px; left:268px; font-size:11pt;">{!! $isInd ? 'X' : '' !!}</div>
+  <div class="f" style="top:162px; left:418px; font-size:11pt;">{!! $isCom ? 'X' : '' !!}</div>
+  <div class="f" style="top:162px; left:568px; font-size:11pt;">{!! $isRes ? 'X' : '' !!}</div>
 
-  {{-- ── FORM FIELD ROWS (Pixel-perfect matching Image 2 reference) ── --}}
+  {{-- ── FORM FIELD ROWS (Pixel-perfect matching reference) ── --}}
 
   {{-- Row 1 — Owner Name --}}
-  <div class="f" style="top:185px; left:92px; width:580px;">{{ $ownerN }}</div>
+  <div class="f" style="top:185px; left:140px; width:520px;">{{ $ownerN }}</div>
 
   {{-- Row 2 — Landlord Name --}}
-  <div class="f" style="top:213px; left:102px; width:570px;">{{ $lanN }}</div>
+  <div class="f" style="top:213px; left:140px; width:520px;">{{ $lanN }}</div>
 
   {{-- Row 3 — Tenant Name --}}
-  <div class="f" style="top:241px; left:92px; width:580px;">{{ $tenN }}</div>
+  <div class="f" style="top:241px; left:140px; width:520px;">{{ $tenN }}</div>
 
   {{-- Row 4 — Tenant Email | Landlord Email --}}
-  <div class="f" style="top:269px; left:88px; width:220px;">{{ $tenEmail }}</div>
-  <div class="f" style="top:269px; left:484px; width:220px;">{{ $lanEmail }}</div>
+  <div class="f" style="top:269px; left:140px; width:200px;">{{ $tenEmail }}</div>
+  <div class="f" style="top:269px; left:480px; width:190px;">{{ $lanEmail }}</div>
 
   {{-- Row 5 — Tenant Phone | Landlord Phone --}}
-  <div class="f" style="top:297px; left:92px; width:230px;">{{ $tenPh }}</div>
-  <div class="f" style="top:297px; left:488px; width:200px;">{{ $lanPh }}</div>
+  <div class="f" style="top:297px; left:142px; width:200px;">{{ $tenPh }}</div>
+  <div class="f" style="top:297px; left:480px; width:190px;">{{ $lanPh }}</div>
 
   {{-- Row 6 — Building Name | Location --}}
-  <div class="f" style="top:326px; left:98px; width:240px;">{{ $bldName }}</div>
-  <div class="f" style="top:326px; left:458px; width:245px;">{{ $loc }}</div>
+  <div class="f" style="top:326px; left:142px; width:215px;">{{ $bldName }}</div>
+  <div class="f" style="top:326px; left:450px; width:220px;">{{ $loc }}</div>
 
   {{-- Row 7 — Property Size | Property Type | Property No --}}
-  <div class="f" style="top:354px; left:116px; width:88px;">{{ $pSize }}</div>
-  <div class="f" style="top:354px; left:394px; width:110px;">{{ $pType }}</div>
-  <div class="f" style="top:354px; left:648px; width:50px;">{{ $pNo }}</div>
+  <div class="f" style="top:354px; left:150px; width:80px;">{{ $pSize }}</div>
+  <div class="f" style="top:354px; left:395px; width:110px;">{{ $pType }}</div>
+  <div class="f" style="top:354px; left:650px; width:60px;">{{ $pNo }}</div>
 
   {{-- Row 8 — Premises No DEWA | Plot No --}}
-  <div class="f" style="top:382px; left:128px; width:190px;">{{ $dewaNo }}</div>
-  <div class="f" style="top:382px; left:454px; width:250px;">{{ $plotNo }}</div>
+  <div class="f" style="top:382px; left:170px; width:170px;">{{ $dewaNo }}</div>
+  <div class="f" style="top:382px; left:460px; width:180px;">{{ $plotNo }}</div>
 
   {{-- Row 9 — Contract Period: To | From --}}
-  <div class="f" style="top:410px; left:138px; width:230px;">{{ $pToL }}</div>
-  <div class="f" style="top:410px; left:444px; width:245px;">{{ $pFromL }}</div>
+  <div class="f" style="top:410px; left:175px; width:160px;">{{ $pToL }}</div>
+  <div class="f" style="top:410px; left:435px; width:180px;">{{ $pFromL }}</div>
 
   {{-- Row 10 — Annual Rent --}}
-  <div class="f" style="top:438px; left:92px; width:588px;">{!! $rent !!} ({!! $rentW !!})</div>
+  <div class="f" style="top:438px; left:135px; width:530px;">{!! $rent !!} ({!! $rentW !!})</div>
 
   {{-- Row 11 — Contract Value --}}
-  <div class="f" style="top:467px; left:102px; width:580px;">{!! $cVal !!} ({!! $cValW !!})</div>
+  <div class="f" style="top:467px; left:140px; width:530px;">{!! $cVal !!} ({!! $cValW !!})</div>
 
   {{-- Row 12 — Security Deposit | Mode of Payment --}}
-  <div class="f" style="top:495px; left:148px; width:190px;">{!! $secDep ? $secDep.' AED CASH DEPOSIT' : '' !!}</div>
-  <div class="f" style="top:495px; left:494px; width:195px;">{{ $mop }}</div>
+  <div class="f" style="top:495px; left:152px; width:195px; font-size:8.2pt;">{!! $secDep ? $secDep.' AED CASH DEPOSIT' : '' !!}</div>
+  <div class="f" style="top:495px; left:510px; width:160px;">{{ $mop }}</div>
 
 </div>
 {{-- ══════════════════════════ PAGE 2 ══════════════════════════ --}}<div class="page pb">

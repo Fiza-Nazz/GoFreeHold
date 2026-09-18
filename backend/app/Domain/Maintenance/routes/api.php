@@ -8,12 +8,15 @@
 use App\Domain\Maintenance\Http\Controllers\ApplianceController;
 use App\Domain\Maintenance\Http\Controllers\ComplaintController;
 use App\Domain\Maintenance\Http\Controllers\InventoryController;
+use App\Domain\Maintenance\Http\Controllers\ItemController;
+use App\Domain\Maintenance\Http\Controllers\ItemStoreController;
 use App\Domain\Maintenance\Http\Controllers\JobController;
 use App\Domain\Maintenance\Http\Controllers\MaintenanceChargeController;
 use App\Domain\Maintenance\Http\Controllers\MaintenanceController;
 use App\Domain\Maintenance\Http\Controllers\MaintenanceReportController;
 use App\Domain\Maintenance\Http\Controllers\PurchaseController;
 use App\Domain\Maintenance\Http\Controllers\TeamController;
+use App\Domain\Maintenance\Http\Controllers\UnitItemController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth:sanctum')->group(function () {
@@ -33,6 +36,9 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::apiResource('maintenances', MaintenanceController::class);
 
         Route::apiResource('appliances', ApplianceController::class);
+        Route::apiResource('items', ItemController::class);
+        Route::apiResource('unit-items', UnitItemController::class);
+        Route::apiResource('item-store', ItemStoreController::class)->parameters(['item-store' => 'itemStore']);
 
         Route::get('/inventory/warehouse', [InventoryController::class, 'warehouseItems']);
         Route::get('/inventory/unit', [InventoryController::class, 'unitItems']);
@@ -49,6 +55,9 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // ── Maintenance role
     Route::middleware('role:maintenance')->prefix('maintenance')->group(function () {
+        Route::get('/jobs', [\App\Domain\Maintenance\Http\Controllers\StaffJobController::class, 'index']);
+        Route::get('/jobs/{job}', [\App\Domain\Maintenance\Http\Controllers\StaffJobController::class, 'show']);
+        Route::post('/jobs/{job}/status', [\App\Domain\Maintenance\Http\Controllers\StaffJobController::class, 'status']);
         Route::get('/complaints', [ComplaintController::class, 'index']);
         Route::post('/complaints/{complaint}/status', [ComplaintController::class, 'updateStatus']);
         Route::get('/daily-report', [MaintenanceReportController::class, 'dailyReport']);
@@ -60,4 +69,14 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/complaints', [ComplaintController::class, 'index']);
         Route::post('/complaints', [ComplaintController::class, 'store']);
     });
+
+    // ── Owner role (Maintenance & Complaints Dispatching)
+    Route::middleware('role:owner')->prefix('owner')->group(function () {
+        Route::get('/complaints', [ComplaintController::class, 'index']);
+        Route::get('/complaints/{complaint}', [ComplaintController::class, 'show']);
+        Route::post('/complaints/{complaint}/assign', [ComplaintController::class, 'assign']);
+        Route::post('/complaints/{complaint}/status', [ComplaintController::class, 'updateStatus']);
+        Route::get('/technicians', [ComplaintController::class, 'getTechnicians']);
+    });
 });
+

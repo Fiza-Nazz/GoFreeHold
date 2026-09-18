@@ -19,21 +19,11 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // ── Admin Routes
     Route::middleware('role:admin')->prefix('admin')->group(function () {
-        // Access & Parties (real schema) — plan: /api/owners & /api/tenants full CRUD
-        Route::get('/owners/{owner}/portfolio', [\App\Http\Controllers\Api\OwnerController::class, 'portfolio']);
-        Route::apiResource('owners', \App\Http\Controllers\Api\OwnerController::class);
-        Route::apiResource('tenants', \App\Http\Controllers\Api\TenantController::class);
-
         /*
         | Module 3 Property & Unit routes live in:
         |   app/Domain/Property/routes/api.php
         | registered by App\Domain\Property\Providers\PropertyServiceProvider.
         */
-
-        // Property inventory (real schema: items / unit_items / item_store)
-        Route::apiResource('items', \App\Http\Controllers\Api\ItemController::class);
-        Route::apiResource('unit-items', \App\Http\Controllers\Api\UnitItemController::class);
-        Route::apiResource('item-store', \App\Http\Controllers\Api\ItemStoreController::class)->parameters(['item-store' => 'itemStore']);
 
         /*
         | Module 4 Contracts, Leasing & Legal routes live in:

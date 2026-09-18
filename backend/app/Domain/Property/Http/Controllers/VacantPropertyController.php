@@ -2,7 +2,7 @@
 
 namespace App\Domain\Property\Http\Controllers;
 
-use App\Domain\Property\Models\Unit;
+use App\Domain\Property\Services\PropertyService;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 
@@ -11,11 +11,9 @@ use Illuminate\Http\JsonResponse;
  */
 class VacantPropertyController extends Controller
 {
-    public function __invoke(): JsonResponse
+    public function __invoke(PropertyService $propertyService): JsonResponse
     {
-        $units = Unit::with('property:id,name', 'owner:id,name')
-            ->where('status', 'AVAILABLE')
-            ->get();
+        $units = $propertyService->vacantUnits();
 
         return response()->json([
             'status' => 'success',

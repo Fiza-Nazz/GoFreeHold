@@ -55,7 +55,7 @@ class AuthController extends Controller
     {
         return response()->json([
             'status' => 'success',
-            'data'   => ['user' => $request->user()],
+            'data'   => ['user' => (new \App\Domain\Auth\Http\Resources\UserResource($request->user()))->resolve()],
         ]);
     }
 }

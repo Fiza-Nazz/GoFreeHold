@@ -3,12 +3,10 @@
 namespace App\Domain\Payment\Http\Controllers;
 
 use App\Domain\Payment\Models\Payment;
-use App\Domain\Payment\Models\PaymentAuditLog;
-use App\Domain\Payment\Models\RentTransaction;
+use App\Domain\Payment\Services\PaymentService;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 class PaymentController extends Controller
 {
@@ -19,6 +17,15 @@ class PaymentController extends Controller
             'tenant:id,name',
             'recordedBy:id,name',
         ]);
+
+        $user = $request->user();
+        if ($user && in_array($user->role, ['owner', 'cashier', 'accountant'], true)) {
+            $ownerId = app(\App\Domain\Auth\Services\OwnerContextResolver::class)->ownerId($user);
+            $query->whereHas('contract', function ($q) use ($ownerId) {
+                $q->where('contracts.owner_id', $ownerId)
+                  ->orWhereHas('unit.property', fn ($p) => $p->where('owner_id', $ownerId));
+            });
+        }
 
         if ($request->has('contract_id')) {
             $query->where('contract_id', $request->contract_id);
@@ -69,26 +76,15 @@ class PaymentController extends Controller
             'recorded_by'      => $request->user()->id,
         ];
 
-        $payment = DB::transaction(function () use ($payload) {
-            $payment = Payment::create($payload);
+        $user = $request->user();
+        if ($user && in_array($user->role, ['owner', 'cashier', 'accountant'], true)) {
+            $ownerId = app(\App\Domain\Auth\Services\OwnerContextResolver::class)->ownerId($user);
+            $contract = \App\Domain\Contract\Models\Contract::findOrFail($payload['contract_id']);
+            $contractOwnerId = (int) ($contract->owner_id ?: $contract->unit?->property?->owner_id);
+            abort_unless($contractOwnerId === (int) $ownerId, 403, 'Unauthorized access to this contract.');
+        }
 
-            // Contract ledger (rent_transactions): credit for EVERY payment type so
-            // Admin sees full tenant payment history, not rent-only.
-            $typeLabel = strtoupper(str_replace('_', ' ', $payment->type));
-            $description = $typeLabel . ' payment'
-                . (! empty($payment->reference_number) ? ' ref ' . $payment->reference_number : '');
-
-            RentTransaction::create([
-                'contract_id' => $payment->contract_id,
-                'payment_id'  => $payment->id,
-                'date'        => $payment->date,
-                'description' => $description,
-                'debit'       => 0,
-                'credit'      => $payment->amount,
-            ]);
-
-            return $payment;
-        });
+        $payment = app(PaymentService::class)->recordPayment($payload);
 
         return response()->json([
             'status'  => 'success',
@@ -109,48 +105,20 @@ class PaymentController extends Controller
      */
     public function destroy(Request $request, Payment $payment): JsonResponse
     {
-        $request->validate([
-            'reason' => 'required|string|min:5',
+        $user = $request->user();
+        if ($user && in_array($user->role, ['owner', 'cashier', 'accountant'], true)) {
+            $ownerId = app(\App\Domain\Auth\Services\OwnerContextResolver::class)->ownerId($user);
+            $contractOwnerId = (int) ($payment->contract?->owner_id ?: $payment->contract?->unit?->property?->owner_id);
+            abort_unless($contractOwnerId === (int) $ownerId, 403, 'Unauthorized access to this payment.');
+        }
+
+        $validated = $request->validate([
+            'reason' => ['required', 'string', 'max:500'],
         ]);
 
-        DB::transaction(function () use ($request, $payment) {
-            $linked = RentTransaction::where('payment_id', $payment->id)
-                ->where('credit', '>', 0)
-                ->get();
+        $reason = $validated['reason'];
 
-            foreach ($linked as $ledger) {
-                PaymentAuditLog::create([
-                    'ledger_id'    => $ledger->id,
-                    'payment_id'   => $payment->id,
-                    'action'       => 'deleted',
-                    'reason'       => $request->reason . ' (linked ledger credit reversed with payment)',
-                    'performed_by' => $request->user()->id,
-                    'snapshot'     => $ledger->toArray(),
-                ]);
-
-                $ledger->deleted_by = $request->user()->id;
-                $ledger->deletion_reason = $request->reason;
-                $ledger->save();
-                $ledger->delete();
-            }
-
-            PaymentAuditLog::create([
-                'ledger_id'    => $linked->first()?->id,
-                'payment_id'   => $payment->id,
-                'action'       => 'deleted',
-                'reason'       => $request->reason,
-                'performed_by' => $request->user()->id,
-                'snapshot'     => array_merge($payment->toArray(), [
-                    'entity'            => 'payment',
-                    'linked_ledger_ids' => $linked->pluck('id')->values()->all(),
-                ]),
-            ]);
-
-            $payment->deleted_by = $request->user()->id;
-            $payment->deletion_reason = $request->reason;
-            $payment->save();
-            $payment->delete();
-        });
+        app(PaymentService::class)->deletePayment($payment, $reason, $request->user()->id);
 
         return response()->json([
             'status'  => 'success',

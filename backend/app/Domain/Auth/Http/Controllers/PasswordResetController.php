@@ -7,6 +7,8 @@ use App\Domain\Auth\Http\Requests\ResetPasswordRequest;
 use App\Domain\Auth\Services\AuthService;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Validation\ValidationException;
+use Throwable;
 
 class PasswordResetController extends Controller
 {
@@ -16,7 +18,18 @@ class PasswordResetController extends Controller
 
     public function forgotPassword(ForgotPasswordRequest $request): JsonResponse
     {
-        $message = $this->authService->sendPasswordResetLink($request->validated('email'));
+        try {
+            $message = $this->authService->sendPasswordResetLink($request->validated('email'));
+        } catch (ValidationException $exception) {
+            throw $exception;
+        } catch (Throwable $exception) {
+            report($exception);
+
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Unable to send the password reset email. Please try again later.',
+            ], 503);
+        }
 
         return response()->json([
             'status'  => 'success',

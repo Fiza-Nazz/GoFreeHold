@@ -115,17 +115,31 @@ class ContractTest extends TestCase
             'status'      => 'active',
             'rent_amount' => 2200,
         ]);
+        $this->assertNotNull($contract->fresh()->last_renewed_at);
     }
 
     public function test_contract_pdf_returns_pdf_content_type(): void
     {
         $admin    = $this->adminUser();
-        $contract = Contract::factory()->active()->create();
+        $contract = Contract::factory()->active()->create(['rent_amount' => 7342.65, 'dewa_deposit' => 1834.29]);
 
-        $this->actingAs($admin)
+        $response = $this->actingAs($admin)
              ->get("/api/admin/contracts/{$contract->id}/pdf")
              ->assertOk()
              ->assertHeader('Content-Type', 'application/pdf');
+
+        $decodedStreams = '';
+        preg_match_all('/stream\r?\n(.*?)\r?\nendstream/s', $response->getContent(), $streams);
+        foreach ($streams[1] as $stream) {
+            $decoded = @gzuncompress($stream);
+            if ($decoded !== false) {
+                $decodedStreams .= $decoded;
+            }
+        }
+
+        $this->assertStringContainsString('GFH-' . str_pad((string) $contract->id, 4, '0', STR_PAD_LEFT), $decodedStreams);
+        $this->assertStringContainsString('7,342.65', $decodedStreams);
+        $this->assertStringContainsString('1,834.29', $decodedStreams);
     }
 
     public function test_create_contract_with_automatic_tenant_creation(): void

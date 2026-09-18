@@ -121,11 +121,10 @@ export default function SettlementWizard() {
 
   const pickContract = (contractId: string) => {
     const c = activeContracts.find(x => String(x.id) === contractId)
-    const ownerProfile = c ? owners.find(o => o.user_id === c.owner_id) : undefined
     setFormData(prev => ({
       ...prev,
       contract_id: contractId,
-      owner_id: ownerProfile ? String(ownerProfile.id) : prev.owner_id,
+      owner_id: c ? String(c.owner_id) : '',
     }))
   }
 
@@ -362,8 +361,8 @@ export default function SettlementWizard() {
                 </div>
 
                 <div>
-                  <label style={labelStyle}>Owner Profile</label>
-                  <select style={inputStyle} value={formData.owner_id} onChange={e => setFormData({ ...formData, owner_id: e.target.value })} required>
+                  <label style={labelStyle} htmlFor="settlement-owner">Owner Profile</label>
+                  <select id="settlement-owner" style={inputStyle} value={formData.owner_id} disabled={!!formData.contract_id} onChange={e => setFormData({ ...formData, owner_id: e.target.value })} required>
                     <option value="">Select owner</option>
                     {owners.map(o => (
                       <option key={o.id} value={o.id}>{o.name}</option>

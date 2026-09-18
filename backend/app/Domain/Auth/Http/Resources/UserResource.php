@@ -17,6 +17,9 @@ class UserResource extends JsonResource
             'name'       => $this->name,
             'email'      => $this->email,
             'role'       => $this->role,
+            'account_status' => $this->account_status,
+            'owner_scope_id' => $this->role === 'owner' ? $this->owner()->value('id') : $this->staffMembership()->value('owner_id'),
+            'permissions' => app(\App\Domain\Auth\Services\OwnerContextResolver::class)->permissions($this->resource),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

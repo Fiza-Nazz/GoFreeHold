@@ -4,14 +4,18 @@ namespace App\Domain\Maintenance\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Domain\Maintenance\Models\Complaint;
 use App\Domain\Maintenance\Models\Job;
+use App\Domain\Maintenance\Services\MaintenanceStatusService;
+use App\Domain\Maintenance\Services\MaintenanceService;
 use App\Domain\Auth\Models\Tenant;
 use App\Domain\Auth\Models\User;
 use App\Domain\Contract\Models\Contract;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 class ComplaintController extends Controller
 {
+    public function __construct(private readonly MaintenanceService $maintenance)
+    {
+    }
     /** Tenant's units from active contracts (for complaint form). */
     public function tenantUnits(Request $request)
     {
@@ -40,15 +44,18 @@ class ComplaintController extends Controller
 
         if ($user->role === 'tenant') {
             $tenantId = Tenant::where('user_id', $user->id)->value('id');
-            $query->where('tenant_id', $tenantId);
+            $tenantId ? $query->where('tenant_id', $tenantId) : $query->whereRaw('1 = 0');
+        }
+
+        if ($user->role === 'owner') {
+            $ownerId = app(\App\Domain\Auth\Services\OwnerContextResolver::class)->ownerId($user);
+            $query->whereHas('unit.property', fn ($p) => $p->where('owner_id', $ownerId));
         }
 
         if ($user->role === 'maintenance') {
-            $query->where(function ($q) use ($user) {
-                $q->whereHas('job', function ($jq) use ($user) {
-                    $jq->where('assigned_to', $user->id);
-                })->orWhere('status', 'open');
-            });
+            $context = app(\App\Domain\Auth\Services\OwnerContextResolver::class);
+            $query->whereHas('job', fn ($q) => $context->jobs($q, $user));
+            $query->withOnly(['unit:id,number,property_id', 'unit.property:id,name,address,city', 'job']);
         }
 
         return response()->json(['status' => 'success', 'data' => ['complaints' => $query->get()]]);
@@ -65,19 +72,7 @@ class ComplaintController extends Controller
             'priority'    => 'required|in:low,medium,high',
         ]);
 
-        $tenant = Tenant::firstOrCreate(
-            ['user_id' => $request->user()->id],
-            [
-                'name'  => $request->user()->name,
-                'email' => $request->user()->email,
-            ]
-        );
-
-        unset($validated['category']);
-        $validated['tenant_id'] = $tenant->id;
-        $validated['status']    = 'open';
-
-        $complaint = Complaint::create($validated);
+        $complaint = $this->maintenance->createComplaint($request->user(), $validated);
 
         return response()->json([
             'status'  => 'success',
@@ -86,106 +81,91 @@ class ComplaintController extends Controller
         ], 201);
     }
 
-    public function show(Complaint $complaint)
+    public function show(Request $request, Complaint $complaint)
     {
+        if ($request->user()->role === 'owner') {
+            $ownerId = app(\App\Domain\Auth\Services\OwnerContextResolver::class)->ownerId($request->user());
+            abort_unless((int) $complaint->unit?->property?->owner_id === (int) $ownerId, 403, 'Unauthorized.');
+        }
+
         $complaint->load(['unit.property', 'tenant:id,name', 'job.assignedTo:id,name', 'job.assignedBy:id,name']);
         return response()->json(['status' => 'success', 'data' => ['complaint' => $complaint]]);
     }
 
     public function assign(Request $request, Complaint $complaint)
     {
+        if ($request->user()->role === 'owner') {
+            $ownerId = app(\App\Domain\Auth\Services\OwnerContextResolver::class)->ownerId($request->user());
+            abort_unless((int) $complaint->unit?->property?->owner_id === (int) $ownerId, 403, 'Unauthorized.');
+        }
+
         $validated = $request->validate([
             'assigned_to' => 'required|exists:users,id',
             'team_id'     => 'nullable|exists:teams,id',
             'notes'       => 'nullable|string',
         ]);
 
-        DB::beginTransaction();
         try {
-            $job = Job::updateOrCreate(
-                ['complaint_id' => $complaint->id],
-                [
-                    'assigned_to'  => $validated['assigned_to'],
-                    'assigned_by'  => $request->user()->id,
-                    'team_id'      => $validated['team_id'] ?? null,
-                    'status'       => 'assigned',
-                    'notes'        => $validated['notes'] ?? null,
-                ]
-            );
-
-            $complaint->update([
-                'status'      => 'assigned',
-                'assigned_to' => $validated['assigned_to'],
-            ]);
-
-            DB::commit();
+            $job = $this->maintenance->assignComplaint($complaint, $validated, $request->user()->id);
 
             return response()->json([
                 'status'  => 'success',
                 'message' => 'Complaint assigned to technician.',
                 'data'    => ['job' => $job->load('assignedTo:id,name')],
             ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            throw $e;
+        } catch (\Symfony\Component\HttpKernel\Exception\HttpException $e) {
+            throw $e;
         } catch (\Exception $e) {
-            DB::rollBack();
             return response()->json(['status' => 'error', 'message' => 'Failed to assign job.'], 500);
         }
     }
 
-    public function updateStatus(Request $request, Complaint $complaint)
+    public function updateStatus(Request $request, Complaint $complaint, MaintenanceStatusService $statusService)
     {
-        // Live complaints.status enum: open|assigned|in_progress|resolved (no closed, no resolved_at column).
-        // Completion timestamp is tracked on jobs.completed_at.
+        if ($request->user()->role === 'owner') {
+            $ownerId = app(\App\Domain\Auth\Services\OwnerContextResolver::class)->ownerId($request->user());
+            abort_unless((int) $complaint->unit?->property?->owner_id === (int) $ownerId, 403, 'Unauthorized.');
+        }
+
         $validated = $request->validate([
             'status' => 'required|in:open,assigned,in_progress,resolved',
             'notes'  => 'nullable|string',
         ]);
 
-        $jobStatus = match ($validated['status']) {
-            'in_progress' => 'in_progress',
-            'resolved'    => 'completed',
-            'open'        => 'assigned',
-            default       => 'assigned',
-        };
-
-        $complaint->update([
-            'status'      => $validated['status'],
-            // If maintenance staff moves an open ticket, claim it so queue filters stay consistent.
-            'assigned_to' => $complaint->assigned_to ?: $request->user()->id,
-        ]);
-
-        // Tenant-created complaints often have no job yet — create/update so daily report can count completed_at.
-        $existingJob = $complaint->job;
-        $jobPayload = [
-            'status'       => $jobStatus,
-            'notes'        => $validated['notes'] ?? $existingJob?->notes,
-            'completed_at' => ($jobStatus === 'completed') ? now() : null,
-        ];
-
-        if ($existingJob) {
-            $existingJob->update($jobPayload);
-            $job = $existingJob->fresh();
-        } else {
-            $job = Job::create([
-                'complaint_id' => $complaint->id,
-                'assigned_to'  => $request->user()->id,
-                'assigned_by'  => $request->user()->id,
-                ...$jobPayload,
-            ]);
-        }
+        $job = $statusService->updateComplaintStatus(
+            $complaint,
+            $validated['status'],
+            $request->user()->id,
+            $validated['notes'] ?? null,
+        );
 
         return response()->json([
             'status'  => 'success',
             'message' => 'Complaint status updated.',
             'data'    => [
-                'complaint' => $complaint->fresh()->load(['unit.property', 'tenant:id,name', 'job.assignedTo:id,name']),
+                'complaint' => $complaint->fresh()->load($request->user()->role === 'maintenance'
+                    ? ['unit:id,number,property_id', 'unit.property:id,name,address,city', 'job']
+                    : ['unit.property', 'tenant:id,name', 'job.assignedTo:id,name']),
                 'job'       => $job,
             ],
         ]);
     }
 
-    public function getTechnicians()
+    public function getTechnicians(Request $request)
     {
-        $techs = User::where('role', 'maintenance')->select('id', 'name', 'email')->get();
+        $ownerId = null;
+        if ($request->user()->role === 'owner') {
+            $ownerId = app(\App\Domain\Auth\Services\OwnerContextResolver::class)->ownerId($request->user());
+        } elseif ($request->filled('owner_id')) {
+            $ownerId = (int) $request->owner_id;
+        }
+
+        $techs = User::where('role', 'maintenance')->where('account_status', 'active')->whereHas('staffMembership', function ($q) use ($ownerId) {
+            if ($ownerId) $q->where('owner_id', $ownerId);
+            $q->whereHas('owner.user', fn ($u) => $u->where('account_status', 'active')->where('role', 'owner'));
+        })->with('staffMembership:id,user_id,owner_id')->select('id', 'name', 'email')->get();
         return response()->json(['status' => 'success', 'data' => ['technicians' => $techs]]);
     }
 }

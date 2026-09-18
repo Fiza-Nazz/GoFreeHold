@@ -11,10 +11,6 @@ class Appliance extends Model
 {
     use HasFactory;
 
-    /**
-     * Real DB columns: unit_id, name, brand, model, serial_number, purchase_date.
-     * FLAG: warranty_expiry / condition / notes were draft extras — not in DB yet.
-     */
     protected $fillable = [
         'unit_id',
         'name',
@@ -22,10 +18,14 @@ class Appliance extends Model
         'model',
         'serial_number',
         'purchase_date',
+        'warranty_expiry',
+        'condition',
+        'notes',
     ];
 
     protected $casts = [
-        'purchase_date' => 'date',
+        'purchase_date' => 'date:Y-m-d',
+        'warranty_expiry' => 'date:Y-m-d',
     ];
 
     public function unit(): BelongsTo

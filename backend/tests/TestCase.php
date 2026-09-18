@@ -8,13 +8,39 @@ use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 
 abstract class TestCase extends BaseTestCase
 {
+    public function createApplication()
+    {
+        $app = parent::createApplication();
+        // Runs before Laravel invokes RefreshDatabase/DatabaseTransactions traits.
+        $connection = $app['db']->connection();
+        if ($connection->getDriverName() !== 'mysql'
+            || $connection->getDatabaseName() !== 'gofreehold_phpunit'
+            || $connection->selectOne('SELECT DATABASE() AS db')->db !== 'gofreehold_phpunit') {
+            throw new \RuntimeException('Refusing test setup outside gofreehold_phpunit.');
+        }
+        return $app;
+    }
+
     protected function setUp(): void
     {
         parent::setUp();
 
+        $this->assertUsingPhpunitDatabase();
+
         Factory::guessFactoryNamesUsing(function (string $modelName) {
             return 'Database\\Factories\\' . class_basename($modelName) . 'Factory';
         });
+    }
+
+    protected function beforeRefreshingDatabase()
+    {
+        $this->assertUsingPhpunitDatabase();
+    }
+
+    private function assertUsingPhpunitDatabase(): void
+    {
+        $this->assertSame('mysql', config('database.default'));
+        $this->assertSame('gofreehold_phpunit', config('database.connections.mysql.database'));
     }
 
     /**
@@ -47,6 +73,9 @@ abstract class TestCase extends BaseTestCase
      */
     protected function maintenanceUser(): User
     {
-        return User::factory()->create(['role' => 'maintenance']);
+        $user = User::factory()->create(['role' => 'maintenance']);
+        $owner = \App\Domain\Auth\Models\Owner::factory()->create();
+        \App\Domain\Auth\Models\OwnerStaff::create(['user_id' => $user->id, 'owner_id' => $owner->id, 'created_by' => $owner->user_id]);
+        return $user;
     }
 }

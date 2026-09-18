@@ -3,11 +3,14 @@ namespace App\Domain\Maintenance\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Domain\Maintenance\Models\Purchase;
-use App\Domain\Maintenance\Models\PurchaseItem;
+use App\Domain\Maintenance\Services\MaintenanceService;
 use Illuminate\Http\Request;
 
 class PurchaseController extends Controller
 {
+    public function __construct(private readonly MaintenanceService $maintenance)
+    {
+    }
     public function index()
     {
         $purchases = Purchase::with('items')->latest('purchase_date')->get();
@@ -27,17 +30,7 @@ class PurchaseController extends Controller
             'items.*.price'     => 'required|numeric|min:0',
         ]);
 
-        $purchase = Purchase::create([
-            'supplier_name' => $validated['supplier_name'],
-            'purchase_date' => $validated['purchase_date'],
-            'remark'        => $validated['remark'] ?? null,
-            'status'        => 'pending',
-            'total_amount'  => collect($validated['items'])->sum(fn ($i) => $i['qty'] * $i['price']),
-        ]);
-
-        foreach ($validated['items'] as $item) {
-            $purchase->items()->create($item);
-        }
+        $purchase = $this->maintenance->createPurchase($validated);
 
         return response()->json([
             'status'  => 'success',

@@ -11,7 +11,9 @@ import ResetPasswordPage from '../pages/auth/ResetPasswordPage'
 import AdminLayout from '../components/layout/AdminLayout'
 import AdminDashboard from '../pages/admin/Dashboard'
 import BuildingManagement from '../pages/admin/BuildingManagement'
+import AddPropertyPage from '../pages/admin/AddPropertyPage'
 import UnitManagement from '../pages/admin/UnitManagement'
+import TenantManagement from '../pages/admin/TenantManagement'
 import ContractManagement from '../pages/admin/ContractManagement'
 import ContractDetailPage from '../pages/admin/ContractDetailPage'
 import PdcChequeTracker from '../pages/admin/PdcChequeTracker'
@@ -51,6 +53,7 @@ import UnitDetailPage from '../pages/owner/UnitDetail'
 import OwnerUnits from '../pages/owner/OwnerUnits'
 import OwnerProfile from '../pages/owner/OwnerProfile'
 import OwnerFinancePage from '../pages/owner/OwnerFinancePage'
+import OwnerComplaints from '../pages/owner/OwnerComplaints'
 
 // ─── Maintenance Pages ────────────────────────────────────────────────────────
 import MaintenanceLayout from '../components/layout/MaintenanceLayout'
@@ -70,12 +73,26 @@ import TenantProfile from '../pages/tenant/Profile'
 
 // ─── Other ───────────────────────────────────────────────────────────────────
 import NotFound from '../pages/NotFound'
+import StaffLayout from '../components/rbac/StaffLayout'
+import FinancePage from '../pages/staff/FinancePage'
+import StaffManagement from '../pages/owner/StaffManagement'
+import StaffActivation from '../pages/auth/StaffActivation'
+import AssignedJobs from '../pages/maintenance/AssignedJobs'
 import Unauthorized from '../pages/Unauthorized'
 
 export default function AppRouter() {
   return (
     <BrowserRouter>
       <Routes>
+        <Route path="/staff/activate" element={<StaffActivation />} />
+        {(['cashier','accountant'] as const).map(role => <Route key={role} element={<ProtectedRoute allowedRoles={[role]} />}>
+          <Route path={'/'+role} element={<StaffLayout />}>
+            <Route index element={<Navigate to="dashboard" replace />} />
+            <Route path="contracts" element={<ContractManagement basePath={'/' + role} />} />
+            <Route path="contracts/:id" element={<ContractDetailPage basePath={'/' + role} />} />
+            {['dashboard','payments','payments/new','receivables','profile',...(role==='accountant'?['ledger']:[])].map(path=><Route key={path} path={path} element={<FinancePage key={role+'/'+path} />} />)}
+          </Route>
+        </Route>)}
         {/* Default redirect */}
         <Route path="/" element={<Navigate to="/login" replace />} />
 
@@ -94,8 +111,12 @@ export default function AppRouter() {
             <Route path="dashboard" element={<AdminDashboard />} />
             {/* Stage 3: Property & Unit Management */}
             <Route path="properties" element={<BuildingManagement />} />
+            <Route path="properties/add" element={<AddPropertyPage />} />
             <Route path="buildings" element={<Navigate to="/admin/properties" replace />} />
             <Route path="units" element={<UnitManagement />} />
+            <Route path="tenants" element={<TenantManagement />} />
+            <Route path="tenants/add" element={<TenantManagement mode="add" />} />
+            <Route path="tenants/previous" element={<TenantManagement mode="previous" />} />
             {/* Stage 4: Contracts, Leasing & Legal */}
             <Route path="contracts" element={<ContractManagement />} />
             <Route path="contracts/:id" element={<ContractDetailPage />} />
@@ -136,11 +157,15 @@ export default function AppRouter() {
         {/* ── Owner Routes ──────────────────────────────────────────────── */}
         <Route element={<ProtectedRoute allowedRoles={['owner']} />}>
           <Route path="/owner" element={<OwnerLayout />}>
+            <Route path="staff" element={<StaffManagement />} />
             <Route index element={<Navigate to="dashboard" replace />} />
             <Route path="dashboard" element={<OwnerDashboard />} />
             <Route path="properties" element={<PropertyDrillDown />} />
             <Route path="vacant-units" element={<VacantUnits />} />
             <Route path="vacant" element={<Navigate to="/owner/vacant-units" replace />} />
+            <Route path="contracts" element={<ContractManagement basePath="/owner" />} />
+            <Route path="contracts/:id" element={<ContractDetailPage basePath="/owner" />} />
+            <Route path="complaints" element={<OwnerComplaints />} />
             <Route path="units" element={<OwnerUnits />} />
             <Route path="units/:unitId" element={<UnitDetailPage />} />
             <Route path="ledger" element={<OwnerFinancePage kind="ledger" />} />
@@ -154,7 +179,8 @@ export default function AppRouter() {
         <Route element={<ProtectedRoute allowedRoles={['maintenance']} />}>
           <Route path="/maintenance" element={<MaintenanceLayout />}>
             <Route index element={<Navigate to="dashboard" replace />} />
-            <Route path="dashboard" element={<MaintenanceDashboard />} />
+            <Route path="dashboard" element={<AssignedJobs />} />
+            <Route path="jobs" element={<AssignedJobs />} />
             <Route path="complaints" element={<MaintenanceComplaints />} />
             <Route path="daily-report" element={<MaintenanceDailyReport />} />
             <Route path="profile" element={<MaintenanceProfile />} />

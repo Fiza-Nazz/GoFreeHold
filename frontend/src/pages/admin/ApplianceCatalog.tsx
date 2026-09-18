@@ -7,7 +7,7 @@ interface Appliance {
   unit_id: number
   name: string
   brand: string
-  model_number?: string
+  model?: string
   serial_number?: string
   purchase_date?: string
   warranty_expiry?: string
@@ -36,6 +36,7 @@ const inputStyle: React.CSSProperties = {
   fontWeight: 500,
   padding: '10px 12px',
   width: '100%',
+  boxSizing: 'border-box',
 }
 
 const labelStyle: React.CSSProperties = {
@@ -53,6 +54,9 @@ export default function ApplianceCatalog() {
   const [isLoading, setIsLoading] = useState(true)
   const [unitFilter, setUnitFilter] = useState('')
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [units, setUnits] = useState<{id: number; number: string; property?: {id: number; name: string}}[]>([])
+  const [isSaving, setIsSaving] = useState(false)
+  const [error, setError] = useState('')
   const [formData, setFormData] = useState({
     unit_id: '',
     name: '',
@@ -66,6 +70,10 @@ export default function ApplianceCatalog() {
   })
 
   useEffect(() => { fetchAppliances() }, [unitFilter])
+  useEffect(() => {
+    api.get('/admin/units').then(res => setUnits(res.data?.data?.units || []))
+      .catch(() => setError('Unable to load units. Please reload the page.'))
+  }, [])
 
   const fetchAppliances = async () => {
     setIsLoading(true)
@@ -73,18 +81,22 @@ export default function ApplianceCatalog() {
       const url = unitFilter ? `/admin/appliances?unit_id=${unitFilter}` : '/admin/appliances'
       const res = await api.get(url)
       setAppliances(res.data?.data?.appliances || [])
-    } catch (err) { console.error(err) }
+    } catch (err) { setError('Unable to load appliances. Please reload the page.') }
     finally { setIsLoading(false) }
   }
 
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (isSaving) return
+    setIsSaving(true)
+    setError('')
     try {
       await api.post('/admin/appliances', formData)
       setIsModalOpen(false)
       fetchAppliances()
       setFormData({ unit_id: '', name: '', brand: '', model_number: '', serial_number: '', purchase_date: '', warranty_expiry: '', condition: 'good', notes: '' })
-    } catch (err) { alert('Error adding appliance') }
+    } catch (err: any) { setError(err.response?.data?.message || 'Error adding appliance') }
+    finally { setIsSaving(false) }
   }
 
   const handleDelete = async (id: number) => {
@@ -109,22 +121,26 @@ export default function ApplianceCatalog() {
           </p>
         </div>
         <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
-          <input
-            placeholder="Unit ID filter"
+          <select
+            aria-label="Filter by property and unit"
             value={unitFilter}
             onChange={e => setUnitFilter(e.target.value)}
             style={{
-              width: 140,
+              width: 240,
+              maxWidth: '100%',
               borderRadius: 8,
-              border: '1px solid rgba(255,255,255,0.3)',
-              background: 'rgba(255,255,255,0.1)',
-              color: '#fff',
+              border: '1px solid #CBD5E1',
+              background: '#FFFFFF',
+              color: '#0F172A',
               fontSize: 13,
               fontWeight: 500,
               padding: '8px 12px',
             }}
-          />
-          <button className="gfh-portal-btn" onClick={() => setIsModalOpen(true)} style={ghostBtnStyle}>
+          >
+            <option value="">All property units</option>
+            {units.map(unit => <option key={unit.id} value={unit.id}>{unit.property?.name} — Unit {unit.number}</option>)}
+          </select>
+          <button className="gfh-portal-btn" onClick={() => { setError(''); setIsModalOpen(true) }} style={{ ...ghostBtnStyle, background: '#0F8A67', color: '#FFFFFF' }}>
             <Icon path={icons.plus} size={16} />
             Add appliance
           </button>
@@ -132,6 +148,7 @@ export default function ApplianceCatalog() {
       </div>
 
       <div className="fade-in" style={{ ...panelStyle, minHeight: 400 }}>
+        {error && !isModalOpen && <p role="alert" style={{ color: '#991B1B' }}>{error}</p>}
         <CornerBrackets />
         {isLoading ? (
           <div style={{ textAlign: 'center', padding: 40 }}><span className="spinner" /></div>
@@ -154,7 +171,7 @@ export default function ApplianceCatalog() {
                   <tr key={app.id} className="gfh-portal-row" style={{ borderBottom: `1px solid ${THEME.border}` }}>
                     <td style={{ ...tdStyle, fontWeight: 700 }}>{app.name}</td>
                     <td style={tdStyle}>
-                      {app.brand} <span style={{ fontSize: 12, color: THEME.textMuted }}>({app.model_number || 'N/A'})</span>
+                      {app.brand} <span style={{ fontSize: 12, color: THEME.textMuted }}>({app.model || 'N/A'})</span>
                     </td>
                     <td style={tdStyle}>
                       Unit {app.unit?.number} <span style={{ fontSize: 12, color: THEME.textMuted }}>({app.unit?.property?.name})</span>
@@ -190,7 +207,10 @@ export default function ApplianceCatalog() {
             className="fade-in"
             style={{
               position: 'relative',
-              width: 480,
+              width: 'min(560px, calc(100vw - 32px))',
+              maxHeight: 'calc(100dvh - 32px)',
+              overflowY: 'auto',
+              boxSizing: 'border-box',
               padding: 30,
               background: '#ffffff',
               borderRadius: 8,
@@ -201,11 +221,15 @@ export default function ApplianceCatalog() {
             <h2 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 22, fontWeight: 700, marginBottom: 20, color: THEME.purple }}>
               Add appliance
             </h2>
+            {error && <p role="alert" style={{ color: '#991B1B' }}>{error}</p>}
             <form onSubmit={handleCreate} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
                 <div>
-                  <label style={labelStyle}>Unit ID</label>
-                  <input type="number" style={inputStyle} value={formData.unit_id} onChange={e => setFormData({ ...formData, unit_id: e.target.value })} required />
+                  <label style={labelStyle} htmlFor="appliance-unit">Property / Unit</label>
+                  <select id="appliance-unit" style={inputStyle} value={formData.unit_id} onChange={e => setFormData({ ...formData, unit_id: e.target.value })} required>
+                    <option value="">Select property / unit</option>
+                    {units.map(unit => <option key={unit.id} value={unit.id}>{unit.property?.name} — Unit {unit.number}</option>)}
+                  </select>
                 </div>
                 <div>
                   <label style={labelStyle}>Appliance name</label>
@@ -247,6 +271,10 @@ export default function ApplianceCatalog() {
                   <input type="date" style={inputStyle} value={formData.warranty_expiry} onChange={e => setFormData({ ...formData, warranty_expiry: e.target.value })} />
                 </div>
               </div>
+              <div>
+                <label style={labelStyle} htmlFor="appliance-notes">Notes</label>
+                <textarea id="appliance-notes" style={inputStyle} value={formData.notes} onChange={e => setFormData({ ...formData, notes: e.target.value })} />
+              </div>
               <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 10 }}>
                 <button
                   type="button"
@@ -255,8 +283,8 @@ export default function ApplianceCatalog() {
                 >
                   Cancel
                 </button>
-                <button type="submit" className="gfh-portal-btn" style={ghostBtnStyle}>
-                  Save appliance
+                <button type="submit" disabled={isSaving} className="gfh-portal-btn" style={{ ...ghostBtnStyle, background: '#0F8A67', color: '#FFFFFF' }}>
+                  {isSaving ? 'Saving…' : 'Save appliance'}
                 </button>
               </div>
             </form>

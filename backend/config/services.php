@@ -2,6 +2,11 @@
 
 return [
 
+    'recaptcha' => [
+        'secret_key' => env('RECAPTCHA_SECRET_KEY'),
+        'skip' => filter_var(env('RECAPTCHA_SKIP', false), FILTER_VALIDATE_BOOLEAN),
+    ],
+
     /*
     |--------------------------------------------------------------------------
     | Third Party Services

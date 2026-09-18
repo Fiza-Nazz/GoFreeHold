@@ -3,16 +3,16 @@
 <br/>
 
 ```
- ██████╗  ██████╗ ███████╗██████╗ ███████╗███████╗██╗  ██╗ ██████╗ ██╗     ██████╗
+ ██████╗  ██████╗ ███████╗██████╗ ███████╗███████╗██╗  ██╗ ██████╗ ██╗     ██████╗ 
 ██╔════╝ ██╔═══██╗██╔════╝██╔══██╗██╔════╝██╔════╝██║  ██║██╔═══██╗██║     ██╔══██╗
 ██║  ███╗██║   ██║█████╗  ██████╔╝█████╗  █████╗  ███████║██║   ██║██║     ██║  ██║
 ██║   ██║██║   ██║██╔══╝  ██╔══██╗██╔══╝  ██╔══╝  ██╔══██║██║   ██║██║     ██║  ██║
 ╚██████╔╝╚██████╔╝██║     ██║  ██║███████╗███████╗██║  ██║╚██████╔╝███████╗██████╔╝
- ╚═════╝  ╚═════╝ ╚═╝     ╚═╝  ╚═╝╚══════╝╚══════╝╚═╝  ╚═╝ ╚═════╝ ╚══════╝╚═════╝
+ ╚═════╝  ╚═════╝ ╚═╝     ╚═╝  ╚═╝╚══════╝╚══════╝╚═╝  ╚═╝ ╚═════╝ ╚══════╝╚═════╝ 
 ```
 
-### **Enterprise Property Management Operating System**
-*Built for the UAE Real Estate Ecosystem — Dubai Land Department Ready*
+### **Enterprise Property & Tenancy Management Operating System**
+*Engineered for the UAE Real Estate Ecosystem — Dubai Land Department (EJARI) Ready*
 
 <br/>
 
@@ -23,14 +23,15 @@
 [![TailwindCSS](https://img.shields.io/badge/Tailwind_CSS_4-06B6D4?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com)
 
 [![MariaDB](https://img.shields.io/badge/MariaDB-003545?style=for-the-badge&logo=mariadb&logoColor=white)](https://mariadb.org)
-[![DomPDF](https://img.shields.io/badge/DomPDF-UAE_EJARI_PDF-1E1B4B?style=for-the-badge)](https://github.com/dompdf/dompdf)
-[![PHPUnit](https://img.shields.io/badge/PHPUnit-69_Tests_✓_Passing-059669?style=for-the-badge)](https://phpunit.de)
-[![Sanctum](https://img.shields.io/badge/Laravel_Sanctum-RBAC_Auth-065F46?style=for-the-badge)](https://laravel.com/docs/sanctum)
+[![DomPDF](https://img.shields.io/badge/DomPDF-Official_EJARI_Bilingual_PDF-1E1B4B?style=for-the-badge)](https://github.com/dompdf/dompdf)
+[![PHPUnit](https://img.shields.io/badge/PHPUnit-127+_Tests_✓_Passing-059669?style=for-the-badge)](https://phpunit.de)
+[![E2E Audit](https://img.shields.io/badge/E2E_Real--Data_Audit-55%2F55_PASS_(100%25)-0284C7?style=for-the-badge)](https://github.com)
+[![Sanctum](https://img.shields.io/badge/Laravel_Sanctum-6--Role_RBAC-065F46?style=for-the-badge)](https://laravel.com/docs/sanctum)
 [![reCAPTCHA](https://img.shields.io/badge/Google_reCAPTCHA_v2-Bot_Protection-4285F4?style=for-the-badge&logo=google&logoColor=white)](https://www.google.com/recaptcha)
 
 <br/>
 
-> 🏛️ **Domain-Driven Architecture** &nbsp;|&nbsp; 📄 **Official Dubai EJARI 3-Page Bilingual PDF** &nbsp;|&nbsp; 👥 **4 Role-Based Portals** &nbsp;|&nbsp; 💰 **Double-Entry Rent Ledger**
+> 🏛️ **Domain-Driven Architecture (8 Domains)** &nbsp;|&nbsp; 👥 **6 Role-Based Portals** &nbsp;|&nbsp; 📄 **Calibrated Dubai EJARI Dual-Language PDF** &nbsp;|&nbsp; 💰 **Double-Entry Rent Ledger Engine** &nbsp;|&nbsp; 🛠️ **Work Order Dispatch Engine**
 
 <br/>
 
@@ -40,195 +41,203 @@
 
 <br/>
 
-## 🗺️ What Is GoFreeHold?
+## 🗺️ Executive Overview
 
-**GoFreeHold** is a production-grade, end-to-end **Property & Tenancy Management System** purpose-built for the **UAE / Dubai real estate market**.
+**GoFreeHold** is a production-grade, enterprise-ready **Property, Tenancy, and Financial Operations Platform** purpose-built to comply with the rigorous requirements of the **UAE / Dubai real estate sector**.
 
-It unifies every stakeholder — Property Managers, Landlords, Tenants, and Maintenance Technicians — into a single synchronized platform, from the very first property listing all the way through lease signing, rent collection, and final move-out settlement.
-
-<br/>
-
-```
-OWNER                    ADMIN                    TENANT              MAINTENANCE
-  │                        │                        │                      │
-  ├── Portfolio View        ├── Properties & Units   ├── Rent & DEWA Dues   ├── Assigned Jobs
-  ├── Rent Ledger           ├── Lease Contracts      ├── Payment History     ├── Status Updates
-  ├── Receivables           ├── PDC Cheque Tracker   ├── Complaints          ├── Daily Report
-  └── Payments History      ├── Legal Cases          └── Profile             └── Profile
-                            ├── Settlement Wizard
-                            ├── Maintenance Queue
-                            ├── 5 Excel Reports
-                            └── Cron Alert System
-```
+From portfolio acquisition, multi-tier property listing, and advance booking to active tenancy execution, quarterly PDC cheque reconciliation, technician work-order dispatch, and final move-out deposit settlements — GoFreeHold connects every stakeholder into a singular, synchronized operational cockpit.
 
 <br/>
 
----
-
-## ✨ Feature Highlights
-
-<br/>
-
-<table>
-<tr>
-<td width="50%">
-
-### 🏢 Property & Portfolio Management
-- Multi-building, multi-unit property hierarchy
-- Unit status engine: `AVAILABLE` → `BOOKED` → `OCCUPIED` → `SOLD`
-- Advance booking receipts with auto-status
-- Vacant unit filtering and reporting
-
-</td>
-<td width="50%">
-
-### 📝 Tenancy Contracts & Leasing
-- Full lease lifecycle: Create → Renew → Vacate
-- Contract auto-marks unit as `OCCUPIED` on signing
-- Move-out vacates unit back to `AVAILABLE`
-- Call log history per contract
-
-</td>
-</tr>
-<tr>
-<td width="50%">
-
-### 📄 UAE Official EJARI PDF Generation
-- **3-Page** Dubai Land Department contract
-- **Bilingual** English/Arabic with RTL Amiri font shaping
-- Property Usage selector: Residential `[X]` / Commercial / Industrial
-- PDC Cheques schedule table, tenant inventory addendum
-
-</td>
-<td width="50%">
-
-### 💰 Double-Entry Rent Ledger Engine
-- Auto-posts first-month rent `DEBIT` on contract creation
-- Each payment records a balancing `CREDIT`
-- Running balance tracking per tenant
-- Service charges, DEWA dues, adjustments
-
-</td>
-</tr>
-<tr>
-<td width="50%">
-
-### 🧾 PDC Cheque Tracker
-- 4-cheque quarterly schedule per contract
-- Status progression: `pending` → `cleared` / `bounced`
-- Bounced cheque alerts and legal case linkage
-- Comprehensive cheque management dashboard
-
-</td>
-<td width="50%">
-
-### 🚪 Move-Out Settlement Wizard
-- Step-by-step guided settlement wizard
-- Deposit deductions & repair itemization
-- Settlement completion auto-vacates linked unit
-- Income/Expense tracking for financial reporting
-
-</td>
-</tr>
-<tr>
-<td width="50%">
-
-### 🛠️ Maintenance & Asset Management
-- Tenant complaint ticket submission & tracking
-- Technician job assignment & dispatch
-- Status flow: `open` → `in_progress` → `resolved`
-- Unit appliance catalog with serial tracking
-- Stock inventory & Purchase Order management
-
-</td>
-<td width="50%">
-
-### 📊 Reports & Excel Export
-- **5 Excel Reports:** Portfolio Revenue, Receivables, Expired Leases, Stock Inventory, PDC Status
-- Vacant Property PDF/Excel export
-- Artisan-scheduled email alerts for expiring contracts, overdue cheques, and monthly dues
-- Daily maintenance completion analytics
-
-</td>
-</tr>
-</table>
-
-<br/>
-
----
-
-## 🏛️ Architecture — Domain-Driven Design (DDD)
-
-The backend is structured into **8 fully isolated business domains**, each containing its own Models, Controllers, Services, Form Requests, Route Provider, and API routes:
-
 ```
-backend/
-└── app/
-    └── Domain/
-        ├── 🔐 Auth/           → RBAC Middleware, Sanctum Tokens, Google reCAPTCHA v2, Password Reset
-        ├── 🏘️  Property/      → Buildings, Units, Advance Booking, Vacant Unit Reports
-        ├── 📝 Contract/       → Lease Contracts, Call Logs, PDC Cheques, EJARI DomPDF Engine
-        ├── 📊 Dashboard/      → Owner & Tenant Dashboards, PostMonthlyRent, Ledger Rebuild
-        ├── 💳 Payment/        → Payments, Rent Ledger, Service Charges, Receivables, Payables
-        ├── 🏦 Settlement/     → Move-out Wizard, Deposit Deductions, Bank Accounts, Auto-Vacate
-        ├── 🔧 Maintenance/    → Complaints, Job Dispatch, Teams, Appliance Catalog, Stock POs
-        └── 📈 Report/         → 5 Excel Reports, Notification Settings, 4 Artisan Schedulers
-```
-
-```
-frontend/
-└── src/
-    ├── api/              → Axios instance + Bearer token interceptors
-    ├── components/
-    │   ├── auth/         → Shared AuthShell (login/register/forgot/reset UI chrome)
-    │   ├── gfh/          → Admin theme tokens, shared UI components
-    │   └── layout/       → AdminLayout, OwnerLayout, TenantLayout, MaintenanceLayout
-    ├── pages/
-    │   ├── auth/         → Login, Register (+ reCAPTCHA), Forgot, Reset
-    │   ├── admin/        → 33 comprehensive admin management screens
-    │   ├── owner/        → 7 portfolio & finance screens
-    │   ├── tenant/       → 6 dues, payments & complaint screens
-    │   └── maintenance/  → 4 work queue & reporting screens
-    ├── routes/           → AppRouter.tsx + Role-based route guards
-    ├── store/            → Zustand authStore (Remember Me → localStorage / sessionStorage)
-    └── types/            → Shared TypeScript types & interfaces
+┌────────────────────────────────────────────────────────────────────────────────────────┐
+│                               GOFREEHOLD ENTERPRISE OS                                 │
+└──────────────────────────────────────────┬─────────────────────────────────────────────┘
+                                           │
+         ┌─────────────────────────────────┼─────────────────────────────────┐
+         │                                 │                                 │
+┌────────▼────────┐               ┌────────▼────────┐               ┌────────▼────────┐
+│  ADMIN PORTAL   │               │  OWNER PORTAL   │               │  TENANT PORTAL  │
+│  - 35+ Screens  │               │  - Drill-down   │               │  - Dues & DEWA  │
+│  - All Modules  │               │  - Staff Mgmt   │               │  - Pay History  │
+│  - Financials   │               │  - Portfolio    │               │  - Complaints   │
+└────────┬────────┘               └────────┬────────┘               └────────┬────────┘
+         │                                 │                                 │
+         ├─────────────────────────────────┼─────────────────────────────────┤
+         │                                 │                                 │
+┌────────▼────────┐               ┌────────▼────────┐               ┌────────▼────────┐
+│ CASHIER PORTAL  │               │ACCOUNTANT PORTAL│               │MAINTENANCE PORT.│
+│  - Rent Receipts│               │  - Full Ledger  │               │  - Work Orders  │
+│  - Booking Pay  │               │  - Receivables  │               │  - Job Status   │
+│  - Collections  │               │  - Settlements  │               │  - Daily Report │
+└─────────────────┘               └─────────────────┘               └─────────────────┘
+                                           │
+                                  ┌────────▼────────┐
+                                  │ 8 DDD DOMAINS   │
+                                  │ Auth, Property, │
+                                  │ Contract, Dash, │
+                                  │ Payment, Settle,│
+                                  │ Maint., Report  │
+                                  └─────────────────┘
 ```
 
 <br/>
 
 ---
 
-## 👥 The 4 Role-Based Portals
+## 👥 The 6 Dedicated Role-Based Portals
 
-| Portal | User Type | Screens | Access |
-|--------|-----------|---------|--------|
-| 🛡️ **Admin** | Property Managers | 33 screens | Full system management: properties, units, contracts, cheques, legal, maintenance, settlements, reports |
-| 🏠 **Owner** | Landlords & Investors | 7 screens | Portfolio overview, property drill-down, rent ledger, receivables, payment history |
-| 👤 **Tenant** | Lease Occupants | 6 screens | Rent & DEWA dues, payment history, maintenance complaint submission & timeline |
-| 🔧 **Maintenance** | Technicians & Staff | 4 screens | Assigned complaint queue, job status updates, daily completion report |
+GoFreeHold implements strict **Role-Based Access Control (RBAC)** across six customized portals, ensuring complete data isolation, multi-tenant boundaries, and tailored workflows for each persona:
 
-<br/>
-
----
-
-## 🚀 Setup Guide for Paul — Step by Step (0 to 100)
-
-### ✅ What You Need Installed First
-
-| Tool | Download Link | Why |
-|------|--------------|-----|
-| **PHP 8.2+** | [php.net/downloads](https://www.php.net/downloads) | Laravel backend runs on PHP |
-| **Composer** | [getcomposer.org](https://getcomposer.org) | PHP package manager |
-| **Node.js 20+** | [nodejs.org](https://nodejs.org) | React frontend runs on Node |
-| **MySQL / MariaDB** | [mariadb.org](https://mariadb.org/download) or XAMPP | Database |
-
-> 💡 **Easiest option for Windows:** Install [XAMPP](https://www.apachefriends.org/) — it includes PHP, MySQL, and phpMyAdmin all-in-one.
+| Portal | Role Code | Target Persona | Scope of Work & Capabilities |
+|---|---|---|---|
+| 🛡️ **Admin Portal** | `admin` | Property Management Companies & Chief Operators | **35+ screens**. Full oversight over all properties, units, owners, tenants, staff, active contracts, PDC cheques, legal disputes, rent ledger, service charges, maintenance queues, dispatch boards, inventory, 5 Excel report generators, and scheduled automations. |
+| 🏠 **Owner Portal** | `owner` | Real Estate Landlords & Institutional Investors | Property portfolio drill-downs, occupied vs. vacant unit analytics, owner financial statements (cash-in / cash-out ledger), tenant complaint oversight, and **Owner Staff Management** (invite and configure Cashier, Accountant, and Maintenance staff). |
+| 👤 **Tenant Portal** | `tenant` | Residential & Commercial Lease Tenants | Active lease agreement details, quarterly rent & DEWA utility payment schedule, automated payment receipts, maintenance ticket submission with Dubai GST (UTC+4) timestamps, and real-time technician progress tracking. |
+| 🔧 **Maintenance Portal** | `maintenance` | Field Technicians & Facilities Engineers | Assigned work orders queue (`/maintenance/jobs`), real-time job execution lifecycle (`pending` → `in_progress` → `completed`), material consumption logging, and daily maintenance shift summaries. |
+| 💵 **Cashier Portal** | `cashier` | Front-Desk Cashiers & Collection Officers | High-speed rent collection, advance booking deposit vouchers, PDC cheque intake, automated payment receipt generation, and tenant contract lookup restricted to their employing landlord. |
+| 📊 **Accountant Portal** | `accountant` | Corporate Financial Controllers & Auditors | Double-entry rent ledger auditing, debit/credit journal entries, aged outstanding receivables, contract payables, bank account reconciliation, and move-out deposit clearance review. |
 
 <br/>
 
 ---
 
-### 📥 Step 1 — Clone the Repository
+## 🏛️ Backend Architecture — Domain-Driven Design (DDD)
+
+The backend is organized into **8 isolated business domains** under `backend/app/Domain/`. Each domain encapsulates its own dedicated Models, Controllers, Services, Form Requests, Policies, Providers, and API Routes:
+
+```
+backend/app/Domain/
+├── 🔐 Auth/
+│   ├── Controllers/   → AuthController, PasswordResetController, OwnerStaffController
+│   ├── Middleware/    → ActiveAccountMiddleware, RoleGuards
+│   ├── Models/        → User, Owner, OwnerStaff, StaffInvitation
+│   ├── Notifications/ → StaffInvitationNotification, ResetPasswordNotification
+│   └── Services/      → AuthService, StaffAccountService, OwnerContextResolver
+│
+├── 🏘️ Property/
+│   ├── Controllers/   → PropertyController, UnitController, BookingController, VacantPropertyController
+│   ├── Models/        → Property, Unit, AdvanceBooking, UnitStatusLog
+│   └── Services/      → PropertyService, UnitLifecycleService, BookingService
+│
+├── 📝 Contract/
+│   ├── Controllers/   → ContractController, ContractChequeController, ContractPdfController, CallLogController, LegalCaseController
+│   ├── Models/        → TenancyContract, ContractCheque, CallLog, LegalCase, ContractDocument
+│   └── Services/      → ContractService, EjariPdfService, MoneyToWordsArabicService, ContractRenewService
+│
+├── 📊 Dashboard/
+│   ├── Controllers/   → DashboardController, OwnerFinanceController, TenantFinanceController
+│   └── Services/      → MetricsAggregationService, PostMonthlyRentService, LedgerRebuildService
+│
+├── 💳 Payment/
+│   ├── Controllers/   → PaymentController, RentTransactionController, ServiceChargeController, StaffFinanceController, BankAccountController
+│   ├── Models/        → Payment, RentLedger, ServiceCharge, BankAccount, Payable
+│   └── Services/      → PaymentService, LedgerAuditService, ServiceChargeService
+│
+├── 🏦 Settlement/
+│   ├── Controllers/   → SettlementController, SettlementPaymentController, SettlementDocController
+│   ├── Models/        → MoveOutSettlement, SettlementItem, SettlementPayment
+│   └── Services/      → SettlementCalculationService, DepositRefundService, AutoVacateService
+│
+├── 🛠️ Maintenance/
+│   ├── Controllers/   → ComplaintController, JobController, StaffJobController, MaintenanceReportController, InventoryController, ApplianceController, PurchaseController
+│   ├── Models/        → Complaint, Job, MaintenanceTeam, Appliance, InventoryItem, PurchaseOrder
+│   └── Services/      → MaintenanceService, JobAccessService, InventoryAllocationService
+│
+└── 📈 Report/
+    ├── Controllers/   → ReportController, NotificationSettingController
+    ├── Exports/       → RevenueExport, ReceivablesExport, ExpiredLeasesExport, InventoryExport, PdcStatusExport
+    └── Services/      → ReportAnalyticsService, NotificationSchedulerService
+```
+
+<br/>
+
+---
+
+## ✨ Core Functional Capabilities
+
+<br/>
+
+### 1. 📄 Official Dubai Land Department (EJARI) 3-Page Contract PDF Engine
+- **Calibrated Coordinates:** Built to precisely replicate official Dubai Land Department tenancy contract stationary down to the exact millimeter.
+- **Dual-Language & RTL Arabic Shaping:** Seamlessly renders English and Arabic side-by-side using embedded DejaVu / Amiri fonts with native Arabic script shaping.
+- **English-to-Arabic Money Words Engine:** Automatically translates numeric rent values into grammatically correct Arabic words (e.g., `120,000 AED` → `فقط مائة وعشرون ألف درهم إماراتي لا غير`).
+- **Complete Contract Terms:** Includes property usage selections (Residential `[X]`, Commercial, Industrial), PDC cheques payment schedule, tenant inventory addendums, and official signature panels.
+
+### 2. 💰 Double-Entry Rent Ledger & Receivable Engine
+- **Zero-Drift Accounting:** Automatically generates scheduled `DEBIT` entries upon contract creation and matching `CREDIT` entries upon payment receipt.
+- **Audited Balance Tracking:** Maintains running net balance calculations per contract, tenant, and property owner.
+- **PDC Cheque Lifecycle:** Supports 1, 2, 4, or 6 cheque payment terms. Tracks cheques from `pending` → `deposited` → `cleared` or `bounced`, with digital cheque front/back attachments.
+- **Service & Utility Dues:** Dedicated tracking for DEWA utilities, chiller fees, cleaning, security, and general property service charges.
+
+### 3. 👥 Owner Staff Management & Cryptographic Invitation System
+- **Expiring Single-Use Invitations:** Owners can invite Cashiers, Accountants, and Maintenance Technicians via secure, cryptographically hashed tokens sent via email.
+- **Independent Staff Activation:** Staff members activate their accounts at `/staff/activate` with zero default or hardcoded passwords.
+- **Granular Account Controls:** Landlords can enable or disable staff access with instantaneous session revocation.
+
+### 4. 🛠️ Work Order Dispatch & Maintenance Operations
+- **Full Work Order Lifecycle:** Manages the entire path: `Open Complaint` → `Dispatched Job Order` → `In Progress` → `Resolved & Closed`.
+- **Owner-Linked Technician Verification:** Technicians can only be assigned to jobs within properties owned by their employing landlord (`owner_staff.owner_id === unit.property.owner_id`).
+- **Executive Job Order KPI Dashboard:** Real-time KPI metrics displaying Total Work Orders, In-Progress count, Dispatched/Assigned count, and Closed count.
+- **Appliance & Asset Inventory:** Tracks appliance serial numbers, warranty terms, spare parts inventory, and purchase orders.
+
+### 5. 🚪 Move-Out Settlement Wizard
+- **Comprehensive Clearance:** Deducts pending rent, utility arrears, and physical repair costs from the security deposit.
+- **Automated Property Status Reversion:** Upon settlement completion, the linked unit is atomically returned to `AVAILABLE` status.
+- **Settlement Receipts:** Generates verified clearance receipts and documentation.
+
+<br/>
+
+---
+
+## 🧪 Quality Assurance & Verification Rigor
+
+GoFreeHold has undergone comprehensive verification:
+
+```text
+================================================================================
+GOFREEHOLD PRODUCTION E2E VERIFICATION AUDIT
+Target: http://127.0.0.1:8000/api | Live MariaDB Database Engine
+================================================================================
+ [PASS] M1: Auth & User Onboarding (Admin, Owner, Tenant, Cashier, Acct, Maint)
+ [PASS] M2: Dashboard & Real-Time Analytics (KPI Aggregations & Metrics)
+ [PASS] M3: Property & Unit Lifecycle Management (AVAILABLE -> BOOKED -> OCCUPIED)
+ [PASS] M4: Tenancy Contracts, PDC Cheques, Call Logs & Legal Disputes
+ [PASS] M5: Double-Entry Rent Ledger, Receipts, Service Charges & Payables
+ [PASS] M6: Move-Out Settlement Wizard, Deposit Deductions & Unit Return
+ [PASS] M7: Maintenance Complaints, Teams, Job Dispatch & Parts Inventory
+ [PASS] M8: Financial Analytics Reports, Excel Engine & Scheduler Alerts
+--------------------------------------------------------------------------------
+TOTAL CHECKS: 55 | PASSED: 55 | FAILED: 0 | WARNINGS: 0
+VERDICT: 100% PRODUCTION READY
+================================================================================
+```
+
+- **55 / 55 Live API & UI E2E Real-Data Checks Passed (100% Pass Rate).**
+- **127+ Automated Feature & Unit Tests** in the backend PHPUnit test suite.
+- **0 TypeScript Compilation Errors** (`npx tsc --noEmit` exits with Code 0 across all 6 portals).
+- **Strict Role Isolation Verified:** 403 Forbidden rigorously asserted against cross-role endpoint tampering.
+
+<br/>
+
+---
+
+## 🚀 Complete Step-by-Step Setup Guide (0 to 100)
+
+### 📋 Prerequisites
+
+| Component | Minimum Version | Download / Reference |
+|---|---|---|
+| **PHP** | 8.2 or 8.3 | [php.net](https://www.php.net/downloads) (with `pdo_mysql`, `mbstring`, `gd`, `openssl`, `bcmath`) |
+| **Composer** | 2.6+ | [getcomposer.org](https://getcomposer.org) |
+| **Node.js** | 20.x or 22.x LTS | [nodejs.org](https://nodejs.org) |
+| **Database** | MariaDB 10.11+ or MySQL 8.0+ | [mariadb.org](https://mariadb.org/download) or XAMPP |
+
+<br/>
+
+---
+
+### Step 1: Clone the Repository
 
 ```bash
 git clone https://github.com/Fiza-Nazz/GoFreeHold.git
@@ -239,174 +248,123 @@ cd GoFreeHold
 
 ---
 
-### ⚙️ Step 2 — Backend Setup
+### Step 2: Backend Setup (Laravel 11)
 
 ```bash
 cd backend
-```
 
-**2a. Install PHP packages:**
-```bash
+# 1. Install PHP dependencies
 composer install
-```
 
-**2b. Create your environment file:**
-```bash
-# Mac / Linux:
+# 2. Configure environment file
 cp .env.example .env
+# On Windows Command Prompt:
+# copy .env.example .env
 
-# Windows Command Prompt:
-copy .env.example .env
-```
-
-**2c. Generate the application secret key:**
-```bash
+# 3. Generate application encryption key
 php artisan key:generate
-```
 
-**2d. Create the database:**
+# 4. Configure Database in .env:
+# DB_CONNECTION=mysql
+# DB_HOST=127.0.0.1
+# DB_PORT=3306
+# DB_DATABASE=gofreehold
+# DB_USERNAME=root
+# DB_PASSWORD=
 
-> Open **phpMyAdmin** (at `http://localhost/phpmyadmin`) or any MySQL tool and run:
-> ```sql
-> CREATE DATABASE gofreehold CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-> ```
+# 5. Create database in MySQL/MariaDB:
+# CREATE DATABASE gofreehold CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
-```bash
-# 5. Run all 37 migrations and seed demo accounts
+# 6. Run all 41 migrations and seed initial accounts
 php artisan migrate --seed
 
-# 6. Start the API server
+# 7. Start the Laravel development server
 php artisan serve --host=127.0.0.1 --port=8000
 ```
 
-✅ Backend API now running at **`http://127.0.0.1:8000`**
+> **Backend API URL:** `http://127.0.0.1:8000`
 
 <br/>
 
-### 🖥️ Step 2 — Frontend Setup
+---
+
+### Step 3: Frontend Setup (React 19 + Vite + TypeScript)
 
 ```bash
-# In a NEW terminal window
-
-# 1. Navigate to frontend
+# In a NEW terminal window:
 cd frontend
 
-# 2. Install Node dependencies
+# 1. Install Node dependencies
 npm install
 
-# 3. Copy environment config (keys are pre-configured for localhost)
-cp .env.example .env          # Windows: copy .env.example .env
+# 2. Configure environment file
+cp .env.example .env
+# On Windows Command Prompt:
+# copy .env.example .env
 
-# 4. Start Vite development server
+# 3. Start Vite development server
 npm run dev
 ```
 
-✅ Frontend now running at **`http://localhost:5173`**
-
-<br/>
-
-### 🔐 Google reCAPTCHA — Works Out of the Box
-
-The reCAPTCHA keys in `.env.example` are **pre-authorized for `localhost` and `127.0.0.1`**.  
-Paul (or any reviewer) clones and runs the project — the **"I'm not a robot"** checkbox works immediately with zero configuration.
-
-> For production deployment: Replace keys with domain-specific ones from [Google reCAPTCHA Admin Console](https://www.google.com/recaptcha/admin).
+> **Frontend Application URL:** `http://localhost:5173`
 
 <br/>
 
 ---
 
-## 🧪 TDD Automated Test Suite — PHPUnit (69 Passing Tests)
+## 🔐 Demo Credentials for Local Testing
 
-The backend is built following strict **Test-Driven Development (TDD)** principles with fast in-memory SQLite testing and full RBAC isolation.
-
-```bash
-cd backend
-
-# 1. Run the entire test suite (69 tests, 182 assertions, ~8s)
-php artisan test
-
-# 2. Run only Domain Unit tests (pure service business logic)
-php artisan test --testsuite=Unit
-
-# 3. Run only HTTP Feature & Security tests
-php artisan test --testsuite=Feature
-
-# 4. Run RBAC role-isolation tests
-php artisan test --filter=RbacTest
-```
-
-```text
-   PASS  Tests\Unit\Domain\Auth\AuthServiceTest                      (6 tests)
-   PASS  Tests\Unit\Domain\Contract\ContractServiceTest              (4 tests)
-   PASS  Tests\Unit\Domain\Contract\ContractVacateServiceTest         (2 tests)
-   PASS  Tests\Unit\Domain\Dashboard\PostMonthlyRentServiceTest      (4 tests)
-   PASS  Tests\Unit\Domain\Payment\PaymentLedgerTest                 (2 tests)
-   PASS  Tests\Feature\AuthTest                                      (7 tests)
-   PASS  Tests\Feature\PropertyTest                                  (4 tests)
-   PASS  Tests\Feature\PropertyUnitEndToEndTest                      (1 test)
-   PASS  Tests\Feature\ContractTest                                  (6 tests)
-   PASS  Tests\Feature\PaymentTest                                   (3 tests)
-   PASS  Tests\Feature\SettlementTest                                (2 tests)
-   PASS  Tests\Feature\MaintenanceTest                               (3 tests)
-   PASS  Tests\Feature\ReportTest                                    (2 tests)
-   PASS  Tests\Feature\RbacTest                                      (18 tests)
-   PASS  Tests\Feature\RealWorkflowE2ETest                            (1 test)
-   PASS  Tests\Feature\ValidationTest                                (4 tests)
-
-   Tests: 69 passed (182 assertions) | Time: 8.2s
-```
-
-| Test Category | Files & Coverage |
-|---|---|
-| 🧬 **Domain Unit Tests** | `AuthServiceTest`, `ContractServiceTest`, `ContractVacateServiceTest`, `PostMonthlyRentServiceTest`, `PaymentLedgerTest` — pure service rules, automatic tenant profile creation on contract onboarding, monthly idempotency, ledger reversals |
-| 🛡️ **RBAC Security Suite** | `RbacTest` — Data-provider testing ensuring Admin endpoints strictly return `403 Forbidden` for tenant/owner and `401 Unauthorized` for guests |
-| 🔐 **Public Auth Security** | `AuthTest` — Disallows public admin self-registration (`role in:owner,tenant,maintenance`), password strength, Sanctum token revocations |
-| 🏢 **Property & Units Management** | `PropertyTest`, `PropertyUnitEndToEndTest`, `ContractTest` — Full CRUD, auto unit-counter increment/decrement, filtering vacant units, occupied unit collision prevention, automatic `AVAILABLE` / `OCCUPIED` transitions, EJARI PDF stream |
-| 🔄 **End-to-End Workflow** | `RealWorkflowE2ETest` — Complete Dubai real estate lifecycle: inline tenant creation → contract signing → rent debit ledger → cheque payment credit → renewal → move-out vacate |
-| 💰 **Ledger & Settlement** | `PaymentTest`, `SettlementTest` — Auto double-entry credit, mandatory soft-delete reasons, conditional auto-vacate on settlement completion |
-| ❌ **Validation Unhappy Paths** | `ValidationTest` — Invalid payloads, negative rent, reverse dates, barter payment mode rejection |
+| Role | Email Address | Password | Portal Entry URL |
+|---|---|---|---|
+| **System Admin** | `admin@gofreehold.com` | `password` | `http://localhost:5173/admin/dashboard` |
+| **Property Owner** | `owner@gofreehold.com` | `password` | `http://localhost:5173/owner/dashboard` |
+| **Tenant** | `tenant@gofreehold.com` | `password` | `http://localhost:5173/tenant/dashboard` |
+| **Technician** | `maintenance@gofreehold.com` | `password` | `http://localhost:5173/maintenance/dashboard` |
+| **Cashier** | `cashier@gofreehold.com` | `password` | `http://localhost:5173/cashier/dashboard` |
+| **Accountant** | `accountant@gofreehold.com` | `password` | `http://localhost:5173/accountant/dashboard` |
 
 <br/>
 
 ---
 
-## ⏰ Scheduled Artisan Automations
+## ⏰ Automated Scheduled Tasks
+
+Run scheduled background tasks using Laravel's Artisan scheduler:
 
 ```bash
-# Run all scheduled commands via Laravel task scheduler
 php artisan schedule:run
 ```
 
-| Command | Schedule | Purpose |
-|---------|----------|---------|
-| `rent:post-monthly` | 1st of every month | Auto-posts monthly rent debit for all active contracts |
-| `alert:contract-expiry` | Daily | Sends email for contracts expiring in 30, 60, or 90 days |
-| `alert:pending-cheques` | Daily | Flags PDC cheques due within 7 days |
-| `alert:monthly-dues` | Monthly | Sends overdue balance payment reminders |
+| Task Command | Frequency | Description |
+|---|---|---|
+| `rent:post-monthly` | 1st of every month | Automatically generates monthly rent debit records for all active tenancy contracts. |
+| `alert:contract-expiry` | Daily at 08:00 | Scans for contracts expiring in 90, 60, and 30 days and sends notification reminders. |
+| `alert:pending-cheques` | Daily at 09:00 | Flags and alerts on post-dated cheques due for bank deposit within 7 days. |
+| `alert:monthly-dues` | Monthly | Alerts tenants with overdue or unpaid rental and utility balances. |
 
 <br/>
 
 ---
 
-## 📐 Tech Stack
+## 🛠️ Complete Tech Stack Overview
 
 <div align="center">
 
-| Layer | Technology |
-|-------|-----------|
-| **Backend Framework** | Laravel 11 — Domain-Driven Design (8 isolated domains) |
-| **API Auth** | Laravel Sanctum — Bearer token per portal role |
-| **Database** | MariaDB / MySQL 8.0+ — 37 production migrations |
-| **PDF Generation** | DomPDF + Amiri Arabic Font — Official UAE EJARI 3-Page Contract |
-| **Excel Export** | Maatwebsite Excel — 5 report types |
-| **Frontend Framework** | React 19 + TypeScript 5 + Vite 8 |
-| **Styling** | Tailwind CSS 4 — Semantic admin color system |
-| **State Management** | Zustand — Persistent auth with Remember Me |
-| **Data Fetching** | Axios — Auto Bearer token injection |
-| **Charts** | Recharts — Owner & Admin financial dashboards |
-| **Bot Protection** | Google reCAPTCHA v2 — Registration guard |
-| **Testing** | PHPUnit — 15 feature tests, 38 assertions |
+| Layer | Technologies Employed |
+|---|---|
+| **Backend Framework** | Laravel 11.x (Domain-Driven Design with 8 isolated domains) |
+| **Authentication & RBAC** | Laravel Sanctum (Stateful & Bearer Token Authentication, 6 Roles) |
+| **Database Engine** | MariaDB 12.x / MySQL 8.x (InnoDB, 41 clean schema migrations) |
+| **Frontend Framework** | React 19.x with TypeScript 5.x |
+| **Build & Tooling** | Vite 8.x, PostCSS, ESLint |
+| **Design System** | Tailwind CSS 4.x with custom enterprise purple tokens (`#1E1B4B`, `#065F46`, `#075985`) |
+| **State Management** | Zustand (persistent authentication session & role state) |
+| **HTTP Client** | Axios (with token injection interceptors and 401/403 handlers) |
+| **PDF Generation** | DomPDF with DejaVu Sans & Amiri Arabic typography |
+| **Data Analytics & Charts** | Recharts (Financial trends, occupancy ratios, collection rate) |
+| **Excel & CSV Engine** | Maatwebsite / PhpSpreadsheet (5 specialized analytical workbooks) |
+| **Anti-Bot Security** | Google reCAPTCHA v2 checkbox integration on public forms |
+| **Automated Testing** | PHPUnit 11.x (127+ passing tests, MariaDB testing database) |
 
 </div>
 
@@ -414,16 +372,17 @@ php artisan schedule:run
 
 ---
 
+## 📄 License & Intellectual Property
+
+Proprietary Software — Developed for **GoFreeHold Real Estate Operations**.  
+All rights reserved. Unauthorized copying, modification, or distribution is strictly prohibited.
+
+<br/>
+
 <div align="center">
 
-<br/>
-
-**GoFreeHold** — *Engineered for high-performance UAE property management operations.*
-
-<br/>
+**GoFreeHold** — *The Gold Standard in UAE Enterprise Property Management.*
 
 [![GitHub](https://img.shields.io/badge/GitHub-Fiza--Nazz%2FGoFreeHold-181717?style=for-the-badge&logo=github)](https://github.com/Fiza-Nazz/GoFreeHold)
-
-<br/>
 
 </div>

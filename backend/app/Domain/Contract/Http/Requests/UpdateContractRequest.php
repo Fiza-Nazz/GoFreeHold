@@ -26,6 +26,10 @@ class UpdateContractRequest extends FormRequest
             'due'              => 'nullable|numeric|min:0',
             'on_case'          => 'nullable|boolean',
             'notes'            => 'nullable|string',
+            'tenant_name'      => 'nullable|string|max:255',
+            'tenant_email'     => 'nullable|email|max:255',
+            'tenant_address'   => 'nullable|string|max:500',
+            'tenant_contact'   => 'nullable|string|max:255',
         ];
     }
 }

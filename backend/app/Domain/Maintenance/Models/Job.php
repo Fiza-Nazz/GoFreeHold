@@ -12,6 +12,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 class Job extends Model
 {
+    // Keep assignedTo/assignedBy relations distinct from their numeric FK attributes.
+    public static $snakeAttributes = false;
     use HasFactory;
 
     protected $fillable = [

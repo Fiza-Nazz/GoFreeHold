@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 import api from '../../api/axios'
 import { formatDate } from '../../utils/formatDate'
 import { THEME, Icon, CornerBrackets, portalPageCss, heroStyle, panelStyle, thStyle, tdStyle, ghostBtnStyle } from '../../components/gfh/adminTheme'
@@ -8,10 +8,11 @@ type ReportType = 'revenue' | 'receivables' | 'expired-contracts' | 'inventory-s
 const icons = {
   printer: 'M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M6 14h12v8H6v-8z',
   download: 'M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3',
+  search: 'M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z',
 }
 
 const REPORT_LABELS: Record<ReportType, string> = {
-  'revenue': 'Revenue Analysis',
+  'revenue': 'Revenue & Utility Analysis',
   'receivables': 'Receivables',
   'expired-contracts': 'Expiring Contracts (~100d)',
   'inventory-summary': 'Inventory Summary',
@@ -22,6 +23,11 @@ export default function ReportsDashboard() {
   const [activeTab, setActiveTab] = useState<ReportType>('revenue')
   const [reportData, setReportData] = useState<any>(null)
   const [isLoading, setIsLoading] = useState(true)
+
+  // Granular Revenue Analysis States
+  const [categoryFilter, setCategoryFilter] = useState<'all' | 'dewa' | 'rent' | 'deposit' | 'service_charge'>('all')
+  const [searchTerm, setSearchTerm] = useState('')
+  const [revenueView, setRevenueView] = useState<'detailed' | 'monthly'>('detailed')
 
   useEffect(() => {
     fetchReport()
@@ -61,31 +67,88 @@ export default function ReportsDashboard() {
     window.print()
   }
 
+  // Filtered payments for Revenue Analysis
+  const filteredPayments = useMemo(() => {
+    if (!reportData?.payments) return []
+    return reportData.payments.filter((p: any) => {
+      // Category filter
+      if (categoryFilter !== 'all' && (p.type || '').toLowerCase() !== categoryFilter) {
+        return false
+      }
+      // Search filter
+      if (searchTerm.trim()) {
+        const q = searchTerm.toLowerCase()
+        const tenantName = (p.contract?.tenant?.name || p.tenant?.name || '').toLowerCase()
+        const ownerName = (p.contract?.owner?.name || '').toLowerCase()
+        const propName = (p.contract?.unit?.property?.name || '').toLowerCase()
+        const unitNum = (p.contract?.unit?.number || '').toLowerCase()
+        const ref = (p.receipt_number || p.reference_number || `RCP-${p.id}`).toLowerCase()
+        const mode = (p.mode || '').toLowerCase()
+        return (
+          tenantName.includes(q) ||
+          ownerName.includes(q) ||
+          propName.includes(q) ||
+          unitNum.includes(q) ||
+          ref.includes(q) ||
+          mode.includes(q)
+        )
+      }
+      return true
+    })
+  }, [reportData?.payments, categoryFilter, searchTerm])
+
+  const categoryCounts = useMemo(() => {
+    const list = reportData?.payments || []
+    return {
+      all: list.length,
+      dewa: list.filter((p: any) => (p.type || '').toLowerCase() === 'dewa').length,
+      rent: list.filter((p: any) => (p.type || '').toLowerCase() === 'rent').length,
+      deposit: list.filter((p: any) => (p.type || '').toLowerCase() === 'deposit').length,
+      service_charge: list.filter((p: any) => (p.type || '').toLowerCase() === 'service_charge').length,
+    }
+  }, [reportData?.payments])
+
   return (
     <div className="gfh-portal-page gfh-rp-page" style={{ fontFamily: "'Poppins', system-ui, sans-serif" }}>
       <style>{`${portalPageCss}
         .gfh-rp-print-only { display: none; }
 
-        /* ---- Print-only styles: premium branded, purple-accented professional report ---- */
         @media print {
-          -webkit-print-color-adjust: exact;
-          print-color-adjust: exact;
-
-          body * { visibility: hidden; }
-          .gfh-rp-printable, .gfh-rp-printable * {
-            visibility: visible;
-            -webkit-print-color-adjust: exact !important;
-            print-color-adjust: exact !important;
+          -webkit-print-color-adjust: exact !important;
+          print-color-adjust: exact !important;
+          @page {
+            margin: 12mm 14mm;
+            size: auto;
           }
+
+          body {
+            background: #ffffff !important;
+            color: #0f172a !important;
+          }
+
+          nav, aside, header, .gfh-rp-noprint {
+            display: none !important;
+          }
+
+          .gfh-portal-page, .gfh-rp-page {
+            padding: 0 !important;
+            margin: 0 !important;
+            background: #ffffff !important;
+          }
+
           .gfh-rp-printable {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
+            position: static !important;
+            width: 100% !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            box-shadow: none !important;
+            border: none !important;
           }
-          .gfh-rp-noprint { display: none !important; }
 
-          .gfh-rp-print-only { display: block !important; }
+          .gfh-rp-print-only {
+            display: block !important;
+          }
+
           .gfh-rp-letterhead {
             display: flex !important;
             justify-content: space-between !important;
@@ -93,89 +156,114 @@ export default function ReportsDashboard() {
             gap: 16px !important;
             padding-bottom: 14px !important;
             margin-bottom: 18px !important;
-            border-bottom: 3px solid #115e59 !important;
+            border-bottom: 2px solid #0e5e48 !important;
           }
+
           .gfh-rp-brand-row {
             display: flex !important;
             align-items: center !important;
             gap: 10px !important;
           }
+
           .gfh-rp-brand-mark {
-            width: 30px !important;
-            height: 30px !important;
+            width: 32px !important;
+            height: 32px !important;
             border-radius: 6px !important;
-            background: linear-gradient(135deg, #0f766e, #115e59) !important;
+            background: #0e5e48 !important;
             color: #fff !important;
             display: flex !important;
             align-items: center !important;
             justify-content: center !important;
             font-family: 'Playfair Display', Georgia, serif !important;
             font-weight: 800 !important;
-            font-size: 15px !important;
+            font-size: 16px !important;
             flex-shrink: 0 !important;
           }
+
           .gfh-rp-brand-text h2 {
             font-family: 'Playfair Display', Georgia, serif !important;
-            font-size: 15px !important;
+            font-size: 16px !important;
             font-weight: 800 !important;
-            color: #1c1917 !important;
+            color: #0f172a !important;
             margin: 0 !important;
           }
+
           .gfh-rp-brand-text span {
-            font-size: 9px !important;
+            font-size: 9.5px !important;
             font-weight: 700 !important;
-            color: #0f766e !important;
+            color: #0e5e48 !important;
             text-transform: uppercase !important;
             letter-spacing: 1px !important;
           }
+
           .gfh-rp-print-only h1 {
             font-family: 'Playfair Display', Georgia, serif !important;
-            font-size: 22px !important;
+            font-size: 20px !important;
             font-weight: 800 !important;
-            color: #1c1917 !important;
-            margin: 0 0 3px 0 !important;
+            color: #0f172a !important;
+            margin: 0 0 4px 0 !important;
             text-align: right !important;
           }
+
           .gfh-rp-print-only p {
             font-size: 10px !important;
-            color: #6b6478 !important;
+            color: #64748b !important;
             margin: 0 !important;
             text-align: right !important;
           }
+
           .gfh-rp-print-footer {
             display: flex !important;
             justify-content: space-between !important;
-            margin-top: 22px !important;
+            margin-top: 24px !important;
             padding-top: 10px !important;
-            border-top: 1px solid #e5e7eb !important;
-            font-size: 8.5px !important;
-            color: #a89bc4 !important;
+            border-top: 1px solid #e2e8f0 !important;
+            font-size: 9px !important;
+            color: #94a3b8 !important;
             letter-spacing: 0.3px !important;
           }
 
-          table { width: 100% !important; border-collapse: collapse !important; }
-          thead tr { background: #2d1657 !important; }
+          table {
+            width: 100% !important;
+            border-collapse: collapse !important;
+            page-break-inside: auto !important;
+          }
+
+          thead {
+            display: table-header-group !important;
+          }
+
+          tr {
+            page-break-inside: avoid !important;
+            page-break-after: auto !important;
+          }
+
+          thead tr {
+            background: #f1f5f9 !important;
+          }
+
           th {
             text-align: left !important;
-            color: #ffffff !important;
-            font-size: 9px !important;
+            color: #1e293b !important;
+            font-size: 9.5px !important;
             font-weight: 700 !important;
             letter-spacing: 0.5px !important;
             text-transform: uppercase !important;
             padding: 8px 10px !important;
+            border-bottom: 2px solid #cbd5e1 !important;
           }
+
           td {
             text-align: left !important;
-            color: #1c1917 !important;
-            font-size: 10.5px !important;
+            color: #0f172a !important;
+            font-size: 10px !important;
             padding: 8px 10px !important;
+            border-bottom: 1px solid #e2e8f0 !important;
           }
-          tr { border-bottom: 1px solid #e5e7eb !important; }
-          tbody tr:nth-child(even) { background: #faf6ff !important; }
 
-          h3 { color: #1c1917 !important; }
-
-          @page { margin: 1.4cm; }
+          tbody tr:nth-child(even) {
+            background: #f8fafc !important;
+          }
         }
       `}</style>
 
@@ -324,32 +412,319 @@ export default function ReportsDashboard() {
             </div>
           ) : (
             <div>
-              {/* Revenue Tab */}
+              {/* Revenue & Utility Analysis Tab */}
               {activeTab === 'revenue' && (
                 <div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
-                    <h3 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 18, fontWeight: 700, color: THEME.ink, margin: 0 }}>
-                      Total revenue ({reportData.year}): <span style={{ color: '#10b981' }}>AED {Number(reportData.total_revenue).toLocaleString()}</span>
-                    </h3>
+                  {/* KPI Summary Cards */}
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 16, marginBottom: 24 }}>
+                    <div style={{ padding: '16px 20px', background: '#F8FAFC', border: '1px solid #E2E8F0', borderRadius: 10 }}>
+                      <div style={{ fontSize: 11.5, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px', color: '#64748B' }}>
+                        Total Revenue ({reportData.year})
+                      </div>
+                      <div style={{ fontSize: 24, fontWeight: 800, color: '#0E5E48', marginTop: 4 }}>
+                        AED {Number(reportData.total_revenue || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                      </div>
+                      <div style={{ fontSize: 11.5, color: '#94A3B8', marginTop: 2 }}>All verified inflows</div>
+                    </div>
+
+                    <div style={{ padding: '16px 20px', background: '#F0FDF4', border: '1px solid #BBF7D0', borderRadius: 10 }}>
+                      <div style={{ fontSize: 11.5, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px', color: '#15803D' }}>
+                        Rent Collected
+                      </div>
+                      <div style={{ fontSize: 24, fontWeight: 800, color: '#15803D', marginTop: 4 }}>
+                        AED {Number(reportData.total_rent || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                      </div>
+                      <div style={{ fontSize: 11.5, color: '#16A34A', marginTop: 2 }}>Contractual rent payments</div>
+                    </div>
+
+                    <div style={{ padding: '16px 20px', background: '#F0F9FF', border: '1px solid #BAE6FD', borderRadius: 10 }}>
+                      <div style={{ fontSize: 11.5, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px', color: '#0369A1' }}>
+                        DEWA Utilities Collected
+                      </div>
+                      <div style={{ fontSize: 24, fontWeight: 800, color: '#0369A1', marginTop: 4 }}>
+                        AED {Number(reportData.total_dewa || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                      </div>
+                      <div style={{ fontSize: 11.5, color: '#0284C7', marginTop: 2 }}>Water & electricity collections</div>
+                    </div>
+
+                    <div style={{ padding: '16px 20px', background: '#FAF5FF', border: '1px solid #E9D5FF', borderRadius: 10 }}>
+                      <div style={{ fontSize: 11.5, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px', color: '#7E22CE' }}>
+                        Security Deposits
+                      </div>
+                      <div style={{ fontSize: 24, fontWeight: 800, color: '#7E22CE', marginTop: 4 }}>
+                        AED {Number(reportData.total_deposit || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                      </div>
+                      <div style={{ fontSize: 11.5, color: '#9333EA', marginTop: 2 }}>Refundable security deposits</div>
+                    </div>
                   </div>
-                  <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                    <thead>
-                      <tr style={{ borderBottom: `2px solid ${THEME.border}` }}>
-                        {['Month', 'Category', 'Total collected (AED)'].map(h => (
-                          <th key={h} style={thStyle}>{h}</th>
+
+                  {/* Interactive Controls Bar */}
+                  <div className="gfh-rp-noprint" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12, marginBottom: 18, background: '#F8FAFC', padding: '12px 16px', borderRadius: 10, border: '1px solid #E2E8F0' }}>
+                    {/* View Switcher: Detailed Ledger vs Monthly Summary */}
+                    <div style={{ display: 'flex', gap: 4, background: '#E2E8F0', padding: 3, borderRadius: 8 }}>
+                      <button
+                        onClick={() => setRevenueView('detailed')}
+                        style={{
+                          padding: '6px 14px',
+                          fontSize: 12.5,
+                          fontWeight: 700,
+                          borderRadius: 6,
+                          border: 'none',
+                          cursor: 'pointer',
+                          background: revenueView === 'detailed' ? '#FFFFFF' : 'transparent',
+                          color: revenueView === 'detailed' ? '#0E5E48' : '#64748B',
+                          boxShadow: revenueView === 'detailed' ? '0 1px 2px rgba(0,0,0,0.06)' : 'none',
+                        }}
+                      >
+                        Detailed Ledger ({filteredPayments.length})
+                      </button>
+                      <button
+                        onClick={() => setRevenueView('monthly')}
+                        style={{
+                          padding: '6px 14px',
+                          fontSize: 12.5,
+                          fontWeight: 700,
+                          borderRadius: 6,
+                          border: 'none',
+                          cursor: 'pointer',
+                          background: revenueView === 'monthly' ? '#FFFFFF' : 'transparent',
+                          color: revenueView === 'monthly' ? '#0E5E48' : '#64748B',
+                          boxShadow: revenueView === 'monthly' ? '0 1px 2px rgba(0,0,0,0.06)' : 'none',
+                        }}
+                      >
+                        Monthly Summary ({reportData.breakdown?.length || 0})
+                      </button>
+                    </div>
+
+                    {/* Category Filter Pills (When in Detailed View) */}
+                    {revenueView === 'detailed' && (
+                      <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', alignItems: 'center' }}>
+                        {[
+                          { key: 'all', label: `All (${categoryCounts.all})` },
+                          { key: 'dewa', label: `DEWA Only (${categoryCounts.dewa})` },
+                          { key: 'rent', label: `Rent Only (${categoryCounts.rent})` },
+                          { key: 'deposit', label: `Deposits (${categoryCounts.deposit})` },
+                          { key: 'service_charge', label: `Service Charges (${categoryCounts.service_charge})` },
+                        ].map(pill => (
+                          <button
+                            key={pill.key}
+                            onClick={() => setCategoryFilter(pill.key as any)}
+                            style={{
+                              padding: '5px 12px',
+                              fontSize: 12,
+                              fontWeight: 700,
+                              borderRadius: 20,
+                              border: categoryFilter === pill.key ? '1px solid #0E5E48' : '1px solid #CBD5E1',
+                              background: categoryFilter === pill.key ? '#0E5E48' : '#FFFFFF',
+                              color: categoryFilter === pill.key ? '#FFFFFF' : '#475569',
+                              cursor: 'pointer',
+                              transition: 'all 0.15s ease',
+                            }}
+                          >
+                            {pill.label}
+                          </button>
                         ))}
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {reportData.breakdown?.map((b: any, i: number) => (
-                        <tr key={i} className="gfh-portal-row" style={{ borderBottom: `1px solid ${THEME.border}` }}>
-                          <td style={tdStyle}>Month {b.month}</td>
-                          <td style={tdStyle}>{String(b.type ?? b.category ?? '—').toUpperCase()}</td>
-                          <td style={{ ...tdStyle, fontWeight: 700, color: '#10b981' }}>AED {Number(b.total).toLocaleString()}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                      </div>
+                    )}
+
+                    {/* Search Bar */}
+                    {revenueView === 'detailed' && (
+                      <div style={{ position: 'relative', minWidth: 260, flex: '1 1 240px', maxWidth: 360 }}>
+                        <input
+                          type="text"
+                          placeholder="Search tenant, owner, building, unit, receipt..."
+                          value={searchTerm}
+                          onChange={e => setSearchTerm(e.target.value)}
+                          style={{
+                            width: '100%',
+                            padding: '8px 12px 8px 32px',
+                            fontSize: 12.5,
+                            borderRadius: 8,
+                            border: '1px solid #CBD5E1',
+                            outline: 'none',
+                            boxSizing: 'border-box',
+                          }}
+                        />
+                        <span style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', color: '#94A3B8', display: 'flex' }}>
+                          <Icon path={icons.search} size={14} />
+                        </span>
+                        {searchTerm && (
+                          <button
+                            onClick={() => setSearchTerm('')}
+                            style={{
+                              position: 'absolute',
+                              right: 8,
+                              top: '50%',
+                              transform: 'translateY(-50%)',
+                              background: 'none',
+                              border: 'none',
+                              cursor: 'pointer',
+                              color: '#94A3B8',
+                              fontSize: 14,
+                            }}
+                          >
+                            ×
+                          </button>
+                        )}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Content: Detailed Transactions vs Monthly Summary */}
+                  {revenueView === 'detailed' ? (
+                    filteredPayments.length === 0 ? (
+                      <div style={{ textAlign: 'center', padding: '50px 20px', color: THEME.textMuted }}>
+                        <p style={{ fontSize: 14, fontWeight: 600 }}>No payments match the selected criteria.</p>
+                      </div>
+                    ) : (
+                      <div style={{ overflowX: 'auto' }}>
+                        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                          <thead>
+                            <tr style={{ borderBottom: `2px solid ${THEME.border}`, background: '#F8FAFC' }}>
+                              {['Date', 'Ref / Receipt #', 'Category', 'Tenant Name', 'Owner / Landlord', 'Property & Unit', 'Mode', 'Amount (AED)'].map(h => (
+                                <th key={h} style={thStyle}>{h}</th>
+                              ))}
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {filteredPayments.map((p: any) => {
+                              const type = (p.type || '').toLowerCase()
+                              const isDewa = type === 'dewa'
+                              const isRent = type === 'rent'
+                              const isDeposit = type === 'deposit'
+                              const isServiceCharge = type === 'service_charge'
+
+                              let badgeBg = '#F1F5F9'
+                              let badgeColor = '#475569'
+                              let badgeBorder = '#CBD5E1'
+                              let badgeLabel = (p.type || 'Other').toUpperCase()
+
+                              if (isDewa) {
+                                badgeBg = '#E0F2FE'
+                                badgeColor = '#0369A1'
+                                badgeBorder = '#BAE6FD'
+                                badgeLabel = 'DEWA Utility'
+                              } else if (isRent) {
+                                badgeBg = '#DCFCE7'
+                                badgeColor = '#15803D'
+                                badgeBorder = '#BBF7D0'
+                                badgeLabel = 'Rent'
+                              } else if (isDeposit) {
+                                badgeBg = '#F3E8FF'
+                                badgeColor = '#7E22CE'
+                                badgeBorder = '#DDD6FE'
+                                badgeLabel = 'Deposit'
+                              } else if (isServiceCharge) {
+                                badgeBg = '#FEF3C7'
+                                badgeColor = '#B45309'
+                                badgeBorder = '#FDE68A'
+                                badgeLabel = 'Service Charge'
+                              }
+
+                              return (
+                                <tr key={p.id} className="gfh-portal-row" style={{ borderBottom: `1px solid ${THEME.border}` }}>
+                                  <td style={{ ...tdStyle, whiteSpace: 'nowrap' }}>{formatDate(p.date)}</td>
+                                  <td style={{ ...tdStyle, fontWeight: 600, fontSize: 12, color: '#334155' }}>
+                                    {p.receipt_number || p.reference_number || `RCP-${String(p.id).padStart(5, '0')}`}
+                                  </td>
+                                  <td style={tdStyle}>
+                                    <span style={{
+                                      display: 'inline-block',
+                                      padding: '3px 8px',
+                                      borderRadius: 4,
+                                      fontSize: 11,
+                                      fontWeight: 700,
+                                      background: badgeBg,
+                                      color: badgeColor,
+                                      border: `1px solid ${badgeBorder}`,
+                                      whiteSpace: 'nowrap',
+                                    }}>
+                                      {badgeLabel}
+                                    </span>
+                                  </td>
+                                  <td style={{ ...tdStyle, fontWeight: 600, color: THEME.ink }}>
+                                    {p.contract?.tenant?.name || p.tenant?.name || '—'}
+                                  </td>
+                                  <td style={{ ...tdStyle, color: '#475569' }}>
+                                    {p.contract?.owner?.name || '—'}
+                                  </td>
+                                  <td style={tdStyle}>
+                                    {p.contract?.unit ? (
+                                      <div>
+                                        <span style={{ fontWeight: 600, color: '#0E5E48' }}>Unit {p.contract.unit.number}</span>
+                                        {p.contract.unit.property?.name && (
+                                          <span style={{ fontSize: 11.5, color: '#64748B', display: 'block' }}>
+                                            {p.contract.unit.property.name}
+                                          </span>
+                                        )}
+                                      </div>
+                                    ) : (
+                                      '—'
+                                    )}
+                                  </td>
+                                  <td style={{ ...tdStyle, textTransform: 'capitalize', fontSize: 12, color: '#64748B' }}>
+                                    {(p.mode || '—').replace('_', ' ')}
+                                  </td>
+                                  <td style={{
+                                    ...tdStyle,
+                                    fontWeight: 700,
+                                    fontSize: 13,
+                                    whiteSpace: 'nowrap',
+                                    color: isDewa ? '#0369A1' : isRent ? '#065F46' : '#1E293B',
+                                    textAlign: 'right',
+                                  }}>
+                                    AED {Number(p.amount).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                                  </td>
+                                </tr>
+                              )
+                            })}
+                          </tbody>
+                        </table>
+                      </div>
+                    )
+                  ) : (
+                    /* Monthly Aggregate Breakdown View */
+                    <div style={{ overflowX: 'auto' }}>
+                      <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                        <thead>
+                          <tr style={{ borderBottom: `2px solid ${THEME.border}`, background: '#F8FAFC' }}>
+                            {['Month', 'Category', 'Total collected (AED)'].map(h => (
+                              <th key={h} style={thStyle}>{h}</th>
+                            ))}
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {reportData.breakdown?.map((b: any, i: number) => {
+                            const bType = (b.type || b.category || '').toLowerCase()
+                            const isDewa = bType === 'dewa'
+                            const isRent = bType === 'rent'
+                            return (
+                              <tr key={i} className="gfh-portal-row" style={{ borderBottom: `1px solid ${THEME.border}` }}>
+                                <td style={{ ...tdStyle, fontWeight: 600 }}>Month {b.month}</td>
+                                <td style={tdStyle}>
+                                  <span style={{
+                                    display: 'inline-block',
+                                    padding: '3px 8px',
+                                    borderRadius: 4,
+                                    fontSize: 11,
+                                    fontWeight: 700,
+                                    background: isDewa ? '#E0F2FE' : isRent ? '#DCFCE7' : '#F1F5F9',
+                                    color: isDewa ? '#0369A1' : isRent ? '#15803D' : '#475569',
+                                    border: `1px solid ${isDewa ? '#BAE6FD' : isRent ? '#BBF7D0' : '#CBD5E1'}`,
+                                  }}>
+                                    {String(b.type ?? b.category ?? '—').toUpperCase()}
+                                  </span>
+                                </td>
+                                <td style={{ ...tdStyle, fontWeight: 700, color: '#0E5E48', textAlign: 'right' }}>
+                                  AED {Number(b.total).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                                </td>
+                              </tr>
+                            )
+                          })}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
                 </div>
               )}
 

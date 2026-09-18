@@ -19,7 +19,7 @@ class PropertyPolicy
         }
 
         if ($user->role === 'owner') {
-            return (int) $user->id === (int) $property->owner_id;
+            return $user->owner()->whereKey($property->owner_id)->exists();
         }
 
         return false;

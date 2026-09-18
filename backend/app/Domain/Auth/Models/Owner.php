@@ -23,7 +23,7 @@ class Owner extends Model
 
     public function properties(): HasMany
     {
-        // properties.owner_id currently references users; flagged pending client realign
+        // properties.owner_id references this owner profile, not the login user.
         return $this->hasMany(Property::class, 'owner_id');
     }
 

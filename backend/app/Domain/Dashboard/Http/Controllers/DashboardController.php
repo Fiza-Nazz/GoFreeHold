@@ -47,14 +47,14 @@ class DashboardController extends Controller
      */
     public function ownerSummary(Request $request): JsonResponse
     {
-        $ownerId = $request->user()->owner?->id ?? Owner::where('user_id', $request->user()->id)->value('id');
+        $ownerId = app(\App\Domain\Auth\Services\OwnerContextResolver::class)->ownerId($request->user());
 
         $portfolio = [
             'total_properties' => Property::where('owner_id', $ownerId)->count(),
-            'total_units'      => Unit::where('owner_id', $ownerId)->count(),
-            'occupied_units'   => Unit::where('owner_id', $ownerId)->where('status', 'OCCUPIED')->count(),
-            'vacant_units'     => Unit::where('owner_id', $ownerId)->where('status', 'AVAILABLE')->count(),
-            'booked_units'     => Unit::where('owner_id', $ownerId)->where('status', 'BOOKED')->count(),
+            'total_units'      => app(\App\Domain\Auth\Services\OwnerContextResolver::class)->units(Unit::query(), $ownerId)->count(),
+            'occupied_units'   => app(\App\Domain\Auth\Services\OwnerContextResolver::class)->units(Unit::query(), $ownerId)->where('status', 'OCCUPIED')->count(),
+            'vacant_units'     => app(\App\Domain\Auth\Services\OwnerContextResolver::class)->units(Unit::query(), $ownerId)->where('status', 'AVAILABLE')->count(),
+            'booked_units'     => app(\App\Domain\Auth\Services\OwnerContextResolver::class)->units(Unit::query(), $ownerId)->where('status', 'BOOKED')->count(),
         ];
 
         return response()->json([
@@ -70,7 +70,7 @@ class DashboardController extends Controller
      */
     public function propertyDrillDown(Request $request): JsonResponse
     {
-        $ownerId = $request->user()->owner?->id ?? Owner::where('user_id', $request->user()->id)->value('id');
+        $ownerId = app(\App\Domain\Auth\Services\OwnerContextResolver::class)->ownerId($request->user());
 
         $properties = Property::where('owner_id', $ownerId)
             ->withCount(['units as total_units'])
@@ -91,13 +91,13 @@ class DashboardController extends Controller
      */
     public function propertyUnits(Request $request, Property $property): JsonResponse
     {
-        $ownerId = $request->user()->owner?->id ?? Owner::where('user_id', $request->user()->id)->value('id');
+        $ownerId = app(\App\Domain\Auth\Services\OwnerContextResolver::class)->ownerId($request->user());
 
         if ((int) $property->owner_id !== (int) $ownerId) {
             return response()->json(['status' => 'error', 'message' => 'Unauthorized'], 403);
         }
 
-        $units = Unit::where('property_id', $property->id)->get();
+        $units = Unit::where('property_id', $property->id)->where('owner_id', $ownerId)->get();
 
         return response()->json([
             'status' => 'success',
@@ -113,18 +113,34 @@ class DashboardController extends Controller
      */
     public function unitDetail(Request $request, Unit $unit): JsonResponse
     {
-        $ownerId = $request->user()->owner?->id ?? Owner::where('user_id', $request->user()->id)->value('id');
+        $ownerId = app(\App\Domain\Auth\Services\OwnerContextResolver::class)->ownerId($request->user());
 
-        if ((int) $unit->owner_id !== (int) $ownerId) {
+        if ((int) $unit->owner_id !== (int) $ownerId && (int) $unit->property?->owner_id !== $ownerId) {
             return response()->json(['status' => 'error', 'message' => 'Unauthorized'], 403);
         }
 
-        $unit->load('property:id,name,address,city');
+        $unit->load([
+            'property:id,name,address,city,type',
+            'contracts' => fn ($q) => $q->with('tenant:id,name,email,phone,contact')->latest(),
+        ]);
+
+        $activeContract = $unit->contracts->firstWhere('status', 'active') ?? $unit->contracts->first();
+        $complaints = \App\Domain\Maintenance\Models\Complaint::where('unit_id', $unit->id)
+            ->with(['job.assignedTo:id,name'])
+            ->latest()
+            ->take(5)
+            ->get();
+
+        $unitData = (new UnitDetailResource($unit))->resolve();
+        $unitData['active_contract'] = $activeContract;
+        $unitData['contracts_count'] = $unit->contracts->count();
+        $unitData['recent_contracts'] = $unit->contracts->take(5);
+        $unitData['recent_complaints'] = $complaints;
 
         return response()->json([
             'status' => 'success',
             'data'   => [
-                'unit' => (new UnitDetailResource($unit))->resolve(),
+                'unit' => $unitData,
             ],
         ]);
     }
@@ -134,9 +150,9 @@ class DashboardController extends Controller
      */
     public function vacantUnits(Request $request): JsonResponse
     {
-        $ownerId = $request->user()->owner?->id ?? Owner::where('user_id', $request->user()->id)->value('id');
+        $ownerId = app(\App\Domain\Auth\Services\OwnerContextResolver::class)->ownerId($request->user());
 
-        $query = Unit::where('owner_id', $ownerId)
+        $query = app(\App\Domain\Auth\Services\OwnerContextResolver::class)->units(Unit::query(), $ownerId)
             ->where('status', 'AVAILABLE')
             ->with('property:id,name');
 

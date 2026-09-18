@@ -2,18 +2,29 @@
 
 namespace App\Domain\Property\Http\Controllers;
 
-use App\Domain\Auth\Models\Owner;
-use App\Domain\Auth\Models\User;
 use App\Domain\Property\Models\Property;
+use App\Domain\Property\Services\PropertyService;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class PropertyController extends Controller
 {
-    public function index(): JsonResponse
+    public function __construct(private readonly PropertyService $propertyService)
     {
-        $properties = Property::with('owner:id,name,email')->get();
+    }
+
+    public function index(Request $request): JsonResponse
+    {
+        $query = Property::with('owner:id,name,email');
+
+        $user = $request->user();
+        if ($user && in_array($user->role, ['owner', 'cashier', 'accountant'], true)) {
+            $ownerId = app(\App\Domain\Auth\Services\OwnerContextResolver::class)->ownerId($user);
+            $query->where('owner_id', $ownerId);
+        }
+
+        $properties = $query->get();
 
         return response()->json([
             'status' => 'success',
@@ -23,23 +34,7 @@ class PropertyController extends Controller
 
     public function store(Request $request): JsonResponse
     {
-        $ownerId = $request->input('owner_id');
-        if ($ownerId && !Owner::where('id', $ownerId)->exists()) {
-            $ownerProfile = Owner::where('user_id', $ownerId)->first();
-            if ($ownerProfile) {
-                $request->merge(['owner_id' => $ownerProfile->id]);
-            } else {
-                $user = User::find($ownerId);
-                if ($user) {
-                    $newOwner = Owner::create([
-                        'user_id' => $user->id,
-                        'name'    => $user->name,
-                        'email'   => $user->email,
-                    ]);
-                    $request->merge(['owner_id' => $newOwner->id]);
-                }
-            }
-        }
+        $request->merge(['owner_id' => $this->propertyService->resolveOwnerProfileId($request->integer('owner_id'))]);
 
         $validated = $request->validate([
             'owner_id'    => 'required|exists:owners,id',
@@ -50,7 +45,7 @@ class PropertyController extends Controller
             'type'        => 'nullable|in:residential,commercial,mixed',
         ]);
 
-        $property = Property::create($validated);
+        $property = $this->propertyService->createProperty($validated);
 
         return response()->json([
             'status'  => 'success',
@@ -71,12 +66,8 @@ class PropertyController extends Controller
 
     public function update(Request $request, Property $property): JsonResponse
     {
-        $ownerId = $request->input('owner_id');
-        if ($ownerId && !Owner::where('id', $ownerId)->exists()) {
-            $ownerProfile = Owner::where('user_id', $ownerId)->first();
-            if ($ownerProfile) {
-                $request->merge(['owner_id' => $ownerProfile->id]);
-            }
+        if ($request->filled('owner_id')) {
+            $request->merge(['owner_id' => $this->propertyService->resolveOwnerProfileId($request->integer('owner_id'))]);
         }
 
         $validated = $request->validate([
@@ -87,7 +78,7 @@ class PropertyController extends Controller
             'type'     => 'in:residential,commercial,mixed',
         ]);
 
-        $property->update($validated);
+        $property = $this->propertyService->updateProperty($property, $validated);
 
         return response()->json([
             'status'  => 'success',
@@ -108,18 +99,7 @@ class PropertyController extends Controller
 
     public function getOwners(): JsonResponse
     {
-        $userOwners = User::where('role', 'owner')->get();
-        foreach ($userOwners as $u) {
-            Owner::firstOrCreate(
-                ['user_id' => $u->id],
-                ['name' => $u->name, 'email' => $u->email]
-            );
-        }
-
-        $ownerProfiles = Owner::query()
-            ->select('id', 'name', 'email', 'contact', 'user_id')
-            ->orderBy('name')
-            ->get();
+        $ownerProfiles = $this->propertyService->syncOwnerProfiles();
 
         return response()->json([
             'status' => 'success',

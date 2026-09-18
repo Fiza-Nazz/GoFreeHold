@@ -3,10 +3,14 @@ namespace App\Domain\Maintenance\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Domain\Maintenance\Models\InventoryItem;
+use App\Domain\Maintenance\Services\MaintenanceService;
 use Illuminate\Http\Request;
 
 class InventoryController extends Controller
 {
+    public function __construct(private readonly MaintenanceService $maintenance)
+    {
+    }
     /**
      * Get warehouse stock (location_type = warehouse)
      */
@@ -43,13 +47,7 @@ class InventoryController extends Controller
             'notes'           => 'nullable|string',
         ]);
 
-        // Keep legacy location_id + unit_cost in sync with current columns
-        $validated['location_id'] = $validated['location_type'] === 'unit'
-            ? (int) $validated['unit_id']
-            : 0;
-        $validated['unit_cost'] = $validated['unit_price'];
-
-        $item = InventoryItem::create($validated);
+        $item = $this->maintenance->createInventoryItem($validated);
 
         return response()->json(['status' => 'success', 'message' => 'Inventory item added.', 'data' => ['item' => $item]], 201);
     }
@@ -65,11 +63,7 @@ class InventoryController extends Controller
             'notes'           => 'nullable|string',
         ]);
 
-        if (array_key_exists('unit_price', $validated)) {
-            $validated['unit_cost'] = $validated['unit_price'];
-        }
-
-        $inventoryItem->update($validated);
+        $inventoryItem = $this->maintenance->updateInventoryItem($inventoryItem, $validated);
 
         return response()->json(['status' => 'success', 'message' => 'Item updated.', 'data' => ['item' => $inventoryItem]]);
     }

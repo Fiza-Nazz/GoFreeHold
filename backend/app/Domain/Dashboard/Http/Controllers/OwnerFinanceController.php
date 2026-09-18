@@ -21,9 +21,9 @@ class OwnerFinanceController extends Controller
      */
     public function ledger(Request $request): JsonResponse
     {
-        $ownerId = $request->user()->owner?->id ?? Owner::where('user_id', $request->user()->id)->value('id');
+        $ownerId = app(\App\Domain\Auth\Services\OwnerContextResolver::class)->ownerId($request->user());
 
-        $scope = fn ($q) => $q->where('owner_id', $ownerId);
+        $scope = fn ($q) => app(\App\Domain\Auth\Services\OwnerContextResolver::class)->contracts($q, $ownerId);
 
         $entries = RentTransaction::whereHas('contract', $scope)
             ->with([
@@ -52,9 +52,9 @@ class OwnerFinanceController extends Controller
      */
     public function receivables(Request $request): JsonResponse
     {
-        $ownerId = $request->user()->owner?->id ?? Owner::where('user_id', $request->user()->id)->value('id');
+        $ownerId = app(\App\Domain\Auth\Services\OwnerContextResolver::class)->ownerId($request->user());
 
-        $contracts = Contract::where('owner_id', $ownerId)
+        $contracts = app(\App\Domain\Auth\Services\OwnerContextResolver::class)->contracts(Contract::query(), $ownerId)
             ->withSum('rentTransactions as total_debit', 'debit')
             ->withSum('rentTransactions as total_credit', 'credit')
             ->with([
@@ -82,9 +82,9 @@ class OwnerFinanceController extends Controller
      */
     public function payments(Request $request): JsonResponse
     {
-        $ownerId = $request->user()->owner?->id ?? Owner::where('user_id', $request->user()->id)->value('id');
+        $ownerId = app(\App\Domain\Auth\Services\OwnerContextResolver::class)->ownerId($request->user());
 
-        $payments = Payment::whereHas('contract', fn ($q) => $q->where('owner_id', $ownerId))
+        $payments = Payment::whereHas('contract', fn ($q) => app(\App\Domain\Auth\Services\OwnerContextResolver::class)->contracts($q, $ownerId))
             ->with([
                 'contract:id,unit_id',
                 'contract.unit:id,number,property_id',
@@ -100,7 +100,7 @@ class OwnerFinanceController extends Controller
             'status' => 'success',
             'data'   => [
                 'payments'     => $payments,
-                'total_amount' => (float) $payments->sum('amount'),
+                'total_amount' => (float) Payment::whereHas('contract', fn ($q) => app(\App\Domain\Auth\Services\OwnerContextResolver::class)->contracts($q, $ownerId))->sum('amount'),
             ],
         ]);
     }

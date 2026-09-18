@@ -3,6 +3,7 @@ namespace App\Domain\Maintenance\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Domain\Maintenance\Models\Job;
+use App\Domain\Maintenance\Services\MaintenanceStatusService;
 use Illuminate\Http\Request;
 
 /**
@@ -37,8 +38,8 @@ class JobController extends Controller
         $validated = $request->validate([
             'complaint_id'   => 'required|exists:complaints,id',
             'team_id'        => 'nullable|exists:teams,id',
-            'assigned_to'    => 'nullable|exists:users,id',
-            'status'         => 'nullable|string|max:50',
+            'assigned_to'    => 'required|exists:users,id',
+            'status'         => 'nullable|in:assigned',
             'scheduled_date' => 'nullable|date',
             'notes'          => 'nullable|string',
         ]);
@@ -47,7 +48,9 @@ class JobController extends Controller
         $validated['assigned_to'] = $validated['assigned_to'] ?? $request->user()->id;
         $validated['status'] = $validated['status'] ?? 'assigned';
 
-        $job = Job::create($validated);
+        $complaint = \App\Domain\Maintenance\Models\Complaint::findOrFail($validated['complaint_id']);
+        $job = app(\App\Domain\Maintenance\Services\MaintenanceService::class)->assignComplaint($complaint, $validated, $request->user()->id);
+        if (isset($validated['scheduled_date'])) $job->update(['scheduled_date' => $validated['scheduled_date']]);
 
         return response()->json([
             'status'  => 'success',
@@ -62,23 +65,23 @@ class JobController extends Controller
         return response()->json(['status' => 'success', 'data' => ['job' => $job]]);
     }
 
-    public function update(Request $request, Job $job)
+    public function update(Request $request, Job $job, MaintenanceStatusService $statusService)
     {
         $validated = $request->validate([
             'team_id'        => 'nullable|exists:teams,id',
-            'assigned_to'    => 'nullable|exists:users,id',
-            'status'         => 'nullable|string|max:50',
+            'assigned_to'    => 'sometimes|required|exists:users,id',
+            'status'         => 'sometimes|required|in:assigned,in_progress,completed',
             'scheduled_date' => 'nullable|date',
-            'completed_at'   => 'nullable|date',
+            'completed_at'   => 'prohibited',
             'notes'          => 'nullable|string',
         ]);
 
-        $job->update($validated);
+        $job = $statusService->updateJob($job, $validated, $request->user()->id);
 
         return response()->json([
             'status'  => 'success',
             'message' => 'Job updated.',
-            'data'    => ['job' => $job],
+            'data'    => ['job' => $job->load('complaint:id,title,status,assigned_to')],
         ]);
     }
 

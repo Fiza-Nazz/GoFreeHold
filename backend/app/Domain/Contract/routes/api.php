@@ -39,6 +39,7 @@ Route::middleware(['auth:sanctum', 'role:admin'])->prefix('admin')->group(functi
     Route::put('/contracts/{contract}/cheques/{cheque}', [ContractChequeController::class, 'update']);
     Route::delete('/contracts/{contract}/cheques/{cheque}', [ContractChequeController::class, 'destroy']);
     Route::get('/contracts/{contract}/cheques/{cheque}/receipt', [ContractChequeController::class, 'generateReceipt']);
+    Route::get('/contracts/{contract}/cheques/{cheque}/attachment', [ContractChequeController::class, 'attachment']);
 
     Route::get('/contracts/{contract}/case-docs', [ContractCaseDocController::class, 'indexForContract']);
     Route::post('/contracts/{contract}/case-docs', [ContractCaseDocController::class, 'storeForContract']);
@@ -47,6 +48,7 @@ Route::middleware(['auth:sanctum', 'role:admin'])->prefix('admin')->group(functi
     Route::apiResource('contracts', ContractController::class);
 
     Route::get('/contract-cheques', [ContractChequeController::class, 'index']);
+    Route::post('/contract-cheques', [ContractChequeController::class, 'store']);
 
     Route::get('/call-logs', [CallLogController::class, 'index']);
     Route::post('/call-logs', [CallLogController::class, 'store']);
@@ -63,4 +65,32 @@ Route::middleware(['auth:sanctum', 'role:admin'])->prefix('admin')->group(functi
     Route::get('/contract-docs', [ContractDocController::class, 'index']);
     Route::post('/contract-docs', [ContractDocController::class, 'store']);
     Route::delete('/contract-docs/{contractDoc}', [ContractDocController::class, 'destroy']);
+});
+
+Route::middleware(['auth:sanctum', 'role:owner,cashier,accountant'])->prefix('owner')->group(function () {
+    Route::post('/contracts/{contract}/renew', [ContractController::class, 'renew']);
+    Route::post('/contracts/{contract}/vacate', [ContractController::class, 'vacate']);
+    Route::post('/contracts/{contract}/settle', [ContractController::class, 'settle']);
+    Route::get('/contracts/{contract}/pdf', [ContractPdfController::class, 'generate']);
+    Route::put('/contracts/{contract}/on-case', [ContractController::class, 'setOnCase']);
+
+    Route::get('/contracts/{contract}/cheques', [ContractChequeController::class, 'index']);
+    Route::post('/contracts/{contract}/cheques', [ContractChequeController::class, 'store']);
+    Route::put('/contracts/{contract}/cheques/{cheque}', [ContractChequeController::class, 'update']);
+    Route::delete('/contracts/{contract}/cheques/{cheque}', [ContractChequeController::class, 'destroy']);
+    Route::get('/contracts/{contract}/cheques/{cheque}/receipt', [ContractChequeController::class, 'generateReceipt']);
+    Route::get('/contracts/{contract}/cheques/{cheque}/attachment', [ContractChequeController::class, 'attachment']);
+
+    Route::get('/contracts/{contract}/case-docs', [ContractCaseDocController::class, 'indexForContract']);
+    Route::post('/contracts/{contract}/case-docs', [ContractCaseDocController::class, 'storeForContract']);
+    Route::delete('/contracts/{contract}/case-docs/{contractCaseDoc}', [ContractCaseDocController::class, 'destroyForContract']);
+
+    Route::apiResource('contracts', ContractController::class)->except(['destroy']);
+
+    Route::get('/contract-cheques', [ContractChequeController::class, 'index']);
+    Route::post('/contract-cheques', [ContractChequeController::class, 'store']);
+
+    Route::get('/call-logs', [CallLogController::class, 'index']);
+    Route::post('/call-logs', [CallLogController::class, 'store']);
+    Route::delete('/call-logs/{callLog}', [CallLogController::class, 'destroy']);
 });

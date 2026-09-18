@@ -19,6 +19,8 @@ const icons = {
   user: 'M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z',
   logout: 'M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9',
   menu: 'M3 12h18M3 6h18M3 18h18',
+  wrench: 'M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z',
+  contracts: 'M9 3h6l4 4v14a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1zM9 9h6M9 13h6M9 17h4',
 }
 
 /** Same Owner menu items — restyled only to match Admin dark sidebar. */
@@ -30,6 +32,8 @@ const ownerNavItems = [
     { to: '/owner/properties', icon: icons.building, label: 'My Properties' },
     { to: '/owner/units', icon: icons.door, label: 'Units' },
     { to: '/owner/vacant-units', icon: icons.search, label: 'Vacant Units' },
+    { to: '/owner/contracts', icon: icons.contracts, label: 'Contracts' },
+    { to: '/owner/complaints', icon: icons.wrench, label: 'Maintenance & Complaints' },
   ]},
   { section: 'Finance', items: [
     { to: '/owner/ledger', icon: icons.ledger, label: 'Rent Ledger' },
@@ -37,15 +41,19 @@ const ownerNavItems = [
     { to: '/owner/payments', icon: icons.card, label: 'Payments' },
   ]},
   { section: 'Account', items: [
+    { to: '/owner/staff', icon: icons.user, label: 'Manage Staff' },
     { to: '/owner/profile', icon: icons.user, label: 'Profile' },
   ]},
 ]
 
 const PAGE_TITLES: Record<string, string> = {
+  '/owner/staff': 'Manage Staff',
   '/owner/dashboard': 'Portfolio Overview',
   '/owner/properties': 'My Properties',
   '/owner/units': 'Units',
   '/owner/vacant-units': 'Vacant Units',
+  '/owner/contracts': 'Contracts',
+  '/owner/complaints': 'Maintenance & Complaints',
   '/owner/ledger': 'Rent Ledger',
   '/owner/receivables': 'Receivables',
   '/owner/payments': 'Payments',
@@ -56,6 +64,7 @@ function resolveTitle(pathname: string) {
   if (PAGE_TITLES[pathname]) return PAGE_TITLES[pathname]
   if (pathname.startsWith('/owner/properties/')) return 'Property Detail'
   if (pathname.startsWith('/owner/units/')) return 'Unit Detail'
+  if (pathname.startsWith('/owner/contracts/')) return 'Contract Detail'
   return 'Owner'
 }
 

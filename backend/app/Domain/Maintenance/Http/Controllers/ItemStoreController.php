@@ -1,28 +1,30 @@
 <?php
-namespace App\Http\Controllers\Api;
 
+namespace App\Domain\Maintenance\Http\Controllers;
+
+use App\Domain\Maintenance\Services\MaintenanceService;
 use App\Http\Controllers\Controller;
-use App\Models\ItemStore;
+use App\Domain\Maintenance\Models\ItemStore;
 use Illuminate\Http\Request;
 
 class ItemStoreController extends Controller
 {
+    public function __construct(private readonly MaintenanceService $maintenance)
+    {
+    }
+
     public function index()
     {
-        $stock = ItemStore::with('item:id,name,category,brand')->get();
-        return response()->json(['status' => 'success', 'data' => ['item_store' => $stock]]);
+        return response()->json(['status' => 'success', 'data' => ['item_store' => ItemStore::with('item:id,name,category,brand')->get()]]);
     }
 
     public function store(Request $request)
     {
-        $validated = $request->validate([
+        $stock = $this->maintenance->createItemStore($request->validate([
             'item_id' => 'required|exists:items,id',
-            'qty'     => 'required|integer|min:0',
-            'remark'  => 'nullable|string',
-        ]);
-
-        $stock = ItemStore::create($validated);
-
+            'qty' => 'required|integer|min:0',
+            'remark' => 'nullable|string',
+        ]));
         return response()->json(['status' => 'success', 'message' => 'Stock entry created.', 'data' => ['stock' => $stock->load('item')]], 201);
     }
 
@@ -33,19 +35,13 @@ class ItemStoreController extends Controller
 
     public function update(Request $request, ItemStore $itemStore)
     {
-        $validated = $request->validate([
-            'qty'    => 'integer|min:0',
-            'remark' => 'nullable|string',
-        ]);
-
-        $itemStore->update($validated);
-
+        $this->maintenance->updateItemStore($itemStore, $request->validate(['qty' => 'integer|min:0', 'remark' => 'nullable|string']));
         return response()->json(['status' => 'success', 'message' => 'Stock updated.', 'data' => ['stock' => $itemStore]]);
     }
 
     public function destroy(ItemStore $itemStore)
     {
-        $itemStore->delete();
+        $this->maintenance->deleteItemStore($itemStore);
         return response()->json(['status' => 'success', 'message' => 'Stock entry deleted.']);
     }
 }

@@ -476,7 +476,7 @@ export default function MaintenanceComplaints() {
                               Start
                             </button>
                           )}
-                          {c.status !== 'resolved' && (
+                          {c.status === 'in_progress' && (
                             <button
                               className="gfh-portal-btn"
                               onClick={() => handleStatusUpdate(c.id, 'resolved')}

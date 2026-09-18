@@ -3,17 +3,30 @@
 namespace App\Domain\Property\Http\Controllers;
 
 use App\Domain\Property\Http\Requests\StoreUnitRequest;
-use App\Domain\Property\Models\Property;
 use App\Domain\Property\Models\Unit;
+use App\Domain\Property\Services\PropertyService;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class UnitController extends Controller
 {
+    public function __construct(private readonly PropertyService $propertyService)
+    {
+    }
+
     public function index(Request $request): JsonResponse
     {
         $query = Unit::with(['property:id,name', 'owner:id,name']);
+
+        $user = $request->user();
+        if ($user && in_array($user->role, ['owner', 'cashier', 'accountant'], true)) {
+            $ownerId = app(\App\Domain\Auth\Services\OwnerContextResolver::class)->ownerId($user);
+            $query->where(function ($q) use ($ownerId) {
+                $q->where('units.owner_id', $ownerId)
+                  ->orWhereHas('property', fn ($p) => $p->where('owner_id', $ownerId));
+            });
+        }
 
         if ($request->has('property_id')) {
             $query->where('property_id', $request->property_id);
@@ -35,12 +48,7 @@ class UnitController extends Controller
     {
         $validated = $request->validated();
 
-        $property = Property::findOrFail($validated['property_id']);
-        $validated['owner_id'] = $property->owner_id;
-        $validated['status'] = $validated['status'] ?? 'AVAILABLE';
-
-        $unit = Unit::create($validated);
-        $property->increment('total_units');
+        $unit = $this->propertyService->createUnit($validated);
 
         return response()->json([
             'status'  => 'success',
@@ -84,11 +92,7 @@ class UnitController extends Controller
 
     public function destroy(Unit $unit): JsonResponse
     {
-        $property = Property::find($unit->property_id);
-        $unit->delete();
-        if ($property) {
-            $property->decrement('total_units');
-        }
+        $this->propertyService->deleteUnit($unit);
 
         return response()->json([
             'status'  => 'success',

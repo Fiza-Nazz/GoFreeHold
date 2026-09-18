@@ -3,6 +3,7 @@
 namespace Tests\Unit\Domain\Payment;
 
 use App\Domain\Contract\Models\Contract;
+use App\Domain\Payment\Models\PaymentAuditLog;
 use App\Domain\Payment\Models\Payment;
 use App\Domain\Payment\Models\RentTransaction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -48,12 +49,40 @@ class PaymentLedgerTest extends TestCase
         ])->assertStatus(201);
 
         $paymentId = $res->json('data.payment.id');
+        $ledgerId = RentTransaction::where('payment_id', $paymentId)->value('id');
+        $reason = 'Entered by mistake';
 
         $this->actingAs($admin)->deleteJson("/api/admin/payments/{$paymentId}", [
-            'reason' => 'Entered by mistake',
+            'reason' => $reason,
         ])->assertStatus(200);
 
-        $this->assertSoftDeleted('payments', ['id' => $paymentId]);
-        $this->assertSoftDeleted('rent_transactions', ['payment_id' => $paymentId]);
+        $this->assertSoftDeleted('payments', [
+            'id' => $paymentId,
+            'deleted_by' => $admin->id,
+            'deletion_reason' => $reason,
+        ]);
+        $this->assertSoftDeleted('rent_transactions', [
+            'id' => $ledgerId,
+            'payment_id' => $paymentId,
+            'deleted_by' => $admin->id,
+            'deletion_reason' => $reason,
+        ]);
+
+        $this->assertDatabaseHas('payment_audit_logs', [
+            'ledger_id' => $ledgerId,
+            'payment_id' => $paymentId,
+            'action' => 'deleted',
+            'reason' => $reason . ' (linked ledger credit reversed with payment)',
+            'performed_by' => $admin->id,
+        ]);
+        $this->assertDatabaseHas('payment_audit_logs', [
+            'ledger_id' => $ledgerId,
+            'payment_id' => $paymentId,
+            'action' => 'deleted',
+            'reason' => $reason,
+            'performed_by' => $admin->id,
+        ]);
+
+        $this->assertCount(2, PaymentAuditLog::where('payment_id', $paymentId)->get());
     }
 }

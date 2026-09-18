@@ -13,6 +13,10 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
+        $middleware->appendToGroup('api', \App\Domain\Auth\Http\Middleware\ActiveAccountMiddleware::class);
+        $middleware->appendToPriorityList(\Illuminate\Contracts\Auth\Middleware\AuthenticatesRequests::class, \App\Domain\Auth\Http\Middleware\ActiveAccountMiddleware::class);
+        // Reject wrong roles before model binding can reveal record existence.
+        $middleware->appendToPriorityList(\App\Domain\Auth\Http\Middleware\ActiveAccountMiddleware::class, \App\Domain\Auth\Http\Middleware\RoleMiddleware::class);
         $middleware->alias([
             'role' => \App\Domain\Auth\Http\Middleware\RoleMiddleware::class,
         ]);

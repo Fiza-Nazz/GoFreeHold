@@ -38,15 +38,18 @@ class PropertyTest extends TestCase
 
     public function test_admin_can_list_vacant_units(): void
     {
-        Unit::factory()->count(3)->create(['status' => 'AVAILABLE']);
-        Unit::factory()->count(2)->occupied()->create();
+        $vacant = Unit::factory()->count(3)->create(['status' => 'AVAILABLE']);
+        $occupied = Unit::factory()->count(2)->occupied()->create();
 
         $response = $this->actingAs($this->adminUser())
                          ->getJson('/api/admin/reports/vacant-properties');
 
         $response->assertOk();
         $data = $response->json('data.vacant_units') ?? $response->json('data.units') ?? $response->json('data');
-        $this->assertNotEmpty($data);
+        $returnedIds = collect($data)->pluck('id');
+        $this->assertEqualsCanonicalizing($vacant->pluck('id')->all(), $returnedIds->all());
+        $this->assertTrue(collect($data)->every(fn (array $unit) => $unit['status'] === 'AVAILABLE'));
+        $this->assertEmpty($returnedIds->intersect($occupied->pluck('id')));
     }
 
     public function test_creating_unit_with_missing_required_fields_fails(): void

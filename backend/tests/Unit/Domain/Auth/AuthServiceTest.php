@@ -7,6 +7,8 @@ use App\Domain\Auth\Services\AuthService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Validation\ValidationException;
 use Tests\TestCase;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Http\Client\ConnectionException;
 
 class AuthServiceTest extends TestCase
 {
@@ -86,19 +88,53 @@ class AuthServiceTest extends TestCase
     public function test_logout_revokes_current_token(): void
     {
         $user  = User::factory()->create();
-        $token = $user->createToken('auth_token')->plainTextToken;
-
-        $request = \Illuminate\Http\Request::create('/api/auth/logout', 'POST');
-        $request->headers->set('Authorization', 'Bearer ' . $token);
-        app(\Illuminate\Auth\AuthManager::class)->guard('sanctum')->setRequest($request);
-
+        $createdToken = $user->createToken('auth_token');
+        $token = $createdToken->plainTextToken;
+        $tokenId = $createdToken->accessToken->id;
         $this->assertSame(1, $user->tokens()->count());
 
-        $user->refresh();
-        $this->service->logout($user);
+        $this->withToken($token)
+            ->postJson('/api/auth/logout')
+            ->assertOk()
+            ->assertJsonPath('message', 'Logged out successfully');
 
-        // Delete all user tokens on explicit logout call if not request-scoped
-        $user->tokens()->delete();
         $this->assertSame(0, $user->tokens()->count());
+        $this->assertDatabaseMissing('personal_access_tokens', ['id' => $tokenId]);
+    }
+
+    public function test_recaptcha_connection_failure_cannot_create_an_account(): void
+    {
+        $this->assertRecaptchaRejectsRegistration(function () {
+            throw new ConnectionException('Simulated TLS/network failure');
+        });
+    }
+
+    public function test_invalid_recaptcha_cannot_create_an_account(): void
+    {
+        $this->assertRecaptchaRejectsRegistration(fn () => Http::response(['success' => false], 200));
+    }
+
+    private function assertRecaptchaRejectsRegistration(callable $response): void
+    {
+        $oldSettings = config('services.recaptcha');
+        config(['services.recaptcha.skip' => false, 'services.recaptcha.secret_key' => 'isolated-test-secret']);
+        Http::fake(['www.google.com/recaptcha/api/siteverify' => $response]);
+        try {
+            try {
+                $this->service->register([
+                    'name' => 'Rejected Verification', 'email' => 'rejected@example.test',
+                    'password' => 'Synthetic-Password-123', 'role' => 'owner',
+                    'recaptcha_token' => 'synthetic-invalid-token',
+                ]);
+                $this->fail('Registration must fail when verification fails.');
+            } catch (ValidationException $exception) {
+                $this->assertArrayHasKey('recaptcha_token', $exception->errors());
+            }
+            $this->assertDatabaseMissing('users', ['email' => 'rejected@example.test']);
+            $this->assertDatabaseCount('owners', 0);
+            $this->assertDatabaseCount('personal_access_tokens', 0);
+        } finally {
+            config(['services.recaptcha' => $oldSettings]);
+        }
     }
 }

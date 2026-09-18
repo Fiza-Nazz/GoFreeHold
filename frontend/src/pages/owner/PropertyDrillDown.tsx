@@ -34,6 +34,69 @@ const icons = {
   x: 'M18 6 6 18M6 6l12 12',
 }
 
+const propertyDrillDownCss = `
+  .gfh-owner-drilldown-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+    gap: 20px;
+    align-items: start;
+    width: 100%;
+  }
+  .gfh-owner-drilldown-panel {
+    min-width: 0;
+    overflow: hidden;
+    box-sizing: border-box;
+  }
+  .gfh-owner-drilldown-detail {
+    position: sticky !important;
+    top: 20px;
+  }
+  .gfh-owner-property-card {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 16px;
+    align-items: center;
+    width: 100%;
+    box-sizing: border-box;
+    overflow: hidden;
+  }
+  .gfh-owner-property-info {
+    min-width: 0;
+  }
+  .gfh-owner-property-name,
+  .gfh-owner-property-address {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+  .gfh-owner-property-address {
+    white-space: normal;
+    line-height: 1.45;
+  }
+  .gfh-owner-property-metrics {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(44px, 1fr));
+    gap: 10px;
+    text-align: center;
+  }
+  @media (max-width: 1180px) {
+    .gfh-owner-drilldown-grid {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .gfh-owner-drilldown-detail {
+      position: relative !important;
+      top: auto;
+    }
+  }
+  @media (max-width: 640px) {
+    .gfh-owner-property-card {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .gfh-owner-property-metrics {
+      width: 100%;
+    }
+  }
+`
+
 export default function PropertyDrillDown() {
   const navigate = useNavigate()
   const [searchParams, setSearchParams] = useSearchParams()
@@ -166,6 +229,7 @@ export default function PropertyDrillDown() {
   return (
     <div className="gfh-portal-page" style={{ fontFamily: "'Poppins', system-ui, sans-serif" }}>
       <style>{portalPageCss}</style>
+      <style>{propertyDrillDownCss}</style>
 
       {/* Hero Bar */}
       <div className="fade-in" style={heroStyle}>
@@ -460,9 +524,9 @@ export default function PropertyDrillDown() {
       </div>
 
       {/* Main Two-Column Drilldown Section */}
-      <div style={{ display: 'flex', gap: 20, alignItems: 'flex-start', flexWrap: 'wrap' }}>
+      <div className="gfh-owner-drilldown-grid">
         {/* Properties List Column */}
-        <div className="fade-in" style={{ ...panelStyle, flex: 1, minWidth: 320, minHeight: 420 }}>
+        <div className="fade-in gfh-owner-drilldown-panel" style={{ ...panelStyle, minHeight: 420 }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
             <h2 style={{ fontSize: 16, fontWeight: 800, color: THEME.ink, margin: 0 }}>
               Properties ({filteredProperties.length})
@@ -511,13 +575,10 @@ export default function PropertyDrillDown() {
                 return (
                   <div
                     key={prop.id}
-                    className="gfh-portal-row"
+                    className="gfh-portal-row gfh-owner-property-card"
                     onClick={() => handlePropertyClick(prop)}
                     style={{
                       cursor: 'pointer',
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      alignItems: 'center',
                       padding: '16px 18px',
                       background: isSelected ? '#ECFDF8' : '#FFFFFF',
                       border: isSelected ? '1.5px solid #0F8A67' : '1px solid #E2E8F0',
@@ -526,9 +587,9 @@ export default function PropertyDrillDown() {
                       transition: 'all 0.15s ease',
                     }}
                   >
-                    <div style={{ flex: 1, minWidth: 0, paddingRight: 12 }}>
+                    <div className="gfh-owner-property-info">
                       <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
-                        <h3 style={{ margin: 0, color: isSelected ? '#0E5E48' : THEME.ink, fontSize: 15, fontWeight: 800 }}>
+                        <h3 className="gfh-owner-property-name" style={{ margin: 0, color: isSelected ? '#0E5E48' : THEME.ink, fontSize: 15, fontWeight: 800 }}>
                           {prop.name}
                         </h3>
                         {prop.type && (
@@ -546,12 +607,12 @@ export default function PropertyDrillDown() {
                           </span>
                         )}
                       </div>
-                      <p style={{ fontSize: 12, color: THEME.textMuted, margin: '4px 0 0 0', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                      <p className="gfh-owner-property-address" style={{ fontSize: 12, color: THEME.textMuted, margin: '4px 0 0 0' }}>
                         {prop.address || 'Dubai, UAE'}
                       </p>
                     </div>
 
-                    <div style={{ display: 'flex', gap: 14, textAlign: 'center', flexShrink: 0 }}>
+                    <div className="gfh-owner-property-metrics">
                       <div style={{ minWidth: 44 }}>
                         <div style={{ fontSize: 17, fontWeight: 800, color: '#0F172A' }}>{prop.total_units}</div>
                         <div style={{ fontSize: 10.5, color: '#64748B', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.3px' }}>Total</div>
@@ -576,7 +637,7 @@ export default function PropertyDrillDown() {
 
         {/* Units Drilldown Column */}
         {selectedProperty ? (
-          <div className="fade-in" style={{ ...panelStyle, flex: 1.15, minWidth: 340, minHeight: 420 }}>
+          <div className="fade-in gfh-owner-drilldown-panel gfh-owner-drilldown-detail" style={{ ...panelStyle, minHeight: 420 }}>
             {/* Header with Title and Close Button */}
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
               <div>
@@ -701,7 +762,7 @@ export default function PropertyDrillDown() {
                 <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                   <thead>
                     <tr style={{ borderBottom: `2px solid ${THEME.border}` }}>
-                      {['Unit', 'Type', 'Floor', 'Status', 'Rent (AED)', 'Action'].map(h => (
+                      {['Unit', 'Type', 'Floor', 'Status', 'Rent (AED)'].map(h => (
                         <th key={h} style={thStyle}>{h}</th>
                       ))}
                     </tr>
@@ -747,9 +808,6 @@ export default function PropertyDrillDown() {
                         <td style={{ ...tdStyle, fontWeight: 700, color: '#065f46' }}>
                           {Number(unit.price).toLocaleString()}
                         </td>
-                        <td style={tdStyle}>
-                          <span style={{ fontSize: 12, fontWeight: 600, color: '#0E5E48' }}>View →</span>
-                        </td>
                       </tr>
                     ))}
                   </tbody>
@@ -759,11 +817,9 @@ export default function PropertyDrillDown() {
           </div>
         ) : (
           <div
-            className="fade-in"
+            className="fade-in gfh-owner-drilldown-panel gfh-owner-drilldown-detail"
             style={{
               ...panelStyle,
-              flex: 1,
-              minWidth: 300,
               minHeight: 420,
               display: 'flex',
               flexDirection: 'column',
