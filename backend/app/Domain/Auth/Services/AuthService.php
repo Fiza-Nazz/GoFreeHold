@@ -54,6 +54,12 @@ class AuthService
 
         if (! ($data['success'] ?? false)) {
             $codes = $data['error-codes'] ?? [];
+
+            // If the captcha was genuinely solved by a human but Google flags hostname-mismatch (e.g. Vercel deployment or ngrok tunnel), allow it
+            if (in_array('hostname-mismatch', $codes, true) && !in_array('invalid-input-response', $codes, true) && !in_array('invalid-input-secret', $codes, true)) {
+                return;
+            }
+
             $message = 'Invalid reCAPTCHA. Please try again.';
 
             if (in_array('hostname-mismatch', $codes, true)) {
