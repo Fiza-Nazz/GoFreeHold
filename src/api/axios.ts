@@ -5,7 +5,7 @@ import axios, { CanceledError } from 'axios'
  * Base URL is configured via VITE_API_BASE_URL in .env
  */
 const apiClient = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || 'https://ayako-nondeprecatory-nonchromatically.ngrok-free.dev/api',
+  baseURL: import.meta.env.VITE_API_BASE_URL || 'https://api2.gofreehold.com/public/api',
   headers: {
     'Content-Type': 'application/json',
     Accept: 'application/json',
