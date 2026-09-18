@@ -12,8 +12,18 @@ class CallLogController extends Controller
     public function index(Request $request): JsonResponse
     {
         $contractId = $request->query('contract_id');
-        $logs = CallLog::with('loggedBy:id,name')
-            ->when($contractId, fn ($q) => $q->where('contract_id', $contractId))
+        $query = CallLog::with('loggedBy:id,name');
+
+        $user = $request->user();
+        if ($user && in_array($user->role, ['owner', 'cashier', 'accountant'], true)) {
+            $ownerId = app(\App\Domain\Auth\Services\OwnerContextResolver::class)->ownerId($user);
+            $query->whereHas('contract', function ($c) use ($ownerId) {
+                $c->where('contracts.owner_id', $ownerId)
+                  ->orWhereHas('unit.property', fn ($p) => $p->where('owner_id', $ownerId));
+            });
+        }
+
+        $logs = $query->when($contractId, fn ($q) => $q->where('contract_id', $contractId))
             ->latest('date')
             ->get();
 

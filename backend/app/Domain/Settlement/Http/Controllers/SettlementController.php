@@ -14,9 +14,9 @@ class SettlementController extends Controller
     {
     }
 
-    public function index(): JsonResponse
+    public function index(Request $request): JsonResponse
     {
-        $settlements = Settlement::with([
+        $query = Settlement::with([
             'owner:id,name,email',
             'contract:id,unit_id,tenant_id,owner_id,status,rent_amount',
             'contract.unit:id,number,property_id,status',
@@ -24,9 +24,18 @@ class SettlementController extends Controller
             'contract.tenant:id,name',
             'docs',
             'payments',
-        ])->latest()->get();
+        ])->latest();
 
-        return response()->json(['status' => 'success', 'data' => ['settlements' => $settlements]]);
+        $user = $request->user();
+        if ($user && in_array($user->role, ['owner', 'cashier', 'accountant'], true)) {
+            $ownerId = app(\App\Domain\Auth\Services\OwnerContextResolver::class)->ownerId($user);
+            $query->where(function ($q) use ($ownerId) {
+                $q->where('owner_id', $ownerId)
+                  ->orWhereHas('contract', fn ($c) => $c->where('owner_id', $ownerId));
+            });
+        }
+
+        return response()->json(['status' => 'success', 'data' => ['settlements' => $query->get()]]);
     }
 
     public function store(Request $request): JsonResponse

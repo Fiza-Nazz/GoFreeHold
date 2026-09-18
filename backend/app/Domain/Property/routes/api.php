@@ -31,6 +31,7 @@ Route::middleware(['auth:sanctum', 'role:admin'])->prefix('admin')->group(functi
 });
 
 Route::middleware(['auth:sanctum', 'role:owner,cashier,accountant'])->prefix('owner')->group(function () {
+    Route::get('/properties/owners', [PropertyController::class, 'getOwners']);
     Route::get('/properties', [PropertyController::class, 'index']);
     Route::post('/properties', [PropertyController::class, 'storeForOwner']);
     Route::put('/properties/{property}', [PropertyController::class, 'updateForOwner']);
@@ -38,5 +39,8 @@ Route::middleware(['auth:sanctum', 'role:owner,cashier,accountant'])->prefix('ow
     Route::post('/units', [UnitController::class, 'storeForOwner']);
     Route::put('/units/{unit}', [UnitController::class, 'updateForOwner']);
     Route::get('/tenants', [TenantController::class, 'index']);
+    Route::post('/tenants', [TenantController::class, 'store']);
+    Route::get('/tenants/{tenant}', [TenantController::class, 'show']);
     Route::put('/tenants/{tenant}', [TenantController::class, 'update']);
+    Route::get('/reports/vacant-properties', VacantPropertyController::class);
 });

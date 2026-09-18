@@ -25,6 +25,17 @@ class LegalCaseController extends Controller
             'documents',
         ])->latest();
 
+        $user = $request->user();
+        if ($user && in_array($user->role, ['owner', 'cashier', 'accountant'], true)) {
+            $ownerId = app(\App\Domain\Auth\Services\OwnerContextResolver::class)->ownerId($user);
+            $query->where(function ($q) use ($ownerId) {
+                $q->whereHas('contract', function ($c) use ($ownerId) {
+                    $c->where('contracts.owner_id', $ownerId)
+                      ->orWhereHas('unit.property', fn ($p) => $p->where('owner_id', $ownerId));
+                })->orWhereHas('settlement', fn ($s) => $s->where('owner_id', $ownerId));
+            });
+        }
+
         if ($request->filled('contract_id')) {
             $query->where('contract_id', $request->integer('contract_id'));
         }

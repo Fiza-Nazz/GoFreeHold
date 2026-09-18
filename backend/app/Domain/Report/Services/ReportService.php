@@ -17,35 +17,37 @@ use Illuminate\Support\Facades\DB;
 
 class ReportService
 {
-    public function revenueAnalysis(int $year): array
+    public function revenueAnalysis(int $year, ?int $ownerId = null): array
     {
         $monthSql = DB::getDriverName() === 'sqlite'
             ? "CAST(strftime('%m', date) AS INTEGER)"
             : 'MONTH(date)';
 
-        $breakdown = Payment::whereYear('date', $year)
+        $paymentBase = Payment::whereYear('date', $year)
+            ->when($ownerId, fn ($q) => $q->whereHas('contract', fn ($c) => $c->where('owner_id', $ownerId)));
+
+        $breakdown = (clone $paymentBase)
             ->selectRaw("{$monthSql} as month, type, SUM(amount) as total")
             ->groupBy('month', 'type')
             ->get();
 
-        $byType = Payment::whereYear('date', $year)
+        $byType = (clone $paymentBase)
             ->selectRaw('type, SUM(amount) as total')
             ->groupBy('type')
             ->pluck('total', 'type');
 
-        $payments = Payment::with([
+        $payments = (clone $paymentBase)->with([
             'contract.tenant:id,name,email,contact',
             'contract.owner:id,name,email',
             'contract.unit.property:id,name',
             'contract.unit:id,number,property_id',
         ])
-            ->whereYear('date', $year)
             ->latest('date')
             ->get();
 
         return [
             'year' => $year,
-            'total_revenue' => (float) Payment::whereYear('date', $year)->sum('amount'),
+            'total_revenue' => (float) (clone $paymentBase)->sum('amount'),
             'total_rent' => (float) ($byType['rent'] ?? 0),
             'total_dewa' => (float) ($byType['dewa'] ?? 0),
             'total_deposit' => (float) ($byType['deposit'] ?? 0),
@@ -55,9 +57,10 @@ class ReportService
         ];
     }
 
-    public function receivables(): array
+    public function receivables(?int $ownerId = null): array
     {
         $entries = RentTransaction::query()
+            ->when($ownerId, fn ($q) => $q->whereHas('contract', fn ($c) => $c->where('owner_id', $ownerId)))
             ->selectRaw('contract_id, SUM(debit) as total_debit, SUM(credit) as total_credit, (SUM(debit) - SUM(credit)) as balance')
             ->groupBy('contract_id')
             ->havingRaw('(SUM(debit) - SUM(credit)) > 0')
@@ -70,11 +73,12 @@ class ReportService
         ];
     }
 
-    public function expiringContracts(int $days): array
+    public function expiringContracts(int $days, ?int $ownerId = null): array
     {
         $contracts = Contract::with(['unit.property', 'tenant:id,name,email', 'owner:id,name'])
             ->where('status', 'active')
             ->where('end_date', '<=', Carbon::now()->addDays($days))
+            ->when($ownerId, fn ($q) => $q->where('owner_id', $ownerId))
             ->orderBy('end_date')
             ->get();
 
@@ -104,12 +108,16 @@ class ReportService
         ];
     }
 
-    public function historicalLedgers(?int $contractId = null): array
+    public function historicalLedgers(?int $contractId = null, ?int $ownerId = null): array
     {
         $query = RentTransaction::with(['contract.unit.property', 'contract.tenant:id,name'])->withTrashed();
 
         if ($contractId !== null) {
             $query->where('contract_id', $contractId);
+        }
+
+        if ($ownerId !== null) {
+            $query->whereHas('contract', fn ($c) => $c->where('owner_id', $ownerId));
         }
 
         return ['ledgers' => $query->latest('date')->get()];

@@ -19,6 +19,15 @@ class ServiceChargeController extends Controller
     {
         $query = ServiceCharge::with(['contract:id', 'unit:id,number,property_id', 'unit.property:id,name']);
 
+        $user = $request->user();
+        if ($user && in_array($user->role, ['owner', 'cashier', 'accountant'], true)) {
+            $ownerId = app(\App\Domain\Auth\Services\OwnerContextResolver::class)->ownerId($user);
+            $query->whereHas('unit', function ($u) use ($ownerId) {
+                $u->where('units.owner_id', $ownerId)
+                  ->orWhereHas('property', fn ($p) => $p->where('owner_id', $ownerId));
+            });
+        }
+
         if ($request->has('contract_id')) {
             $query->where('contract_id', $request->contract_id);
         }

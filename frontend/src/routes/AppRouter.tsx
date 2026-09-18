@@ -157,20 +157,55 @@ export default function AppRouter() {
         {/* ── Owner Routes ──────────────────────────────────────────────── */}
         <Route element={<ProtectedRoute allowedRoles={['owner']} />}>
           <Route path="/owner" element={<OwnerLayout />}>
-            <Route path="staff" element={<StaffManagement />} />
             <Route index element={<Navigate to="dashboard" replace />} />
             <Route path="dashboard" element={<OwnerDashboard />} />
+            {/* Stage 3: Property & Unit Management */}
             <Route path="properties" element={<PropertyDrillDown />} />
-            <Route path="vacant-units" element={<VacantUnits />} />
-            <Route path="vacant" element={<Navigate to="/owner/vacant-units" replace />} />
-            <Route path="contracts" element={<ContractManagement basePath="/owner" />} />
-            <Route path="contracts/:id" element={<ContractDetailPage basePath="/owner" />} />
-            <Route path="complaints" element={<OwnerComplaints />} />
+            <Route path="properties/add" element={<AddPropertyPage />} />
+            <Route path="buildings" element={<Navigate to="/owner/properties" replace />} />
             <Route path="units" element={<OwnerUnits />} />
             <Route path="units/:unitId" element={<UnitDetailPage />} />
+            <Route path="vacant-units" element={<VacantUnits />} />
+            <Route path="vacant" element={<Navigate to="/owner/vacant-units" replace />} />
+            <Route path="appliances" element={<ApplianceCatalog />} />
+            {/* Stage 4: Contracts, Leasing & Legal */}
+            <Route path="tenants" element={<TenantManagement />} />
+            <Route path="tenants/add" element={<TenantManagement mode="add" />} />
+            <Route path="tenants/previous" element={<TenantManagement mode="previous" />} />
+            <Route path="contracts" element={<ContractManagement basePath="/owner" />} />
+            <Route path="contracts/:id" element={<ContractDetailPage basePath="/owner" />} />
+            <Route path="pdc" element={<PdcChequeTracker />} />
+            <Route path="call-logs" element={<ContractCallLogPage />} />
+            <Route path="legal" element={<LegalCases />} />
+            {/* Stage 5: Payments, Receivables & Payables */}
+            <Route path="payments" element={<OwnerFinancePage kind="payments" />} />
             <Route path="ledger" element={<OwnerFinancePage kind="ledger" />} />
             <Route path="receivables" element={<OwnerFinancePage kind="receivables" />} />
-            <Route path="payments" element={<OwnerFinancePage kind="payments" />} />
+            <Route path="service-charges" element={<ServiceCharges />} />
+            {/* Stage 6: Move-out Settlements & Financial Tracking */}
+            <Route path="settlements" element={<SettlementWizard />} />
+            <Route path="receivables-categorized" element={<OutstandingReceivables />} />
+            <Route path="financial-tracking" element={<FinancialTracking />} />
+            {/* Accounts */}
+            <Route path="contract-payables" element={<ContractPayablesPage />} />
+            <Route path="bank-accounts" element={<BankAccountsPage />} />
+            <Route path="settlement-payments" element={<SettlementPaymentsPage />} />
+            <Route path="tenancy-res" element={<TenancyResPage />} />
+            <Route path="terms" element={<TermsPage />} />
+            {/* Stage 7: Maintenance & Operations */}
+            <Route path="complaints" element={<OwnerComplaints />} />
+            <Route path="jobs" element={<JobsPage />} />
+            <Route path="teams" element={<TeamsPage />} />
+            <Route path="maintenances" element={<MaintenancesPage />} />
+            <Route path="daily-maintenance" element={<DailyMaintenanceReport />} />
+            <Route path="inventory" element={<InventoryManagement />} />
+            <Route path="item-store" element={<ItemStorePage />} />
+            <Route path="purchase-orders" element={<PurchaseOrderTracker />} />
+            {/* Stage 8: Reports & Settings */}
+            <Route path="reports" element={<ReportsDashboard />} />
+            <Route path="reports/vacant" element={<VacantPropertyReport />} />
+            <Route path="settings" element={<AdminSettings />} />
+            <Route path="staff" element={<StaffManagement />} />
             <Route path="profile" element={<OwnerProfile />} />
           </Route>
         </Route>

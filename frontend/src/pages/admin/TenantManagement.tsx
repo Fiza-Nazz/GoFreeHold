@@ -40,6 +40,8 @@ export default function TenantManagement({ mode = 'list' }: Props) {
   const [search, setSearch] = useState('')
   const [formData, setFormData] = useState({ name: '', email: '', address: '', contact: '', emirates_id: '', phone: '', nationality: '', passport_number: '' })
 
+  const basePath = typeof window !== 'undefined' && window.location.pathname.startsWith('/owner') ? '/owner' : '/admin'
+
   useEffect(() => {
     const requests: Promise<any>[] = [api.get('/admin/tenants')]
     if (mode === 'previous') requests.push(api.get('/admin/contracts'))
@@ -69,7 +71,7 @@ export default function TenantManagement({ mode = 'list' }: Props) {
     setError('')
     try {
       await api.post('/admin/tenants', formData)
-      navigate('/admin/tenants')
+      navigate(`${basePath}/tenants`)
     } catch (err: any) {
       setError(err.response?.data?.message || 'Unable to add tenant.')
     } finally {
@@ -93,7 +95,7 @@ export default function TenantManagement({ mode = 'list' }: Props) {
         <style>{portalPageCss}</style>
         <div className="fade-in" style={heroStyle}>
           <div><h1 style={{ margin: 0, color: THEME.ink, fontSize: 24, fontWeight: 800 }}>Add Tenant</h1><p style={{ margin: '6px 0 0', color: THEME.textMuted, fontSize: 13 }}>Create a tenant record for contract assignment</p></div>
-          <button type="button" onClick={() => navigate('/admin/tenants')} style={{ padding: '10px 15px', border: '1px solid #A7F3DC', background: '#ECFDF8', color: '#065F46', cursor: 'pointer', fontWeight: 700 }}>← Tenant List</button>
+          <button type="button" onClick={() => navigate(`${basePath}/tenants`)} style={{ padding: '10px 15px', border: '1px solid #A7F3DC', background: '#ECFDF8', color: '#065F46', cursor: 'pointer', fontWeight: 700 }}>← Tenant List</button>
         </div>
         <div className="fade-in" style={{ ...panelStyle, width: '100%', minHeight: 0 }}>
           {error && <div role="alert" style={{ marginBottom: 16, padding: 11, border: '1px solid #FECACA', borderRadius: 8, background: '#FEF2F2', color: '#991B1B', fontWeight: 600 }}>{error}</div>}
@@ -101,7 +103,7 @@ export default function TenantManagement({ mode = 'list' }: Props) {
             {tenantFields.map(field => <div key={field.key}><label style={labelStyle} htmlFor={`tenant-${field.key}`}>{field.label}</label><input id={`tenant-${field.key}`} type={field.key === 'email' ? 'email' : 'text'} required={field.required} style={inputStyle} value={formData[field.key]} onChange={event => setFormData({ ...formData, [field.key]: event.target.value })} /></div>)}
             <div style={{ gridColumn: '1 / -1' }}><label style={labelStyle} htmlFor="tenant-address">Address</label><textarea id="tenant-address" style={{ ...inputStyle, minHeight: 80, resize: 'vertical' }} value={formData.address} onChange={event => setFormData({ ...formData, address: event.target.value })} /></div>
             <div style={{ gridColumn: '1 / -1', display: 'flex', justifyContent: 'flex-end', gap: 10 }}>
-              <button type="button" onClick={() => navigate('/admin/tenants')} style={{ padding: '10px 18px', border: '1px solid #CBD5E1', background: '#FFFFFF', color: '#475569', cursor: 'pointer', fontWeight: 700 }}>Cancel</button>
+              <button type="button" onClick={() => navigate(`${basePath}/tenants`)} style={{ padding: '10px 18px', border: '1px solid #CBD5E1', background: '#FFFFFF', color: '#475569', cursor: 'pointer', fontWeight: 700 }}>Cancel</button>
               <button type="submit" disabled={isSaving} style={{ display: 'inline-flex', alignItems: 'center', gap: 7, padding: '10px 20px', border: 'none', background: '#0F8A67', color: '#FFFFFF', cursor: isSaving ? 'wait' : 'pointer', fontWeight: 700, opacity: isSaving ? 0.7 : 1 }}><Icon path={ICONS.plus} size={16} />{isSaving ? 'Saving…' : 'Save Tenant'}</button>
             </div>
           </form>
@@ -115,7 +117,7 @@ export default function TenantManagement({ mode = 'list' }: Props) {
       <style>{portalPageCss}</style>
       <div className="fade-in" style={heroStyle}>
         <div><h1 style={{ margin: 0, color: THEME.ink, fontSize: 24, fontWeight: 800 }}>{mode === 'previous' ? 'Previous Tenants' : 'Tenant List'}</h1><p style={{ margin: '6px 0 0', color: THEME.textMuted, fontSize: 13 }}>{mode === 'previous' ? 'Tenants whose contracts ended or are no longer active' : 'View tenant records available for contracts'}</p></div>
-        <button type="button" onClick={() => navigate('/admin/tenants/add')} style={{ display: 'inline-flex', alignItems: 'center', gap: 7, padding: '10px 16px', border: 'none', background: '#0F8A67', color: '#FFFFFF', cursor: 'pointer', fontWeight: 700 }}><Icon path={ICONS.plus} size={16} />Add Tenant</button>
+        <button type="button" onClick={() => navigate(`${basePath}/tenants/add`)} style={{ display: 'inline-flex', alignItems: 'center', gap: 7, padding: '10px 16px', border: 'none', background: '#0F8A67', color: '#FFFFFF', cursor: 'pointer', fontWeight: 700 }}><Icon path={ICONS.plus} size={16} />Add Tenant</button>
       </div>
       <div className="fade-in" style={{ ...panelStyle, minHeight: 360 }}>
         <input aria-label="Search tenants" placeholder="Search tenants..." value={search} onChange={event => setSearch(event.target.value)} style={{ ...inputStyle, maxWidth: 360, marginBottom: 18 }} />

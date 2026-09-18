@@ -93,4 +93,11 @@ Route::middleware(['auth:sanctum', 'role:owner,cashier,accountant'])->prefix('ow
     Route::get('/call-logs', [CallLogController::class, 'index']);
     Route::post('/call-logs', [CallLogController::class, 'store']);
     Route::delete('/call-logs/{callLog}', [CallLogController::class, 'destroy']);
+
+    Route::get('/legal-cases', [LegalCaseController::class, 'index']);
+    Route::post('/legal-cases', [LegalCaseController::class, 'store']);
+    Route::get('/legal-cases/{legalCase}', [LegalCaseController::class, 'show']);
+    Route::put('/legal-cases/{legalCase}', [LegalCaseController::class, 'update']);
+    Route::get('/tenancy-res', [TenancyResController::class, 'index']);
+    Route::get('/terms', [TermController::class, 'index']);
 });

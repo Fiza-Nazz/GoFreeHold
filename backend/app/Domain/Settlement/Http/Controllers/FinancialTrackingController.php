@@ -17,11 +17,24 @@ class FinancialTrackingController extends Controller
             $query->where('type', $request->type);
         }
 
+        $user = $request->user();
+        $baseQuery = FinancialEntry::query();
+
+        if ($user && in_array($user->role, ['owner', 'cashier', 'accountant'], true)) {
+            $ownerId = app(\App\Domain\Auth\Services\OwnerContextResolver::class)->ownerId($user);
+            $scopeFn = function ($q) use ($ownerId) {
+                $q->whereHas('contract', fn ($c) => $c->where('owner_id', $ownerId))
+                  ->orWhereHas('unit', fn ($u) => $u->where('owner_id', $ownerId)->orWhereHas('property', fn ($p) => $p->where('owner_id', $ownerId)));
+            };
+            $query->where($scopeFn);
+            $baseQuery->where($scopeFn);
+        }
+
         $entries = $query->latest('entry_date')->get();
 
-        $totalIncome = FinancialEntry::where('type', 'income')->sum('amount');
-        $totalExpense = FinancialEntry::where('type', 'expense')->sum('amount');
-        $totalLoan = FinancialEntry::where('type', 'loan')->sum('amount');
+        $totalIncome = (clone $baseQuery)->where('type', 'income')->sum('amount');
+        $totalExpense = (clone $baseQuery)->where('type', 'expense')->sum('amount');
+        $totalLoan = (clone $baseQuery)->where('type', 'loan')->sum('amount');
 
         return response()->json([
             'status' => 'success',

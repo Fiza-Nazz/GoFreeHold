@@ -18,25 +18,31 @@ class ReportController extends Controller
 
     public function revenueAnalysis(Request $request): JsonResponse
     {
+        $ownerId = app(\App\Domain\Auth\Services\OwnerContextResolver::class)->ownerId($request->user());
+
         return response()->json([
             'status' => 'success',
-            'data' => $this->reports->revenueAnalysis((int) $request->query('year', Carbon::now()->year)),
+            'data' => $this->reports->revenueAnalysis((int) $request->query('year', Carbon::now()->year), $ownerId),
         ]);
     }
 
-    public function receivablesReport(): JsonResponse
+    public function receivablesReport(Request $request): JsonResponse
     {
+        $ownerId = app(\App\Domain\Auth\Services\OwnerContextResolver::class)->ownerId($request->user());
+
         return response()->json([
             'status' => 'success',
-            'data' => $this->reports->receivables(),
+            'data' => $this->reports->receivables($ownerId),
         ]);
     }
 
     public function expiredContractsReport(Request $request): JsonResponse
     {
+        $ownerId = app(\App\Domain\Auth\Services\OwnerContextResolver::class)->ownerId($request->user());
+
         return response()->json([
             'status' => 'success',
-            'data' => $this->reports->expiringContracts((int) $request->query('days', 100)),
+            'data' => $this->reports->expiringContracts((int) $request->query('days', 100), $ownerId),
         ]);
     }
 
@@ -58,10 +64,13 @@ class ReportController extends Controller
 
     public function historicalLedgers(Request $request): JsonResponse
     {
+        $ownerId = app(\App\Domain\Auth\Services\OwnerContextResolver::class)->ownerId($request->user());
+
         return response()->json([
             'status' => 'success',
             'data' => $this->reports->historicalLedgers(
-                $request->filled('contract_id') ? (int) $request->query('contract_id') : null
+                $request->filled('contract_id') ? (int) $request->query('contract_id') : null,
+                $ownerId
             ),
         ]);
     }

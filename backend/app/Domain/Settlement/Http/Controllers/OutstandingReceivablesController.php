@@ -43,7 +43,11 @@ class OutstandingReceivablesController extends Controller
             ->filter()
             ->values();
 
-        if ($request->has('owner_id')) {
+        $user = $request->user();
+        if ($user && in_array($user->role, ['owner', 'cashier', 'accountant'], true)) {
+            $ownerId = app(\App\Domain\Auth\Services\OwnerContextResolver::class)->ownerId($user);
+            $contracts = $contracts->where('owner_id', $ownerId)->values();
+        } elseif ($request->has('owner_id')) {
             $contracts = $contracts->where('owner_id', (int) $request->owner_id)->values();
         }
 

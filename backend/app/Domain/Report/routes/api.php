@@ -26,3 +26,12 @@ Route::middleware(['auth:sanctum', 'role:admin'])->prefix('admin')->group(functi
     Route::match(['get', 'post', 'put'], '/settings/notifications/trigger/{key}', [NotificationSettingController::class, 'trigger']);
     Route::put('/settings/notifications/{notificationSetting}', [NotificationSettingController::class, 'update']);
 });
+
+Route::middleware(['auth:sanctum', 'role:owner,cashier,accountant'])->prefix('owner')->group(function () {
+    Route::get('/reports/revenue', [ReportController::class, 'revenueAnalysis']);
+    Route::get('/reports/receivables', [ReportController::class, 'receivablesReport']);
+    Route::get('/reports/expired-contracts', [ReportController::class, 'expiredContractsReport']);
+    Route::get('/reports/inventory-summary', [ReportController::class, 'inventorySummary']);
+    Route::get('/reports/historical-ledgers', [ReportController::class, 'historicalLedgers']);
+    Route::get('/reports/export/{type}', [ReportController::class, 'exportExcel']);
+});

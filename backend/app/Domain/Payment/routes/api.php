@@ -50,4 +50,10 @@ Route::middleware(['auth:sanctum', 'role:owner,cashier,accountant'])->prefix('ow
     Route::post('/payments', [PaymentController::class, 'store']);
     Route::delete('/payments/{payment}', [PaymentController::class, 'destroy']);
     Route::get('/rent-ledger', [RentTransactionController::class, 'index']);
+    Route::get('/ledger', [RentTransactionController::class, 'index']);
+    Route::get('/ledger/receivables', [RentTransactionController::class, 'receivablesSummary']);
+    Route::get('/receivables', [RentTransactionController::class, 'receivablesSummary']);
+    Route::get('/service-charges', [ServiceChargeController::class, 'index']);
+    Route::post('/service-charges', [ServiceChargeController::class, 'store']);
+    Route::get('/contract-payables', [ContractPayableController::class, 'index']);
 });

@@ -108,10 +108,16 @@ class PropertyService
         });
     }
 
-    public function vacantUnits()
+    public function vacantUnits(?int $ownerId = null)
     {
         return Unit::with('property:id,name', 'owner:id,name')
             ->where('status', 'AVAILABLE')
+            ->when($ownerId, function ($q, $oid) {
+                $q->where(function ($sub) use ($oid) {
+                    $sub->where('units.owner_id', $oid)
+                        ->orWhereHas('property', fn ($p) => $p->where('owner_id', $oid));
+                });
+            })
             ->get();
     }
 

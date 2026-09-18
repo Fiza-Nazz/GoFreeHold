@@ -38,3 +38,13 @@ Route::middleware(['auth:sanctum', 'role:admin'])->prefix('admin')->group(functi
 
     Route::get('/receivables/categorized', [OutstandingReceivablesController::class, 'report']);
 });
+
+Route::middleware(['auth:sanctum', 'role:owner,cashier,accountant'])->prefix('owner')->group(function () {
+    Route::get('/settlements', [SettlementController::class, 'index']);
+    Route::get('/settlements/{settlement}', [SettlementController::class, 'show']);
+    Route::get('/settlement-payments', [SettlementPaymentController::class, 'index']);
+    Route::get('/financial-entries', [FinancialTrackingController::class, 'index']);
+    Route::post('/financial-entries', [FinancialTrackingController::class, 'store']);
+    Route::get('/receivables/categorized', [OutstandingReceivablesController::class, 'report']);
+    Route::get('/bank-accounts', [BankAccountController::class, 'index']);
+});

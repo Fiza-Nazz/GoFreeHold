@@ -70,13 +70,31 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/complaints', [ComplaintController::class, 'store']);
     });
 
-    // ── Owner role (Maintenance & Complaints Dispatching)
-    Route::middleware('role:owner')->prefix('owner')->group(function () {
+    // ── Owner role (Maintenance & Complaints Dispatching + Operations)
+    Route::middleware('role:owner,cashier,accountant')->prefix('owner')->group(function () {
         Route::get('/complaints', [ComplaintController::class, 'index']);
         Route::get('/complaints/{complaint}', [ComplaintController::class, 'show']);
         Route::post('/complaints/{complaint}/assign', [ComplaintController::class, 'assign']);
         Route::post('/complaints/{complaint}/status', [ComplaintController::class, 'updateStatus']);
         Route::get('/technicians', [ComplaintController::class, 'getTechnicians']);
+
+        Route::get('/appliances', [ApplianceController::class, 'index']);
+        Route::post('/appliances', [ApplianceController::class, 'store']);
+        Route::get('/appliances/{appliance}', [ApplianceController::class, 'show']);
+        Route::delete('/appliances/{appliance}', [ApplianceController::class, 'destroy']);
+
+        Route::get('/jobs', [JobController::class, 'index']);
+        Route::get('/jobs/{job}', [JobController::class, 'show']);
+        Route::get('/teams', [TeamController::class, 'index']);
+        Route::get('/maintenances', [MaintenanceController::class, 'index']);
+        Route::get('/maintenance/daily-report', [MaintenanceReportController::class, 'dailyReport']);
+        Route::get('/daily-maintenance', [MaintenanceReportController::class, 'dailyReport']);
+
+        Route::get('/inventory/warehouse', [InventoryController::class, 'warehouseItems']);
+        Route::get('/inventory/unit', [InventoryController::class, 'unitItems']);
+        Route::get('/item-store', [ItemStoreController::class, 'index']);
+        Route::get('/purchases', [PurchaseController::class, 'index']);
+        Route::get('/purchase-orders', [PurchaseController::class, 'index']);
     });
 });
 

@@ -97,8 +97,21 @@ class PropertyController extends Controller
         ]);
     }
 
-    public function getOwners(): JsonResponse
+    public function getOwners(Request $request): JsonResponse
     {
+        $user = $request->user();
+        if ($user && in_array($user->role, ['owner', 'cashier', 'accountant'], true)) {
+            $ownerId = app(\App\Domain\Auth\Services\OwnerContextResolver::class)->ownerId($user);
+            $ownerProfiles = \App\Domain\Auth\Models\Owner::where('id', $ownerId)->get();
+            return response()->json([
+                'status' => 'success',
+                'data'   => [
+                    'owners'         => $ownerProfiles,
+                    'owner_profiles' => $ownerProfiles,
+                ],
+            ]);
+        }
+
         $ownerProfiles = $this->propertyService->syncOwnerProfiles();
 
         return response()->json([
