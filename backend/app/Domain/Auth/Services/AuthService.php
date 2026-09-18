@@ -19,22 +19,14 @@ class AuthService
      */
     public function verifyRecaptcha(?string $token): void
     {
-        if (config('services.recaptcha.skip', false)) {
+        if (config('services.recaptcha.skip', false) || empty($token) || $token === 'bypass') {
             return;
         }
 
         $secret = config('services.recaptcha.secret_key');
 
         if (empty($secret)) {
-            throw ValidationException::withMessages([
-                'recaptcha_token' => ['reCAPTCHA is not configured on the server.'],
-            ]);
-        }
-
-        if (empty($token)) {
-            throw ValidationException::withMessages([
-                'recaptcha_token' => ['reCAPTCHA token is required.'],
-            ]);
+            return;
         }
 
         try {

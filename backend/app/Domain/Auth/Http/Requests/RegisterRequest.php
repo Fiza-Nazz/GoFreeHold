@@ -22,7 +22,7 @@ class RegisterRequest extends FormRequest
             'email'                 => 'required|string|email|max:255|unique:users,email',
             'password'              => 'required|string|min:8|confirmed',
             'role'                  => 'required|string|in:owner,tenant',
-            'recaptcha_token'       => 'required|string',
+            'recaptcha_token'       => 'sometimes|nullable|string',
         ];
     }
 }

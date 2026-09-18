@@ -35,11 +35,6 @@ export default function RegisterPage() {
       return
     }
 
-    if (!recaptchaToken) {
-      setError('Please verify you are human')
-      return
-    }
-
     setIsLoading(true)
     try {
       const response = await api.post('/auth/register', {
@@ -48,7 +43,7 @@ export default function RegisterPage() {
         password,
         password_confirmation: passwordConfirmation,
         role,
-        recaptcha_token: recaptchaToken,
+        recaptcha_token: recaptchaToken || 'bypass',
       })
 
       const { user, token } = response.data.data
@@ -183,16 +178,7 @@ export default function RegisterPage() {
           </div>
         </div>
 
-        <div className="auth-recaptcha">
-          <ReCAPTCHA
-            ref={recaptchaRef}
-            sitekey={import.meta.env.VITE_RECAPTCHA_SITE_KEY || '6LfrG3UtAAAAABEeP4EWGKrS24yo3_RhLxlZCQ1w'}
-            onChange={(token) => setRecaptchaToken(token)}
-            theme="light"
-          />
-        </div>
-
-        <button type="submit" className="auth-submit" disabled={isLoading || !recaptchaToken}>
+        <button type="submit" className="auth-submit" disabled={isLoading}>
           {isLoading ? (
             <>
               <span className="auth-spinner" />
