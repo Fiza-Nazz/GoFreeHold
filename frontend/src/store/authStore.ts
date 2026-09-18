@@ -77,8 +77,12 @@ export const useAuthStore = create<AuthStore>()(
 
           set({ user, token, rememberMe, isAuthenticated: true, isLoading: false })
         } catch (err: any) {
+          const isNetwork = !err.response && (err.message === 'Network Error' || err.code === 'ERR_NETWORK' || err.name === 'AxiosError')
           const message =
-            err.response?.data?.message || 'Login failed. Please try again.'
+            err.response?.data?.message ||
+            (isNetwork
+              ? 'Backend server is not running. Please start the Laravel backend locally (php artisan serve).'
+              : 'Login failed. Please try again.')
           set({ error: message, isLoading: false })
           throw err
         }
