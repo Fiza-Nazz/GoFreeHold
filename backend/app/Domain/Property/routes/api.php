@@ -32,7 +32,11 @@ Route::middleware(['auth:sanctum', 'role:admin'])->prefix('admin')->group(functi
 
 Route::middleware(['auth:sanctum', 'role:owner,cashier,accountant'])->prefix('owner')->group(function () {
     Route::get('/properties', [PropertyController::class, 'index']);
+    Route::post('/properties', [PropertyController::class, 'storeForOwner']);
+    Route::put('/properties/{property}', [PropertyController::class, 'updateForOwner']);
     Route::get('/units', [UnitController::class, 'index']);
+    Route::post('/units', [UnitController::class, 'storeForOwner']);
+    Route::put('/units/{unit}', [UnitController::class, 'updateForOwner']);
     Route::get('/tenants', [TenantController::class, 'index']);
     Route::put('/tenants/{tenant}', [TenantController::class, 'update']);
 });

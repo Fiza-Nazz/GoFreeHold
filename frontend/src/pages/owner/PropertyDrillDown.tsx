@@ -1,7 +1,7 @@
 import { useEffect, useState, useMemo } from 'react'
 import api from '../../api/axios'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
-import { THEME, ADMIN_COLORS, Icon, portalPageCss, heroStyle, panelStyle, ghostBtnStyle, thStyle, tdStyle, RADIUS } from '../../components/gfh/adminTheme'
+import { THEME, ADMIN_COLORS, Icon, ICONS, CornerBrackets, portalPageCss, heroStyle, panelStyle, ghostBtnStyle, thStyle, tdStyle, RADIUS } from '../../components/gfh/adminTheme'
 import { safeUpper } from '../../utils/safeLabel'
 
 interface UnitSummary {
@@ -115,17 +115,47 @@ export default function PropertyDrillDown() {
   const [unitSearch, setUnitSearch] = useState<string>('')
   const [unitStatusFilter, setUnitStatusFilter] = useState<string>('ALL')
 
-  useEffect(() => {
-    const fetchProperties = async () => {
-      try {
-        const res = await api.get('/owner/dashboard/properties')
-        setProperties(res.data?.data?.properties || [])
-      } catch (err) {
-        console.error(err)
-      } finally {
-        setIsLoading(false)
-      }
+  // Add Property modal state
+  const [showAddPropertyModal, setShowAddPropertyModal] = useState(false)
+  const [addPropertyBusy, setAddPropertyBusy] = useState(false)
+  const [addPropertyError, setAddPropertyError] = useState<string | null>(null)
+  const [propertyForm, setPropertyForm] = useState({
+    name: '',
+    type: 'residential',
+    city: 'Dubai',
+    address: '',
+    description: '',
+  })
+
+  // Add Unit modal state
+  const [showAddUnitModal, setShowAddUnitModal] = useState(false)
+  const [addUnitBusy, setAddUnitBusy] = useState(false)
+  const [addUnitError, setAddUnitError] = useState<string | null>(null)
+  const [unitForm, setUnitForm] = useState({
+    property_id: '',
+    number: '',
+    floor: '1',
+    type: 'apartment',
+    size: '850',
+    price: '65000',
+    dhewa_no: '',
+    category: 'Standard',
+    furnished: false,
+    status: 'AVAILABLE',
+  })
+
+  const fetchProperties = async () => {
+    try {
+      const res = await api.get('/owner/dashboard/properties')
+      setProperties(res.data?.data?.properties || [])
+    } catch (err) {
+      console.error(err)
+    } finally {
+      setIsLoading(false)
     }
+  }
+
+  useEffect(() => {
     fetchProperties()
   }, [])
 
@@ -141,6 +171,111 @@ export default function PropertyDrillDown() {
       console.error(err)
     } finally {
       setIsUnitsLoading(false)
+    }
+  }
+
+  const handleCreateProperty = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!propertyForm.name.trim() || !propertyForm.address.trim()) {
+      setAddPropertyError('Please enter property name and address.')
+      return
+    }
+    setAddPropertyBusy(true)
+    setAddPropertyError(null)
+    try {
+      const res = await api.post('/owner/properties', {
+        name: propertyForm.name.trim(),
+        type: propertyForm.type,
+        city: propertyForm.city.trim() || 'Dubai',
+        address: propertyForm.address.trim(),
+        description: propertyForm.description.trim() || null,
+      })
+      const created = res.data?.data?.property
+      setShowAddPropertyModal(false)
+      setPropertyForm({
+        name: '',
+        type: 'residential',
+        city: 'Dubai',
+        address: '',
+        description: '',
+      })
+      // Reload properties list
+      const propsRes = await api.get('/owner/dashboard/properties')
+      const updatedList: PropertySummary[] = propsRes.data?.data?.properties || []
+      setProperties(updatedList)
+      if (created?.id) {
+        const found = updatedList.find(p => p.id === created.id)
+        if (found) {
+          handlePropertyClick(found)
+        }
+      }
+    } catch (err: any) {
+      console.error(err)
+      setAddPropertyError(err.response?.data?.message || 'Failed to create property. Please try again.')
+    } finally {
+      setAddPropertyBusy(false)
+    }
+  }
+
+  const handleCreateUnit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    const targetPropId = unitForm.property_id || selectedProperty?.id
+    if (!targetPropId) {
+      setAddUnitError('Please select a property for this unit.')
+      return
+    }
+    if (!unitForm.number.trim()) {
+      setAddUnitError('Please enter a unit number.')
+      return
+    }
+    setAddUnitBusy(true)
+    setAddUnitError(null)
+    try {
+      await api.post('/owner/units', {
+        property_id: Number(targetPropId),
+        number: unitForm.number.trim(),
+        floor: Number(unitForm.floor) || 1,
+        type: unitForm.type,
+        size: Number(unitForm.size) || 0,
+        price: Number(unitForm.price) || 0,
+        dhewa_no: unitForm.dhewa_no.trim() || null,
+        category: unitForm.category.trim() || null,
+        furnished: Boolean(unitForm.furnished),
+        status: unitForm.status || 'AVAILABLE',
+      })
+      setShowAddUnitModal(false)
+      setUnitForm({
+        property_id: '',
+        number: '',
+        floor: '1',
+        type: 'apartment',
+        size: '850',
+        price: '65000',
+        dhewa_no: '',
+        category: 'Standard',
+        furnished: false,
+        status: 'AVAILABLE',
+      })
+      // Refresh current property's units
+      if (selectedProperty?.id) {
+        const unitsRes = await api.get(`/owner/dashboard/properties/${selectedProperty.id}/units`)
+        const newUnits = unitsRes.data?.data?.units || []
+        setSelectedProperty(prev => prev ? {
+          ...prev,
+          units: newUnits,
+          total_units: newUnits.length,
+          vacant_units: newUnits.filter((u: any) => u.status === 'AVAILABLE').length,
+          occupied_units: newUnits.filter((u: any) => u.status === 'OCCUPIED').length,
+        } : null)
+      }
+      // Also refresh properties to update counts
+      const propsRes = await api.get('/owner/dashboard/properties')
+      setProperties(propsRes.data?.data?.properties || [])
+    } catch (err: any) {
+      console.error(err)
+      setAddUnitError(err.response?.data?.message || 'Failed to create unit. Please try again.')
+    } finally {
+      setAddUnitBusy(false)
     }
   }
 
@@ -239,9 +374,32 @@ export default function PropertyDrillDown() {
             Search, filter, and inspect detailed occupancy and unit lists across your portfolio
           </div>
         </div>
-        <Link to="/owner/dashboard" className="gfh-portal-btn" style={{ ...ghostBtnStyle, background: '#0E5E48', borderRadius: 8 }}>
-          ← Back to dashboard
-        </Link>
+        <div style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap' }}>
+          <button
+            type="button"
+            onClick={() => { setAddPropertyError(null); setShowAddPropertyModal(true) }}
+            className="gfh-portal-btn"
+            style={{
+              background: '#0E5E48',
+              color: '#FFFFFF',
+              borderRadius: 8,
+              fontWeight: 700,
+              fontSize: 13,
+              padding: '9px 16px',
+              border: 'none',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 6,
+              cursor: 'pointer',
+              boxShadow: '0 2px 4px rgba(14, 94, 72, 0.2)',
+            }}
+          >
+            <Icon path={ICONS.plus} size={15} /> + Add Property
+          </button>
+          <Link to="/owner/dashboard" className="gfh-portal-btn" style={{ ...ghostBtnStyle, background: '#0E5E48', borderRadius: 8 }}>
+            ← Back to dashboard
+          </Link>
+        </div>
       </div>
 
       {/* Aggregate Stats Cards */}
@@ -539,8 +697,33 @@ export default function PropertyDrillDown() {
           {isLoading ? (
             <div style={{ textAlign: 'center', padding: 40 }}><span className="spinner" /></div>
           ) : properties.length === 0 ? (
-            <div style={{ textAlign: 'center', padding: 40 }}>
-              <p style={{ fontSize: 14, color: THEME.textMuted, fontWeight: 500 }}>No properties registered to your account.</p>
+            <div style={{ textAlign: 'center', padding: '40px 20px', background: '#F8FAFC', borderRadius: 12, border: '1px dashed #CBD5E1' }}>
+              <div style={{ width: 44, height: 44, borderRadius: 10, background: '#ECFDF8', color: '#0E5E48', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', marginBottom: 10 }}>
+                <Icon path={icons.building} size={22} />
+              </div>
+              <p style={{ fontSize: 15, fontWeight: 700, color: '#0F172A', margin: '0 0 6px 0' }}>No properties registered yet</p>
+              <p style={{ fontSize: 13, color: '#64748B', margin: '0 0 16px 0' }}>
+                Add your first building to start managing units, leases, and tenant rent collections.
+              </p>
+              <button
+                type="button"
+                onClick={() => { setAddPropertyError(null); setShowAddPropertyModal(true) }}
+                style={{
+                  padding: '9px 18px',
+                  borderRadius: 8,
+                  border: 'none',
+                  background: '#0E5E48',
+                  color: '#FFFFFF',
+                  fontSize: 13,
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 6,
+                }}
+              >
+                <Icon path={ICONS.plus} size={15} /> + Add Property
+              </button>
             </div>
           ) : filteredProperties.length === 0 ? (
             <div style={{ textAlign: 'center', padding: '40px 20px', background: '#F8FAFC', borderRadius: 12, border: '1px dashed #CBD5E1' }}>
@@ -648,26 +831,52 @@ export default function PropertyDrillDown() {
                   {selectedProperty.address} • {selectedProperty.total_units} units total
                 </div>
               </div>
-              <button
-                type="button"
-                onClick={() => setSelectedProperty(null)}
-                style={{
-                  background: '#F1F5F9',
-                  border: 'none',
-                  borderRadius: 6,
-                  color: '#64748B',
-                  padding: '5px 8px',
-                  cursor: 'pointer',
-                  fontSize: 12,
-                  fontWeight: 600,
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 4,
-                }}
-                title="Close units view"
-              >
-                ✕ Close
-              </button>
+              <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setUnitForm(f => ({ ...f, property_id: String(selectedProperty.id) }))
+                    setAddUnitError(null)
+                    setShowAddUnitModal(true)
+                  }}
+                  style={{
+                    background: '#0E5E48',
+                    color: '#FFFFFF',
+                    border: 'none',
+                    borderRadius: 6,
+                    padding: '6px 12px',
+                    cursor: 'pointer',
+                    fontSize: 12,
+                    fontWeight: 700,
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 5,
+                    boxShadow: '0 1px 2px rgba(14, 94, 72, 0.2)',
+                  }}
+                >
+                  <Icon path={ICONS.plus} size={13} /> + Add Unit
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setSelectedProperty(null)}
+                  style={{
+                    background: '#F1F5F9',
+                    border: 'none',
+                    borderRadius: 6,
+                    color: '#64748B',
+                    padding: '6px 9px',
+                    cursor: 'pointer',
+                    fontSize: 12,
+                    fontWeight: 600,
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 4,
+                  }}
+                  title="Close units view"
+                >
+                  ✕ Close
+                </button>
+              </div>
             </div>
 
             {/* Units Sub-filter Controls */}
@@ -853,6 +1062,381 @@ export default function PropertyDrillDown() {
           </div>
         )}
       </div>
+
+      {/* ── MODAL 1: ADD PROPERTY (OWNER) ── */}
+      {showAddPropertyModal && (
+        <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(15, 61, 58, 0.55)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: 16 }}>
+          <div
+            className="fade-in"
+            style={{
+              position: 'relative',
+              width: 520,
+              maxWidth: '100%',
+              maxHeight: '90vh',
+              overflowY: 'auto',
+              padding: 28,
+              background: '#ffffff',
+              borderRadius: 14,
+              border: `1px solid ${THEME.border}`,
+              boxShadow: '0 20px 45px -10px rgba(6, 56, 44, 0.25)',
+            }}
+          >
+            <CornerBrackets color="#0E5E48" />
+
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 14 }}>
+              <div>
+                <h2 style={{ fontSize: 20, fontWeight: 800, margin: 0, color: '#0F172A' }}>
+                  Add New Property
+                </h2>
+                <div style={{ fontSize: 12.5, color: '#0E5E48', fontWeight: 600, marginTop: 3 }}>
+                  Register a building or real estate asset to your portfolio
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowAddPropertyModal(false)}
+                style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#64748B', padding: 4 }}
+              >
+                <Icon path={icons.x} size={18} />
+              </button>
+            </div>
+
+            {addPropertyError && (
+              <div style={{ background: '#FEF2F2', border: '1px solid #FECACA', borderRadius: 8, padding: '10px 14px', marginBottom: 16, color: '#991B1B', fontSize: 12.5, fontWeight: 600 }}>
+                {addPropertyError}
+              </div>
+            )}
+
+            <form onSubmit={handleCreateProperty} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+              <div>
+                <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: '#334155', marginBottom: 4 }}>
+                  Property / Building Name *
+                </label>
+                <input
+                  type="text"
+                  required
+                  placeholder="e.g. Marina Horizon Tower"
+                  value={propertyForm.name}
+                  onChange={e => setPropertyForm({ ...propertyForm, name: e.target.value })}
+                  style={{ width: '100%', padding: '9px 12px', borderRadius: 8, border: '1px solid #CBD5E1', fontSize: 13, color: '#0F172A', outline: 'none', boxSizing: 'border-box' }}
+                />
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+                <div>
+                  <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: '#334155', marginBottom: 4 }}>
+                    Type *
+                  </label>
+                  <select
+                    value={propertyForm.type}
+                    onChange={e => setPropertyForm({ ...propertyForm, type: e.target.value })}
+                    style={{ width: '100%', padding: '9px 12px', borderRadius: 8, border: '1px solid #CBD5E1', fontSize: 13, color: '#0F172A', outline: 'none', boxSizing: 'border-box', background: '#fff' }}
+                  >
+                    <option value="residential">Residential</option>
+                    <option value="commercial">Commercial</option>
+                    <option value="mixed">Mixed</option>
+                  </select>
+                </div>
+                <div>
+                  <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: '#334155', marginBottom: 4 }}>
+                    City *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="Dubai"
+                    value={propertyForm.city}
+                    onChange={e => setPropertyForm({ ...propertyForm, city: e.target.value })}
+                    style={{ width: '100%', padding: '9px 12px', borderRadius: 8, border: '1px solid #CBD5E1', fontSize: 13, color: '#0F172A', outline: 'none', boxSizing: 'border-box' }}
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: '#334155', marginBottom: 4 }}>
+                  Address / Location *
+                </label>
+                <input
+                  type="text"
+                  required
+                  placeholder="e.g. Dubai Marina, Plot 392-412"
+                  value={propertyForm.address}
+                  onChange={e => setPropertyForm({ ...propertyForm, address: e.target.value })}
+                  style={{ width: '100%', padding: '9px 12px', borderRadius: 8, border: '1px solid #CBD5E1', fontSize: 13, color: '#0F172A', outline: 'none', boxSizing: 'border-box' }}
+                />
+              </div>
+
+              <div>
+                <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: '#334155', marginBottom: 4 }}>
+                  Description / Notes (Optional)
+                </label>
+                <textarea
+                  rows={3}
+                  placeholder="Key specifications, amenities, security contacts..."
+                  value={propertyForm.description}
+                  onChange={e => setPropertyForm({ ...propertyForm, description: e.target.value })}
+                  style={{ width: '100%', padding: '9px 12px', borderRadius: 8, border: '1px solid #CBD5E1', fontSize: 13, color: '#0F172A', outline: 'none', boxSizing: 'border-box', resize: 'vertical' }}
+                />
+              </div>
+
+              <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 10 }}>
+                <button
+                  type="button"
+                  onClick={() => setShowAddPropertyModal(false)}
+                  style={{ borderRadius: 8, fontWeight: 700, fontSize: 13, padding: '9px 16px', backgroundColor: '#f1f5f9', color: '#64748B', border: '1px solid #E2E8F0', cursor: 'pointer' }}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={addPropertyBusy}
+                  style={{
+                    borderRadius: 8,
+                    fontWeight: 700,
+                    fontSize: 13,
+                    padding: '9px 20px',
+                    backgroundColor: '#0E5E48',
+                    color: '#FFFFFF',
+                    border: 'none',
+                    cursor: addPropertyBusy ? 'not-allowed' : 'pointer',
+                    opacity: addPropertyBusy ? 0.7 : 1,
+                  }}
+                >
+                  {addPropertyBusy ? 'Creating...' : 'Save Property'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* ── MODAL 2: ADD UNIT (OWNER) ── */}
+      {showAddUnitModal && (
+        <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(15, 61, 58, 0.55)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: 16 }}>
+          <div
+            className="fade-in"
+            style={{
+              position: 'relative',
+              width: 540,
+              maxWidth: '100%',
+              maxHeight: '90vh',
+              overflowY: 'auto',
+              padding: 28,
+              background: '#ffffff',
+              borderRadius: 14,
+              border: `1px solid ${THEME.border}`,
+              boxShadow: '0 20px 45px -10px rgba(6, 56, 44, 0.25)',
+            }}
+          >
+            <CornerBrackets color="#0E5E48" />
+
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 14 }}>
+              <div>
+                <h2 style={{ fontSize: 20, fontWeight: 800, margin: 0, color: '#0F172A' }}>
+                  Add New Unit
+                </h2>
+                <div style={{ fontSize: 12.5, color: '#0E5E48', fontWeight: 600, marginTop: 3 }}>
+                  {selectedProperty ? `Adding to ${selectedProperty.name}` : 'Assign a new unit to your property'}
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowAddUnitModal(false)}
+                style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#64748B', padding: 4 }}
+              >
+                <Icon path={icons.x} size={18} />
+              </button>
+            </div>
+
+            {addUnitError && (
+              <div style={{ background: '#FEF2F2', border: '1px solid #FECACA', borderRadius: 8, padding: '10px 14px', marginBottom: 16, color: '#991B1B', fontSize: 12.5, fontWeight: 600 }}>
+                {addUnitError}
+              </div>
+            )}
+
+            <form onSubmit={handleCreateUnit} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+              <div>
+                <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: '#334155', marginBottom: 4 }}>
+                  Target Property *
+                </label>
+                <select
+                  value={unitForm.property_id || selectedProperty?.id || ''}
+                  onChange={e => setUnitForm({ ...unitForm, property_id: e.target.value })}
+                  required
+                  style={{ width: '100%', padding: '9px 12px', borderRadius: 8, border: '1px solid #CBD5E1', fontSize: 13, color: '#0F172A', outline: 'none', boxSizing: 'border-box', background: '#fff' }}
+                >
+                  {properties.map(p => (
+                    <option key={p.id} value={p.id}>{p.name} ({p.address})</option>
+                  ))}
+                </select>
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+                <div>
+                  <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: '#334155', marginBottom: 4 }}>
+                    Unit Number *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="e.g. 101, 1204, PH-1"
+                    value={unitForm.number}
+                    onChange={e => setUnitForm({ ...unitForm, number: e.target.value })}
+                    style={{ width: '100%', padding: '9px 12px', borderRadius: 8, border: '1px solid #CBD5E1', fontSize: 13, color: '#0F172A', outline: 'none', boxSizing: 'border-box' }}
+                  />
+                </div>
+                <div>
+                  <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: '#334155', marginBottom: 4 }}>
+                    Floor *
+                  </label>
+                  <input
+                    type="number"
+                    required
+                    placeholder="1"
+                    value={unitForm.floor}
+                    onChange={e => setUnitForm({ ...unitForm, floor: e.target.value })}
+                    style={{ width: '100%', padding: '9px 12px', borderRadius: 8, border: '1px solid #CBD5E1', fontSize: 13, color: '#0F172A', outline: 'none', boxSizing: 'border-box' }}
+                  />
+                </div>
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+                <div>
+                  <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: '#334155', marginBottom: 4 }}>
+                    Unit Type *
+                  </label>
+                  <select
+                    value={unitForm.type}
+                    onChange={e => setUnitForm({ ...unitForm, type: e.target.value })}
+                    required
+                    style={{ width: '100%', padding: '9px 12px', borderRadius: 8, border: '1px solid #CBD5E1', fontSize: 13, color: '#0F172A', outline: 'none', boxSizing: 'border-box', background: '#fff' }}
+                  >
+                    <option value="apartment">Apartment</option>
+                    <option value="studio">Studio</option>
+                    <option value="villa">Villa</option>
+                    <option value="penthouse">Penthouse</option>
+                    <option value="office">Office</option>
+                    <option value="retail">Retail / Shop</option>
+                    <option value="warehouse">Warehouse</option>
+                  </select>
+                </div>
+                <div>
+                  <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: '#334155', marginBottom: 4 }}>
+                    Initial Status *
+                  </label>
+                  <select
+                    value={unitForm.status}
+                    onChange={e => setUnitForm({ ...unitForm, status: e.target.value })}
+                    style={{ width: '100%', padding: '9px 12px', borderRadius: 8, border: '1px solid #CBD5E1', fontSize: 13, color: '#0F172A', outline: 'none', boxSizing: 'border-box', background: '#fff' }}
+                  >
+                    <option value="AVAILABLE">AVAILABLE</option>
+                    <option value="BOOKED">BOOKED</option>
+                    <option value="OCCUPIED">OCCUPIED</option>
+                  </select>
+                </div>
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+                <div>
+                  <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: '#334155', marginBottom: 4 }}>
+                    Size (Sq. Ft.) *
+                  </label>
+                  <input
+                    type="number"
+                    required
+                    min="0"
+                    placeholder="850"
+                    value={unitForm.size}
+                    onChange={e => setUnitForm({ ...unitForm, size: e.target.value })}
+                    style={{ width: '100%', padding: '9px 12px', borderRadius: 8, border: '1px solid #CBD5E1', fontSize: 13, color: '#0F172A', outline: 'none', boxSizing: 'border-box' }}
+                  />
+                </div>
+                <div>
+                  <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: '#334155', marginBottom: 4 }}>
+                    Annual Rent / Price (AED) *
+                  </label>
+                  <input
+                    type="number"
+                    required
+                    min="0"
+                    placeholder="65000"
+                    value={unitForm.price}
+                    onChange={e => setUnitForm({ ...unitForm, price: e.target.value })}
+                    style={{ width: '100%', padding: '9px 12px', borderRadius: 8, border: '1px solid #CBD5E1', fontSize: 13, color: '#0F172A', outline: 'none', boxSizing: 'border-box' }}
+                  />
+                </div>
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+                <div>
+                  <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: '#334155', marginBottom: 4 }}>
+                    DEWA Premise / Meter No.
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="e.g. 21049281"
+                    value={unitForm.dhewa_no}
+                    onChange={e => setUnitForm({ ...unitForm, dhewa_no: e.target.value })}
+                    style={{ width: '100%', padding: '9px 12px', borderRadius: 8, border: '1px solid #CBD5E1', fontSize: 13, color: '#0F172A', outline: 'none', boxSizing: 'border-box' }}
+                  />
+                </div>
+                <div>
+                  <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: '#334155', marginBottom: 4 }}>
+                    Category
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="e.g. Standard, Luxury"
+                    value={unitForm.category}
+                    onChange={e => setUnitForm({ ...unitForm, category: e.target.value })}
+                    style={{ width: '100%', padding: '9px 12px', borderRadius: 8, border: '1px solid #CBD5E1', fontSize: 13, color: '#0F172A', outline: 'none', boxSizing: 'border-box' }}
+                  />
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, paddingTop: 4 }}>
+                <input
+                  type="checkbox"
+                  id="unitFurnished"
+                  checked={unitForm.furnished}
+                  onChange={e => setUnitForm({ ...unitForm, furnished: e.target.checked })}
+                  style={{ width: 16, height: 16, accentColor: '#0E5E48', cursor: 'pointer' }}
+                />
+                <label htmlFor="unitFurnished" style={{ fontSize: 13, fontWeight: 600, color: '#334155', cursor: 'pointer' }}>
+                  Fully Furnished unit
+                </label>
+              </div>
+
+              <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 10 }}>
+                <button
+                  type="button"
+                  onClick={() => setShowAddUnitModal(false)}
+                  style={{ borderRadius: 8, fontWeight: 700, fontSize: 13, padding: '9px 16px', backgroundColor: '#f1f5f9', color: '#64748B', border: '1px solid #E2E8F0', cursor: 'pointer' }}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={addUnitBusy}
+                  style={{
+                    borderRadius: 8,
+                    fontWeight: 700,
+                    fontSize: 13,
+                    padding: '9px 20px',
+                    backgroundColor: '#0E5E48',
+                    color: '#FFFFFF',
+                    border: 'none',
+                    cursor: addUnitBusy ? 'not-allowed' : 'pointer',
+                    opacity: addUnitBusy ? 0.7 : 1,
+                  }}
+                >
+                  {addUnitBusy ? 'Adding...' : 'Save Unit'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

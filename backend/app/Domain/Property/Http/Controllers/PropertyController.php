@@ -109,4 +109,52 @@ class PropertyController extends Controller
             ],
         ]);
     }
+
+    public function storeForOwner(Request $request): JsonResponse
+    {
+        $ownerId = app(\App\Domain\Auth\Services\OwnerContextResolver::class)->ownerId($request->user());
+
+        $validated = $request->validate([
+            'name'        => 'required|string|max:255',
+            'address'     => 'required|string|max:255',
+            'city'        => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'type'        => 'nullable|in:residential,commercial,mixed',
+        ]);
+
+        $validated['owner_id'] = $ownerId;
+
+        $property = $this->propertyService->createProperty($validated);
+
+        return response()->json([
+            'status'  => 'success',
+            'message' => 'Property created successfully',
+            'data'    => ['property' => $property],
+        ], 201);
+    }
+
+    public function updateForOwner(Request $request, Property $property): JsonResponse
+    {
+        $ownerId = app(\App\Domain\Auth\Services\OwnerContextResolver::class)->ownerId($request->user());
+
+        if ((int) $property->owner_id !== $ownerId) {
+            abort(403, 'Unauthorized to update this property.');
+        }
+
+        $validated = $request->validate([
+            'name'        => 'sometimes|required|string|max:255',
+            'address'     => 'sometimes|required|string|max:255',
+            'city'        => 'sometimes|required|string|max:255',
+            'description' => 'nullable|string',
+            'type'        => 'nullable|in:residential,commercial,mixed',
+        ]);
+
+        $property = $this->propertyService->updateProperty($property, $validated);
+
+        return response()->json([
+            'status'  => 'success',
+            'message' => 'Property updated successfully',
+            'data'    => ['property' => $property],
+        ]);
+    }
 }

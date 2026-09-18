@@ -99,4 +99,65 @@ class UnitController extends Controller
             'message' => 'Unit deleted successfully',
         ]);
     }
+
+    public function storeForOwner(Request $request): JsonResponse
+    {
+        $ownerId = app(\App\Domain\Auth\Services\OwnerContextResolver::class)->ownerId($request->user());
+
+        $validated = $request->validate([
+            'property_id' => 'required|exists:properties,id',
+            'number'      => 'required|string|max:50',
+            'dhewa_no'    => 'nullable|string|max:100',
+            'category'    => 'nullable|string|max:100',
+            'floor'       => 'required|integer',
+            'type'        => 'required|string|max:50',
+            'size'        => 'required|numeric|min:0',
+            'furnished'   => 'nullable|boolean',
+            'price'       => 'required|numeric|min:0',
+            'status'      => 'nullable|in:AVAILABLE,BOOKED,OCCUPIED,SOLD',
+        ]);
+
+        $property = \App\Domain\Property\Models\Property::findOrFail($validated['property_id']);
+        if ((int) $property->owner_id !== $ownerId) {
+            abort(403, 'You do not own this property.');
+        }
+
+        $validated['owner_id'] = $ownerId;
+        $unit = $this->propertyService->createUnit($validated);
+
+        return response()->json([
+            'status'  => 'success',
+            'message' => 'Unit created successfully',
+            'data'    => ['unit' => $unit],
+        ], 201);
+    }
+
+    public function updateForOwner(Request $request, Unit $unit): JsonResponse
+    {
+        $ownerId = app(\App\Domain\Auth\Services\OwnerContextResolver::class)->ownerId($request->user());
+
+        if ((int) $unit->owner_id !== $ownerId) {
+            abort(403, 'You do not own this unit.');
+        }
+
+        $validated = $request->validate([
+            'number'    => 'sometimes|required|string|max:50',
+            'dhewa_no'  => 'nullable|string|max:100',
+            'category'  => 'nullable|string|max:100',
+            'floor'     => 'sometimes|required|integer',
+            'type'      => 'sometimes|required|string|max:50',
+            'size'      => 'nullable|numeric|min:0',
+            'furnished' => 'nullable|boolean',
+            'price'     => 'sometimes|required|numeric|min:0',
+            'status'    => 'nullable|in:AVAILABLE,BOOKED,OCCUPIED,SOLD',
+        ]);
+
+        $unit->update($validated);
+
+        return response()->json([
+            'status'  => 'success',
+            'message' => 'Unit updated successfully',
+            'data'    => ['unit' => $unit],
+        ]);
+    }
 }
