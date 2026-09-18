@@ -17,7 +17,7 @@ class UnitController extends Controller
 
     public function index(Request $request): JsonResponse
     {
-        $query = Unit::with(['property:id,name', 'owner:id,name']);
+        $query = Unit::with(['property:id,name,owner_id', 'owner:id,name']);
 
         $user = $request->user();
         if ($user && in_array($user->role, ['owner', 'cashier', 'accountant'], true)) {

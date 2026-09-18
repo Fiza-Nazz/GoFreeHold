@@ -15,7 +15,7 @@ class ContractChequeController extends Controller
 {
     public function index(Request $request, ?Contract $contract = null): JsonResponse
     {
-        $query = ContractCheque::with('contract:id,unit_id')->latest();
+        $query = ContractCheque::with('contract:id,unit_id,owner_id')->latest();
 
         $user = $request->user();
         if ($user && in_array($user->role, ['owner', 'cashier', 'accountant'], true)) {

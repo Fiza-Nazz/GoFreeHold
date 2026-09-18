@@ -13,7 +13,7 @@ class PaymentController extends Controller
     public function index(Request $request): JsonResponse
     {
         $query = Payment::with([
-            'contract:id,unit_id',
+            'contract:id,unit_id,owner_id',
             'tenant:id,name',
             'recordedBy:id,name',
         ]);

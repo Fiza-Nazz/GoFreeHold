@@ -17,7 +17,7 @@ class RentTransactionController extends Controller
     public function index(Request $request): JsonResponse
     {
         $query = RentTransaction::with([
-            'contract:id,unit_id,tenant_id,rent_amount',
+            'contract:id,unit_id,tenant_id,rent_amount,owner_id',
             'contract.unit:id,number,property_id',
             'contract.unit.property:id,name',
             'contract.tenant:id,name',
