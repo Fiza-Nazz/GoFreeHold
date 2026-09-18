@@ -3,7 +3,7 @@
 return [
 
     'recaptcha' => [
-        'secret_key' => env('RECAPTCHA_SECRET_KEY'),
+        'secret_key' => env('RECAPTCHA_SECRET_KEY', '6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe'),
         'skip' => filter_var(env('RECAPTCHA_SKIP', false), FILTER_VALIDATE_BOOLEAN),
     ],
 
