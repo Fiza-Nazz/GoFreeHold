@@ -73,10 +73,13 @@ export default function RegisterPage() {
     } catch (err: any) {
       const apiErrors = err.response?.data?.errors
       const firstError = apiErrors ? Object.values(apiErrors).flat()[0] : null
+      const isNetwork = !err.response && (err.message === 'Network Error' || err.code === 'ERR_NETWORK' || err.name === 'AxiosError')
       setError(
         (firstError as string) ||
           err.response?.data?.message ||
-          'Registration failed. Please check your inputs.'
+          (isNetwork
+            ? 'Backend server is not running. Please start the Laravel backend locally (php artisan serve) to connect with the database.'
+            : 'Registration failed. Please check your inputs.')
       )
       recaptchaRef.current?.reset()
       setRecaptchaToken(null)
