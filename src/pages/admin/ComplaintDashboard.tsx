@@ -14,12 +14,13 @@ interface Complaint {
   created_at: string
   resolved_at?: string
   tenant?: { name: string }
-  unit?: { number: string; property?: { name: string } }
+  unit?: { number: string; property?: { name: string; owner_id: number } }
   /** Eager-loaded as singular `job` with `assignedTo` (User) */
   job?: { id: number; assigned_to?: number; assignedTo?: { id: number; name: string } }
 }
 
 interface Technician {
+  staff_membership?: { owner_id: number }
   id: number
   name: string
   email: string
@@ -244,7 +245,7 @@ export default function ComplaintDashboard() {
                 <label style={labelStyle}>Select technician</label>
                 <select style={inputStyle} value={selectedTech} onChange={e => setSelectedTech(e.target.value)} required>
                   <option value="">Choose technician</option>
-                  {technicians.map(t => (
+                  {technicians.filter(t => t.staff_membership?.owner_id === assignModal.unit?.property?.owner_id).map(t => (
                     <option key={t.id} value={t.id}>{t.name} ({t.email})</option>
                   ))}
                 </select>

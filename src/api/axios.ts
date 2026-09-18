@@ -1,4 +1,4 @@
-import axios from 'axios'
+import axios, { CanceledError } from 'axios'
 
 /**
  * Centralized Axios instance for GoFreeHold API.
@@ -17,6 +17,10 @@ const apiClient = axios.create({
 // Attach Bearer token from storage on every request
 apiClient.interceptors.request.use(
   (config) => {
+    if (config.data instanceof FormData) {
+      // The browser supplies the multipart boundary; JSON would discard file bytes.
+      config.headers.delete('Content-Type')
+    }
     const token =
       localStorage.getItem('gfh_token') || sessionStorage.getItem('gfh_token')
     if (token) {
@@ -30,9 +34,16 @@ apiClient.interceptors.request.use(
 // ─── Response Interceptor ──────────────────────────────────────────────────────
 // Handle 401 globally → clear token and redirect to login
 apiClient.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    const sent = response.config.headers.Authorization
+    const current = localStorage.getItem('gfh_token') || sessionStorage.getItem('gfh_token')
+    if (sent && sent !== `Bearer ${current}`) throw new CanceledError('Session changed')
+    return response
+  },
   (error) => {
-    if (error.response?.status === 401) {
+    if (error.response?.status === 401 || error.response?.data?.code === 'ACCOUNT_ACCESS_DENIED') {
+      localStorage.removeItem('gfh-auth')
+      sessionStorage.removeItem('gfh-auth')
       localStorage.removeItem('gfh_token')
       sessionStorage.removeItem('gfh_token')
       localStorage.removeItem('gfh_user')

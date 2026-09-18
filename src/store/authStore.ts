@@ -53,6 +53,9 @@ export const useAuthStore = create<AuthStore>()(
 
       // ── Login ──────────────────────────────────────────────────────────────
       login: async (email, password, rememberMe) => {
+        for (const storage of [localStorage, sessionStorage]) {
+          storage.removeItem('gfh_token'); storage.removeItem('gfh_user'); storage.removeItem('gfh-auth')
+        }
         set({ isLoading: true, error: null })
         try {
           const { data } = await apiClient.post('/auth/login', {
@@ -147,6 +150,7 @@ export const useAuthStore = create<AuthStore>()(
         if (!token) return
         try {
           const { data } = await apiClient.get('/user')
+          if (token !== (localStorage.getItem('gfh_token') || sessionStorage.getItem('gfh_token'))) return
           const user = data.data?.user || data.data || data.user
           if (user) {
             set({ user, token, isAuthenticated: true })
@@ -210,6 +214,8 @@ export const getRoleDashboardPath = (role: UserRole): string => {
     maintenance: '/maintenance/dashboard',
     owner: '/owner/dashboard',
     tenant: '/tenant/dashboard',
+    cashier: '/cashier/dashboard',
+    accountant: '/accountant/dashboard',
   }
   return paths[role] || '/login'
 }

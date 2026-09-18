@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useMemo } from 'react'
 import api from '../../api/axios'
-import { THEME, Icon, portalPageCss } from '../../components/gfh/adminTheme'
+import { THEME, Icon, ICONS, portalPageCss } from '../../components/gfh/adminTheme'
 
 interface Property {
   id: number
@@ -19,8 +19,21 @@ interface Owner {
   email: string
 }
 
+interface Unit {
+  id: number
+  property_id: number
+  number: string
+  category?: string | null
+  type?: string | null
+  floor?: number | null
+  size?: number | string | null
+  price?: number | string | null
+  status: 'AVAILABLE' | 'BOOKED' | 'OCCUPIED' | 'SOLD'
+}
+
 const icons = {
   plus: 'M12 5v14M5 12h14',
+  edit: 'M12 20h9M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4Z',
   trash: 'M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0-1 14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2L4 6h16z',
   close: 'M18 6 6 18M6 6l12 12',
   check: 'M20 6 9 17l-5-5',
@@ -52,12 +65,18 @@ const labelStyle: React.CSSProperties = {
 export default function BuildingManagement() {
   const [properties, setProperties] = useState<Property[]>([])
   const [owners, setOwners] = useState<Owner[]>([])
+  const [unitCounts, setUnitCounts] = useState<Record<number, number>>({})
   const [isLoading, setIsLoading] = useState(true)
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [editingProperty, setEditingProperty] = useState<Property | null>(null)
   const [formData, setFormData] = useState({ owner_id: '', name: '', address: '', city: '', type: 'residential' })
   const [statusMsg, setStatusMsg] = useState('')
   const [searchTerm, setSearchTerm] = useState('')
   const [typeFilter, setTypeFilter] = useState('')
+  const [selectedProperty, setSelectedProperty] = useState<Property | null>(null)
+  const [propertyUnits, setPropertyUnits] = useState<Unit[]>([])
+  const [isUnitsLoading, setIsUnitsLoading] = useState(false)
+  const [unitsError, setUnitsError] = useState('')
 
   useEffect(() => {
     fetchData()
@@ -66,12 +85,18 @@ export default function BuildingManagement() {
   const fetchData = async () => {
     setIsLoading(true)
     try {
-      const [bRes, oRes] = await Promise.all([
+      const [bRes, oRes, uRes] = await Promise.all([
         api.get('/admin/properties'),
-        api.get('/admin/properties/owners')
+        api.get('/admin/properties/owners'),
+        api.get('/admin/units')
       ])
       setProperties(bRes.data?.data?.properties || [])
       setOwners(oRes.data?.data?.owners || [])
+      const counts = (uRes.data?.data?.units || []).reduce((result: Record<number, number>, unit: Unit) => {
+        result[unit.property_id] = (result[unit.property_id] || 0) + 1
+        return result
+      }, {})
+      setUnitCounts(counts)
     } catch (err) {
       console.error(err)
     } finally {
@@ -79,16 +104,38 @@ export default function BuildingManagement() {
     }
   }
 
-  const handleCreate = async (e: React.FormEvent) => {
+  const openEdit = (property: Property) => {
+    setEditingProperty(property)
+    setFormData({
+      owner_id: String(property.owner_id),
+      name: property.name,
+      address: property.address,
+      city: property.city,
+      type: property.type || 'residential',
+    })
+    setIsModalOpen(true)
+  }
+
+  const closeModal = () => {
+    setIsModalOpen(false)
+    setEditingProperty(null)
+    setFormData({ owner_id: '', name: '', address: '', city: '', type: 'residential' })
+  }
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     try {
-      await api.post('/admin/properties', formData)
-      setStatusMsg('Property created successfully!')
-      setIsModalOpen(false)
-      fetchData()
-      setFormData({ owner_id: '', name: '', address: '', city: '', type: 'residential' })
+      if (editingProperty) {
+        await api.put(`/admin/properties/${editingProperty.id}`, formData)
+        setStatusMsg('Property updated successfully!')
+      } else {
+        await api.post('/admin/properties', formData)
+        setStatusMsg('Property created successfully!')
+      }
+      closeModal()
+      await fetchData()
     } catch (err: any) {
-      alert(err.response?.data?.message || err.message || 'Error creating property')
+      alert(err.response?.data?.message || err.message || `Error ${editingProperty ? 'updating' : 'creating'} property`)
     }
   }
 
@@ -100,6 +147,51 @@ export default function BuildingManagement() {
       } catch (err) {
         alert('Cannot delete property with active units')
       }
+    }
+  }
+
+  const openProperty = (property: Property) => {
+    setSelectedProperty(property)
+    setIsUnitsLoading(true)
+    setPropertyUnits([])
+    setUnitsError('')
+  }
+
+  useEffect(() => {
+    if (!selectedProperty) return
+    const controller = new AbortController()
+    api.get(`/admin/units?property_id=${selectedProperty.id}`, { signal: controller.signal })
+      .then(response => setPropertyUnits(response.data?.data?.units || []))
+      .catch(err => {
+        if (!controller.signal.aborted) setUnitsError(err.response?.data?.message || 'Unable to load property units. Please go back and try again.')
+      })
+      .finally(() => {
+        if (!controller.signal.aborted) setIsUnitsLoading(false)
+      })
+    return () => controller.abort()
+  }, [selectedProperty])
+
+  const isCommercialUnit = (unit: Unit) => {
+    // A single-use property's saved classification controls its units section.
+    // Mixed properties retain the individual unit classifications.
+    const propertyType = selectedProperty?.type?.trim().toLowerCase()
+    if (propertyType === 'commercial') return true
+    if (propertyType === 'residential') return false
+
+    const descriptor = `${unit.category || ''} ${unit.type || ''}`.toLowerCase()
+    return ['commercial', 'shop', 'office', 'retail'].some(value => descriptor.includes(value))
+  }
+
+  const residentialUnits = propertyUnits.filter(unit => !isCommercialUnit(unit))
+  const commercialUnits = propertyUnits.filter(isCommercialUnit)
+
+  const unitStatusStyle = (status: Unit['status']) => {
+    switch (status) {
+      case 'AVAILABLE': return { background: '#F0FCF7', border: '#CFF2E4', badge: '#07875D' }
+      case 'OCCUPIED': return { background: '#EDF7FF', border: '#CDEAFE', badge: '#0284C7' }
+      case 'BOOKED': return { background: '#FFFBEB', border: '#FDE7AA', badge: '#B45309' }
+      case 'SOLD': return { background: '#FFF1F2', border: '#FECDD3', badge: '#BE123C' }
+      default: return { background: '#F8FAFC', border: '#E2E8F0', badge: '#475569' }
     }
   }
 
@@ -120,6 +212,124 @@ export default function BuildingManagement() {
       return true
     })
   }, [properties, searchTerm, typeFilter])
+
+  const renderUnitSection = (title: string, units: Unit[]) => (
+    <section className="gfh-property-unit-section" aria-labelledby={`${title.toLowerCase()}-units-heading`}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
+        <h3 id={`${title.toLowerCase()}-units-heading`} style={{ margin: 0, color: THEME.ink, fontSize: 16, fontWeight: 800 }}>
+          {title}
+        </h3>
+        <span style={{ background: '#ECFDF5', color: '#065F46', borderRadius: 999, padding: '3px 9px', fontSize: 11, fontWeight: 800 }}>
+          {units.length}
+        </span>
+      </div>
+      {units.length === 0 ? (
+        <div style={{ border: '1px dashed #CBDDEB', borderRadius: 8, padding: '20px 16px', color: '#64748B', fontSize: 13, fontWeight: 500, textAlign: 'center' }}>
+          No {title.toLowerCase()} units in this property.
+        </div>
+      ) : (
+        <div className="gfh-property-unit-grid">
+          {units.map(unit => {
+            const statusStyle = unitStatusStyle(unit.status)
+            return (
+              <article key={unit.id} className="gfh-property-unit-card" style={{ background: statusStyle.background, borderColor: statusStyle.border }}>
+                <div className="gfh-property-unit-card-heading">
+                  <strong>Unit {unit.number}</strong>
+                  <span className="gfh-property-unit-status" style={{ background: statusStyle.badge }}>
+                    {unit.status}
+                  </span>
+                </div>
+                <div className="gfh-property-unit-card-footer">
+                  <span className="gfh-property-unit-rented">
+                    <span aria-hidden="true" style={{ display: 'inline-flex', color: unit.status === 'OCCUPIED' ? '#16A34A' : '#94A3B8' }}>
+                      <Icon path={unit.status === 'OCCUPIED' ? 'M22 11.08V12a10 10 0 1 1-5.93-9.14M22 4 12 14.01l-3-3' : 'M12 8v4m0 4h.01M22 12a10 10 0 1 1-20 0 10 10 0 0 1 20 0'} size={13} />
+                    </span>
+                    {unit.status === 'OCCUPIED' ? 'Rented' : 'Not Rented'}
+                  </span>
+                  <span className="gfh-property-unit-rent">
+                    Rent: {unit.price !== null && unit.price !== undefined && unit.price !== '' && Number.isFinite(Number(unit.price)) ? `AED ${Number(unit.price).toLocaleString('en-AE')}` : '—'}
+                  </span>
+                </div>
+              </article>
+            )
+          })}
+        </div>
+      )}
+    </section>
+  )
+
+  if (selectedProperty) {
+    return (
+      <div className="gfh-portal-page gfh-property-detail" style={{ fontFamily: "'Poppins', system-ui, sans-serif" }}>
+        <style>{portalPageCss}</style>
+        <style>{`
+          .gfh-property-detail { padding: 0; }
+          .gfh-property-detail-panel { background: #FFFFFF; border-radius: 16px; border: 1px solid #E2E8F0; padding: 22px; box-shadow: 0 2px 5px rgba(15,23,42,0.04); }
+          .gfh-property-unit-section { margin-top: 26px; }
+          .gfh-property-unit-section + .gfh-property-unit-section { margin-top: 32px; }
+          .gfh-property-unit-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(min(100%, 210px), 1fr));
+            gap: 12px;
+          }
+          .gfh-property-unit-card {
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+            min-height: 106px;
+            color: #0F172A;
+            border: 1px solid;
+            border-radius: 8px;
+            padding: 13px 14px;
+            box-shadow: 0 2px 4px rgba(15, 23, 42, 0.04);
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+          }
+          .gfh-property-unit-card:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 10px rgba(15, 23, 42, 0.08);
+          }
+          .gfh-property-unit-card-heading { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+          .gfh-property-unit-card-heading strong { min-width: 0; flex: 1 1 90px; font-size: 14px; line-height: 1.4; overflow-wrap: anywhere; }
+          .gfh-property-unit-status { flex: 0 0 auto; color: #FFFFFF; border-radius: 6px; padding: 3px 7px; font-size: 9px; font-weight: 800; line-height: 1.5; }
+          .gfh-property-unit-card-footer { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; border-top: 1px solid #DCE8EC; margin-top: auto; padding-top: 16px; font-size: 10.5px; }
+          .gfh-property-unit-rented { display: inline-flex; align-items: center; gap: 5px; white-space: nowrap; }
+          .gfh-property-unit-rent { overflow-wrap: anywhere; }
+          @media (max-width: 600px) {
+            .gfh-property-detail-panel { padding: 18px 14px; }
+          }
+        `}</style>
+        <div className="gfh-property-detail-panel">
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 16, flexWrap: 'wrap', paddingBottom: 18, borderBottom: '2px solid #0F8A67' }}>
+            <div style={{ minWidth: 0, overflowWrap: 'anywhere' }}>
+              <span style={{ display: 'block', color: '#0F8A67', fontSize: 11, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.7px' }}>
+                Selected Property
+              </span>
+              <h2 style={{ margin: '3px 0 4px', color: '#0F172A', fontSize: 22, fontWeight: 800 }}>{selectedProperty.name}</h2>
+              <p style={{ margin: 0, color: '#64748B', fontSize: 13 }}>{selectedProperty.address} · {selectedProperty.city}</p>
+            </div>
+            <button
+              type="button"
+              onClick={() => { setSelectedProperty(null); setPropertyUnits([]); setStatusMsg('') }}
+              style={{ display: 'inline-flex', alignItems: 'center', gap: 7, padding: '8px 14px', color: '#0F8A67', background: '#ECFDF5', border: '1px solid #A7F3D0', fontWeight: 800, cursor: 'pointer' }}
+            >
+              ← Back to Properties
+            </button>
+          </div>
+
+          {isUnitsLoading ? (
+            <div style={{ textAlign: 'center', padding: 50 }}><span className="spinner" /></div>
+          ) : unitsError ? (
+            <p role="alert" style={{ marginTop: 24, color: '#991B1B' }}>{unitsError}</p>
+          ) : (
+            <>
+              {renderUnitSection('Residential', residentialUnits)}
+              {renderUnitSection('Commercial', commercialUnits)}
+            </>
+          )}
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="gfh-portal-page" style={{ fontFamily: "'Poppins', system-ui, sans-serif", padding: '20px 24px' }}>
@@ -194,6 +404,111 @@ export default function BuildingManagement() {
         .gfh-cancel-btn:hover {
           background: #E2E8F0 !important;
         }
+        .gfh-property-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fill, minmax(235px, 1fr));
+          gap: 14px;
+        }
+        .gfh-property-card {
+          overflow: hidden;
+          background: #FFFFFF;
+          border: 1px solid #DDE7E3;
+          border-radius: 11px;
+          box-shadow: 0 3px 10px rgba(6, 56, 44, 0.08);
+          transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+        }
+        .gfh-property-card:hover {
+          transform: translateY(-2px);
+          border-color: #7DD3B7;
+          box-shadow: 0 8px 18px rgba(6, 56, 44, 0.13);
+        }
+        .gfh-property-open {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          width: 100%;
+          padding: 15px;
+          text-align: left;
+          background: #FFFFFF;
+          border: 0;
+          border-radius: 0 !important;
+          cursor: pointer;
+        }
+        .gfh-property-open:hover { background: #F0FDF8; }
+        .gfh-property-icon {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          width: 43px;
+          height: 43px;
+          flex: 0 0 43px;
+          border-radius: 8px;
+          color: #FFFFFF;
+          background: #0F8A67;
+        }
+        .gfh-property-name {
+          display: block;
+          overflow: hidden;
+          color: #06382C;
+          font-size: 13px;
+          font-weight: 800;
+          line-height: 1.25;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+        .gfh-property-city, .gfh-property-address {
+          display: block;
+          overflow: hidden;
+          color: #64748B;
+          font-size: 10.5px;
+          font-weight: 500;
+          line-height: 1.4;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+        .gfh-property-count {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          min-width: 25px;
+          height: 25px;
+          padding: 0 6px;
+          border-radius: 999px;
+          color: #065F46;
+          background: #D1FAE5;
+          font-size: 11px;
+          font-weight: 800;
+        }
+        .gfh-property-actions {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 8px;
+          padding: 8px 11px;
+          color: #64748B;
+          background: #F8FAFC;
+          border-top: 1px solid #EEF2F0;
+          font-size: 9.5px;
+          font-weight: 600;
+          text-transform: capitalize;
+        }
+        .gfh-property-actions > div { display: flex; gap: 5px; }
+        .gfh-property-action-edit, .gfh-property-action-delete {
+          display: inline-flex;
+          align-items: center;
+          gap: 4px;
+          padding: 5px 7px;
+          border: 0;
+          color: #FFFFFF;
+          font-size: 9px;
+          font-weight: 700;
+          cursor: pointer;
+        }
+        .gfh-property-action-edit { background: #0F8A67; }
+        .gfh-property-action-delete { background: #DC2626; }
+        @media (max-width: 640px) {
+          .gfh-property-grid { grid-template-columns: 1fr; }
+        }
       `}</style>
 
       {/* Main Single Card Container matching media_1788523948275.png & media_1788526951091.png */}
@@ -204,7 +519,7 @@ export default function BuildingManagement() {
         padding: '24px 28px',
         boxShadow: '0 1px 3px rgba(0, 0, 0, 0.03)',
       }}>
-        {/* Top Header Row with Title, Search, Filter, and Add Property Button */}
+        {/* Property search and type filter */}
         <div style={{
           display: 'flex',
           justifyContent: 'space-between',
@@ -274,41 +589,6 @@ export default function BuildingManagement() {
               <option value="mixed">Mixed</option>
             </select>
 
-            {/* + Add Property Button (Matching media_1788526951091.png) */}
-            <button
-              onClick={() => setIsModalOpen(true)}
-              className="gfh-add-prop-btn"
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: 6,
-                background: '#0F8A67',
-                color: '#FFFFFF',
-                border: 'none',
-                borderRadius: 10,
-                padding: '9px 18px',
-                fontSize: 13.5,
-                fontWeight: 700,
-                cursor: 'pointer',
-                boxShadow: '0 1px 3px rgba(15, 138, 103, 0.25)',
-                transition: 'background 0.15s ease, transform 0.15s ease',
-                fontFamily: "'Poppins', sans-serif",
-              }}
-              onMouseEnter={e => {
-                e.currentTarget.style.background = '#0B6E52'
-                e.currentTarget.style.transform = 'translateY(-1px)'
-              }}
-              onMouseLeave={e => {
-                e.currentTarget.style.background = '#0F8A67'
-                e.currentTarget.style.transform = 'translateY(0)'
-              }}
-            >
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <line x1="12" y1="5" x2="12" y2="19" />
-                <line x1="5" y1="12" x2="19" y2="12" />
-              </svg>
-              <span>Add Property</span>
-            </button>
           </div>
         </div>
 
@@ -330,97 +610,41 @@ export default function BuildingManagement() {
             {properties.length === 0 ? 'No properties found.' : 'No properties match your filter.'}
           </p>
         ) : (
-          <div style={{ overflowX: 'auto' }}>
-            <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
-              <thead>
-                <tr style={{ borderBottom: '1px solid #E2E8F0' }}>
-                  <th style={{ padding: '12px 14px', fontSize: 12, fontWeight: 700, color: '#64748B' }}>Property Name</th>
-                  <th style={{ padding: '12px 14px', fontSize: 12, fontWeight: 700, color: '#64748B' }}>Owner</th>
-                  <th style={{ padding: '12px 14px', fontSize: 12, fontWeight: 700, color: '#64748B' }}>City</th>
-                  <th style={{ padding: '12px 14px', fontSize: 12, fontWeight: 700, color: '#64748B' }}>Type</th>
-                  <th style={{ padding: '12px 14px', fontSize: 12, fontWeight: 700, color: '#64748B' }}>Total Units</th>
-                  <th style={{ padding: '12px 14px', fontSize: 12, fontWeight: 700, color: '#64748B', textAlign: 'right' }}>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredProperties.map((property) => (
-                  <tr key={property.id} className="gfh-portal-row" style={{ borderBottom: '1px solid #F1F5F9' }}>
-                    <td style={{ padding: '14px' }}>
-                      <span style={{ fontWeight: 700, color: '#0F172A', fontSize: 14 }}>{property.name}</span>
-                      <span style={{ display: 'block', fontSize: 12, color: '#64748B', marginTop: 2 }}>{property.address}</span>
-                    </td>
-                    <td style={{ padding: '14px', color: '#334155', fontWeight: 600, fontSize: 13.5 }}>
-                      {property.owner?.name || '—'}
-                    </td>
-                    <td style={{ padding: '14px', color: '#334155', fontWeight: 500, fontSize: 13.5 }}>
-                      {property.city || '—'}
-                    </td>
-                    <td style={{ padding: '14px' }}>
-                      <span style={{
-                        display: 'inline-block',
-                        padding: '4px 10px',
-                        borderRadius: 6,
-                        fontSize: 11.5,
-                        fontWeight: 700,
-                        textTransform: 'uppercase',
-                        background: property.type === 'commercial' ? '#EFF6FF' : property.type === 'mixed' ? '#FAF5FF' : '#F0FDF4',
-                        color: property.type === 'commercial' ? '#1D4ED8' : property.type === 'mixed' ? '#7E22CE' : '#15803D',
-                      }}>
-                        {property.type || 'Residential'}
-                      </span>
-                    </td>
-                    <td style={{ padding: '14px' }}>
-                      <span style={{
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        minWidth: 28,
-                        height: 24,
-                        padding: '0 8px',
-                        background: '#ECFDF5',
-                        color: '#065F46',
-                        borderRadius: 999,
-                        fontSize: 12.5,
-                        fontWeight: 800,
-                      }}>
-                        {property.total_units || 0}
-                      </span>
-                    </td>
-                    <td style={{ padding: '14px', textAlign: 'right' }}>
-                      <button
-                        onClick={() => handleDelete(property.id)}
-                        className="gfh-del-btn"
-                        style={{
-                          display: 'inline-flex',
-                          alignItems: 'center',
-                          gap: 6,
-                          padding: '7px 14px',
-                          background: '#EF4444',
-                          border: 'none',
-                          color: '#ffffff',
-                          borderRadius: 8,
-                          fontWeight: 700,
-                          fontSize: 12,
-                          cursor: 'pointer',
-                          boxShadow: '0 1px 2px rgba(239, 68, 68, 0.2)',
-                          transition: 'background 0.15s ease',
-                        }}
-                        onMouseEnter={e => (e.currentTarget.style.background = '#DC2626')}
-                        onMouseLeave={e => (e.currentTarget.style.background = '#EF4444')}
-                      >
-                        <Icon path={icons.trash} size={13} />
-                        <span>Delete</span>
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          <div className="gfh-property-grid">
+            {filteredProperties.map(property => (
+              <article key={property.id} className="gfh-property-card">
+                <button
+                  type="button"
+                  className="gfh-property-open"
+                  onClick={() => openProperty(property)}
+                  aria-label={`Open ${property.name} units`}
+                >
+                  <span className="gfh-property-icon"><Icon path={ICONS.building} size={22} /></span>
+                  <span style={{ minWidth: 0, flex: 1 }}>
+                    <strong className="gfh-property-name">{property.name}</strong>
+                    <span className="gfh-property-city">{property.city || 'City not set'}</span>
+                    <span className="gfh-property-address">{property.address}</span>
+                  </span>
+                  <span className="gfh-property-count">{unitCounts[property.id] || 0}</span>
+                </button>
+                <div className="gfh-property-actions">
+                  <span>{property.type || 'residential'} · {property.owner?.name || 'No owner'}</span>
+                  <div>
+                    <button type="button" onClick={() => openEdit(property)} aria-label={`Edit ${property.name}`} className="gfh-property-action-edit">
+                      <Icon path={icons.edit} size={12} /> Edit
+                    </button>
+                    <button type="button" onClick={() => handleDelete(property.id)} aria-label={`Delete ${property.name}`} className="gfh-property-action-delete">
+                      <Icon path={icons.trash} size={12} /> Delete
+                    </button>
+                  </div>
+                </div>
+              </article>
+            ))}
           </div>
         )}
       </div>
 
-      {/* Add Property Modal */}
+      {/* Edit Property Modal */}
       {isModalOpen && (
         <div style={{
           position: 'fixed', inset: 0, background: 'rgba(15, 23, 42, 0.6)', backdropFilter: 'blur(3px)',
@@ -434,9 +658,9 @@ export default function BuildingManagement() {
             animation: 'gfhModalPop 0.25s cubic-bezier(.2,.8,.2,1)',
           }}>
             <h2 style={{ fontSize: 18, fontWeight: 800, color: '#0F172A', margin: '0 0 20px 0' }}>
-              Add New Property
+              {editingProperty ? 'Edit Property' : 'Add New Property'}
             </h2>
-            <form onSubmit={handleCreate} style={{ display: 'flex', flexDirection: 'column', gap: 15 }}>
+            <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 15 }}>
               <div>
                 <label style={labelStyle}>Owner</label>
                 <select style={inputStyle} value={formData.owner_id} onChange={e => setFormData({...formData, owner_id: e.target.value})} required>
@@ -469,7 +693,7 @@ export default function BuildingManagement() {
               <div style={{ display: 'flex', gap: 10, marginTop: 12, justifyContent: 'flex-end' }}>
                 <button
                   type="button"
-                  onClick={() => setIsModalOpen(false)}
+                  onClick={closeModal}
                   className="gfh-cancel-btn"
                   style={{
                     display: 'inline-flex',
@@ -513,7 +737,7 @@ export default function BuildingManagement() {
                   onMouseLeave={e => (e.currentTarget.style.background = '#0F8A67')}
                 >
                   <Icon path={icons.check} size={15} />
-                  <span>Save Property</span>
+                  <span>{editingProperty ? 'Update Property' : 'Save Property'}</span>
                 </button>
               </div>
             </form>

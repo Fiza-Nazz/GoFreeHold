@@ -1,9 +1,13 @@
-﻿import { Link } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { useAuthStore, getRoleDashboardPath } from '../store/authStore'
-import { CornerBrackets, THEME } from '../components/gfh/adminTheme'
 
 export default function Unauthorized() {
   const { user, logout } = useAuthStore()
+
+  const roleName = user?.role ? user.role.toUpperCase() : 'USER'
+  const initials = user?.name
+    ? user.name.split(' ').map((n: string) => n[0]).join('').slice(0, 2).toUpperCase()
+    : 'GF'
 
   return (
     <div
@@ -12,7 +16,7 @@ export default function Unauthorized() {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        background: '#F8F7FD',
+        background: 'radial-gradient(ellipse at top, #ECFDF8 0%, #F8FAFC 70%)',
         fontFamily: "'Poppins', system-ui, sans-serif",
         padding: 24,
       }}
@@ -20,112 +24,221 @@ export default function Unauthorized() {
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap');
 
-        .gfh-unauth-btn {
-          transition: transform 0.2s ease, box-shadow 0.2s ease;
-          border-radius: 0;
-          font-family: 'Poppins', sans-serif;
+        .gfh-unauth-card {
+          animation: gfhSlideUp 0.35s cubic-bezier(0.16, 1, 0.3, 1);
         }
-        .gfh-unauth-btn:hover { transform: translateY(-2px); }
-        .gfh-unauth-btn:active { transform: translateY(0); }
+        @keyframes gfhSlideUp {
+          from { opacity: 0; transform: translateY(12px) scale(0.98); }
+          to { opacity: 1; transform: translateY(0) scale(1); }
+        }
 
-        .gfh-unauth-btn-solid {
-          box-shadow: 0 4px 14px rgba(36, 0, 70, 0.25);
+        .gfh-btn-hover {
+          transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+          cursor: pointer;
         }
-        .gfh-unauth-btn-solid:hover {
-          box-shadow: 0 8px 20px rgba(36, 0, 70, 0.35);
+        .gfh-btn-hover:hover {
+          transform: translateY(-2px);
+        }
+        .gfh-btn-hover:active {
+          transform: translateY(0);
         }
       `}</style>
 
       <div
+        className="gfh-unauth-card"
         style={{
-          position: 'relative',
           background: '#FFFFFF',
           border: '1px solid #E2E8F0',
-          borderRadius: 0,
-          padding: '48px 40px',
+          borderRadius: 24,
+          padding: '44px 38px',
           maxWidth: 480,
           width: '100%',
           textAlign: 'center',
-          boxShadow: '0 20px 45px -10px rgba(24, 0, 46, 0.1)',
+          boxShadow: '0 25px 50px -12px rgba(15, 23, 42, 0.08), 0 0 0 1px rgba(15, 23, 42, 0.03)',
         }}
       >
-        <CornerBrackets color="#240046" />
-
-        {/* Icon badge */}
+        {/* Soft Glowing Security Icon */}
         <div
           style={{
-            width: 68,
-            height: 68,
-            borderRadius: 0,
-            background: 'linear-gradient(135deg, #18002E 0%, #240046 100%)',
-            border: '1px solid #5A189A',
+            width: 76,
+            height: 76,
+            borderRadius: 22,
+            background: '#FEF2F2',
+            border: '1px solid #FECACA',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            margin: '0 auto 24px',
-            boxShadow: '0 8px 20px rgba(36, 0, 70, 0.3)',
+            margin: '0 auto 20px',
+            boxShadow: '0 10px 25px -5px rgba(239, 68, 68, 0.18)',
+            color: '#DC2626',
           }}
         >
-          <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <circle cx="12" cy="12" r="10" />
-            <line x1="4.93" y1="4.93" x2="19.07" y2="19.07" />
+          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+            <path d="M7 11V7a5 5 0 0 1 10 0v4" />
           </svg>
+        </div>
+
+        {/* 403 Pill Badge */}
+        <div style={{ marginBottom: 12 }}>
+          <span
+            style={{
+              fontSize: 11,
+              fontWeight: 700,
+              letterSpacing: '1px',
+              textTransform: 'uppercase',
+              background: '#FEF2F2',
+              color: '#DC2626',
+              border: '1px solid #FECACA',
+              padding: '4px 12px',
+              borderRadius: 999,
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 5,
+            }}
+          >
+            <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#DC2626' }} />
+            403 · Access Restricted
+          </span>
         </div>
 
         <h1
           style={{
-            fontFamily: "'Poppins', sans-serif",
-            fontSize: 26,
+            fontSize: 24,
             fontWeight: 800,
-            color: '#18002E',
-            margin: 0,
+            color: '#0F172A',
+            margin: '0 0 10px',
             letterSpacing: '-0.02em',
           }}
         >
-          Access Denied
+          Permission Denied
         </h1>
-        <p style={{ fontSize: 14, color: '#64748B', fontWeight: 500, marginTop: 12, marginBottom: 30, lineHeight: 1.6 }}>
-          You do not have administrative permissions to view this section based on your current account role
-          {user?.role ? (
-            <> (<strong style={{ color: '#240046', textTransform: 'uppercase' }}>{user.role}</strong>)</>
-          ) : null}
-          .
+
+        <p
+          style={{
+            fontSize: 14,
+            color: '#64748B',
+            lineHeight: 1.6,
+            margin: '0 0 24px',
+            padding: '0 10px',
+          }}
+        >
+          You do not have authorization to view this section with your current account privileges.
         </p>
 
-        <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
+        {/* Active Account Identity Card */}
+        {user && (
+          <div
+            style={{
+              background: '#F8FAFC',
+              border: '1px solid #E2E8F0',
+              borderRadius: 14,
+              padding: '12px 16px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              marginBottom: 28,
+              textAlign: 'left',
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+              <div
+                style={{
+                  width: 38,
+                  height: 38,
+                  borderRadius: 10,
+                  background: '#0E5E48',
+                  color: '#FFFFFF',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontWeight: 700,
+                  fontSize: 13,
+                  flexShrink: 0,
+                }}
+              >
+                {initials}
+              </div>
+              <div style={{ minWidth: 0 }}>
+                <div style={{ fontSize: 13.5, fontWeight: 700, color: '#0F172A', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                  {user.name}
+                </div>
+                <div style={{ fontSize: 11.5, color: '#64748B' }}>
+                  Signed in
+                </div>
+              </div>
+            </div>
+
+            <span
+              style={{
+                fontSize: 11,
+                fontWeight: 700,
+                background: '#ECFDF8',
+                color: '#065F46',
+                border: '1px solid #A7F3DC',
+                padding: '3px 9px',
+                borderRadius: 999,
+                letterSpacing: '0.4px',
+              }}
+            >
+              {roleName}
+            </span>
+          </div>
+        )}
+
+        {/* Action Buttons */}
+        <div style={{ display: 'flex', gap: 10, justifyContent: 'center' }}>
           <Link
             to={user ? getRoleDashboardPath(user.role) : '/login'}
-            className="gfh-unauth-btn gfh-unauth-btn-solid"
+            className="gfh-btn-hover"
             style={{
-              fontSize: 13.5,
+              flex: 1,
+              fontSize: 13,
               fontWeight: 700,
-              padding: '12px 24px',
-              background: 'linear-gradient(135deg, #18002E 0%, #240046 100%)',
+              padding: '12px 18px',
+              background: '#0E5E48',
               color: '#FFFFFF',
+              borderRadius: 10,
               textDecoration: 'none',
-              letterSpacing: '0.04em',
-              textTransform: 'uppercase',
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: 8,
+              boxShadow: '0 4px 14px rgba(14, 94, 72, 0.28)',
             }}
           >
-            Go To My Dashboard
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+              <polyline points="9 22 9 12 15 12 15 22" />
+            </svg>
+            Return to Dashboard
           </Link>
+
           <button
-            onClick={logout}
-            className="gfh-unauth-btn"
+            onClick={() => void logout()}
+            className="gfh-btn-hover"
             style={{
-              fontSize: 13.5,
-              fontWeight: 700,
-              padding: '12px 22px',
-              background: '#FEF2F2',
-              color: '#991B1B',
-              border: '1px solid #FECACA',
-              cursor: 'pointer',
-              letterSpacing: '0.04em',
-              textTransform: 'uppercase',
+              fontSize: 13,
+              fontWeight: 600,
+              padding: '12px 18px',
+              background: '#FFFFFF',
+              color: '#64748B',
+              border: '1px solid #CBD5E1',
+              borderRadius: 10,
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 6,
             }}
           >
-            Logout
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9" />
+            </svg>
+            Sign out
           </button>
+        </div>
+
+        <div style={{ marginTop: 24, fontSize: 11.5, color: '#94A3B8' }}>
+          GoFreeHold Role-Based Security Policy
         </div>
       </div>
     </div>

@@ -9,8 +9,6 @@ import AuthShell, { FieldIcon, AUTH_ICONS } from '../../components/auth/AuthShel
 const ROLE_OPTIONS: { value: UserRole; label: string }[] = [
   { value: 'tenant', label: 'Tenant' },
   { value: 'owner', label: 'Property Owner' },
-  { value: 'maintenance', label: 'Maintenance Staff' },
-  { value: 'admin', label: 'Administrator' },
 ]
 
 export default function RegisterPage() {

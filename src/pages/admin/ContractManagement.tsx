@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useMemo } from 'react'
-import { Link, useNavigate, useSearchParams } from 'react-router-dom'
+import { Link, useNavigate, useSearchParams, useLocation } from 'react-router-dom'
 import ReactDOM from 'react-dom/client'
 import api from '../../api/axios'
 import { formatDate } from '../../utils/formatDate'
@@ -30,8 +30,18 @@ interface Unit { id: number; number: string; property?: { id: number; name: stri
 interface Tenant { id: number; name: string; email: string }
 interface Owner { id: number; name: string }
 
-export default function ContractManagement() {
+export default function ContractManagement({ basePath }: { basePath?: string } = {}) {
   const navigate = useNavigate()
+  const location = useLocation()
+
+  const effectiveBasePath = basePath || (
+    location.pathname.startsWith('/owner') ? '/owner' :
+    location.pathname.startsWith('/cashier') ? '/cashier' :
+    location.pathname.startsWith('/accountant') ? '/accountant' :
+    '/admin'
+  )
+  const isOwnerStaff = effectiveBasePath !== '/admin'
+  const apiPrefix = isOwnerStaff ? '/owner' : '/admin'
   const [contracts, setContracts] = useState<Contract[]>([])
   const [units, setUnits] = useState<Unit[]>([])
   const [tenants, setTenants] = useState<Tenant[]>([])
@@ -64,6 +74,22 @@ export default function ContractManagement() {
   })
   const [renewData, setRenewData] = useState({ new_end_date: '', new_rent_amount: '' })
   const [vacateNote, setVacateNote] = useState('')
+  const [modalPropertyId, setModalPropertyId] = useState<string>('')
+
+  const modalUnits = useMemo(() => {
+    if (!modalPropertyId) return units
+    return units.filter(u => String(u.property?.id || '') === String(modalPropertyId))
+  }, [units, modalPropertyId])
+
+  const unitsByProperty = useMemo(() => {
+    const map = new Map<string, Unit[]>()
+    modalUnits.forEach(u => {
+      const pName = u.property?.name || 'General Units'
+      if (!map.has(pName)) map.set(pName, [])
+      map.get(pName)!.push(u)
+    })
+    return map
+  }, [modalUnits])
 
   useEffect(() => { fetchAll() }, [])
 
@@ -71,11 +97,11 @@ export default function ContractManagement() {
     setIsLoading(true)
     try {
       const [cRes, uRes, oRes, tRes, pRes] = await Promise.all([
-        api.get('/admin/contracts'),
-        api.get('/admin/units'),
-        api.get('/admin/properties/owners'),
-        api.get('/admin/tenants'),
-        api.get('/admin/properties'),
+        api.get(`${apiPrefix}/contracts`),
+        api.get(`${apiPrefix}/units`),
+        isOwnerStaff ? Promise.resolve({ data: { data: { owners: [] } } }) : api.get('/admin/properties/owners'),
+        api.get(`${apiPrefix}/tenants`),
+        api.get(`${apiPrefix}/properties`),
       ])
       setContracts(cRes.data?.data?.contracts || [])
       setUnits(uRes.data?.data?.units || [])
@@ -95,7 +121,7 @@ export default function ContractManagement() {
           data.append(key, value as any)
         }
       })
-      await api.post('/admin/contracts', data, {
+      await api.post(`${apiPrefix}/contracts`, data, {
         headers: { 'Content-Type': 'multipart/form-data' }
       })
       setIsModalOpen(false)
@@ -107,7 +133,7 @@ export default function ContractManagement() {
     e.preventDefault()
     if (!renewModal) return
     try {
-      await api.post(`/admin/contracts/${renewModal.id}/renew`, renewData)
+      await api.post(`${apiPrefix}/contracts/${renewModal.id}/renew`, renewData)
       setRenewModal(null)
       fetchAll()
     } catch (err: any) { alert(err.response?.data?.message || 'Error renewing') }
@@ -116,7 +142,7 @@ export default function ContractManagement() {
   const handleVacate = async () => {
     if (!vacateContract) return
     try {
-      await api.post(`/admin/contracts/${vacateContract.id}/vacate`, { notes: vacateNote })
+      await api.post(`${apiPrefix}/contracts/${vacateContract.id}/vacate`, { notes: vacateNote })
       setVacateContract(null)
       fetchAll()
     } catch (err) { alert('Error vacating contract') }
@@ -126,7 +152,7 @@ export default function ContractManagement() {
     if (pdfLoading !== null) return
     setPdfLoading(id)
     try {
-      const response = await api.get(`/admin/contracts/${id}/pdf`, { responseType: 'blob' })
+      const response = await api.get(`${apiPrefix}/contracts/${id}/pdf`, { responseType: 'blob' })
       const url = window.URL.createObjectURL(new Blob([response.data]))
       const link = document.createElement('a')
       link.href = url
@@ -594,7 +620,7 @@ export default function ContractManagement() {
                     <tr key={c.id} className="gfh-contract-row" style={{ borderBottom: '1px solid #F1F5F9' }}>
                       {/* REF # Link */}
                       <td style={{ padding: '16px 14px' }}>
-                        <Link to={`/admin/contracts/${c.id}`} style={{ textDecoration: 'none' }}>
+                        <Link to={`${effectiveBasePath}/contracts/${c.id}`} style={{ textDecoration: 'none' }}>
                           <span style={{ color: '#0F8A67', fontWeight: 700, fontSize: 13.5, textDecoration: 'underline' }}>
                             GFH-{String(c.id).padStart(5, '0')}
                           </span>
@@ -688,7 +714,7 @@ export default function ContractManagement() {
                           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6, width: 176 }}>
                             {/* Details button */}
                             <Link
-                              to={`/admin/contracts/${c.id}`}
+                              to={`${effectiveBasePath}/contracts/${c.id}`}
                               style={{
                                 display: 'inline-flex',
                                 alignItems: 'center',
@@ -939,10 +965,30 @@ export default function ContractManagement() {
             </div>
 
             <form onSubmit={handleCreate} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-              {/* Unit & Owner */}
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+              {/* Property Filter & Unit & Owner */}
+              <div style={{ display: 'grid', gridTemplateColumns: isOwnerStaff ? '1fr 1fr' : '1fr 1fr 1fr', gap: 12 }}>
                 <div>
-                  <label style={{ fontSize: 12, fontWeight: 700, color: '#334155', display: 'block', marginBottom: 5 }}>Unit</label>
+                  <label style={{ fontSize: 12, fontWeight: 700, color: '#334155', display: 'block', marginBottom: 5 }}>
+                    Property / Building
+                  </label>
+                  <select
+                    value={modalPropertyId}
+                    onChange={e => {
+                      setModalPropertyId(e.target.value)
+                      setFormData({ ...formData, unit_id: '' })
+                    }}
+                    className="gfh-contract-filter"
+                    style={{ width: '100%' }}
+                  >
+                    <option value="">All Properties ({properties.length})</option>
+                    {properties.map(p => (
+                      <option key={p.id} value={p.id}>{p.name}</option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label style={{ fontSize: 12, fontWeight: 700, color: '#334155', display: 'block', marginBottom: 5 }}>Unit *</label>
                   <select
                     value={formData.unit_id}
                     onChange={e => setFormData({ ...formData, unit_id: e.target.value })}
@@ -951,24 +997,33 @@ export default function ContractManagement() {
                     style={{ width: '100%' }}
                   >
                     <option value="">Select Unit</option>
-                    {units.map(u => (
-                      <option key={u.id} value={u.id}>{u.number} {u.property?.name ? `(${u.property.name})` : ''}</option>
+                    {Array.from(unitsByProperty.entries()).map(([propName, pUnits]) => (
+                      <optgroup key={propName} label={propName}>
+                        {pUnits.map(u => (
+                          <option key={u.id} value={u.id}>
+                            Unit {u.number} ({propName})
+                          </option>
+                        ))}
+                      </optgroup>
                     ))}
                   </select>
                 </div>
-                <div>
-                  <label style={{ fontSize: 12, fontWeight: 700, color: '#334155', display: 'block', marginBottom: 5 }}>Owner</label>
-                  <select
-                    value={formData.owner_id}
-                    onChange={e => setFormData({ ...formData, owner_id: e.target.value })}
-                    required
-                    className="gfh-contract-filter"
-                    style={{ width: '100%' }}
-                  >
-                    <option value="">Select Owner</option>
-                    {owners.map(o => <option key={o.id} value={o.id}>{o.name}</option>)}
-                  </select>
-                </div>
+
+                {!isOwnerStaff && (
+                  <div>
+                    <label style={{ fontSize: 12, fontWeight: 700, color: '#334155', display: 'block', marginBottom: 5 }}>Owner *</label>
+                    <select
+                      value={formData.owner_id}
+                      onChange={e => setFormData({ ...formData, owner_id: e.target.value })}
+                      required={!isOwnerStaff}
+                      className="gfh-contract-filter"
+                      style={{ width: '100%' }}
+                    >
+                      <option value="">Select Owner</option>
+                      {owners.map(o => <option key={o.id} value={o.id}>{o.name}</option>)}
+                    </select>
+                  </div>
+                )}
               </div>
 
               {/* Tenant */}

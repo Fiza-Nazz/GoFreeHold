@@ -23,6 +23,7 @@ const maintenanceNavItems = [
     { to: '/maintenance/dashboard', icon: icons.chart, label: 'Dashboard' },
   ]},
   { section: 'Work', items: [
+    { to: '/maintenance/jobs', icon: icons.wrench, label: 'Assigned Jobs' },
     { to: '/maintenance/complaints', icon: icons.wrench, label: 'Complaints' },
     { to: '/maintenance/daily-report', icon: icons.note, label: 'Daily Report' },
   ]},
@@ -32,6 +33,7 @@ const maintenanceNavItems = [
 ]
 
 const PAGE_TITLES: Record<string, string> = {
+  '/maintenance/jobs': 'Assigned Jobs',
   '/maintenance/dashboard': 'Dashboard',
   '/maintenance/complaints': 'Complaints',
   '/maintenance/daily-report': 'Daily Report',
