@@ -95,9 +95,9 @@ export default function TenantManagement({ mode = 'list' }: Props) {
           <div><h1 style={{ margin: 0, color: THEME.ink, fontSize: 24, fontWeight: 800 }}>Add Tenant</h1><p style={{ margin: '6px 0 0', color: THEME.textMuted, fontSize: 13 }}>Create a tenant record for contract assignment</p></div>
           <button type="button" onClick={() => navigate('/admin/tenants')} style={{ padding: '10px 15px', border: '1px solid #A7F3DC', background: '#ECFDF8', color: '#065F46', cursor: 'pointer', fontWeight: 700 }}>← Tenant List</button>
         </div>
-        <div className="fade-in" style={{ ...panelStyle, maxWidth: 900, margin: '0 auto', minHeight: 0 }}>
+        <div className="fade-in" style={{ ...panelStyle, width: '100%', minHeight: 0 }}>
           {error && <div role="alert" style={{ marginBottom: 16, padding: 11, border: '1px solid #FECACA', borderRadius: 8, background: '#FEF2F2', color: '#991B1B', fontWeight: 600 }}>{error}</div>}
-          <form onSubmit={handleSubmit} style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 16 }}>
+          <form onSubmit={handleSubmit} style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 20, width: '100%' }}>
             {tenantFields.map(field => <div key={field.key}><label style={labelStyle} htmlFor={`tenant-${field.key}`}>{field.label}</label><input id={`tenant-${field.key}`} type={field.key === 'email' ? 'email' : 'text'} required={field.required} style={inputStyle} value={formData[field.key]} onChange={event => setFormData({ ...formData, [field.key]: event.target.value })} /></div>)}
             <div style={{ gridColumn: '1 / -1' }}><label style={labelStyle} htmlFor="tenant-address">Address</label><textarea id="tenant-address" style={{ ...inputStyle, minHeight: 80, resize: 'vertical' }} value={formData.address} onChange={event => setFormData({ ...formData, address: event.target.value })} /></div>
             <div style={{ gridColumn: '1 / -1', display: 'flex', justifyContent: 'flex-end', gap: 10 }}>
