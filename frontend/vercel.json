@@ -1,6 +1,6 @@
 {
   "rewrites": [
-    { "source": "/api/(.*)", "destination": "https://ayako-nondeprecatory-nonchromatically.ngrok-free.dev/api/$1" },
+    { "source": "/api/(.*)", "destination": "https://api2.gofreehold.com/public/api/$1" },
     { "source": "/(.*)", "destination": "/index.html" }
   ]
 }
