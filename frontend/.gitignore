@@ -14,8 +14,9 @@ dist-ssr
 
 # Env / secrets (never commit)
 .env
-.env.*
+.env.local
 !.env.example
+!.env.production
 
 # Logs & OS
 coverage
