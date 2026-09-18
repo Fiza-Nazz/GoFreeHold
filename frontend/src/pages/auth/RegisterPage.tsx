@@ -186,7 +186,7 @@ export default function RegisterPage() {
         <div className="auth-recaptcha">
           <ReCAPTCHA
             ref={recaptchaRef}
-            sitekey={import.meta.env.VITE_RECAPTCHA_SITE_KEY || '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI'}
+            sitekey={import.meta.env.VITE_RECAPTCHA_SITE_KEY || '6LfrG3UtAAAAABEeP4EWGKrS24yo3_RhLxlZCQ1w'}
             onChange={(token) => setRecaptchaToken(token)}
             theme="light"
           />
