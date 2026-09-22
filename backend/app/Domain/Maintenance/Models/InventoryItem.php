@@ -14,6 +14,7 @@ class InventoryItem extends Model
     // location_type: warehouse, unit
     // FLAG: location_id is legacy NOT NULL column — keep in sync with unit_id / 0 for warehouse
     protected $fillable = [
+        'owner_id',
         'name',
         'category',
         'quantity',

@@ -11,7 +11,7 @@ class ItemStore extends Model
 
     protected $table = 'item_store';
 
-    protected $fillable = ['item_id', 'qty', 'remark'];
+    protected $fillable = ['owner_id', 'item_id', 'qty', 'remark'];
 
     public function item(): BelongsTo
     {

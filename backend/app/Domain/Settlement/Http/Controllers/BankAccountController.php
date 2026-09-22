@@ -10,9 +10,26 @@ use Illuminate\Http\Request;
 
 class BankAccountController extends Controller
 {
-    public function index(): JsonResponse
+    private function assertAccountAccess(Request $request, BankAccount $bankAccount): void
     {
-        $accounts = BankAccount::with('bank:id,name')->get();
+        $user = $request->user();
+        if ($user && in_array($user->role, ['owner', 'cashier', 'accountant'], true)) {
+            $ownerId = app(\App\Domain\Auth\Services\OwnerContextResolver::class)->ownerId($user);
+            abort_unless((int) $bankAccount->owner_id === (int) $ownerId, 403, 'Unauthorized access to this bank account.');
+        }
+    }
+
+    public function index(Request $request): JsonResponse
+    {
+        $query = BankAccount::with('bank:id,name');
+
+        $user = $request->user();
+        if ($user && in_array($user->role, ['owner', 'cashier', 'accountant'], true)) {
+            $ownerId = app(\App\Domain\Auth\Services\OwnerContextResolver::class)->ownerId($user);
+            $query->where('owner_id', $ownerId);
+        }
+
+        $accounts = $query->get();
 
         return response()->json(['status' => 'success', 'data' => ['bank_accounts' => $accounts]]);
     }
@@ -28,6 +45,11 @@ class BankAccountController extends Controller
             'branch'         => 'nullable|string|max:255',
         ]);
 
+        $user = $request->user();
+        if ($user && in_array($user->role, ['owner', 'cashier', 'accountant'], true)) {
+            $validated['owner_id'] = app(\App\Domain\Auth\Services\OwnerContextResolver::class)->ownerId($user);
+        }
+
         if (empty($validated['bank_id']) && !empty($validated['bank_name'])) {
             $validated['bank_id'] = Bank::firstOrCreate(['name' => $validated['bank_name']])->id;
         }
@@ -38,13 +60,15 @@ class BankAccountController extends Controller
         return response()->json(['status' => 'success', 'message' => 'Bank account created.', 'data' => ['bank_account' => $account->load('bank')]], 201);
     }
 
-    public function show(BankAccount $bankAccount): JsonResponse
+    public function show(Request $request, BankAccount $bankAccount): JsonResponse
     {
+        $this->assertAccountAccess($request, $bankAccount);
         return response()->json(['status' => 'success', 'data' => ['bank_account' => $bankAccount->load('bank')]]);
     }
 
     public function update(Request $request, BankAccount $bankAccount): JsonResponse
     {
+        $this->assertAccountAccess($request, $bankAccount);
         $validated = $request->validate([
             'bank_id'        => 'nullable|exists:bank,id',
             'account_name'   => 'string|max:255',
@@ -58,8 +82,9 @@ class BankAccountController extends Controller
         return response()->json(['status' => 'success', 'message' => 'Bank account updated.', 'data' => ['bank_account' => $bankAccount]]);
     }
 
-    public function destroy(BankAccount $bankAccount): JsonResponse
+    public function destroy(Request $request, BankAccount $bankAccount): JsonResponse
     {
+        $this->assertAccountAccess($request, $bankAccount);
         $bankAccount->delete();
 
         return response()->json(['status' => 'success', 'message' => 'Bank account deleted.']);

@@ -46,11 +46,17 @@ class ReportController extends Controller
         ]);
     }
 
-    public function inventorySummary(): JsonResponse
+    public function inventorySummary(Request $request): JsonResponse
     {
+        $ownerId = null;
+        $user = $request->user();
+        if ($user && in_array($user->role, ['owner', 'cashier', 'accountant'], true)) {
+            $ownerId = app(\App\Domain\Auth\Services\OwnerContextResolver::class)->ownerId($user);
+        }
+
         return response()->json([
             'status' => 'success',
-            'data' => $this->reports->inventorySummary(),
+            'data' => $this->reports->inventorySummary($ownerId),
         ]);
     }
 

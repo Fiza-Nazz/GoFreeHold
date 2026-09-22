@@ -12,6 +12,7 @@ class Purchase extends Model
 
     // status: pending, received, cancelled
     protected $fillable = [
+        'owner_id',
         'supplier_name',
         'purchase_date',
         'total_amount',

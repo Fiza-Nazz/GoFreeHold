@@ -17,10 +17,21 @@ class MaintenanceReportController extends Controller
         $request->validate(['date' => 'nullable|date_format:Y-m-d']);
         $complaints = Complaint::query();
         $jobs = Job::query();
-        if ($request->user()->role === 'maintenance') {
+        $user = $request->user();
+        if ($user && in_array($user->role, ['owner', 'cashier', 'accountant'], true)) {
+            $ownerId = app(\App\Domain\Auth\Services\OwnerContextResolver::class)->ownerId($user);
+            $complaints->whereHas('unit', function ($u) use ($ownerId) {
+                $u->where('owner_id', $ownerId)
+                  ->orWhereHas('property', fn ($p) => $p->where('owner_id', $ownerId));
+            });
+            $jobs->whereHas('complaint.unit', function ($u) use ($ownerId) {
+                $u->where('owner_id', $ownerId)
+                  ->orWhereHas('property', fn ($p) => $p->where('owner_id', $ownerId));
+            });
+        } elseif ($user && $user->role === 'maintenance') {
             $context = app(\App\Domain\Auth\Services\OwnerContextResolver::class);
-            $context->jobs($jobs, $request->user());
-            $complaints->whereHas('job', fn ($j) => $context->jobs($j, $request->user()));
+            $context->jobs($jobs, $user);
+            $complaints->whereHas('job', fn ($j) => $context->jobs($j, $user));
         }
         $date = $request->query('date', Carbon::today()->toDateString());
 

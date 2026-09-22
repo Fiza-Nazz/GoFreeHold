@@ -11,12 +11,30 @@ class InventoryController extends Controller
     public function __construct(private readonly MaintenanceService $maintenance)
     {
     }
+    private function assertItemAccess(Request $request, InventoryItem $inventoryItem): void
+    {
+        $user = $request->user();
+        if ($user && in_array($user->role, ['owner', 'cashier', 'accountant'], true)) {
+            $ownerId = app(\App\Domain\Auth\Services\OwnerContextResolver::class)->ownerId($user);
+            $unitOwnerId = $inventoryItem->unit?->property?->owner_id ?: $inventoryItem->unit?->owner_id;
+            abort_unless((int) $inventoryItem->owner_id === (int) $ownerId || (int) $unitOwnerId === (int) $ownerId, 403, 'Unauthorized access to this inventory item.');
+        }
+    }
+
     /**
      * Get warehouse stock (location_type = warehouse)
      */
-    public function warehouseItems()
+    public function warehouseItems(Request $request)
     {
-        $items = InventoryItem::where('location_type', 'warehouse')->get();
+        $query = InventoryItem::where('location_type', 'warehouse');
+
+        $user = $request->user();
+        if ($user && in_array($user->role, ['owner', 'cashier', 'accountant'], true)) {
+            $ownerId = app(\App\Domain\Auth\Services\OwnerContextResolver::class)->ownerId($user);
+            $query->where('owner_id', $ownerId);
+        }
+
+        $items = $query->get();
         return response()->json(['status' => 'success', 'data' => ['items' => $items]]);
     }
 
@@ -26,6 +44,15 @@ class InventoryController extends Controller
     public function unitItems(Request $request)
     {
         $query = InventoryItem::where('location_type', 'unit')->with('unit:id,number,property_id', 'unit.property:id,name');
+
+        $user = $request->user();
+        if ($user && in_array($user->role, ['owner', 'cashier', 'accountant'], true)) {
+            $ownerId = app(\App\Domain\Auth\Services\OwnerContextResolver::class)->ownerId($user);
+            $query->where(function ($q) use ($ownerId) {
+                $q->where('owner_id', $ownerId)
+                  ->orWhereHas('unit', fn ($u) => $u->where('owner_id', $ownerId)->orWhereHas('property', fn ($p) => $p->where('owner_id', $ownerId)));
+            });
+        }
 
         if ($request->has('unit_id')) {
             $query->where('unit_id', $request->unit_id);
@@ -47,6 +74,11 @@ class InventoryController extends Controller
             'notes'           => 'nullable|string',
         ]);
 
+        $user = $request->user();
+        if ($user && in_array($user->role, ['owner', 'cashier', 'accountant'], true)) {
+            $validated['owner_id'] = app(\App\Domain\Auth\Services\OwnerContextResolver::class)->ownerId($user);
+        }
+
         $item = $this->maintenance->createInventoryItem($validated);
 
         return response()->json(['status' => 'success', 'message' => 'Inventory item added.', 'data' => ['item' => $item]], 201);
@@ -54,6 +86,7 @@ class InventoryController extends Controller
 
     public function update(Request $request, InventoryItem $inventoryItem)
     {
+        $this->assertItemAccess($request, $inventoryItem);
         $validated = $request->validate([
             'name'            => 'string|max:255',
             'category'        => 'string|max:100',
@@ -68,8 +101,9 @@ class InventoryController extends Controller
         return response()->json(['status' => 'success', 'message' => 'Item updated.', 'data' => ['item' => $inventoryItem]]);
     }
 
-    public function destroy(InventoryItem $inventoryItem)
+    public function destroy(Request $request, InventoryItem $inventoryItem)
     {
+        $this->assertItemAccess($request, $inventoryItem);
         $inventoryItem->delete();
         return response()->json(['status' => 'success', 'message' => 'Inventory item deleted.']);
     }

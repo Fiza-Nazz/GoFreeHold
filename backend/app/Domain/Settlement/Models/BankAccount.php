@@ -10,7 +10,7 @@ class BankAccount extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['bank_id', 'account_name', 'account_number', 'iban', 'branch'];
+    protected $fillable = ['owner_id', 'bank_id', 'account_name', 'account_number', 'iban', 'branch'];
 
     public function bank(): BelongsTo
     {

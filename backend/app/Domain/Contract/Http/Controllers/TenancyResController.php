@@ -39,9 +39,30 @@ class TenancyResController extends Controller
         ];
     }
 
+    private function assertContractAccess(Request $request, int $contractId): void
+    {
+        $user = $request->user();
+        if ($user && in_array($user->role, ['owner', 'cashier', 'accountant'], true)) {
+            $ownerId = app(\App\Domain\Auth\Services\OwnerContextResolver::class)->ownerId($user);
+            $contract = \App\Domain\Contract\Models\Contract::with('unit.property')->find($contractId);
+            abort_unless($contract, 404, 'Contract not found.');
+            $contractOwnerId = (int) ($contract->owner_id ?: $contract->unit?->property?->owner_id);
+            abort_unless($contractOwnerId === (int) $ownerId, 403, 'Unauthorized access to this contract.');
+        }
+    }
+
     public function index(Request $request): JsonResponse
     {
         $query = TenancyRes::with('contract:id,unit_id,tenant_id');
+
+        $user = $request->user();
+        if ($user && in_array($user->role, ['owner', 'cashier', 'accountant'], true)) {
+            $ownerId = app(\App\Domain\Auth\Services\OwnerContextResolver::class)->ownerId($user);
+            $query->whereHas('contract', function ($c) use ($ownerId) {
+                $c->where('contracts.owner_id', $ownerId)
+                  ->orWhereHas('unit.property', fn ($p) => $p->where('owner_id', $ownerId));
+            });
+        }
 
         if ($request->has('contract_id')) {
             $query->where('contract_id', $request->contract_id);
@@ -53,26 +74,30 @@ class TenancyResController extends Controller
     public function store(Request $request): JsonResponse
     {
         $validated = $request->validate($this->rules());
+        $this->assertContractAccess($request, (int) $validated['contract_id']);
         $tenancyRes = TenancyRes::create($validated);
 
         return response()->json(['status' => 'success', 'message' => 'Tenancy form saved.', 'data' => ['tenancy_res' => $tenancyRes]], 201);
     }
 
-    public function show(TenancyRes $tenancyRes): JsonResponse
+    public function show(Request $request, TenancyRes $tenancyRes): JsonResponse
     {
+        $this->assertContractAccess($request, (int) $tenancyRes->contract_id);
         return response()->json(['status' => 'success', 'data' => ['tenancy_res' => $tenancyRes->load('contract')]]);
     }
 
     public function update(Request $request, TenancyRes $tenancyRes): JsonResponse
     {
+        $this->assertContractAccess($request, (int) $tenancyRes->contract_id);
         $validated = $request->validate($this->rules(false));
         $tenancyRes->update($validated);
 
         return response()->json(['status' => 'success', 'message' => 'Tenancy form updated.', 'data' => ['tenancy_res' => $tenancyRes]]);
     }
 
-    public function destroy(TenancyRes $tenancyRes): JsonResponse
+    public function destroy(Request $request, TenancyRes $tenancyRes): JsonResponse
     {
+        $this->assertContractAccess($request, (int) $tenancyRes->contract_id);
         $tenancyRes->delete();
 
         return response()->json(['status' => 'success', 'message' => 'Tenancy form deleted.']);

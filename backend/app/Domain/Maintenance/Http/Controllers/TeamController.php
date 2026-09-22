@@ -7,9 +7,20 @@ use Illuminate\Http\Request;
 
 class TeamController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $teams = Team::withCount('jobs')->get();
+        $query = Team::query();
+
+        $user = $request->user();
+        if ($user && in_array($user->role, ['owner', 'cashier', 'accountant'], true)) {
+            $ownerId = app(\App\Domain\Auth\Services\OwnerContextResolver::class)->ownerId($user);
+            $query->whereHas('jobs.complaint.unit', function ($u) use ($ownerId) {
+                $u->where('owner_id', $ownerId)
+                  ->orWhereHas('property', fn ($p) => $p->where('owner_id', $ownerId));
+            });
+        }
+
+        $teams = $query->withCount('jobs')->get();
         return response()->json(['status' => 'success', 'data' => ['teams' => $teams]]);
     }
 

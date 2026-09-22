@@ -89,11 +89,20 @@ class ReportService
         ];
     }
 
-    public function inventorySummary(): array
+    public function inventorySummary(?int $ownerId = null): array
     {
-        $warehouseStock = InventoryItem::where('location_type', 'warehouse')->get();
-        $unitStock = InventoryItem::where('location_type', 'unit')->with('unit.property')->get();
+        $warehouseStock = InventoryItem::where('location_type', 'warehouse')
+            ->when($ownerId !== null, fn ($q) => $q->where('owner_id', $ownerId))
+            ->get();
+        $unitStock = InventoryItem::where('location_type', 'unit')
+            ->with('unit.property')
+            ->when($ownerId !== null, fn ($q) => $q->where(function ($sq) use ($ownerId) {
+                $sq->where('owner_id', $ownerId)
+                   ->orWhereHas('unit', fn ($u) => $u->where('owner_id', $ownerId)->orWhereHas('property', fn ($p) => $p->where('owner_id', $ownerId)));
+            }))
+            ->get();
         $lowStockItems = InventoryItem::where('location_type', 'warehouse')
+            ->when($ownerId !== null, fn ($q) => $q->where('owner_id', $ownerId))
             ->whereNotNull('min_stock_alert')
             ->whereColumn('quantity', '<=', 'min_stock_alert')
             ->get();

@@ -11,9 +11,26 @@ class PurchaseController extends Controller
     public function __construct(private readonly MaintenanceService $maintenance)
     {
     }
-    public function index()
+    private function assertPurchaseAccess(Request $request, Purchase $purchase): void
     {
-        $purchases = Purchase::with('items')->latest('purchase_date')->get();
+        $user = $request->user();
+        if ($user && in_array($user->role, ['owner', 'cashier', 'accountant'], true)) {
+            $ownerId = app(\App\Domain\Auth\Services\OwnerContextResolver::class)->ownerId($user);
+            abort_unless((int) $purchase->owner_id === (int) $ownerId, 403, 'Unauthorized access to this purchase order.');
+        }
+    }
+
+    public function index(Request $request)
+    {
+        $query = Purchase::with('items');
+
+        $user = $request->user();
+        if ($user && in_array($user->role, ['owner', 'cashier', 'accountant'], true)) {
+            $ownerId = app(\App\Domain\Auth\Services\OwnerContextResolver::class)->ownerId($user);
+            $query->where('owner_id', $ownerId);
+        }
+
+        $purchases = $query->latest('purchase_date')->get();
         return response()->json(['status' => 'success', 'data' => ['purchases' => $purchases]]);
     }
 
@@ -30,6 +47,11 @@ class PurchaseController extends Controller
             'items.*.price'     => 'required|numeric|min:0',
         ]);
 
+        $user = $request->user();
+        if ($user && in_array($user->role, ['owner', 'cashier', 'accountant'], true)) {
+            $validated['owner_id'] = app(\App\Domain\Auth\Services\OwnerContextResolver::class)->ownerId($user);
+        }
+
         $purchase = $this->maintenance->createPurchase($validated);
 
         return response()->json([
@@ -39,13 +61,15 @@ class PurchaseController extends Controller
         ], 201);
     }
 
-    public function show(Purchase $purchase)
+    public function show(Request $request, Purchase $purchase)
     {
+        $this->assertPurchaseAccess($request, $purchase);
         return response()->json(['status' => 'success', 'data' => ['purchase' => $purchase->load('items')]]);
     }
 
     public function updateStatus(Request $request, Purchase $purchase)
     {
+        $this->assertPurchaseAccess($request, $purchase);
         $validated = $request->validate([
             'status' => 'required|in:pending,received,cancelled',
         ]);
@@ -55,8 +79,9 @@ class PurchaseController extends Controller
         return response()->json(['status' => 'success', 'message' => 'Purchase status updated.', 'data' => ['purchase' => $purchase]]);
     }
 
-    public function destroy(Purchase $purchase)
+    public function destroy(Request $request, Purchase $purchase)
     {
+        $this->assertPurchaseAccess($request, $purchase);
         $purchase->delete();
         return response()->json(['status' => 'success', 'message' => 'Purchase deleted.']);
     }

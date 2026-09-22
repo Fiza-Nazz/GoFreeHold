@@ -129,17 +129,39 @@ class RentTransactionController extends Controller
         ]);
     }
 
+    private function assertContractAccess(Request $request, int $contractId): void
+    {
+        $user = $request->user();
+        if ($user && in_array($user->role, ['owner', 'cashier', 'accountant'], true)) {
+            $ownerId = app(\App\Domain\Auth\Services\OwnerContextResolver::class)->ownerId($user);
+            $contract = \App\Domain\Contract\Models\Contract::with('unit.property')->find($contractId);
+            abort_unless($contract, 404, 'Contract not found.');
+            $contractOwnerId = (int) ($contract->owner_id ?: $contract->unit?->property?->owner_id);
+            abort_unless($contractOwnerId === (int) $ownerId, 403, 'Unauthorized access to this contract.');
+        }
+    }
+
     /**
      * Receivables = contracts where SUM(debit) - SUM(credit) > 0
      */
-    public function receivablesSummary(): JsonResponse
+    public function receivablesSummary(Request $request): JsonResponse
     {
-        $rows = RentTransaction::query()
+        $query = RentTransaction::query()
             ->selectRaw('contract_id, SUM(debit) as total_debit, SUM(credit) as total_credit, (SUM(debit) - SUM(credit)) as total_outstanding')
             ->groupBy('contract_id')
             ->havingRaw('(SUM(debit) - SUM(credit)) > 0')
-            ->with(['contract.unit.property', 'contract.tenant:id,name'])
-            ->get();
+            ->with(['contract.unit.property', 'contract.tenant:id,name']);
+
+        $user = $request->user();
+        if ($user && in_array($user->role, ['owner', 'cashier', 'accountant'], true)) {
+            $ownerId = app(\App\Domain\Auth\Services\OwnerContextResolver::class)->ownerId($user);
+            $query->whereHas('contract', function ($q) use ($ownerId) {
+                $q->where('contracts.owner_id', $ownerId)
+                  ->orWhereHas('unit.property', fn ($p) => $p->where('owner_id', $ownerId));
+            });
+        }
+
+        $rows = $query->get();
 
         return response()->json(['status' => 'success', 'data' => ['receivables' => $rows]]);
     }
