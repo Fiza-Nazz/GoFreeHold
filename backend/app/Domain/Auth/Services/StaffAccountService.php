@@ -15,18 +15,41 @@ class StaffAccountService
     {
         return DB::transaction(function () use ($actor, $data) {
             $ownerId = $this->context->ownerId($actor);
+            $hasExplicitPassword = !empty($data['password']);
+            $password = $hasExplicitPassword ? $data['password'] : Str::random(64);
+            $accountStatus = $hasExplicitPassword ? 'active' : 'pending';
+
             try {
-                $user = User::create(['name' => $data['name'], 'email' => $data['email'], 'role' => $data['role'], 'password' => Str::random(64)]);
+                $user = User::create([
+                    'name' => $data['name'],
+                    'email' => $data['email'],
+                    'role' => $data['role'],
+                    'password' => $password,
+                ]);
             } catch (\Illuminate\Database\QueryException $e) {
                 if (($e->errorInfo[1] ?? null) === 1062) {
                     throw \Illuminate\Validation\ValidationException::withMessages(['email' => ['This email is already registered.']]);
                 }
                 throw $e;
             }
-            $user->forceFill(['account_status' => 'pending'])->save();
-            $staff = OwnerStaff::create(['user_id' => $user->id, 'owner_id' => $ownerId, 'created_by' => $actor->id]);
+
+            $user->forceFill([
+                'account_status' => $accountStatus,
+                'email_verified_at' => now(),
+            ])->save();
+
+            $staff = OwnerStaff::create([
+                'user_id' => $user->id,
+                'owner_id' => $ownerId,
+                'created_by' => $actor->id
+            ]);
+
             $this->context->audit($actor, 'staff.created', $user->id, ['role' => $user->role]);
-            $this->invite($actor, $staff);
+
+            if (! $hasExplicitPassword) {
+                $this->invite($actor, $staff);
+            }
+
             return $staff;
         });
     }
@@ -84,6 +107,12 @@ class StaffAccountService
                 $user->revokeSessions();
                 $staff->invitations()->whereNull('accepted_at')->whereNull('revoked_at')->update(['revoked_at' => now()]);
             }
+            if (!empty($data['password'])) {
+                $user->password = $data['password'];
+                $user->account_status = 'active';
+                $user->revokeSessions();
+            }
+            unset($data['password']);
             $user->fill($data)->save();
             $this->context->audit($actor, 'staff.updated', $user->id, ['before' => $before, 'after' => $user->only(['name', 'role', 'account_status'])]);
         });

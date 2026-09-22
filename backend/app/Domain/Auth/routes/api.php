@@ -27,6 +27,7 @@ Route::middleware(['auth:sanctum', 'role:owner'])->prefix('owner/staff')->group(
     Route::post('/{staff}/disable', [$controller, 'disable']);
     Route::post('/{staff}/enable', [$controller, 'enable']);
     Route::post('/{staff}/invite', [$controller, 'invite'])->middleware('throttle:5,1');
+    Route::delete('/{staff}', [$controller, 'destroy']);
 });
 
 // ─── Authenticated Auth ────────────────────────────────────────────────────

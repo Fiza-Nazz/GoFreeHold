@@ -19,7 +19,7 @@ export default function StaffManagement() {
   const [notice, setNotice] = useState('')
   const [busy, setBusy] = useState(false)
   const [loading, setLoading] = useState(true)
-  const [form, setForm] = useState({ name: '', email: '', role: 'cashier' })
+  const [form, setForm] = useState({ name: '', email: '', role: 'cashier', password: '' })
   const [edit, setEdit] = useState<number | null>(null)
   const [page, setPage] = useState(1)
   const [last, setLast] = useState(1)
@@ -51,11 +51,16 @@ export default function StaffManagement() {
     setError('')
     setNotice('')
     try {
+      const payload: any = { name: form.name, role: form.role }
+      if (form.password) payload.password = form.password
+      if (!edit) {
+        payload.email = form.email
+      }
       const { data } = edit
-        ? await api.patch('/owner/staff/' + edit, { name: form.name, role: form.role })
-        : await api.post('/owner/staff', form)
-      setNotice(edit ? 'Staff updated successfully.' : 'Staff invited successfully! Activation link has been sent.')
-      setForm({ name: '', email: '', role: 'cashier' })
+        ? await api.patch('/owner/staff/' + edit, payload)
+        : await api.post('/owner/staff', payload)
+      setNotice(edit ? 'Staff updated successfully.' : 'Staff created successfully! Account is active and can log in immediately.')
+      setForm({ name: '', email: '', role: 'cashier', password: '' })
       setEdit(null)
       refresh((v) => v + 1)
     } catch (e) {
@@ -66,6 +71,22 @@ export default function StaffManagement() {
   }
 
   async function action(row: Staff, kind: string) {
+    if (kind === 'delete') {
+      if (!window.confirm(`Are you sure you want to delete ${row.name}'s staff account?`)) return
+      setBusy(true)
+      setError('')
+      try {
+        await api.delete('/owner/staff/' + row.id)
+        setNotice('Staff account deleted successfully.')
+        refresh((v) => v + 1)
+      } catch (e) {
+        setError(requestError(e))
+      } finally {
+        setBusy(false)
+      }
+      return
+    }
+
     let reason = ''
     if (kind === 'disable') {
       const answer = window.prompt('Reason for disabling this staff account:')
@@ -224,11 +245,11 @@ export default function StaffManagement() {
             +
           </div>
           <h2 style={{ fontSize: 17, fontWeight: 800, color: '#0F172A', margin: 0 }}>
-            {edit ? 'Edit Staff Member' : 'Invite New Staff Member'}
+            {edit ? 'Edit Staff Member' : 'Add New Staff Member'}
           </h2>
         </div>
 
-        <form onSubmit={save} style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 16, alignItems: 'end' }}>
+        <form onSubmit={save} style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 16, alignItems: 'end' }}>
           <div>
             <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: '#0E5E48', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: 6 }}>
               Full Name
@@ -307,6 +328,33 @@ export default function StaffManagement() {
             </select>
           </div>
 
+          <div>
+            <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: '#0E5E48', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: 6 }}>
+              {edit ? 'New Password (Optional)' : 'Password'}
+            </label>
+            <input
+              type="password"
+              required={!edit}
+              minLength={6}
+              maxLength={255}
+              placeholder={edit ? 'Leave blank to keep current' : 'Min 6 characters'}
+              value={form.password}
+              onChange={(e) => setForm({ ...form, password: e.target.value })}
+              style={{
+                width: '100%',
+                boxSizing: 'border-box',
+                padding: '10px 14px',
+                borderRadius: 8,
+                border: '1px solid #CBD5E1',
+                fontSize: 13.5,
+                color: '#0F172A',
+                outline: 'none',
+                fontFamily: 'inherit',
+                background: '#FFFFFF',
+              }}
+            />
+          </div>
+
           <div style={{ display: 'flex', gap: 8 }}>
             <button
               type="submit"
@@ -324,14 +372,14 @@ export default function StaffManagement() {
                 whiteSpace: 'nowrap',
               }}
             >
-              {busy ? 'Saving…' : edit ? 'Save Changes' : 'Invite Staff'}
+              {busy ? 'Saving…' : edit ? 'Save Changes' : 'Create Staff'}
             </button>
             {edit && (
               <button
                 type="button"
                 onClick={() => {
                   setEdit(null)
-                  setForm({ name: '', email: '', role: 'cashier' })
+                  setForm({ name: '', email: '', role: 'cashier', password: '' })
                 }}
                 style={{
                   background: '#F1F5F9',
@@ -554,7 +602,7 @@ export default function StaffManagement() {
                             disabled={busy}
                             onClick={() => {
                               setEdit(row.id)
-                              setForm({ name: row.name, email: row.email, role: row.role })
+                              setForm({ name: row.name, email: row.email, role: row.role, password: '' })
                               window.scrollTo({ top: 0, behavior: 'smooth' })
                             }}
                             style={{
@@ -586,6 +634,23 @@ export default function StaffManagement() {
                             }}
                           >
                             {row.account_status === 'disabled' ? 'Enable' : 'Disable'}
+                          </button>
+
+                          <button
+                            disabled={busy}
+                            onClick={() => void action(row, 'delete')}
+                            style={{
+                              background: '#FEF2F2',
+                              color: '#991B1B',
+                              border: '1px solid #FECACA',
+                              padding: '6px 12px',
+                              borderRadius: 6,
+                              fontSize: 12,
+                              fontWeight: 700,
+                              cursor: 'pointer',
+                            }}
+                          >
+                            Delete
                           </button>
 
                           {row.account_status === 'pending' && (

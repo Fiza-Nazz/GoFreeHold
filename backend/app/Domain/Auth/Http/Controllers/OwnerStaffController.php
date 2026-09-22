@@ -42,8 +42,15 @@ class OwnerStaffController extends Controller
 
     public function store(Request $r)
     {
-        $data = $r->validate(['name' => 'required|string|max:255', 'email' => 'required|email|max:255|unique:users,email',
-            'role' => ['required', Rule::in(OwnerContextResolver::STAFF_ROLES)], 'owner_id' => 'prohibited', 'user_id' => 'prohibited', 'password' => 'prohibited', 'account_status' => 'prohibited']);
+        $data = $r->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|max:255|unique:users,email',
+            'role' => ['required', Rule::in(OwnerContextResolver::STAFF_ROLES)],
+            'password' => 'required|string|min:6|max:255',
+            'owner_id' => 'prohibited',
+            'user_id' => 'prohibited',
+            'account_status' => 'prohibited',
+        ]);
         $staff = $this->service->create($r->user(), $data);
         return response()->json(['data' => ['staff' => $this->row($staff)]], 201);
     }
@@ -52,9 +59,30 @@ class OwnerStaffController extends Controller
     public function update(Request $r, int $staff)
     {
         $member = $this->member($r, $staff);
-        $data = $r->validate(['name' => 'sometimes|required|string|max:255', 'role' => ['sometimes', 'required', Rule::in(OwnerContextResolver::STAFF_ROLES)], 'email' => 'prohibited', 'owner_id' => 'prohibited', 'account_status' => 'prohibited']);
+        $data = $r->validate([
+            'name' => 'sometimes|required|string|max:255',
+            'role' => ['sometimes', 'required', Rule::in(OwnerContextResolver::STAFF_ROLES)],
+            'password' => 'nullable|string|min:6|max:255',
+            'email' => 'prohibited',
+            'owner_id' => 'prohibited',
+            'account_status' => 'prohibited',
+        ]);
         $this->service->update($r->user(), $member, $data);
         return response()->json(['data' => ['staff' => $this->row($member)]]);
+    }
+    public function destroy(Request $r, int $staff)
+    {
+        $member = $this->member($r, $staff);
+        $user = $member->user;
+        abort_if(Job::where('assigned_to', $user->id)->where('status', '!=', 'completed')->exists(), 409, 'Cannot delete staff with unfinished jobs. Reassign them first.');
+        \Illuminate\Support\Facades\DB::transaction(function () use ($r, $member, $user) {
+            $member->invitations()->delete();
+            $member->delete();
+            $user->tokens()->delete();
+            $user->delete();
+            $this->context->audit($r->user(), 'staff.deleted', $user->id);
+        });
+        return response()->json(['message' => 'Staff account deleted successfully.']);
     }
     public function disable(Request $r, int $staff) { return $this->changeStatus($r, $staff, false); }
     public function enable(Request $r, int $staff) { return $this->changeStatus($r, $staff, true); }
