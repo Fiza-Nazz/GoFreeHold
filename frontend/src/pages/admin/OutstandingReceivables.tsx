@@ -1,4 +1,4 @@
-﻿import { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import api from '../../api/axios'
 import { THEME, Icon, CornerBrackets, portalPageCss, heroStyle, panelStyle, thStyle, tdStyle } from '../../components/gfh/adminTheme'
 
@@ -46,18 +46,19 @@ function StatCard({ label, value, color, icon, iconBg, delay }: { label: string;
 }
 
 export default function OutstandingReceivables() {
+  const basePath = typeof window !== 'undefined' && window.location.pathname.startsWith('/owner') ? '/owner' : '/admin'
   const [items, setItems] = useState<CategorizedReceivable[]>([])
   const [summary, setSummary] = useState<Summary | null>(null)
   const [owners, setOwners] = useState<Owner[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [filters, setFilters] = useState({ owner_id: '', tenant_type: '' })
 
-  useEffect(() => { fetchOwners() }, [])
-  useEffect(() => { fetchReport() }, [filters])
+  useEffect(() => { fetchOwners() }, [basePath])
+  useEffect(() => { fetchReport() }, [filters, basePath])
 
   const fetchOwners = async () => {
     try {
-      const res = await api.get('/admin/properties/owners')
+      const res = await api.get(`${basePath}/properties/owners`)
       setOwners(res.data?.data?.owners || [])
     } catch (err) { console.error(err) }
   }
@@ -68,7 +69,7 @@ export default function OutstandingReceivables() {
       const params = new URLSearchParams()
       if (filters.owner_id) params.append('owner_id', filters.owner_id)
       if (filters.tenant_type) params.append('tenant_type', filters.tenant_type)
-      const res = await api.get(`/admin/receivables/categorized?${params.toString()}`)
+      const res = await api.get(`${basePath}/receivables/categorized?${params.toString()}`)
       setItems(res.data?.data?.receivables || [])
       setSummary(res.data.data.summary)
     } catch (err) { console.error(err) }

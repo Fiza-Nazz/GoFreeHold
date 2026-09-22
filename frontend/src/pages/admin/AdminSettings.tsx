@@ -25,6 +25,7 @@ interface NotificationLog {
 }
 
 export default function AdminSettings() {
+  const basePath = typeof window !== 'undefined' && window.location.pathname.startsWith('/owner') ? '/owner' : '/admin'
   const [settings, setSettings] = useState<NotificationSetting[]>([])
   const [logs, setLogs] = useState<NotificationLog[]>([])
   const [isLoading, setIsLoading] = useState(true)
@@ -37,7 +38,7 @@ export default function AdminSettings() {
   const fetchSettings = async () => {
     setIsLoading(true)
     try {
-      const res = await api.get('/admin/settings/notifications')
+      const res = await api.get(`${basePath}/settings/notifications`)
       setSettings(res.data?.data?.settings || [])
       setLogs(res.data?.data?.logs || [])
     } catch (err) { console.error(err) }
@@ -46,7 +47,7 @@ export default function AdminSettings() {
 
   const handleToggle = async (setting: NotificationSetting) => {
     try {
-      await api.put(`/admin/settings/notifications/${setting.id}`, {
+      await api.put(`${basePath}/settings/notifications/${setting.id}`, {
         enabled: !setting.enabled,
         recipient_email: setting.recipient_email,
         days_before_expiry: setting.days_before_expiry,
@@ -57,7 +58,7 @@ export default function AdminSettings() {
 
   const handleUpdateEmail = async (setting: NotificationSetting, newEmail: string) => {
     try {
-      await api.put(`/admin/settings/notifications/${setting.id}`, {
+      await api.put(`${basePath}/settings/notifications/${setting.id}`, {
         enabled: setting.enabled,
         recipient_email: newEmail,
         days_before_expiry: setting.days_before_expiry,
@@ -72,10 +73,10 @@ export default function AdminSettings() {
     try {
       let res
       try {
-        res = await api.post(`/admin/settings/notifications/trigger/${key}`)
+        res = await api.post(`${basePath}/settings/notifications/trigger/${key}`)
       } catch (err: any) {
         if (err.response?.status === 405) {
-          res = await api.put(`/admin/settings/notifications/trigger/${key}`)
+          res = await api.put(`${basePath}/settings/notifications/trigger/${key}`)
         } else {
           throw err
         }
@@ -104,10 +105,10 @@ export default function AdminSettings() {
     try {
       let res
       try {
-        res = await api.post('/admin/settings/notifications/run-scheduler')
+        res = await api.post(`${basePath}/settings/notifications/run-scheduler`)
       } catch (err: any) {
         if (err.response?.status === 405) {
-          res = await api.put('/admin/settings/notifications/run-scheduler')
+          res = await api.put(`${basePath}/settings/notifications/run-scheduler`)
         } else {
           throw err
         }

@@ -1,4 +1,4 @@
-﻿import { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import api from '../../api/axios'
 import ChequeDetails from '../../components/gfh/ChequeDetails'
 import { formatDate } from '../../utils/formatDate'
@@ -106,6 +106,7 @@ interface PdcChequeTrackerProps {
 }
 
 export default function PdcChequeTracker({ contractId }: PdcChequeTrackerProps) {
+  const basePath = typeof window !== 'undefined' && window.location.pathname.startsWith('/owner') ? '/owner' : '/admin'
   const [cheques, setCheques] = useState<Cheque[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [statusFilter, setStatusFilter] = useState('')
@@ -120,17 +121,17 @@ export default function PdcChequeTracker({ contractId }: PdcChequeTrackerProps) 
 
   useEffect(() => {
     if (!isModalOpen) return
-    api.get('/admin/contracts').then(res => setContracts(res.data?.data?.contracts || []))
+    api.get(`${basePath}/contracts`).then(res => setContracts(res.data?.data?.contracts || []))
       .catch(() => setFormError('Unable to load contracts. Close this form and try again.'))
-  }, [isModalOpen])
+  }, [isModalOpen, basePath])
 
-  useEffect(() => { fetchCheques() }, [statusFilter])
+  useEffect(() => { fetchCheques() }, [statusFilter, basePath])
 
   const fetchCheques = async () => {
     setIsLoading(true)
     setListError('')
     try {
-      const url = statusFilter ? `/admin/contract-cheques?status=${statusFilter}` : '/admin/contract-cheques'
+      const url = statusFilter ? `${basePath}/contract-cheques?status=${statusFilter}` : `${basePath}/contract-cheques`
       const res = await api.get(url)
       setCheques(res.data?.data?.cheques || [])
     } catch { setListError('Unable to load cheque records. Please refresh the page.') }
@@ -152,7 +153,7 @@ export default function PdcChequeTracker({ contractId }: PdcChequeTrackerProps) 
       payload.append('contract_id', selectedContract)
       if (chequeImage) payload.append('cheque_image', chequeImage)
 
-      await api.post('/admin/contract-cheques', payload, {
+      await api.post(`${basePath}/contract-cheques`, payload, {
         headers: { 'Content-Type': 'multipart/form-data' },
       })
       setIsModalOpen(false)
@@ -168,14 +169,14 @@ export default function PdcChequeTracker({ contractId }: PdcChequeTrackerProps) 
 
   const updateStatus = async (cheque: Cheque, status: string) => {
     try {
-      await api.put(`/admin/contracts/${cheque.contract_id}/cheques/${cheque.id}`, { status })
+      await api.put(`${basePath}/contracts/${cheque.contract_id}/cheques/${cheque.id}`, { status })
       fetchCheques()
     } catch (err) { alert('Error updating status') }
   }
 
   const deleteCheque = async (cheque: Cheque) => {
     if (confirm('Delete this cheque record?')) {
-      await api.delete(`/admin/contracts/${cheque.contract_id}/cheques/${cheque.id}`)
+      await api.delete(`${basePath}/contracts/${cheque.contract_id}/cheques/${cheque.id}`)
       fetchCheques()
     }
   }

@@ -47,7 +47,10 @@ Route::middleware(['auth:sanctum', 'role:owner,cashier,accountant'])->prefix('ow
     Route::post('/settlements/{settlement}/documents', [SettlementController::class, 'storeDocument']);
     Route::post('/settlements/{settlement}/payments', [SettlementController::class, 'storePayment']);
 
+    Route::get('/settlement-docs', [SettlementDocController::class, 'index']);
+    Route::post('/settlement-docs', [SettlementDocController::class, 'store']);
     Route::get('/settlement-payments', [SettlementPaymentController::class, 'index']);
+    Route::post('/settlement-payments', [SettlementPaymentController::class, 'store']);
     Route::get('/financial-entries', [FinancialTrackingController::class, 'index']);
     Route::post('/financial-entries', [FinancialTrackingController::class, 'store']);
     Route::delete('/financial-entries/{financial_entry}', [FinancialTrackingController::class, 'destroy']);

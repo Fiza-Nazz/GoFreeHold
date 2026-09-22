@@ -84,6 +84,7 @@ const labelStyle: React.CSSProperties = {
 }
 
 export default function JobsPage() {
+  const basePath = typeof window !== 'undefined' && window.location.pathname.startsWith('/owner') ? '/owner' : '/admin'
   const [jobs, setJobs] = useState<Job[]>([])
   const [teams, setTeams] = useState<Team[]>([])
   const [technicians, setTechnicians] = useState<Technician[]>([])
@@ -124,10 +125,10 @@ export default function JobsPage() {
     setIsLoading(true)
     try {
       const [jobsRes, teamsRes, techRes, compRes] = await Promise.all([
-        api.get('/admin/jobs'),
-        api.get('/admin/teams').catch(() => ({ data: { data: { teams: [] } } })),
-        api.get('/admin/technicians').catch(() => ({ data: { data: { technicians: [] } } })),
-        api.get('/admin/complaints').catch(() => ({ data: { data: { complaints: [] } } })),
+        api.get(`${basePath}/jobs`),
+        api.get(`${basePath}/teams`).catch(() => ({ data: { data: { teams: [] } } })),
+        api.get(`${basePath}/technicians`).catch(() => ({ data: { data: { technicians: [] } } })),
+        api.get(`${basePath}/complaints`).catch(() => ({ data: { data: { complaints: [] } } })),
       ])
 
       setJobs(jobsRes.data?.data?.jobs || [])
@@ -143,7 +144,7 @@ export default function JobsPage() {
 
   const fetchJobs = async () => {
     try {
-      const res = await api.get('/admin/jobs')
+      const res = await api.get(`${basePath}/jobs`)
       setJobs(res.data?.data?.jobs || [])
     } catch (err) {
       console.error('Failed to refresh jobs:', err)
@@ -206,7 +207,7 @@ export default function JobsPage() {
       if (addForm.scheduled_date) payload.scheduled_date = addForm.scheduled_date
       if (addForm.notes) payload.notes = addForm.notes
 
-      await api.post('/admin/jobs', payload)
+      await api.post(`${basePath}/jobs`, payload)
       setIsAddModalOpen(false)
       fetchJobs()
     } catch (err: any) {
@@ -239,7 +240,7 @@ export default function JobsPage() {
       }
       if (editForm.notes !== undefined) payload.notes = editForm.notes
 
-      await api.put(`/admin/jobs/${editingJob.id}`, payload)
+      await api.put(`${basePath}/jobs/${editingJob.id}`, payload)
       setIsEditModalOpen(false)
       setEditingJob(null)
       fetchJobs()
@@ -254,7 +255,7 @@ export default function JobsPage() {
   const handleDeleteJob = async (id: number) => {
     if (confirm(`Are you sure you want to delete maintenance job #JOB-00${id}?`)) {
       try {
-        await api.delete(`/admin/jobs/${id}`)
+        await api.delete(`${basePath}/jobs/${id}`)
         fetchJobs()
       } catch (err: any) {
         alert(err.response?.data?.message || 'Failed to delete job.')

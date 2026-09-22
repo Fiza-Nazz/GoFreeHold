@@ -23,6 +23,7 @@ const icons = {
 }
 
 export default function VacantPropertyReport() {
+  const basePath = typeof window !== 'undefined' && window.location.pathname.startsWith('/owner') ? '/owner' : '/admin'
   const [units, setUnits] = useState<VacantUnit[]>([])
   const [isLoading, setIsLoading] = useState(true)
 
@@ -38,7 +39,7 @@ export default function VacantPropertyReport() {
   const fetchVacantUnits = async () => {
     setIsLoading(true)
     try {
-      const res = await api.get('/admin/reports/vacant-properties')
+      const res = await api.get(`${basePath}/reports/vacant-properties`)
       setUnits(res.data?.data?.units || [])
     } catch (err) {
       console.error(err)
@@ -49,7 +50,7 @@ export default function VacantPropertyReport() {
 
   const exportExcel = async () => {
     try {
-      const response = await api.get('/admin/reports/export/vacant-properties', { responseType: 'blob' })
+      const response = await api.get(`${basePath}/reports/export/vacant-properties`, { responseType: 'blob' })
       const url = window.URL.createObjectURL(new Blob([response.data], {
         type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
       }))

@@ -1,4 +1,4 @@
-﻿import { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import api from '../../api/axios'
 import { THEME, Icon, ICONS, CornerBrackets, portalPageCss, heroStyle, panelStyle, thStyle, tdStyle, ghostBtnStyle } from '../../components/gfh/adminTheme'
 
@@ -50,6 +50,7 @@ const labelStyle: React.CSSProperties = {
 }
 
 export default function ApplianceCatalog() {
+  const basePath = typeof window !== 'undefined' && window.location.pathname.startsWith('/owner') ? '/owner' : '/admin'
   const [appliances, setAppliances] = useState<Appliance[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [unitFilter, setUnitFilter] = useState('')
@@ -71,14 +72,14 @@ export default function ApplianceCatalog() {
 
   useEffect(() => { fetchAppliances() }, [unitFilter])
   useEffect(() => {
-    api.get('/admin/units').then(res => setUnits(res.data?.data?.units || []))
+    api.get(`${basePath}/units`).then(res => setUnits(res.data?.data?.units || []))
       .catch(() => setError('Unable to load units. Please reload the page.'))
-  }, [])
+  }, [basePath])
 
   const fetchAppliances = async () => {
     setIsLoading(true)
     try {
-      const url = unitFilter ? `/admin/appliances?unit_id=${unitFilter}` : '/admin/appliances'
+      const url = unitFilter ? `${basePath}/appliances?unit_id=${unitFilter}` : `${basePath}/appliances`
       const res = await api.get(url)
       setAppliances(res.data?.data?.appliances || [])
     } catch (err) { setError('Unable to load appliances. Please reload the page.') }
@@ -91,7 +92,7 @@ export default function ApplianceCatalog() {
     setIsSaving(true)
     setError('')
     try {
-      await api.post('/admin/appliances', formData)
+      await api.post(`${basePath}/appliances`, formData)
       setIsModalOpen(false)
       fetchAppliances()
       setFormData({ unit_id: '', name: '', brand: '', model_number: '', serial_number: '', purchase_date: '', warranty_expiry: '', condition: 'good', notes: '' })
@@ -101,7 +102,7 @@ export default function ApplianceCatalog() {
 
   const handleDelete = async (id: number) => {
     if (confirm('Remove this appliance?')) {
-      await api.delete(`/admin/appliances/${id}`)
+      await api.delete(`${basePath}/appliances/${id}`)
       fetchAppliances()
     }
   }

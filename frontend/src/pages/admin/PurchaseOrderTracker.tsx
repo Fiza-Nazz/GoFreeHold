@@ -1,4 +1,4 @@
-﻿import { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import api from '../../api/axios'
 import { safeUpper } from '../../utils/safeLabel'
 import { THEME, Icon, CornerBrackets, portalPageCss, heroStyle, panelStyle, thStyle, tdStyle, ghostBtnStyle } from '../../components/gfh/adminTheme'
@@ -58,6 +58,7 @@ const labelStyle: React.CSSProperties = {
 }
 
 export default function PurchaseOrderTracker() {
+  const basePath = typeof window !== 'undefined' && window.location.pathname.startsWith('/owner') ? '/owner' : '/admin'
   const [orders, setOrders] = useState<Purchase[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -75,8 +76,8 @@ export default function PurchaseOrderTracker() {
   const fetchOrders = async () => {
     setIsLoading(true)
     try {
-      // Real backend: GET /admin/purchases → data.purchases
-      const res = await api.get('/admin/purchases')
+      // Real backend: GET ${basePath}/purchases → data.purchases
+      const res = await api.get(`${basePath}/purchases`)
       setOrders(res.data.data.purchases || [])
     } catch (err) {
       console.error(err)
@@ -91,7 +92,7 @@ export default function PurchaseOrderTracker() {
     const qty = Math.max(1, parseInt(formData.quantity, 10) || 1)
     const price = Math.max(0, parseFloat(formData.unit_price) || 0)
     try {
-      await api.post('/admin/purchases', {
+      await api.post(`${basePath}/purchases`, {
         supplier_name: formData.supplier_name,
         purchase_date: formData.purchase_date,
         remark: formData.remark || undefined,
@@ -120,7 +121,7 @@ export default function PurchaseOrderTracker() {
 
   const updateStatus = async (id: number, status: string) => {
     try {
-      await api.put(`/admin/purchases/${id}/status`, { status })
+      await api.put(`${basePath}/purchases/${id}/status`, { status })
       fetchOrders()
     } catch (err) {
       alert('Error updating purchase status')
@@ -129,7 +130,7 @@ export default function PurchaseOrderTracker() {
 
   const handleDelete = async (id: number) => {
     if (confirm('Delete this purchase?')) {
-      await api.delete(`/admin/purchases/${id}`)
+      await api.delete(`${basePath}/purchases/${id}`)
       fetchOrders()
     }
   }

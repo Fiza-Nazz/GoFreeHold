@@ -57,5 +57,5 @@ Route::middleware(['auth:sanctum', 'role:owner,cashier,accountant'])->prefix('ow
     Route::post('/service-charges', [ServiceChargeController::class, 'store']);
     Route::put('/service-charges/{serviceCharge}', [ServiceChargeController::class, 'update']);
     Route::delete('/service-charges/{serviceCharge}', [ServiceChargeController::class, 'destroy']);
-    Route::get('/contract-payables', [ContractPayableController::class, 'index']);
+    Route::apiResource('contract-payables', ContractPayableController::class);
 });

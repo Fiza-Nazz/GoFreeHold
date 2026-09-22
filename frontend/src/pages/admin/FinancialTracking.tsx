@@ -1,4 +1,4 @@
-﻿import { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import api from '../../api/axios'
 import { THEME, Icon, ICONS, CornerBrackets, portalPageCss, heroStyle, panelStyle, thStyle, tdStyle, ghostBtnStyle } from '../../components/gfh/adminTheme'
 
@@ -65,6 +65,7 @@ function StatCard({ label, value, color, icon, iconBg, delay }: { label: string;
 }
 
 export default function FinancialTracking() {
+  const basePath = typeof window !== 'undefined' && window.location.pathname.startsWith('/owner') ? '/owner' : '/admin'
   const [entries, setEntries] = useState<FinancialEntry[]>([])
   const [summary, setSummary] = useState<FinancialSummary | null>(null)
   const [isLoading, setIsLoading] = useState(true)
@@ -83,7 +84,7 @@ export default function FinancialTracking() {
   const fetchEntries = async () => {
     setIsLoading(true)
     try {
-      const url = typeFilter ? `/admin/financial-entries?type=${typeFilter}` : '/admin/financial-entries'
+      const url = typeFilter ? `${basePath}/financial-entries?type=${typeFilter}` : `${basePath}/financial-entries`
       const res = await api.get(url)
       setEntries(res.data?.data?.entries || [])
       setSummary(res.data.data.summary)
@@ -94,7 +95,7 @@ export default function FinancialTracking() {
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault()
     try {
-      await api.post('/admin/financial-entries', formData)
+      await api.post(`${basePath}/financial-entries`, formData)
       setIsModalOpen(false)
       fetchEntries()
       setFormData({
@@ -109,7 +110,7 @@ export default function FinancialTracking() {
 
   const handleDelete = async (id: number) => {
     if (confirm('Delete this entry?')) {
-      await api.delete(`/admin/financial-entries/${id}`)
+      await api.delete(`${basePath}/financial-entries/${id}`)
       fetchEntries()
     }
   }

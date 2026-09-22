@@ -30,6 +30,7 @@ const icons = {
 }
 
 export default function DailyMaintenanceReport() {
+  const basePath = typeof window !== 'undefined' && window.location.pathname.startsWith('/owner') ? '/owner' : '/admin'
   const [report, setReport] = useState<ReportData | null>(null)
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0])
   const [isLoading, setIsLoading] = useState(true)
@@ -42,7 +43,7 @@ export default function DailyMaintenanceReport() {
   const fetchReport = async () => {
     setIsLoading(true)
     try {
-      const res = await api.get(`/admin/maintenance/daily-report?date=${selectedDate}`)
+      const res = await api.get(`${basePath}/maintenance/daily-report?date=${selectedDate}`)
       setReport(res.data.data)
     } catch (err) {
       console.error(err)

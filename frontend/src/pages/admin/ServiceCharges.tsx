@@ -1,4 +1,4 @@
-﻿import { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import api from '../../api/axios'
 import { formatDate } from '../../utils/formatDate'
 import { THEME, Icon, ICONS, CornerBrackets, portalPageCss, heroStyle, panelStyle, ghostBtnStyle } from '../../components/gfh/adminTheme'
@@ -51,18 +51,19 @@ const btnTint = {
 }
 
 export default function ServiceCharges() {
+  const basePath = typeof window !== 'undefined' && window.location.pathname.startsWith('/owner') ? '/owner' : '/admin'
   const [charges, setCharges] = useState<ServiceCharge[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [statusFilter, setStatusFilter] = useState('')
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [formData, setFormData] = useState({ contract_id: '', unit_id: '', charge_type: 'maintenance', amount: '', due_date: '', notes: '' })
 
-  useEffect(() => { fetchCharges() }, [statusFilter])
+  useEffect(() => { fetchCharges() }, [statusFilter, basePath])
 
   const fetchCharges = async () => {
     setIsLoading(true)
     try {
-      const url = statusFilter ? `/admin/service-charges?status=${statusFilter}` : '/admin/service-charges'
+      const url = statusFilter ? `${basePath}/service-charges?status=${statusFilter}` : `${basePath}/service-charges`
       const res = await api.get(url)
       setCharges(res.data?.data?.charges || [])
     } catch (err) { console.error(err) }
@@ -72,7 +73,7 @@ export default function ServiceCharges() {
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault()
     try {
-      await api.post('/admin/service-charges', formData)
+      await api.post(`${basePath}/service-charges`, formData)
       setIsModalOpen(false)
       fetchCharges()
       setFormData({ contract_id: '', unit_id: '', charge_type: 'maintenance', amount: '', due_date: '', notes: '' })
@@ -81,21 +82,21 @@ export default function ServiceCharges() {
 
   const markPaid = async (id: number) => {
     try {
-      await api.put(`/admin/service-charges/${id}`, { status: 'paid', paid_date: new Date().toISOString().split('T')[0] })
+      await api.put(`${basePath}/service-charges/${id}`, { status: 'paid', paid_date: new Date().toISOString().split('T')[0] })
       fetchCharges()
     } catch (err) { alert('Error updating charge') }
   }
 
   const markWaived = async (id: number) => {
     try {
-      await api.put(`/admin/service-charges/${id}`, { status: 'waived' })
+      await api.put(`${basePath}/service-charges/${id}`, { status: 'waived' })
       fetchCharges()
     } catch (err) { alert('Error updating charge') }
   }
 
   const deleteCharge = async (id: number) => {
     if (confirm('Delete this service charge?')) {
-      await api.delete(`/admin/service-charges/${id}`)
+      await api.delete(`${basePath}/service-charges/${id}`)
       fetchCharges()
     }
   }

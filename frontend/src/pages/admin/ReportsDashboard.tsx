@@ -20,6 +20,7 @@ const REPORT_LABELS: Record<ReportType, string> = {
 }
 
 export default function ReportsDashboard() {
+  const basePath = typeof window !== 'undefined' && window.location.pathname.startsWith('/owner') ? '/owner' : '/admin'
   const [activeTab, setActiveTab] = useState<ReportType>('revenue')
   const [reportData, setReportData] = useState<any>(null)
   const [isLoading, setIsLoading] = useState(true)
@@ -36,7 +37,7 @@ export default function ReportsDashboard() {
   const fetchReport = async () => {
     setIsLoading(true)
     try {
-      const res = await api.get(`/admin/reports/${activeTab}`)
+      const res = await api.get(`${basePath}/reports/${activeTab}`)
       setReportData(res.data.data)
     } catch (err) {
       console.error(err)
@@ -47,7 +48,7 @@ export default function ReportsDashboard() {
 
   const exportExcel = async () => {
     try {
-      const response = await api.get(`/admin/reports/export/${activeTab}`, { responseType: 'blob' })
+      const response = await api.get(`${basePath}/reports/export/${activeTab}`, { responseType: 'blob' })
       const url = window.URL.createObjectURL(new Blob([response.data], {
         type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
       }))

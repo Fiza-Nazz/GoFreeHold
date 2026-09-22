@@ -1,4 +1,4 @@
-﻿import { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import api from '../../api/axios'
 import { formatDate } from '../../utils/formatDate'
 import { THEME, Icon, ICONS, CornerBrackets, portalPageCss, heroStyle, panelStyle, ghostBtnStyle } from '../../components/gfh/adminTheme'
@@ -16,18 +16,19 @@ const icons = {
 }
 
 export default function ContractCallLogPage() {
+  const basePath = typeof window !== 'undefined' && window.location.pathname.startsWith('/owner') ? '/owner' : '/admin'
   const [logs, setLogs] = useState<CallLog[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [contractIdFilter, setContractIdFilter] = useState('')
   const [isFormOpen, setIsFormOpen] = useState(false)
   const [formData, setFormData] = useState({ contract_id: '', date: '', remark: '' })
 
-  useEffect(() => { fetchLogs() }, [contractIdFilter])
+  useEffect(() => { fetchLogs() }, [contractIdFilter, basePath])
 
   const fetchLogs = async () => {
     setIsLoading(true)
     try {
-      const url = contractIdFilter ? `/admin/call-logs?contract_id=${contractIdFilter}` : '/admin/call-logs'
+      const url = contractIdFilter ? `${basePath}/call-logs?contract_id=${contractIdFilter}` : `${basePath}/call-logs`
       const res = await api.get(url)
       setLogs(res.data.data.logs)
     } catch (err) { console.error(err) }
@@ -37,7 +38,7 @@ export default function ContractCallLogPage() {
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault()
     try {
-      await api.post('/admin/call-logs', formData)
+      await api.post(`${basePath}/call-logs`, formData)
       setIsFormOpen(false)
       fetchLogs()
       setFormData({ contract_id: '', date: '', remark: '' })
@@ -46,7 +47,7 @@ export default function ContractCallLogPage() {
 
   const deleteLog = async (id: number) => {
     if (confirm('Delete this call log?')) {
-      await api.delete(`/admin/call-logs/${id}`)
+      await api.delete(`${basePath}/call-logs/${id}`)
       fetchLogs()
     }
   }

@@ -48,7 +48,7 @@ export default function AddPropertyPage() {
   const basePath = typeof window !== 'undefined' && window.location.pathname.startsWith('/owner') ? '/owner' : '/admin'
 
   useEffect(() => {
-    api.get('/admin/properties/owners')
+    api.get(`${basePath}/properties/owners`)
       .then(response => {
         const list = response.data?.data?.owners || []
         setOwners(list)

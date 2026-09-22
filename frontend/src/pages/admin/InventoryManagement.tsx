@@ -48,6 +48,7 @@ const labelStyle: React.CSSProperties = {
 }
 
 export default function InventoryManagement() {
+  const basePath = typeof window !== 'undefined' && window.location.pathname.startsWith('/owner') ? '/owner' : '/admin'
   const [searchParams] = useSearchParams()
   const topbarQuery = (searchParams.get('q') || '').trim().toLowerCase()
   const [tab, setTab] = useState<'warehouse' | 'unit'>('warehouse')
@@ -76,7 +77,7 @@ export default function InventoryManagement() {
   const fetchInventory = async () => {
     setIsLoading(true)
     try {
-      const url = tab === 'warehouse' ? '/admin/inventory/warehouse' : '/admin/inventory/unit'
+      const url = tab === 'warehouse' ? `${basePath}/inventory/warehouse` : `${basePath}/inventory/unit`
       const res = await api.get(url)
       setItems(res.data?.data?.items || [])
     } catch (err) { console.error(err) }
@@ -86,7 +87,7 @@ export default function InventoryManagement() {
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault()
     try {
-      await api.post('/admin/inventory', formData)
+      await api.post(`${basePath}/inventory`, formData)
       setIsModalOpen(false)
       fetchInventory()
       setFormData({ name: '', category: '', quantity: '1', unit_price: '0', location_type: tab, unit_id: '', min_stock_alert: '5', notes: '' })
@@ -95,7 +96,7 @@ export default function InventoryManagement() {
 
   const handleDelete = async (id: number) => {
     if (confirm('Are you sure you want to delete this inventory item?')) {
-      await api.delete(`/admin/inventory/${id}`)
+      await api.delete(`${basePath}/inventory/${id}`)
       fetchInventory()
     }
   }

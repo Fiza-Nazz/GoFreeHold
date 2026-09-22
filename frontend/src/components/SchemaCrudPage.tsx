@@ -62,6 +62,15 @@ export default function SchemaCrudPage({
   columns,
   mapPayload,
 }: Props) {
+  const isOwner = typeof window !== 'undefined' && window.location.pathname.startsWith('/owner')
+  const resolvedListUrl = isOwner ? listUrl.replace(/^\/admin\//, '/owner/') : listUrl
+  const resolvedCreateUrl = createUrl
+    ? (isOwner ? createUrl.replace(/^\/admin\//, '/owner/') : createUrl)
+    : resolvedListUrl
+  const resolvedDeleteUrl = deleteUrl
+    ? (isOwner ? deleteUrl.replace(/^\/admin\//, '/owner/') : deleteUrl)
+    : resolvedListUrl
+
   const [rows, setRows] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [showForm, setShowForm] = useState(false)
@@ -75,12 +84,12 @@ export default function SchemaCrudPage({
   useEffect(() => {
     setForm(emptyForm())
     fetchList()
-  }, [listUrl])
+  }, [resolvedListUrl])
 
   const fetchList = async () => {
     setLoading(true)
     try {
-      const res = await api.get(listUrl)
+      const res = await api.get(resolvedListUrl)
       setRows(res.data.data?.[listKey] ?? [])
     } catch (e) {
       console.error(e)
@@ -105,7 +114,7 @@ export default function SchemaCrudPage({
               return [f.name, v]
             })
           )
-      await api.post(createUrl || listUrl, payload)
+      await api.post(resolvedCreateUrl, payload)
       setShowForm(false)
       setForm(emptyForm())
       fetchList()
@@ -123,7 +132,7 @@ export default function SchemaCrudPage({
   const handleDelete = async (id: number) => {
     if (!confirm('Delete this record?')) return
     try {
-      await api.delete(`${deleteUrl || listUrl}/${id}`)
+      await api.delete(`${resolvedDeleteUrl}/${id}`)
       fetchList()
     } catch {
       alert('Delete failed.')

@@ -3,12 +3,13 @@ import SchemaCrudPage from '../../components/SchemaCrudPage'
 import api from '../../api/axios'
 
 export default function MaintenancesPage() {
+  const basePath = typeof window !== 'undefined' && window.location.pathname.startsWith('/owner') ? '/owner' : '/admin'
   const [unitOptions, setUnitOptions] = useState<{ value: string | number; label: string }[]>([])
 
   useEffect(() => {
     let cancelled = false
     api
-      .get('/admin/units')
+      .get(`${basePath}/units`)
       .then(res => {
         if (cancelled) return
         const units = res.data?.data?.units || []
@@ -23,13 +24,13 @@ export default function MaintenancesPage() {
         if (!cancelled) setUnitOptions([])
       })
     return () => { cancelled = true }
-  }, [])
+  }, [basePath])
 
   return (
     <SchemaCrudPage
       title="Maintenances"
       subtitle="Unit maintenance cost records"
-      listUrl="/admin/maintenances"
+      listUrl={`${basePath}/maintenances`}
       listKey="maintenances"
       fields={[
         {

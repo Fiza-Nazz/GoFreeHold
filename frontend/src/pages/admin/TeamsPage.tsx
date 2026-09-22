@@ -44,6 +44,7 @@ const labelStyle: React.CSSProperties = {
 }
 
 export default function TeamsPage() {
+  const basePath = typeof window !== 'undefined' && window.location.pathname.startsWith('/owner') ? '/owner' : '/admin'
   const [teams, setTeams] = useState<Team[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState('')
@@ -63,7 +64,7 @@ export default function TeamsPage() {
   const fetchTeams = async () => {
     setIsLoading(true)
     try {
-      const res = await api.get('/admin/teams')
+      const res = await api.get(`${basePath}/teams`)
       setTeams(res.data?.data?.teams || [])
     } catch (err) {
       console.error(err)
@@ -93,9 +94,9 @@ export default function TeamsPage() {
     setIsSaving(true)
     try {
       if (editingTeam) {
-        await api.put(`/admin/teams/${editingTeam.id}`, formData)
+        await api.put(`${basePath}/teams/${editingTeam.id}`, formData)
       } else {
-        await api.post('/admin/teams', formData)
+        await api.post(`${basePath}/teams`, formData)
       }
       setIsModalOpen(false)
       fetchTeams()
@@ -109,7 +110,7 @@ export default function TeamsPage() {
   const handleDelete = async (id: number) => {
     if (confirm('Are you sure you want to delete this maintenance team?')) {
       try {
-        await api.delete(`/admin/teams/${id}`)
+        await api.delete(`${basePath}/teams/${id}`)
         fetchTeams()
       } catch (err: any) {
         alert(err.response?.data?.message || 'Failed to delete team.')

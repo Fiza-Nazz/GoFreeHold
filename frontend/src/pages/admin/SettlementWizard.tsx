@@ -1,4 +1,4 @@
-﻿import { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import api from '../../api/axios'
 import { formatDate } from '../../utils/formatDate'
 import { THEME, Icon, ICONS, CornerBrackets, portalPageCss, heroStyle, panelStyle, thStyle, tdStyle, ghostBtnStyle } from '../../components/gfh/adminTheme'
@@ -77,6 +77,7 @@ const emptyForm = () => ({
 })
 
 export default function SettlementWizard() {
+  const basePath = typeof window !== 'undefined' && window.location.pathname.startsWith('/owner') ? '/owner' : '/admin'
   const [settlements, setSettlements] = useState<Settlement[]>([])
   const [owners, setOwners] = useState<Owner[]>([])
   const [activeContracts, setActiveContracts] = useState<ActiveContract[]>([])
@@ -93,18 +94,18 @@ export default function SettlementWizard() {
     fetchSettlements()
     fetchOwners()
     fetchActiveContracts()
-  }, [])
+  }, [basePath])
 
   const fetchOwners = async () => {
     try {
-      const res = await api.get('/admin/properties/owners')
+      const res = await api.get(`${basePath}/properties/owners`)
       setOwners(res.data?.data?.owner_profiles || [])
     } catch (err) { console.error(err) }
   }
 
   const fetchActiveContracts = async () => {
     try {
-      const res = await api.get('/admin/contracts')
+      const res = await api.get(`${basePath}/contracts`)
       const all = res.data?.data?.contracts || []
       setActiveContracts(all.filter((c: ActiveContract) => c.status === 'active'))
     } catch (err) { console.error(err) }
@@ -113,7 +114,7 @@ export default function SettlementWizard() {
   const fetchSettlements = async () => {
     setIsLoading(true)
     try {
-      const res = await api.get('/admin/settlements')
+      const res = await api.get(`${basePath}/settlements`)
       setSettlements(res.data?.data?.settlements || [])
     } catch (err) { console.error(err) }
     finally { setIsLoading(false) }
@@ -144,7 +145,7 @@ export default function SettlementWizard() {
     setBusy(true)
     setMessage('')
     try {
-      const res = await api.post('/admin/settlements', {
+      const res = await api.post(`${basePath}/settlements`, {
         contract_id: formData.contract_id,
         owner_id: formData.owner_id || undefined,
         vacant_date: formData.vacant_date,
@@ -174,8 +175,8 @@ export default function SettlementWizard() {
       const body = new FormData()
       body.append('settlement_id', String(createdSettlement.id))
       body.append('file', docFile)
-      await api.post('/admin/settlement-docs', body)
-      const show = await api.get(`/admin/settlements/${createdSettlement.id}`)
+      await api.post(`${basePath}/settlement-docs`, body)
+      const show = await api.get(`${basePath}/settlements/${createdSettlement.id}`)
       setCreatedSettlement(show.data.data.settlement)
       setDocFile(null)
       setMessage('Document uploaded.')
@@ -192,13 +193,13 @@ export default function SettlementWizard() {
     if (!createdSettlement) return
     setBusy(true)
     try {
-      await api.post('/admin/settlement-payments', {
+      await api.post(`${basePath}/settlement-payments`, {
         settlement_id: createdSettlement.id,
         amount: payForm.amount,
         payment_method: payForm.payment_method,
         payment_date: payForm.payment_date,
       })
-      const show = await api.get(`/admin/settlements/${createdSettlement.id}`)
+      const show = await api.get(`${basePath}/settlements/${createdSettlement.id}`)
       setCreatedSettlement(show.data.data.settlement)
       setPayForm({ amount: '', payment_method: 'bank_transfer', payment_date: new Date().toISOString().split('T')[0] })
       setMessage('Settlement payment recorded.')
@@ -213,7 +214,7 @@ export default function SettlementWizard() {
   const markCompleted = async (settlementId: number) => {
     setBusy(true)
     try {
-      const res = await api.put(`/admin/settlements/${settlementId}`, { status: 'completed' })
+      const res = await api.put(`${basePath}/settlements/${settlementId}`, { status: 'completed' })
       const updated = res.data.data.settlement as Settlement
       setMessage(`Settlement #${settlementId} completed. Contract vacated; unit AVAILABLE.`)
       if (createdSettlement?.id === settlementId) setCreatedSettlement(updated)

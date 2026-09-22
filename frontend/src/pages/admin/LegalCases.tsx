@@ -1,4 +1,4 @@
-﻿import { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import api from '../../api/axios'
 import { formatDate } from '../../utils/formatDate'
@@ -119,6 +119,7 @@ const LegalCaseBadge = ({ active }: { active?: boolean }) => {
  * List + detail screens.
  */
 export default function LegalCases() {
+  const basePath = typeof window !== 'undefined' && window.location.pathname.startsWith('/owner') ? '/owner' : '/admin'
   const [cases, setCases] = useState<LegalCase[]>([])
   const [contracts, setContracts] = useState<ContractOption[]>([])
   const [settlements, setSettlements] = useState<SettlementOption[]>([])
@@ -139,7 +140,7 @@ export default function LegalCases() {
     fetchCases()
     fetchContracts()
     fetchSettlements()
-  }, [])
+  }, [basePath])
 
   useEffect(() => {
     if (selectedId == null) {
@@ -152,7 +153,7 @@ export default function LegalCases() {
   const fetchCases = async () => {
     setIsLoading(true)
     try {
-      const res = await api.get('/admin/legal-cases')
+      const res = await api.get(`${basePath}/legal-cases`)
       setCases(res.data.data.legal_cases || [])
     } catch (err) {
       console.error(err)
@@ -163,7 +164,7 @@ export default function LegalCases() {
 
   const fetchDetail = async (id: number) => {
     try {
-      const res = await api.get(`/admin/legal-cases/${id}`)
+      const res = await api.get(`${basePath}/legal-cases/${id}`)
       setDetail(res.data.data.legal_case || null)
     } catch (err) {
       console.error(err)
@@ -173,7 +174,7 @@ export default function LegalCases() {
 
   const fetchContracts = async () => {
     try {
-      const res = await api.get('/admin/contracts')
+      const res = await api.get(`${basePath}/contracts`)
       setContracts(res.data.data.contracts || [])
     } catch (err) {
       console.error(err)
@@ -182,7 +183,7 @@ export default function LegalCases() {
 
   const fetchSettlements = async () => {
     try {
-      const res = await api.get('/admin/settlements')
+      const res = await api.get(`${basePath}/settlements`)
       setSettlements(res.data.data.settlements || [])
     } catch (err) {
       console.error(err)
@@ -203,7 +204,7 @@ export default function LegalCases() {
       if (form.contract_id) payload.contract_id = Number(form.contract_id)
       if (form.settlement_id) payload.settlement_id = Number(form.settlement_id)
 
-      const res = await api.post('/admin/legal-cases', payload)
+      const res = await api.post(`${basePath}/legal-cases`, payload)
       setIsCreateOpen(false)
       setForm({ contract_id: '', settlement_id: '', status: 'open', notes: '' })
       await fetchCases()
@@ -216,7 +217,7 @@ export default function LegalCases() {
   const updateStatus = async (status: LegalCase['status']) => {
     if (!detail) return
     try {
-      await api.put(`/admin/legal-cases/${detail.id}`, { status })
+      await api.put(`${basePath}/legal-cases/${detail.id}`, { status })
       fetchCases()
       fetchDetail(detail.id)
     } catch {
@@ -227,7 +228,7 @@ export default function LegalCases() {
   const saveNotes = async () => {
     if (!detail) return
     try {
-      await api.put(`/admin/legal-cases/${detail.id}`, { notes: detail.notes ?? '' })
+      await api.put(`${basePath}/legal-cases/${detail.id}`, { notes: detail.notes ?? '' })
       fetchCases()
       alert('Notes saved')
     } catch {
@@ -241,7 +242,7 @@ export default function LegalCases() {
     const body = new FormData()
     body.append('file', uploadFile)
     try {
-      await api.post(`/admin/legal-cases/${detail.id}/documents`, body, {
+      await api.post(`${basePath}/legal-cases/${detail.id}/documents`, body, {
         headers: { 'Content-Type': 'multipart/form-data' },
       })
       setUploadFile(null)
@@ -255,7 +256,7 @@ export default function LegalCases() {
   const deleteDoc = async (docId: number) => {
     if (!detail || !confirm('Delete this case document?')) return
     try {
-      await api.delete(`/admin/legal-cases/${detail.id}/documents/${docId}`)
+      await api.delete(`${basePath}/legal-cases/${detail.id}/documents/${docId}`)
       fetchDetail(detail.id)
       fetchCases()
     } catch {

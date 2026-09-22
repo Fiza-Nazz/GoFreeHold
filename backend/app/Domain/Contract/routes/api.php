@@ -98,6 +98,9 @@ Route::middleware(['auth:sanctum', 'role:owner,cashier,accountant'])->prefix('ow
     Route::post('/legal-cases', [LegalCaseController::class, 'store']);
     Route::get('/legal-cases/{legalCase}', [LegalCaseController::class, 'show']);
     Route::put('/legal-cases/{legalCase}', [LegalCaseController::class, 'update']);
+    Route::delete('/legal-cases/{legalCase}', [LegalCaseController::class, 'destroy']);
+    Route::post('/legal-cases/{legalCase}/documents', [LegalCaseController::class, 'storeDocument']);
+    Route::delete('/legal-cases/{legalCase}/documents/{legalCaseDocument}', [LegalCaseController::class, 'destroyDocument']);
     Route::get('/tenancy-res', [TenancyResController::class, 'index']);
     Route::get('/terms', [TermController::class, 'index']);
 });
