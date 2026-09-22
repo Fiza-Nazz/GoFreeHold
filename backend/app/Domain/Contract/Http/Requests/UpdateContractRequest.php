@@ -8,7 +8,8 @@ class UpdateContractRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return $this->user()->role === 'admin';
+        $user = $this->user();
+        return $user && in_array($user->role, ['admin', 'owner', 'cashier', 'accountant'], true);
     }
 
     public function rules(): array

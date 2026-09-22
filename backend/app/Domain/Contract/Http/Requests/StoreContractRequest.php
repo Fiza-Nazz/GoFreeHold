@@ -8,7 +8,19 @@ class StoreContractRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return $this->user()->role === 'admin';
+        $user = $this->user();
+        return $user && in_array($user->role, ['admin', 'owner', 'cashier', 'accountant'], true);
+    }
+
+    protected function prepareForValidation(): void
+    {
+        $user = $this->user();
+        if ($user && in_array($user->role, ['owner', 'cashier', 'accountant'], true)) {
+            $ownerId = app(\App\Domain\Auth\Services\OwnerContextResolver::class)->ownerId($user);
+            if (! $this->filled('owner_id')) {
+                $this->merge(['owner_id' => $ownerId]);
+            }
+        }
     }
 
     public function rules(): array
