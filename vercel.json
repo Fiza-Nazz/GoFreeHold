@@ -1,8 +1,10 @@
 {
+  "installCommand": "cd frontend && npm install",
   "buildCommand": "cd frontend && npm run build",
   "outputDirectory": "frontend/dist",
   "framework": "vite",
   "rewrites": [
+    { "source": "/api/(.*)", "destination": "https://api2.gofreehold.com/public/api/$1" },
     { "source": "/(.*)", "destination": "/index.html" }
   ]
 }
