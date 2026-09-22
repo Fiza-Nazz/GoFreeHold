@@ -43,8 +43,9 @@ export default function TenantManagement({ mode = 'list' }: Props) {
   const basePath = typeof window !== 'undefined' && window.location.pathname.startsWith('/owner') ? '/owner' : '/admin'
 
   useEffect(() => {
-    const requests: Promise<any>[] = [api.get('/admin/tenants')]
-    if (mode === 'previous') requests.push(api.get('/admin/contracts'))
+    const apiPrefix = basePath === '/owner' ? '/owner' : '/admin'
+    const requests: Promise<any>[] = [api.get(`${apiPrefix}/tenants`)]
+    if (mode === 'previous') requests.push(api.get(`${apiPrefix}/contracts`))
     Promise.all(requests)
       .then(([tenantResponse, contractResponse]) => {
         setTenants(tenantResponse.data?.data?.tenants || [])
@@ -52,7 +53,7 @@ export default function TenantManagement({ mode = 'list' }: Props) {
       })
       .catch((err) => setError(err.response?.data?.message || 'Unable to load tenant data.'))
       .finally(() => setIsLoading(false))
-  }, [mode])
+  }, [mode, basePath])
 
   const visibleTenants = useMemo(() => {
     let result = tenants
@@ -70,7 +71,8 @@ export default function TenantManagement({ mode = 'list' }: Props) {
     setIsSaving(true)
     setError('')
     try {
-      await api.post('/admin/tenants', formData)
+      const apiPrefix = basePath === '/owner' ? '/owner' : '/admin'
+      await api.post(`${apiPrefix}/tenants`, formData)
       navigate(`${basePath}/tenants`)
     } catch (err: any) {
       setError(err.response?.data?.message || 'Unable to add tenant.')

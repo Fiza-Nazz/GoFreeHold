@@ -20,9 +20,12 @@ class TenantController extends Controller
         $user = $request->user();
         if ($user && in_array($user->role, ['owner', 'cashier', 'accountant'], true)) {
             $ownerId = app(\App\Domain\Auth\Services\OwnerContextResolver::class)->ownerId($user);
-            $query->whereHas('contracts', function ($c) use ($ownerId) {
-                $c->where('contracts.owner_id', $ownerId)
-                  ->orWhereHas('unit.property', fn ($p) => $p->where('owner_id', $ownerId));
+            $query->where(function ($q) use ($ownerId) {
+                $q->where('owner_id', $ownerId)
+                  ->orWhereHas('contracts', function ($c) use ($ownerId) {
+                      $c->where('contracts.owner_id', $ownerId)
+                        ->orWhereHas('unit.property', fn ($p) => $p->where('owner_id', $ownerId));
+                  });
             });
         }
 
@@ -37,7 +40,14 @@ class TenantController extends Controller
 
     public function store(Request $request)
     {
-        $tenant = $this->properties->createTenant($request->validate($this->rules()));
+        $data = $request->validate($this->rules());
+
+        $user = $request->user();
+        if ($user && in_array($user->role, ['owner', 'cashier', 'accountant'], true)) {
+            $data['owner_id'] = app(\App\Domain\Auth\Services\OwnerContextResolver::class)->ownerId($user);
+        }
+
+        $tenant = $this->properties->createTenant($data);
         return response()->json(['status' => 'success', 'message' => 'Tenant created.', 'data' => ['tenant' => $tenant->load('user:id,name,email')]], 201);
     }
 
