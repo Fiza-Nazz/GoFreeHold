@@ -160,7 +160,7 @@ export default function AppRouter() {
             <Route index element={<Navigate to="dashboard" replace />} />
             <Route path="dashboard" element={<OwnerDashboard />} />
             {/* Stage 3: Property & Unit Management */}
-            <Route path="properties" element={<PropertyDrillDown />} />
+            <Route path="properties" element={<BuildingManagement />} />
             <Route path="properties/add" element={<AddPropertyPage />} />
             <Route path="buildings" element={<Navigate to="/owner/properties" replace />} />
             <Route path="units" element={<OwnerUnits />} />

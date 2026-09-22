@@ -63,6 +63,9 @@ const labelStyle: React.CSSProperties = {
 }
 
 export default function BuildingManagement() {
+  const basePath = typeof window !== 'undefined' && window.location.pathname.startsWith('/owner') ? '/owner' : '/admin'
+  const isOwner = basePath === '/owner'
+
   const [properties, setProperties] = useState<Property[]>([])
   const [owners, setOwners] = useState<Owner[]>([])
   const [unitCounts, setUnitCounts] = useState<Record<number, number>>({})
@@ -80,15 +83,15 @@ export default function BuildingManagement() {
 
   useEffect(() => {
     fetchData()
-  }, [])
+  }, [basePath])
 
   const fetchData = async () => {
     setIsLoading(true)
     try {
       const [bRes, oRes, uRes] = await Promise.all([
-        api.get('/admin/properties'),
-        api.get('/admin/properties/owners'),
-        api.get('/admin/units')
+        api.get(`${basePath}/properties`),
+        api.get(`${basePath}/properties/owners`),
+        api.get(`${basePath}/units`)
       ])
       setProperties(bRes.data?.data?.properties || [])
       setOwners(oRes.data?.data?.owners || [])
@@ -125,11 +128,14 @@ export default function BuildingManagement() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     try {
+      const payload = isOwner
+        ? { name: formData.name, address: formData.address, city: formData.city, type: formData.type }
+        : formData
       if (editingProperty) {
-        await api.put(`/admin/properties/${editingProperty.id}`, formData)
+        await api.put(`${basePath}/properties/${editingProperty.id}`, payload)
         setStatusMsg('Property updated successfully!')
       } else {
-        await api.post('/admin/properties', formData)
+        await api.post(`${basePath}/properties`, payload)
         setStatusMsg('Property created successfully!')
       }
       closeModal()
@@ -142,10 +148,10 @@ export default function BuildingManagement() {
   const handleDelete = async (id: number) => {
     if (confirm('Are you sure you want to delete this property?')) {
       try {
-        await api.delete(`/admin/properties/${id}`)
+        await api.delete(`${basePath}/properties/${id}`)
         fetchData()
-      } catch (err) {
-        alert('Cannot delete property with active units')
+      } catch (err: any) {
+        alert(err.response?.data?.message || 'Cannot delete property with active units')
       }
     }
   }
@@ -533,7 +539,7 @@ export default function BuildingManagement() {
               Property Management
             </h2>
             <p style={{ fontSize: 13.5, color: '#64748B', margin: '4px 0 0', fontWeight: 500 }}>
-              Manage all properties, buildings and owners
+              {isOwner ? 'Manage your properties and buildings' : 'Manage all properties, buildings and owners'}
             </p>
           </div>
 
@@ -628,7 +634,7 @@ export default function BuildingManagement() {
                   <span className="gfh-property-count">{unitCounts[property.id] || 0}</span>
                 </button>
                 <div className="gfh-property-actions">
-                  <span>{property.type || 'residential'} · {property.owner?.name || 'No owner'}</span>
+                  <span>{property.type || 'residential'}{!isOwner && property.owner?.name ? ` · ${property.owner.name}` : ''}</span>
                   <div>
                     <button type="button" onClick={() => openEdit(property)} aria-label={`Edit ${property.name}`} className="gfh-property-action-edit">
                       <Icon path={icons.edit} size={12} /> Edit
@@ -661,13 +667,15 @@ export default function BuildingManagement() {
               {editingProperty ? 'Edit Property' : 'Add New Property'}
             </h2>
             <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 15 }}>
-              <div>
-                <label style={labelStyle}>Owner</label>
-                <select style={inputStyle} value={formData.owner_id} onChange={e => setFormData({...formData, owner_id: e.target.value})} required>
-                  <option value="">Select Owner</option>
-                  {owners.map(o => <option key={o.id} value={o.id}>{o.name}</option>)}
-                </select>
-              </div>
+              {!isOwner && (
+                <div>
+                  <label style={labelStyle}>Owner</label>
+                  <select style={inputStyle} value={formData.owner_id} onChange={e => setFormData({...formData, owner_id: e.target.value})} required={!isOwner}>
+                    <option value="">Select Owner</option>
+                    {owners.map(o => <option key={o.id} value={o.id}>{o.name}</option>)}
+                  </select>
+                </div>
+              )}
               <div>
                 <label style={labelStyle}>Property Name</label>
                 <input style={inputStyle} value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} placeholder="e.g. Marina Crown Tower" required />
@@ -694,7 +702,6 @@ export default function BuildingManagement() {
                 <button
                   type="button"
                   onClick={closeModal}
-                  className="gfh-cancel-btn"
                   style={{
                     display: 'inline-flex',
                     alignItems: 'center',

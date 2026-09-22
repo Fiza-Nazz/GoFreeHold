@@ -35,6 +35,7 @@ Route::middleware(['auth:sanctum', 'role:owner,cashier,accountant'])->prefix('ow
     Route::get('/properties', [PropertyController::class, 'index']);
     Route::post('/properties', [PropertyController::class, 'storeForOwner']);
     Route::put('/properties/{property}', [PropertyController::class, 'updateForOwner']);
+    Route::delete('/properties/{property}', [PropertyController::class, 'destroyForOwner']);
     Route::get('/units', [UnitController::class, 'index']);
     Route::post('/units', [UnitController::class, 'storeForOwner']);
     Route::put('/units/{unit}', [UnitController::class, 'updateForOwner']);

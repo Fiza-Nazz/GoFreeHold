@@ -170,4 +170,27 @@ class PropertyController extends Controller
             'data'    => ['property' => $property],
         ]);
     }
+
+    public function destroyForOwner(Request $request, Property $property): JsonResponse
+    {
+        $ownerId = app(\App\Domain\Auth\Services\OwnerContextResolver::class)->ownerId($request->user());
+
+        if ((int) $property->owner_id !== $ownerId) {
+            abort(403, 'Unauthorized to delete this property.');
+        }
+
+        if ($property->units()->exists()) {
+            return response()->json([
+                'status'  => 'error',
+                'message' => 'Cannot delete property with active units. Delete or reassign units first.',
+            ], 422);
+        }
+
+        $property->delete();
+
+        return response()->json([
+            'status'  => 'success',
+            'message' => 'Property deleted successfully',
+        ]);
+    }
 }
