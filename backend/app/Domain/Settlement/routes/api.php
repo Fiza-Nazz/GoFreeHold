@@ -41,10 +41,21 @@ Route::middleware(['auth:sanctum', 'role:admin'])->prefix('admin')->group(functi
 
 Route::middleware(['auth:sanctum', 'role:owner,cashier,accountant'])->prefix('owner')->group(function () {
     Route::get('/settlements', [SettlementController::class, 'index']);
+    Route::post('/settlements', [SettlementController::class, 'store']);
     Route::get('/settlements/{settlement}', [SettlementController::class, 'show']);
+    Route::put('/settlements/{settlement}', [SettlementController::class, 'update']);
+    Route::post('/settlements/{settlement}/documents', [SettlementController::class, 'storeDocument']);
+    Route::post('/settlements/{settlement}/payments', [SettlementController::class, 'storePayment']);
+
     Route::get('/settlement-payments', [SettlementPaymentController::class, 'index']);
     Route::get('/financial-entries', [FinancialTrackingController::class, 'index']);
     Route::post('/financial-entries', [FinancialTrackingController::class, 'store']);
+    Route::delete('/financial-entries/{financial_entry}', [FinancialTrackingController::class, 'destroy']);
     Route::get('/receivables/categorized', [OutstandingReceivablesController::class, 'report']);
+
+    Route::get('/banks', [BankAccountController::class, 'banks']);
     Route::get('/bank-accounts', [BankAccountController::class, 'index']);
+    Route::post('/bank-accounts', [BankAccountController::class, 'store']);
+    Route::put('/bank-accounts/{bankAccount}', [BankAccountController::class, 'update']);
+    Route::delete('/bank-accounts/{bankAccount}', [BankAccountController::class, 'destroy']);
 });

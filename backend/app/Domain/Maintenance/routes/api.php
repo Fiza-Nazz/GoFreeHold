@@ -84,16 +84,35 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::delete('/appliances/{appliance}', [ApplianceController::class, 'destroy']);
 
         Route::get('/jobs', [JobController::class, 'index']);
+        Route::post('/jobs', [JobController::class, 'store']);
         Route::get('/jobs/{job}', [JobController::class, 'show']);
+        Route::put('/jobs/{job}', [JobController::class, 'update']);
+        Route::delete('/jobs/{job}', [JobController::class, 'destroy']);
+
         Route::get('/teams', [TeamController::class, 'index']);
+        Route::post('/teams', [TeamController::class, 'store']);
+        Route::get('/teams/{team}', [TeamController::class, 'show']);
+        Route::put('/teams/{team}', [TeamController::class, 'update']);
+        Route::delete('/teams/{team}', [TeamController::class, 'destroy']);
+
         Route::get('/maintenances', [MaintenanceController::class, 'index']);
         Route::get('/maintenance/daily-report', [MaintenanceReportController::class, 'dailyReport']);
         Route::get('/daily-maintenance', [MaintenanceReportController::class, 'dailyReport']);
 
         Route::get('/inventory/warehouse', [InventoryController::class, 'warehouseItems']);
         Route::get('/inventory/unit', [InventoryController::class, 'unitItems']);
+        Route::post('/inventory', [InventoryController::class, 'store']);
+        Route::put('/inventory/{inventoryItem}', [InventoryController::class, 'update']);
+        Route::delete('/inventory/{inventoryItem}', [InventoryController::class, 'destroy']);
+
         Route::get('/item-store', [ItemStoreController::class, 'index']);
+        Route::post('/item-store', [ItemStoreController::class, 'store']);
+
         Route::get('/purchases', [PurchaseController::class, 'index']);
+        Route::post('/purchases', [PurchaseController::class, 'store']);
+        Route::get('/purchases/{purchase}', [PurchaseController::class, 'show']);
+        Route::put('/purchases/{purchase}/status', [PurchaseController::class, 'updateStatus']);
+        Route::delete('/purchases/{purchase}', [PurchaseController::class, 'destroy']);
         Route::get('/purchase-orders', [PurchaseController::class, 'index']);
     });
 });
