@@ -14,11 +14,59 @@ interface PaymentItem {
   id: number
   amount: number | string
   payment_date?: string
+  date?: string
   created_at?: string
+  type?: string
   contract?: {
     unit?: {
       number?: string
     }
+  }
+}
+
+interface ContractItem {
+  id: number
+  unit_id: number
+  tenant_id?: number
+  rent_amount?: number | string
+  start_date?: string
+  end_date?: string
+  status?: string
+  created_at?: string
+  unit?: {
+    id: number
+    number: string
+    property?: {
+      id: number
+      name: string
+    }
+  }
+  tenant?: {
+    id: number
+    name: string
+  }
+}
+
+interface UnitItem {
+  id: number
+  number: string
+  status: string
+  price?: number | string
+  updated_at?: string
+  created_at?: string
+  property?: {
+    id: number
+    name: string
+  }
+}
+
+interface ComplaintItem {
+  id: number
+  title?: string
+  status?: string
+  created_at?: string
+  unit?: {
+    number?: string
   }
 }
 
@@ -57,9 +105,32 @@ const icons = {
   user: 'M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z',
 }
 
+function formatTimeAgo(dateString?: string) {
+  if (!dateString) return 'recently'
+  const date = new Date(dateString)
+  if (isNaN(date.getTime())) return 'recently'
+  const now = new Date()
+  const diffInSec = Math.floor((now.getTime() - date.getTime()) / 1000)
+
+  if (diffInSec < 60) return 'just now'
+  const diffInMin = Math.floor(diffInSec / 60)
+  if (diffInMin < 60) return `${diffInMin}m ago`
+  const diffInHours = Math.floor(diffInMin / 60)
+  if (diffInHours < 24) return `${diffInHours}h ago`
+  const diffInDays = Math.floor(diffInHours / 24)
+  if (diffInDays < 30) return `${diffInDays}d ago`
+  const diffInMonths = Math.floor(diffInDays / 30)
+  if (diffInMonths < 12) return `${diffInMonths}mo ago`
+  return `${Math.floor(diffInMonths / 12)}y ago`
+}
+
 export default function OwnerDashboard() {
   const [summary, setSummary] = useState<PortfolioSummary | null>(null)
-  const [rentCollectionTotal, setRentCollectionTotal] = useState<number>(0)
+  const [payments, setPayments] = useState<PaymentItem[]>([])
+  const [contracts, setContracts] = useState<ContractItem[]>([])
+  const [units, setUnits] = useState<UnitItem[]>([])
+  const [complaints, setComplaints] = useState<ComplaintItem[]>([])
+  const [hoveredBarIndex, setHoveredBarIndex] = useState<number | null>(null)
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
@@ -67,9 +138,12 @@ export default function OwnerDashboard() {
 
     const fetchDashboardData = async () => {
       try {
-        const [sumRes, payRes] = await Promise.all([
+        const [sumRes, payRes, conRes, unitRes, compRes] = await Promise.all([
           api.get('/owner/dashboard/summary').catch(() => ({ data: { data: { portfolio: null } } })),
           api.get('/owner/payments').catch(() => ({ data: { data: { payments: [] } } })),
+          api.get('/owner/contracts').catch(() => ({ data: { data: { contracts: [] } } })),
+          api.get('/owner/units').catch(() => ({ data: { data: { units: [] } } })),
+          api.get('/owner/complaints').catch(() => ({ data: { data: { complaints: [] } } })),
         ])
 
         if (!isCancelled) {
@@ -77,23 +151,10 @@ export default function OwnerDashboard() {
             setSummary(sumRes.data.data.portfolio)
           }
 
-          const payments: PaymentItem[] = payRes.data?.data?.payments || []
-          if (payments.length > 0) {
-            const currentMonth = new Date().getMonth()
-            const currentYear = new Date().getFullYear()
-
-            // Sum payments for current month
-            const thisMonthTotal = payments
-              .filter(p => {
-                const dateStr = p.payment_date || p.created_at
-                if (!dateStr) return false
-                const d = new Date(dateStr)
-                return d.getMonth() === currentMonth && d.getFullYear() === currentYear
-              })
-              .reduce((acc, curr) => acc + (parseFloat(String(curr.amount)) || 0), 0)
-
-            setRentCollectionTotal(thisMonthTotal)
-          }
+          setPayments(payRes.data?.data?.payments || [])
+          setContracts(conRes.data?.data?.contracts || [])
+          setUnits(unitRes.data?.data?.units || [])
+          setComplaints(compRes.data?.data?.complaints || [])
         }
       } catch (err) {
         console.error('Failed to load dashboard data:', err)
@@ -126,21 +187,146 @@ export default function OwnerDashboard() {
   const circleCircumference = 2 * Math.PI * circleRadius
   const circleOffset = circleCircumference - (circleCircumference * (occupancyPercent || 0)) / 100
 
-  // 12 Months Portfolio Trends Data
-  const monthlyTrends = [
-    { month: 'Jan', value: 12000, height: 26 },
-    { month: 'Feb', value: 18000, height: 35 },
-    { month: 'Mar', value: 24000, height: 44 },
-    { month: 'Apr', value: 31000, height: 55 },
-    { month: 'May', value: 38000, height: 64 },
-    { month: 'Jun', value: 46000, height: 72 },
-    { month: 'Jul', value: 52000, height: 79 },
-    { month: 'Aug', value: 58000, height: 86 },
-    { month: 'Sep', value: 65000, height: 95 },
-    { month: 'Oct', value: 72000, height: 104 },
-    { month: 'Nov', value: 79000, height: 112 },
-    { month: 'Dec', value: 88000, height: 122 },
-  ]
+  // ── 12 Months Portfolio Trends Data strictly from Database ─────────────────
+  const currentYear = new Date().getFullYear()
+  const currentMonthIndex = new Date().getMonth()
+  const monthsNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+  const monthsFull = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+
+  const monthlyTotals = new Array(12).fill(0)
+  const monthlyCounts = new Array(12).fill(0)
+
+  // 1. Calculate from real payments in database
+  payments.forEach(p => {
+    const dateStr = p.payment_date || p.date || p.created_at
+    if (!dateStr) return
+    const d = new Date(dateStr)
+    if (d.getFullYear() === currentYear) {
+      const m = d.getMonth()
+      if (m >= 0 && m < 12) {
+        monthlyTotals[m] += parseFloat(String(p.amount)) || 0
+        monthlyCounts[m] += 1
+      }
+    }
+  })
+
+  // 2. If payments table has no records yet for this owner, reflect scheduled rent from active contracts
+  const hasPayments = monthlyTotals.some(v => v > 0)
+  if (!hasPayments && contracts.length > 0) {
+    contracts.forEach(c => {
+      const dateStr = c.start_date || c.created_at
+      if (!dateStr) return
+      const d = new Date(dateStr)
+      const m = d.getMonth()
+      const rent = parseFloat(String(c.rent_amount)) || 0
+      if (d.getFullYear() === currentYear && m >= 0 && m < 12) {
+        monthlyTotals[m] += rent
+        monthlyCounts[m] += 1
+      }
+    })
+  }
+
+  const maxTrendValue = Math.max(...monthlyTotals, 0)
+  const monthlyTrends = monthsNames.map((name, i) => {
+    const val = monthlyTotals[i]
+    const height = maxTrendValue > 0 ? Math.max(Math.round((val / maxTrendValue) * 125), val > 0 ? 12 : 4) : 4
+    return {
+      month: name,
+      fullName: `${monthsFull[i]} ${currentYear}`,
+      value: val,
+      height,
+      count: monthlyCounts[i],
+    }
+  })
+
+  // Current month collection for card 4
+  const rentCollectionTotal = monthlyTotals[currentMonthIndex] || 0
+
+  // ── Real Recent Activities from Database ───────────────────────────────────
+  const activities: Array<{
+    id: string
+    title: string
+    sub: string
+    date: string
+    timeAgo: string
+    link: string
+    icon: string
+    iconBg: string
+    iconColor: string
+  }> = []
+
+  // Contract events
+  contracts.forEach(c => {
+    const unitNum = c.unit?.number ? `Unit ${c.unit.number}` : 'Unit'
+    const tenantText = c.tenant?.name ? `Tenant: ${c.tenant.name}` : 'Contract Active'
+    const rentText = c.rent_amount ? `AED ${Number(c.rent_amount).toLocaleString()}` : ''
+    const dt = c.created_at || c.start_date || ''
+    activities.push({
+      id: `contract-${c.id}`,
+      title: `Contract active — ${unitNum}`,
+      sub: [tenantText, rentText].filter(Boolean).join(' • '),
+      date: dt,
+      timeAgo: formatTimeAgo(dt),
+      link: '/owner/contracts',
+      icon: icons.document,
+      iconBg: '#DBEAFE',
+      iconColor: '#2563EB',
+    })
+  })
+
+  // Payment events
+  payments.forEach(p => {
+    const unitNum = p.contract?.unit?.number ? `Unit ${p.contract.unit.number}` : 'Unit'
+    const amt = Number(p.amount || 0).toLocaleString()
+    const dt = p.payment_date || p.date || p.created_at || ''
+    activities.push({
+      id: `payment-${p.id}`,
+      title: `Rent payment received — ${unitNum}`,
+      sub: `AED ${amt}`,
+      date: dt,
+      timeAgo: formatTimeAgo(dt),
+      link: '/owner/payments',
+      icon: icons.cash,
+      iconBg: '#DCFCE7',
+      iconColor: '#16A34A',
+    })
+  })
+
+  // Unit status updates
+  units.forEach(u => {
+    const dt = u.updated_at || u.created_at || ''
+    activities.push({
+      id: `unit-${u.id}`,
+      title: `Unit ${u.number} (${u.status})`,
+      sub: `${u.property?.name || 'Property'}${u.price ? ` • AED ${Number(u.price).toLocaleString()}` : ''}`,
+      date: dt,
+      timeAgo: formatTimeAgo(dt),
+      link: `/owner/units/${u.id}`,
+      icon: icons.home,
+      iconBg: u.status === 'AVAILABLE' ? '#ECFDF8' : '#FEF3C7',
+      iconColor: u.status === 'AVAILABLE' ? '#0F8A67' : '#D97706',
+    })
+  })
+
+  // Maintenance complaints
+  complaints.forEach(m => {
+    const dt = m.created_at || ''
+    activities.push({
+      id: `complaint-${m.id}`,
+      title: `Maintenance: ${m.title || 'Request'}`,
+      sub: `Status: ${m.status || 'Pending'}${m.unit?.number ? ` • Unit ${m.unit.number}` : ''}`,
+      date: dt,
+      timeAgo: formatTimeAgo(dt),
+      link: '/owner/complaints',
+      icon: icons.bolt,
+      iconBg: '#FEE2E2',
+      iconColor: '#DC2626',
+    })
+  })
+
+  // Sort real activity by date descending
+  activities.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+  const recentActivities = activities.slice(0, 5)
 
   if (isLoading) {
     return (
@@ -168,7 +354,7 @@ export default function OwnerDashboard() {
           padding: 18px 20px;
           display: flex;
           flex-direction: column;
-          justify-content: space-between;
+          justifyContent: space-between;
           color: #ffffff;
           box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
           transition: transform 0.2s ease, box-shadow 0.2s ease;
@@ -190,7 +376,7 @@ export default function OwnerDashboard() {
         .gfh-action-row {
           display: flex;
           align-items: center;
-          justify-content: space-between;
+          justifyContent: space-between;
           padding: 12px 14px;
           background: #F8FAFC;
           border: 1px solid #F1F5F9;
@@ -202,13 +388,13 @@ export default function OwnerDashboard() {
         .gfh-action-row:hover {
           background: #F1F5F9;
           border-color: #E2E8F0;
-          transform: translateX(2px);
+          transform: translateX(3px);
         }
         .gfh-activity-row {
           display: flex;
           align-items: center;
-          justify-content: space-between;
-          padding: 12px 0;
+          justifyContent: space-between;
+          padding: 12px 6px;
           border-bottom: 1px solid #F1F5F9;
           text-decoration: none;
           color: inherit;
@@ -216,183 +402,136 @@ export default function OwnerDashboard() {
         }
         .gfh-activity-row:last-child {
           border-bottom: none;
-          padding-bottom: 0;
         }
         .gfh-activity-row:hover .gfh-act-title {
           color: #0F8A67;
         }
         .gfh-bar-col:hover .gfh-bar-rect {
-          fill: #0F8A67 !important;
+          background: #0F766E !important;
         }
       `}</style>
 
-      {/* ── TOP 4 METRIC CARDS ──────────────────────────────────────────────── */}
+      {/* ── TOP ROW: 4 KPI CARDS ─────────────────────────────────────────── */}
       <div style={{
         display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(230px, 1fr))',
         gap: 16,
         marginBottom: 20,
       }}>
-        {/* CARD 1: Total Properties (Cyan / Ocean Blue) */}
-        <div className="gfh-dash-card" style={{ background: '#0284C7', minHeight: 128 }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        {/* Card 1: Total Properties */}
+        <div className="gfh-dash-card" style={{ background: '#2563EB' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <span style={{ fontSize: 13, fontWeight: 600, color: 'rgba(255, 255, 255, 0.85)' }}>
+              Total Properties
+            </span>
             <div style={{
-              width: 36,
-              height: 36,
+              width: 32,
+              height: 32,
               borderRadius: 8,
-              background: 'rgba(255, 255, 255, 0.22)',
+              background: 'rgba(255, 255, 255, 0.2)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
             }}>
-              <Icon path={icons.building} size={18} color="#FFFFFF" />
-            </div>
-            <div style={{
-              width: 26,
-              height: 26,
-              borderRadius: 6,
-              background: 'rgba(255, 255, 255, 0.18)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}>
-              <Icon path={icons.pencil} size={13} color="#FFFFFF" />
+              <Icon path={icons.building} size={16} color="#FFFFFF" />
             </div>
           </div>
           <div style={{ marginTop: 14 }}>
-            <div style={{ fontSize: 30, fontWeight: 800, lineHeight: 1.1, letterSpacing: '-0.02em' }}>
+            <div style={{ fontSize: 28, fontWeight: 800, lineHeight: 1.1 }}>
               {totalProperties}
             </div>
-            <div style={{ fontSize: 13.5, fontWeight: 700, marginTop: 4 }}>
-              Total Properties
-            </div>
-            <div style={{ fontSize: 11, color: 'rgba(255, 255, 255, 0.85)', marginTop: 2 }}>
-              Total properties in your portfolio.
+            <div style={{ fontSize: 12, color: 'rgba(255, 255, 255, 0.75)', marginTop: 4 }}>
+              Active in portfolio
             </div>
           </div>
         </div>
 
-        {/* CARD 2: Total Rented (Vibrant Green) */}
-        <div className="gfh-dash-card" style={{ background: '#10B981', minHeight: 128 }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        {/* Card 2: Total Rented */}
+        <div className="gfh-dash-card" style={{ background: '#0D9488' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <span style={{ fontSize: 13, fontWeight: 600, color: 'rgba(255, 255, 255, 0.85)' }}>
+              Total Rented
+            </span>
             <div style={{
-              width: 36,
-              height: 36,
+              width: 32,
+              height: 32,
               borderRadius: 8,
-              background: 'rgba(255, 255, 255, 0.22)',
+              background: 'rgba(255, 255, 255, 0.2)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
             }}>
-              <Icon path={icons.home} size={18} color="#FFFFFF" />
-            </div>
-            <div style={{
-              width: 26,
-              height: 26,
-              borderRadius: 6,
-              background: 'rgba(255, 255, 255, 0.18)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}>
-              <Icon path={icons.pencil} size={13} color="#FFFFFF" />
+              <Icon path={icons.key} size={16} color="#FFFFFF" />
             </div>
           </div>
           <div style={{ marginTop: 14 }}>
-            <div style={{ fontSize: 30, fontWeight: 800, lineHeight: 1.1, letterSpacing: '-0.02em' }}>
+            <div style={{ fontSize: 28, fontWeight: 800, lineHeight: 1.1 }}>
               {totalRented}
             </div>
-            <div style={{ fontSize: 13.5, fontWeight: 700, marginTop: 4 }}>
-              Total Rented
-            </div>
-            <div style={{ fontSize: 11, color: 'rgba(255, 255, 255, 0.85)', marginTop: 2 }}>
-              Properties currently rented
+            <div style={{ fontSize: 12, color: 'rgba(255, 255, 255, 0.75)', marginTop: 4 }}>
+              Occupied units
             </div>
           </div>
         </div>
 
-        {/* CARD 3: Vacant Properties (Slate Charcoal Blue) */}
-        <div className="gfh-dash-card" style={{ background: '#475569', minHeight: 128 }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        {/* Card 3: Vacant Properties */}
+        <div className="gfh-dash-card" style={{ background: '#334155' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <span style={{ fontSize: 13, fontWeight: 600, color: 'rgba(255, 255, 255, 0.85)' }}>
+              Vacant Properties
+            </span>
             <div style={{
-              width: 36,
-              height: 36,
+              width: 32,
+              height: 32,
               borderRadius: 8,
-              background: 'rgba(255, 255, 255, 0.22)',
+              background: 'rgba(255, 255, 255, 0.2)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
             }}>
-              <Icon path={icons.door} size={18} color="#FFFFFF" />
-            </div>
-            <div style={{
-              width: 26,
-              height: 26,
-              borderRadius: 6,
-              background: 'rgba(255, 255, 255, 0.18)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}>
-              <Icon path={icons.pencil} size={13} color="#FFFFFF" />
+              <Icon path={icons.door} size={16} color="#FFFFFF" />
             </div>
           </div>
           <div style={{ marginTop: 14 }}>
-            <div style={{ fontSize: 30, fontWeight: 800, lineHeight: 1.1, letterSpacing: '-0.02em' }}>
+            <div style={{ fontSize: 28, fontWeight: 800, lineHeight: 1.1 }}>
               {vacantUnits}
             </div>
-            <div style={{ fontSize: 13.5, fontWeight: 700, marginTop: 4 }}>
-              Vacant Properties
-            </div>
-            <div style={{ fontSize: 11, color: 'rgba(255, 255, 255, 0.85)', marginTop: 2 }}>
-              Properties currently vacant
+            <div style={{ fontSize: 12, color: 'rgba(255, 255, 255, 0.75)', marginTop: 4 }}>
+              Ready for lease
             </div>
           </div>
         </div>
 
-        {/* CARD 4: Rent Collection (Golden Amber) */}
-        <div className="gfh-dash-card" style={{ background: '#F59E0B', minHeight: 128 }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        {/* Card 4: Rent Collection */}
+        <div className="gfh-dash-card" style={{ background: '#D97706' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <span style={{ fontSize: 13, fontWeight: 600, color: 'rgba(255, 255, 255, 0.85)' }}>
+              Rent Collection
+            </span>
             <div style={{
-              width: 36,
-              height: 36,
+              width: 32,
+              height: 32,
               borderRadius: 8,
-              background: 'rgba(255, 255, 255, 0.22)',
+              background: 'rgba(255, 255, 255, 0.2)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
             }}>
-              <Icon path={icons.cash} size={18} color="#FFFFFF" />
-            </div>
-            <div style={{
-              width: 26,
-              height: 26,
-              borderRadius: 6,
-              background: 'rgba(255, 255, 255, 0.18)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}>
-              <Icon path={icons.pencil} size={13} color="#FFFFFF" />
+              <Icon path={icons.cash} size={16} color="#FFFFFF" />
             </div>
           </div>
           <div style={{ marginTop: 14 }}>
-            <div style={{ fontSize: 30, fontWeight: 800, lineHeight: 1.1, letterSpacing: '-0.02em' }}>
-              {rentCollectionTotal > 0
-                ? rentCollectionTotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
-                : '0.00'}
+            <div style={{ fontSize: 24, fontWeight: 800, lineHeight: 1.1 }}>
+              AED {rentCollectionTotal.toLocaleString()}
             </div>
-            <div style={{ fontSize: 13.5, fontWeight: 700, marginTop: 4 }}>
-              Rent Collection
-            </div>
-            <div style={{ fontSize: 11, color: 'rgba(255, 255, 255, 0.85)', marginTop: 2 }}>
-              Total rent collection (this month)
+            <div style={{ fontSize: 12, color: 'rgba(255, 255, 255, 0.75)', marginTop: 4 }}>
+              Current month
             </div>
           </div>
         </div>
       </div>
 
-      {/* ── MIDDLE ROW: Occupancy Overview & Quick Actions ──────────────────── */}
+      {/* ── MIDDLE ROW: Occupancy Overview & Quick Actions ───────────────── */}
       <div style={{
         display: 'grid',
         gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
@@ -401,7 +540,7 @@ export default function OwnerDashboard() {
       }}>
         {/* OCCUPANCY OVERVIEW CARD */}
         <div className="gfh-dash-panel">
-          <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10, marginBottom: 16 }}>
+          <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10, marginBottom: 20 }}>
             <div style={{ color: '#475569', marginTop: 2 }}>
               <Icon path={icons.pie} size={17} />
             </div>
@@ -410,7 +549,7 @@ export default function OwnerDashboard() {
                 Occupancy Overview
               </h2>
               <div style={{ fontSize: 12, color: '#64748B', marginTop: 2 }}>
-                Rented vs Vacant units
+                Current portfolio utilization
               </div>
             </div>
           </div>
@@ -419,69 +558,84 @@ export default function OwnerDashboard() {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-around',
-            gap: 24,
-            padding: '12px 10px',
             flexWrap: 'wrap',
+            gap: 24,
+            paddingTop: 6,
           }}>
             {/* Donut Gauge */}
-            <div style={{ position: 'relative', width: 140, height: 140, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <svg width="140" height="140" viewBox="0 0 100 100" style={{ transform: 'rotate(-90deg)' }}>
-                {/* Background track circle */}
+            <div style={{ position: 'relative', width: 110, height: 110, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <svg width="110" height="110" viewBox="0 0 100 100" style={{ transform: 'rotate(-90deg)' }}>
+                {/* Background Track */}
                 <circle
                   cx="50"
                   cy="50"
                   r={circleRadius}
+                  fill="transparent"
                   stroke="#E2E8F0"
                   strokeWidth="11"
-                  fill="transparent"
                 />
-                {/* Green progress circle */}
+                {/* Occupied Progress */}
                 <circle
                   cx="50"
                   cy="50"
                   r={circleRadius}
-                  stroke="#10B981"
+                  fill="transparent"
+                  stroke="#0D9488"
                   strokeWidth="11"
                   strokeDasharray={circleCircumference}
                   strokeDashoffset={circleOffset}
                   strokeLinecap="round"
-                  fill="transparent"
-                  style={{ transition: 'stroke-dashoffset 0.8s ease' }}
+                  style={{ transition: 'stroke-dashoffset 0.6s ease' }}
                 />
               </svg>
-              {/* Inner Center Text */}
-              <div style={{
-                position: 'absolute',
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}>
-                <div style={{ fontSize: 24, fontWeight: 800, color: '#0F172A', lineHeight: 1 }}>
+              {/* Centered Percentage */}
+              <div style={{ position: 'absolute', textAlign: 'center' }}>
+                <div style={{ fontSize: 20, fontWeight: 800, color: '#0F172A', lineHeight: 1 }}>
                   {occupancyPercent}%
                 </div>
-                <div style={{ fontSize: 11, fontWeight: 600, color: '#64748B', marginTop: 3 }}>
+                <div style={{ fontSize: 10, fontWeight: 600, color: '#64748B', textTransform: 'uppercase', marginTop: 2 }}>
                   Occupied
                 </div>
               </div>
             </div>
 
-            {/* Legend Stats */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 14, minWidth: 170 }}>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
+            {/* Metrics Breakdown */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 14, minWidth: 150 }}>
+              {/* Occupied Item */}
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16 }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                  <span style={{ width: 9, height: 9, borderRadius: '50%', background: '#10B981', flexShrink: 0 }} />
-                  <span style={{ fontSize: 13, fontWeight: 600, color: '#334155' }}>Rented Units</span>
+                  <span style={{ width: 10, height: 10, borderRadius: '50%', background: '#0D9488' }} />
+                  <span style={{ fontSize: 13, color: '#475569', fontWeight: 500 }}>Occupied</span>
                 </div>
-                <span style={{ fontSize: 13, fontWeight: 700, color: '#0F172A' }}>{totalRented}</span>
+                <span style={{ fontSize: 14, fontWeight: 700, color: '#0F172A' }}>
+                  {totalRented} units
+                </span>
               </div>
 
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
+              {/* Vacant Item */}
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16 }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                  <span style={{ width: 9, height: 9, borderRadius: '50%', background: '#94A3B8', flexShrink: 0 }} />
-                  <span style={{ fontSize: 13, fontWeight: 600, color: '#334155' }}>Vacant Units</span>
+                  <span style={{ width: 10, height: 10, borderRadius: '50%', background: '#CBD5E1' }} />
+                  <span style={{ fontSize: 13, color: '#475569', fontWeight: 500 }}>Vacant</span>
                 </div>
-                <span style={{ fontSize: 13, fontWeight: 700, color: '#0F172A' }}>{vacantUnits}</span>
+                <span style={{ fontSize: 14, fontWeight: 700, color: '#0F172A' }}>
+                  {vacantUnits} units
+                </span>
+              </div>
+
+              {/* Total Units Item */}
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                gap: 16,
+                paddingTop: 8,
+                borderTop: '1px solid #F1F5F9',
+              }}>
+                <span style={{ fontSize: 13, color: '#64748B', fontWeight: 600 }}>Total Portfolio</span>
+                <span style={{ fontSize: 14, fontWeight: 800, color: '#0F172A' }}>
+                  {totalUnits} units
+                </span>
               </div>
             </div>
           </div>
@@ -489,106 +643,105 @@ export default function OwnerDashboard() {
 
         {/* QUICK ACTIONS CARD */}
         <div className="gfh-dash-panel">
-          <div style={{ display: 'flex', alignItems: 'center', gap: 9, marginBottom: 16 }}>
-            <div style={{ color: '#475569' }}>
-              <Icon path={icons.sparkle} size={16} />
+          <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10, marginBottom: 16 }}>
+            <div style={{ color: '#475569', marginTop: 2 }}>
+              <Icon path={icons.bolt} size={17} />
             </div>
-            <h2 style={{ fontSize: 15, fontWeight: 700, color: '#0F172A', margin: 0 }}>
-              Quick Actions
-            </h2>
+            <div>
+              <h2 style={{ fontSize: 15, fontWeight: 700, color: '#0F172A', margin: 0 }}>
+                Quick Actions
+              </h2>
+              <div style={{ fontSize: 12, color: '#64748B', marginTop: 2 }}>
+                Common portfolio tasks
+              </div>
+            </div>
           </div>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 11 }}>
-            {/* Action 1 */}
-            <Link to="/owner/properties" className="gfh-action-row">
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+            {/* Action 1: Add New Property */}
+            <Link to="/owner/properties/add" className="gfh-action-row">
               <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                 <div style={{
-                  width: 36,
-                  height: 36,
-                  borderRadius: 10,
-                  background: '#EFF6FF',
-                  border: '1px solid #DBEAFE',
-                  color: '#2563EB',
+                  width: 32,
+                  height: 32,
+                  borderRadius: 8,
+                  background: '#ECFDF8',
+                  color: '#0F8A67',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  flexShrink: 0,
                 }}>
-                  <Icon path={icons.document} size={18} />
+                  <Icon path={icons.building} size={16} />
                 </div>
                 <div>
-                  <div style={{ fontSize: 13.5, fontWeight: 700, color: '#0F172A' }}>
-                    Property Drill-down
+                  <div style={{ fontSize: 13, fontWeight: 600, color: '#0F172A' }}>
+                    Add New Property
                   </div>
-                  <div style={{ fontSize: 11.5, color: '#64748B', marginTop: 1 }}>
-                    View detailed stats for each property
+                  <div style={{ fontSize: 11.5, color: '#64748B' }}>
+                    Register a new building to portfolio
                   </div>
                 </div>
               </div>
-              <div style={{ color: '#2563EB', display: 'flex', alignItems: 'center' }}>
-                <Icon path={icons.chevron} size={16} />
+              <div style={{ color: '#94A3B8' }}>
+                <Icon path={icons.chevron} size={15} />
               </div>
             </Link>
 
-            {/* Action 2 */}
+            {/* Action 2: View Vacant Units */}
             <Link to="/owner/vacant-units" className="gfh-action-row">
               <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                 <div style={{
-                  width: 36,
-                  height: 36,
-                  borderRadius: 10,
-                  background: '#F0FDF4',
-                  border: '1px solid #DCFCE7',
-                  color: '#16A34A',
+                  width: 32,
+                  height: 32,
+                  borderRadius: 8,
+                  background: '#F0F9FF',
+                  color: '#0284C7',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  flexShrink: 0,
                 }}>
-                  <Icon path={icons.home} size={18} />
+                  <Icon path={icons.door} size={16} />
                 </div>
                 <div>
-                  <div style={{ fontSize: 13.5, fontWeight: 700, color: '#0F172A' }}>
-                    Vacant Units Report
+                  <div style={{ fontSize: 13, fontWeight: 600, color: '#0F172A' }}>
+                    View Vacant Units
                   </div>
-                  <div style={{ fontSize: 11.5, color: '#64748B', marginTop: 1 }}>
-                    Filter and list all currently available units
+                  <div style={{ fontSize: 11.5, color: '#64748B' }}>
+                    Check availability across properties
                   </div>
                 </div>
               </div>
-              <div style={{ color: '#16A34A', display: 'flex', alignItems: 'center' }}>
-                <Icon path={icons.chevron} size={16} />
+              <div style={{ color: '#94A3B8' }}>
+                <Icon path={icons.chevron} size={15} />
               </div>
             </Link>
 
-            {/* Action 3 */}
-            <Link to="/owner/ledger" className="gfh-action-row">
+            {/* Action 3: Review Rent Payments */}
+            <Link to="/owner/payments" className="gfh-action-row">
               <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                 <div style={{
-                  width: 36,
-                  height: 36,
-                  borderRadius: 10,
-                  background: '#FAF5FF',
-                  border: '1px solid #F3E8FF',
-                  color: '#9333EA',
+                  width: 32,
+                  height: 32,
+                  borderRadius: 8,
+                  background: '#FFFBEB',
+                  color: '#D97706',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  flexShrink: 0,
                 }}>
-                  <Icon path={icons.user} size={18} />
+                  <Icon path={icons.cash} size={16} />
                 </div>
                 <div>
-                  <div style={{ fontSize: 13.5, fontWeight: 700, color: '#0F172A' }}>
-                    Rent Ledger
+                  <div style={{ fontSize: 13, fontWeight: 600, color: '#0F172A' }}>
+                    Review Rent Payments
                   </div>
-                  <div style={{ fontSize: 11.5, color: '#64748B', marginTop: 1 }}>
-                    Debit / credit history across your contracts
+                  <div style={{ fontSize: 11.5, color: '#64748B' }}>
+                    Monitor collections and pending dues
                   </div>
                 </div>
               </div>
-              <div style={{ color: '#9333EA', display: 'flex', alignItems: 'center' }}>
-                <Icon path={icons.chevron} size={16} />
+              <div style={{ color: '#94A3B8' }}>
+                <Icon path={icons.chevron} size={15} />
               </div>
             </Link>
           </div>
@@ -601,24 +754,61 @@ export default function OwnerDashboard() {
         gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
         gap: 20,
       }}>
-        {/* PORTFOLIO TRENDS CARD */}
-        <div className="gfh-dash-panel">
-          <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10, marginBottom: 16 }}>
-            <div style={{ color: '#475569', marginTop: 2 }}>
-              <Icon path={icons.trending} size={17} />
-            </div>
-            <div>
-              <h2 style={{ fontSize: 15, fontWeight: 700, color: '#0F172A', margin: 0 }}>
-                Portfolio Trends
-              </h2>
-              <div style={{ fontSize: 12, color: '#64748B', marginTop: 2 }}>
-                Monthly rent collection
+        {/* PORTFOLIO TRENDS CARD (Real Database Monthly Collection) */}
+        <div className="gfh-dash-panel" style={{ position: 'relative' }}>
+          <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 16 }}>
+            <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10 }}>
+              <div style={{ color: '#475569', marginTop: 2 }}>
+                <Icon path={icons.trending} size={17} />
               </div>
+              <div>
+                <h2 style={{ fontSize: 15, fontWeight: 700, color: '#0F172A', margin: 0 }}>
+                  Portfolio Trends
+                </h2>
+                <div style={{ fontSize: 12, color: '#64748B', marginTop: 2 }}>
+                  Monthly rent collection ({currentYear})
+                </div>
+              </div>
+            </div>
+            <div style={{ fontSize: 12, fontWeight: 700, color: '#0F766E', background: '#F0FDFA', border: '1px solid #CCFBF1', padding: '3px 8px', borderRadius: 6 }}>
+              Total: AED {monthlyTotals.reduce((a, b) => a + b, 0).toLocaleString()}
             </div>
           </div>
 
-          {/* Monthly Bar Chart */}
-          <div style={{ width: '100%', height: 180, display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', paddingTop: 10 }}>
+          {/* Monthly Bar Chart with Real Data & Tooltips */}
+          <div style={{ width: '100%', height: 180, display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', paddingTop: 10, position: 'relative' }}>
+            {/* Floating Tooltip when hovering over a bar */}
+            {hoveredBarIndex !== null && (
+              <div
+                style={{
+                  position: 'absolute',
+                  top: 0,
+                  left: '50%',
+                  transform: 'translateX(-50%)',
+                  background: '#0F172A',
+                  color: '#FFFFFF',
+                  padding: '6px 12px',
+                  borderRadius: 8,
+                  fontSize: 12,
+                  fontWeight: 600,
+                  boxShadow: '0 4px 12px rgba(15, 23, 42, 0.15)',
+                  zIndex: 10,
+                  pointerEvents: 'none',
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                {monthlyTrends[hoveredBarIndex].fullName}:{' '}
+                <span style={{ color: '#2DD4BF', fontWeight: 700 }}>
+                  AED {monthlyTrends[hoveredBarIndex].value.toLocaleString()}
+                </span>
+                {monthlyTrends[hoveredBarIndex].count > 0 && (
+                  <span style={{ color: '#94A3B8', fontSize: 11, marginLeft: 6 }}>
+                    ({monthlyTrends[hoveredBarIndex].count} {monthlyTrends[hoveredBarIndex].count === 1 ? 'record' : 'records'})
+                  </span>
+                )}
+              </div>
+            )}
+
             {/* Bars container */}
             <div style={{
               display: 'flex',
@@ -628,10 +818,12 @@ export default function OwnerDashboard() {
               borderBottom: '1px solid #E2E8F0',
               paddingBottom: 6,
             }}>
-              {monthlyTrends.map((item) => (
+              {monthlyTrends.map((item, idx) => (
                 <div
                   key={item.month}
                   className="gfh-bar-col"
+                  onMouseEnter={() => setHoveredBarIndex(idx)}
+                  onMouseLeave={() => setHoveredBarIndex(null)}
                   style={{
                     display: 'flex',
                     flexDirection: 'column',
@@ -640,6 +832,7 @@ export default function OwnerDashboard() {
                     height: '100%',
                     justifyContent: 'flex-end',
                     cursor: 'pointer',
+                    position: 'relative',
                   }}
                   title={`${item.month}: AED ${item.value.toLocaleString()}`}
                 >
@@ -650,7 +843,7 @@ export default function OwnerDashboard() {
                       maxWidth: 16,
                       minWidth: 8,
                       height: `${item.height}px`,
-                      background: '#0D9488',
+                      background: item.value > 0 ? (idx === currentMonthIndex ? '#0F8A67' : '#0D9488') : '#E2E8F0',
                       borderRadius: '3px 3px 0 0',
                       transition: 'background 0.2s ease, height 0.3s ease',
                     }}
@@ -661,15 +854,15 @@ export default function OwnerDashboard() {
 
             {/* X-Axis Month Labels */}
             <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 8 }}>
-              {monthlyTrends.map(item => (
+              {monthlyTrends.map((item, idx) => (
                 <span
                   key={item.month}
                   style={{
                     flex: 1,
                     textAlign: 'center',
                     fontSize: 11,
-                    fontWeight: 600,
-                    color: '#94A3B8',
+                    fontWeight: idx === currentMonthIndex ? 700 : 600,
+                    color: idx === currentMonthIndex ? '#0F8A67' : '#94A3B8',
                   }}
                 >
                   {item.month}
@@ -679,7 +872,7 @@ export default function OwnerDashboard() {
           </div>
         </div>
 
-        {/* RECENT ACTIVITY CARD */}
+        {/* RECENT ACTIVITY CARD (Strictly from Database) */}
         <div className="gfh-dash-panel">
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 9 }}>
@@ -691,7 +884,7 @@ export default function OwnerDashboard() {
               </h2>
             </div>
             <Link
-              to="/owner/payments"
+              to="/owner/contracts"
               style={{
                 fontSize: 12.5,
                 fontWeight: 600,
@@ -707,125 +900,47 @@ export default function OwnerDashboard() {
           </div>
 
           <div style={{ display: 'flex', flexDirection: 'column' }}>
-            {/* Activity 1 */}
-            <Link to="/owner/payments" className="gfh-activity-row">
-              <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                <div style={{
-                  width: 32,
-                  height: 32,
-                  borderRadius: '50%',
-                  background: '#DCFCE7',
-                  color: '#16A34A',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  flexShrink: 0,
-                }}>
-                  <Icon path={icons.cash} size={15} />
+            {recentActivities.length === 0 ? (
+              <div style={{ textAlign: 'center', padding: '36px 12px', color: '#64748B' }}>
+                <div style={{ fontSize: 13, fontWeight: 600, color: '#0F172A', marginBottom: 4 }}>
+                  No recent activity recorded
                 </div>
-                <div>
-                  <div className="gfh-act-title" style={{ fontSize: 13, fontWeight: 600, color: '#0F172A', transition: 'color 0.15s ease' }}>
-                    Rent received — Unit 101
-                  </div>
-                  <div style={{ fontSize: 11.5, color: '#64748B', marginTop: 1 }}>
-                    AED 3,500 • 2 days ago
-                  </div>
+                <div style={{ fontSize: 12, color: '#94A3B8' }}>
+                  Portfolio contracts, collections, and updates will appear here in real time.
                 </div>
               </div>
-              <div style={{ color: '#94A3B8', display: 'flex', alignItems: 'center' }}>
-                <Icon path={icons.chevron} size={15} />
-              </div>
-            </Link>
-
-            {/* Activity 2 */}
-            <Link to="/owner/contracts" className="gfh-activity-row">
-              <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                <div style={{
-                  width: 32,
-                  height: 32,
-                  borderRadius: '50%',
-                  background: '#DBEAFE',
-                  color: '#2563EB',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  flexShrink: 0,
-                }}>
-                  <Icon path={icons.document} size={15} />
-                </div>
-                <div>
-                  <div className="gfh-act-title" style={{ fontSize: 13, fontWeight: 600, color: '#0F172A', transition: 'color 0.15s ease' }}>
-                    New contract signed — Unit 204
+            ) : (
+              recentActivities.map(item => (
+                <Link key={item.id} to={item.link} className="gfh-activity-row">
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                    <div style={{
+                      width: 32,
+                      height: 32,
+                      borderRadius: '50%',
+                      background: item.iconBg,
+                      color: item.iconColor,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      flexShrink: 0,
+                    }}>
+                      <Icon path={item.icon} size={15} />
+                    </div>
+                    <div>
+                      <div className="gfh-act-title" style={{ fontSize: 13, fontWeight: 600, color: '#0F172A', transition: 'color 0.15s ease' }}>
+                        {item.title}
+                      </div>
+                      <div style={{ fontSize: 11.5, color: '#64748B', marginTop: 1 }}>
+                        {item.sub} {item.timeAgo ? `• ${item.timeAgo}` : ''}
+                      </div>
+                    </div>
                   </div>
-                  <div style={{ fontSize: 11.5, color: '#64748B', marginTop: 1 }}>
-                    Drafted • 4 days ago
+                  <div style={{ color: '#94A3B8', display: 'flex', alignItems: 'center' }}>
+                    <Icon path={icons.chevron} size={15} />
                   </div>
-                </div>
-              </div>
-              <div style={{ color: '#94A3B8', display: 'flex', alignItems: 'center' }}>
-                <Icon path={icons.chevron} size={15} />
-              </div>
-            </Link>
-
-            {/* Activity 3 */}
-            <Link to="/owner/vacant-units" className="gfh-activity-row">
-              <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                <div style={{
-                  width: 32,
-                  height: 32,
-                  borderRadius: '50%',
-                  background: '#FEE2E2',
-                  color: '#DC2626',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  flexShrink: 0,
-                }}>
-                  <Icon path={icons.home} size={15} />
-                </div>
-                <div>
-                  <div className="gfh-act-title" style={{ fontSize: 13, fontWeight: 600, color: '#0F172A', transition: 'color 0.15s ease' }}>
-                    Tenancy updated — Unit 305
-                  </div>
-                  <div style={{ fontSize: 11.5, color: '#64748B', marginTop: 1 }}>
-                    Status changed to Vacant • 6 days ago
-                  </div>
-                </div>
-              </div>
-              <div style={{ color: '#94A3B8', display: 'flex', alignItems: 'center' }}>
-                <Icon path={icons.chevron} size={15} />
-              </div>
-            </Link>
-
-            {/* Activity 4 */}
-            <Link to="/owner/service-charges" className="gfh-activity-row">
-              <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                <div style={{
-                  width: 32,
-                  height: 32,
-                  borderRadius: '50%',
-                  background: '#F3E8FF',
-                  color: '#9333EA',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  flexShrink: 0,
-                }}>
-                  <Icon path={icons.bolt} size={15} />
-                </div>
-                <div>
-                  <div className="gfh-act-title" style={{ fontSize: 13, fontWeight: 600, color: '#0F172A', transition: 'color 0.15s ease' }}>
-                    Service charge posted — Unit 112
-                  </div>
-                  <div style={{ fontSize: 11.5, color: '#64748B', marginTop: 1 }}>
-                    AED 150 • 7 days ago
-                  </div>
-                </div>
-              </div>
-              <div style={{ color: '#94A3B8', display: 'flex', alignItems: 'center' }}>
-                <Icon path={icons.chevron} size={15} />
-              </div>
-            </Link>
+                </Link>
+              ))
+            )}
           </div>
         </div>
       </div>
