@@ -78,7 +78,7 @@ export default function RegisterPage() {
         (firstError as string) ||
           err.response?.data?.message ||
           (isNetwork
-            ? 'Backend server is not running. Please start the Laravel backend locally (php artisan serve) to connect with the database.'
+            ? 'Unable to connect to the server. Please check your internet connection or try again.'
             : 'Registration failed. Please check your inputs.')
       )
       recaptchaRef.current?.reset()

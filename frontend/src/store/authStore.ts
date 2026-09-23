@@ -81,7 +81,7 @@ export const useAuthStore = create<AuthStore>()(
           const message =
             err.response?.data?.message ||
             (isNetwork
-              ? 'Backend server is not running. Please start the Laravel backend locally (php artisan serve).'
+              ? 'Unable to connect to the server. Please check your internet connection or try again.'
               : 'Login failed. Please try again.')
           set({ error: message, isLoading: false })
           throw err
