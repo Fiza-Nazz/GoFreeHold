@@ -1,204 +1,297 @@
 import { useEffect, useState, useMemo } from 'react'
-import api from '../../api/axios'
 import { Link, useSearchParams } from 'react-router-dom'
-import { THEME, ADMIN_COLORS, Icon, portalPageCss, heroStyle, panelStyle, ghostBtnStyle, thStyle, tdStyle, RADIUS } from '../../components/gfh/adminTheme'
+import api from '../../api/axios'
+import { THEME, portalPageCss } from '../../components/gfh/adminTheme'
 
 interface Unit {
   id: number
   number: string
-  floor: number
-  type: string
-  price: number
+  floor?: number
+  type?: string
+  category?: string
+  price?: number
+  status?: string
   property?: {
     id: number
     name: string
+    address?: string
+    city?: string
   }
   property_id?: number
+  propertyName?: string
 }
 
-interface PropertyOption {
-  id: number
-  name: string
-}
+// 5 Soft Pastel Themes matching the client screenshot (media_1790175080148.png)
+const PASTEL_THEMES = [
+  {
+    bg: '#F0FDFA', // Mint / Teal
+    border: '#CCFBF1',
+    hoverBorder: '#99F6E4',
+    iconBg: '#CCFBF1',
+    iconColor: '#0D9488',
+    locColor: '#0F766E',
+  },
+  {
+    bg: '#F0FDF4', // Emerald / Green
+    border: '#DCFCE7',
+    hoverBorder: '#BBF7D0',
+    iconBg: '#DCFCE7',
+    iconColor: '#16A34A',
+    locColor: '#15803D',
+  },
+  {
+    bg: '#FAF5FF', // Lavender / Purple
+    border: '#F3E8FF',
+    hoverBorder: '#E9D5FF',
+    iconBg: '#F3E8FF',
+    iconColor: '#9333EA',
+    locColor: '#7E22CE',
+  },
+  {
+    bg: '#FFFBEB', // Warm Peach / Amber
+    border: '#FEF3C7',
+    hoverBorder: '#FDE68A',
+    iconBg: '#FEF3C7',
+    iconColor: '#D97706',
+    locColor: '#B45309',
+  },
+  {
+    bg: '#F0F9FF', // Sky Blue / Cyan
+    border: '#E0F2FE',
+    hoverBorder: '#BAE6FD',
+    iconBg: '#E0F2FE',
+    iconColor: '#0284C7',
+    locColor: '#0369A1',
+  },
+]
 
-const icons = {
-  alert: 'M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0zM12 9v4M12 17h.01',
-  search: 'M11 19a8 8 0 1 0 0-16 8 8 0 0 0 0 16zM21 21l-4.35-4.35',
+function getUnitDisplayInfo(type?: string, category?: string) {
+  const t = (type || '').toLowerCase()
+  const c = (category || '').toLowerCase()
+
+  if (t.includes('studio') || c.includes('studio')) {
+    return { tag: 'STUDIO', label: 'Studio Apartment', isShop: false }
+  }
+  if (t.includes('shop') || c.includes('shop') || t.includes('commercial')) {
+    return { tag: 'SHOP', label: 'Shop Unit', isShop: true }
+  }
+  if (t.includes('office') || c.includes('office')) {
+    return { tag: 'OFFICE', label: 'Office Space', isShop: false }
+  }
+  if (t.includes('penthouse') || c.includes('penthouse')) {
+    return { tag: 'PENTHOUSE', label: 'Penthouse Apartment', isShop: false }
+  }
+  if (t.includes('villa') || c.includes('villa')) {
+    return { tag: 'VILLA', label: 'Luxury Villa', isShop: false }
+  }
+  if (t.includes('1') || t.includes('one')) {
+    return { tag: '1 BR', label: '1 Bed Apartment', isShop: false }
+  }
+  if (t.includes('2') || t.includes('two')) {
+    return { tag: '2 BR', label: '2 Bed Apartment', isShop: false }
+  }
+  if (t.includes('3') || t.includes('three')) {
+    return { tag: '3 BR', label: '3 Bed Apartment', isShop: false }
+  }
+
+  const raw = type ? type.toUpperCase() : 'UNIT'
+  const pretty = type ? type.charAt(0).toUpperCase() + type.slice(1) : 'Residential'
+  return { tag: raw, label: `${pretty} Apartment`, isShop: false }
 }
 
 export default function VacantUnits() {
   const [searchParams, setSearchParams] = useSearchParams()
   const [units, setUnits] = useState<Unit[]>([])
-  const [properties, setProperties] = useState<PropertyOption[]>([])
-  const [propertyId, setPropertyId] = useState<string>('')
   const [typeFilter, setTypeFilter] = useState<string>('ALL')
-  const [sortBy, setSortBy] = useState<string>('NUMBER_ASC')
   const [isLoading, setIsLoading] = useState(true)
 
   const searchQuery = searchParams.get('q') || ''
 
   useEffect(() => {
-    const loadProperties = async () => {
-      try {
-        const res = await api.get('/owner/dashboard/properties')
-        setProperties(res.data?.data?.properties || [])
-      } catch (err) {
-        console.error(err)
-      }
-    }
-    loadProperties()
+    fetchVacantUnits()
   }, [])
 
-  useEffect(() => {
-    const fetchVacantUnits = async () => {
-      setIsLoading(true)
-      try {
-        const url = propertyId
-          ? `/owner/dashboard/vacant-units?property_id=${propertyId}`
-          : '/owner/dashboard/vacant-units'
-        const res = await api.get(url)
-        setUnits(res.data?.data?.units || [])
-      } catch (err) {
-        console.error(err)
-      } finally {
-        setIsLoading(false)
+  const fetchVacantUnits = async () => {
+    setIsLoading(true)
+    try {
+      // Primary: owner dashboard vacant units endpoint
+      const res = await api.get('/owner/dashboard/vacant-units')
+      const list = res.data?.data?.units || res.data?.data || []
+      if (Array.isArray(list) && list.length > 0) {
+        setUnits(list)
+      } else {
+        // Fallback: try owner units with status=AVAILABLE
+        const res2 = await api.get('/owner/units?status=AVAILABLE')
+        const list2 = res2.data?.data?.units || res2.data?.data || []
+        setUnits(Array.isArray(list2) ? list2 : [])
       }
+    } catch (err) {
+      console.error(err)
+      try {
+        const res2 = await api.get('/owner/units?status=AVAILABLE')
+        const list2 = res2.data?.data?.units || res2.data?.data || []
+        setUnits(Array.isArray(list2) ? list2 : [])
+      } catch (err2) {
+        console.error(err2)
+        setUnits([])
+      }
+    } finally {
+      setIsLoading(false)
     }
-    fetchVacantUnits()
-  }, [propertyId])
-
-  // Unique types from vacant units
-  const typeOptions = useMemo(() => {
-    return Array.from(new Set(units.map(u => u.type).filter(Boolean)))
-  }, [units])
-
-  // Filtered and sorted units
-  const filteredUnits = useMemo(() => {
-    return units
-      .filter(u => {
-        if (searchQuery.trim()) {
-          const q = searchQuery.toLowerCase().trim()
-          const matchNum = (u.number || '').toLowerCase().includes(q)
-          const matchProp = (u.property?.name || '').toLowerCase().includes(q)
-          const matchType = (u.type || '').toLowerCase().includes(q)
-          const matchFloor = String(u.floor || '').includes(q)
-          if (!matchNum && !matchProp && !matchType && !matchFloor) return false
-        }
-        if (typeFilter !== 'ALL' && (u.type || '').toLowerCase() !== typeFilter.toLowerCase()) return false
-        return true
-      })
-      .sort((a, b) => {
-        if (sortBy === 'NUMBER_ASC') return (a.number || '').localeCompare(b.number || '', undefined, { numeric: true })
-        if (sortBy === 'PROP_ASC') return (a.property?.name || '').localeCompare(b.property?.name || '')
-        if (sortBy === 'PRICE_DESC') return b.price - a.price
-        if (sortBy === 'PRICE_ASC') return a.price - b.price
-        if (sortBy === 'FLOOR_ASC') return a.floor - b.floor
-        return 0
-      })
-  }, [units, searchQuery, typeFilter, sortBy])
-
-  const hasActiveFilters = Boolean(searchQuery.trim() || propertyId || typeFilter !== 'ALL' || sortBy !== 'NUMBER_ASC')
-
-  const clearAllFilters = () => {
-    setSearchParams({}, { replace: true })
-    setPropertyId('')
-    setTypeFilter('ALL')
-    setSortBy('NUMBER_ASC')
   }
 
+  // Filter units by search query and type filter
+  const filteredUnits = useMemo(() => {
+    return units.filter(u => {
+      const info = getUnitDisplayInfo(u.type, u.category)
+      const propName = u.property?.name || u.propertyName || ''
+      const num = u.number || ''
+
+      if (searchQuery.trim()) {
+        const q = searchQuery.toLowerCase().trim()
+        const matchNum = num.toLowerCase().includes(q)
+        const matchProp = propName.toLowerCase().includes(q)
+        const matchType = (u.type || '').toLowerCase().includes(q)
+        const matchTag = info.tag.toLowerCase().includes(q)
+        const matchLabel = info.label.toLowerCase().includes(q)
+        if (!matchNum && !matchProp && !matchType && !matchTag && !matchLabel) {
+          return false
+        }
+      }
+
+      if (typeFilter !== 'ALL') {
+        const filterLower = typeFilter.toLowerCase()
+        const matchType = (u.type || '').toLowerCase().includes(filterLower)
+        const matchTag = info.tag.toLowerCase().includes(filterLower)
+        if (!matchType && !matchTag) return false
+      }
+
+      return true
+    })
+  }, [units, searchQuery, typeFilter])
+
   return (
-    <div className="gfh-portal-page" style={{ fontFamily: "'Poppins', system-ui, sans-serif" }}>
+    <div
+      className="gfh-portal-page"
+      style={{
+        fontFamily: "'Poppins', system-ui, sans-serif",
+        padding: '24px 28px',
+        minHeight: '100vh',
+        background: '#F8FAFC',
+      }}
+    >
       <style>{portalPageCss}</style>
+      <style>{`
+        .gfh-vacant-card {
+          border-radius: 14px;
+          padding: 18px 20px;
+          display: flex;
+          flex-direction: column;
+          justifyContent: space-between;
+          transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+          cursor: pointer;
+          text-decoration: none;
+          min-height: 165px;
+          box-sizing: border-box;
+        }
+        .gfh-vacant-card:hover {
+          transform: translateY(-3px);
+          box-shadow: 0 10px 24px -6px rgba(15, 23, 42, 0.08);
+        }
+        .gfh-vacant-input {
+          font-family: 'Poppins', system-ui, sans-serif;
+          font-size: 13.5px;
+          border: 1px solid #E2E8F0;
+          border-radius: 10px;
+          outline: none;
+          transition: border-color 0.15s ease, box-shadow 0.15s ease;
+        }
+        .gfh-vacant-input:focus {
+          border-color: #0F8A67;
+          box-shadow: 0 0 0 3px rgba(15, 138, 103, 0.12);
+        }
+      `}</style>
 
-      <div className="fade-in" style={heroStyle}>
-        <div>
-          <div style={{ fontSize: 22, fontWeight: 800, color: THEME.ink, margin: 0 }}>Vacant Units Report</div>
-          <div style={{ fontSize: 12, color: '#9ca3af', marginTop: 6 }}>Search and filter available units across your portfolio</div>
-        </div>
-        <Link to="/owner/dashboard" className="gfh-portal-btn" style={{ ...ghostBtnStyle, background: '#0E5E48', borderRadius: 8 }}>
-          ← Back to dashboard
-        </Link>
-      </div>
-
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 16, marginBottom: 22 }}>
-        <div
-          className="gfh-portal-stat"
-          style={{
-            background: '#FFFFFF',
-            borderRadius: 14,
-            padding: '20px 22px',
-            border: '1px solid #E2E8F0',
-            boxShadow: '0 1px 3px rgba(16,24,40,0.04)',
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'space-between',
-            minHeight: 124,
-          }}
-        >
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
-            <div style={{
-              width: 42,
-              height: 42,
+      {/* Top Header Row with Title, Back Button, Search and Filter */}
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          flexWrap: 'wrap',
+          gap: 16,
+          marginBottom: 24,
+        }}
+      >
+        {/* Left: Back button, Title & Subtitle */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+          <Link
+            to="/owner/dashboard"
+            style={{
+              width: 38,
+              height: 38,
               borderRadius: 10,
-              background: filteredUnits.length > 0 ? '#FEF2F2' : '#F0F9FF',
-              color: filteredUnits.length > 0 ? '#DC2626' : '#0284C7',
+              background: '#0F8A67',
+              color: '#FFFFFF',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
+              textDecoration: 'none',
+              transition: 'background 0.15s ease',
               flexShrink: 0,
-            }}>
-              <Icon path={icons.alert} size={20} />
-            </div>
-            <span style={{
-              fontSize: 11,
-              fontWeight: 700,
-              letterSpacing: '0.4px',
-              textTransform: 'uppercase',
-              background: filteredUnits.length > 0 ? '#FEF2F2' : '#F0F9FF',
-              color: filteredUnits.length > 0 ? '#991B1B' : '#075985',
-              border: `1px solid ${filteredUnits.length > 0 ? '#FECACA' : '#BAE6FD'}`,
-              padding: '3px 9px',
-              borderRadius: 999,
-            }}>
-              Available
-            </span>
-          </div>
+              boxShadow: '0 1px 3px rgba(15, 138, 103, 0.25)',
+            }}
+            onMouseEnter={e => (e.currentTarget.style.background = '#0B6E52')}
+            onMouseLeave={e => (e.currentTarget.style.background = '#0F8A67')}
+            title="Back to dashboard"
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="15 18 9 12 15 6" />
+            </svg>
+          </Link>
           <div>
-            <div style={{ fontSize: 28, fontWeight: 800, color: '#0F172A', lineHeight: 1.15, letterSpacing: '-0.02em' }}>
-              {isLoading ? '—' : filteredUnits.length}
-            </div>
-            <div style={{ fontSize: 13, fontWeight: 600, color: '#64748B', marginTop: 4 }}>
-              Vacant units {hasActiveFilters ? `(of ${units.length})` : ''}
-            </div>
+            <h1
+              style={{
+                fontSize: 22,
+                fontWeight: 800,
+                color: '#0F172A',
+                margin: 0,
+                letterSpacing: '-0.01em',
+                lineHeight: 1.2,
+              }}
+            >
+              Vacant Properties
+            </h1>
+            <p style={{ fontSize: 13, color: '#64748B', margin: '4px 0 0', fontWeight: 500 }}>
+              View all currently vacant properties in your portfolio
+            </p>
           </div>
         </div>
-      </div>
 
-      {/* Filter and Search Bar */}
-      <div
-        className="fade-in"
-        style={{
-          background: '#FFFFFF',
-          borderRadius: 14,
-          padding: '16px 20px',
-          border: '1px solid #E2E8F0',
-          boxShadow: '0 1px 3px rgba(16,24,40,0.04)',
-          marginBottom: 20,
-          display: 'flex',
-          flexWrap: 'wrap',
-          gap: 12,
-          alignItems: 'center',
-          justifyContent: 'space-between',
-        }}
-      >
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, alignItems: 'center', flex: 1, minWidth: 280 }}>
-          {/* Search Input */}
-          <div style={{ position: 'relative', flex: 1, minWidth: 200, maxWidth: 320 }}>
+        {/* Right: Search and Filter controls matching client image */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
+          {/* Search Vacant Properties */}
+          <div style={{ position: 'relative', width: 250 }}>
             <svg
-              style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: '#94A3B8', pointerEvents: 'none' }}
-              width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+              style={{
+                position: 'absolute',
+                left: 14,
+                top: '50%',
+                transform: 'translateY(-50%)',
+                color: '#94A3B8',
+                pointerEvents: 'none',
+              }}
+              width="15"
+              height="15"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
             >
-              <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
+              <circle cx="11" cy="11" r="8" />
+              <line x1="21" y1="21" x2="16.65" y2="16.65" />
             </svg>
             <input
               type="text"
@@ -207,17 +300,13 @@ export default function VacantUnits() {
                 const val = e.target.value
                 setSearchParams(val ? { q: val } : {}, { replace: true })
               }}
-              placeholder="Search vacant units by number, property..."
+              placeholder="Search Vacant Properties..."
+              className="gfh-vacant-input"
               style={{
                 width: '100%',
-                padding: searchQuery ? '9px 30px 9px 34px' : '9px 12px 9px 34px',
-                borderRadius: 8,
-                border: '1px solid #E2E8F0',
+                padding: searchQuery ? '9px 32px 9px 38px' : '9px 14px 9px 38px',
                 background: '#FFFFFF',
-                fontSize: 13,
                 color: '#0F172A',
-                outline: 'none',
-                fontFamily: "'Poppins', system-ui, sans-serif",
                 boxSizing: 'border-box',
               }}
             />
@@ -227,180 +316,313 @@ export default function VacantUnits() {
                 onClick={() => setSearchParams({}, { replace: true })}
                 style={{
                   position: 'absolute',
-                  right: 8,
+                  right: 10,
                   top: '50%',
                   transform: 'translateY(-50%)',
-                  background: 'none',
+                  background: 'transparent',
                   border: 'none',
                   color: '#94A3B8',
                   cursor: 'pointer',
-                  padding: 3,
-                  display: 'flex',
-                  alignItems: 'center',
-                  fontSize: 12,
+                  fontSize: 13,
+                  padding: 2,
                 }}
-                title="Clear search"
               >
                 ✕
               </button>
             )}
           </div>
 
-          {/* Property Dropdown */}
-          <select
-            value={propertyId}
-            onChange={(e) => setPropertyId(e.target.value)}
-            style={{
-              padding: '9px 12px',
-              borderRadius: 8,
-              border: '1px solid #E2E8F0',
-              background: '#FFFFFF',
-              color: '#0F172A',
-              fontSize: 13,
-              fontWeight: 600,
-              outline: 'none',
-              fontFamily: "'Poppins', system-ui, sans-serif",
-              cursor: 'pointer',
-            }}
-          >
-            <option value="">All Properties</option>
-            {properties.map((p) => (
-              <option key={p.id} value={String(p.id)}>{p.name}</option>
-            ))}
-          </select>
-
-          {/* Type Dropdown */}
-          <select
-            value={typeFilter}
-            onChange={(e) => setTypeFilter(e.target.value)}
-            style={{
-              padding: '9px 12px',
-              borderRadius: 8,
-              border: '1px solid #E2E8F0',
-              background: '#FFFFFF',
-              color: '#0F172A',
-              fontSize: 13,
-              fontWeight: 600,
-              outline: 'none',
-              fontFamily: "'Poppins', system-ui, sans-serif",
-              cursor: 'pointer',
-            }}
-          >
-            <option value="ALL">All Unit Types</option>
-            {typeOptions.map((t) => (
-              <option key={t} value={t}>{t.charAt(0).toUpperCase() + t.slice(1)}</option>
-            ))}
-          </select>
-
-          {/* Sort By */}
-          <select
-            value={sortBy}
-            onChange={(e) => setSortBy(e.target.value)}
-            style={{
-              padding: '9px 12px',
-              borderRadius: 8,
-              border: '1px solid #E2E8F0',
-              background: '#FFFFFF',
-              color: '#0F172A',
-              fontSize: 13,
-              fontWeight: 600,
-              outline: 'none',
-              fontFamily: "'Poppins', system-ui, sans-serif",
-              cursor: 'pointer',
-            }}
-          >
-            <option value="NUMBER_ASC">Sort: Unit Number</option>
-            <option value="PROP_ASC">Sort: Property Name</option>
-            <option value="PRICE_DESC">Sort: Rent (High to Low)</option>
-            <option value="PRICE_ASC">Sort: Rent (Low to High)</option>
-            <option value="FLOOR_ASC">Sort: Floor</option>
-          </select>
+          {/* All Types Dropdown */}
+          <div style={{ position: 'relative' }}>
+            <select
+              value={typeFilter}
+              onChange={e => setTypeFilter(e.target.value)}
+              className="gfh-vacant-input"
+              style={{
+                padding: '9px 34px 9px 14px',
+                background: '#FFFFFF',
+                color: '#334155',
+                fontWeight: 600,
+                cursor: 'pointer',
+                appearance: 'none',
+              }}
+            >
+              <option value="ALL">All Types</option>
+              <option value="studio">Studio</option>
+              <option value="apartment">Apartment</option>
+              <option value="shop">Shop</option>
+              <option value="office">Office</option>
+              <option value="penthouse">Penthouse</option>
+              <option value="villa">Villa</option>
+            </select>
+            <svg
+              style={{
+                position: 'absolute',
+                right: 12,
+                top: '50%',
+                transform: 'translateY(-50%)',
+                color: '#64748B',
+                pointerEvents: 'none',
+              }}
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <polyline points="6 9 12 15 18 9" />
+            </svg>
+          </div>
         </div>
-
-        {hasActiveFilters && (
-          <button
-            type="button"
-            onClick={clearAllFilters}
-            style={{
-              padding: '8px 14px',
-              borderRadius: 8,
-              border: '1px solid #FECACA',
-              background: '#FEF2F2',
-              color: '#991B1B',
-              fontSize: 12.5,
-              fontWeight: 600,
-              cursor: 'pointer',
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: 6,
-            }}
-          >
-            <span>✕</span> Reset filters
-          </button>
-        )}
       </div>
 
-      <div className="fade-in" style={{ ...panelStyle, minHeight: 320 }}>
-        {isLoading ? (
-          <div style={{ textAlign: 'center', padding: 40 }}><span className="spinner" /></div>
-        ) : units.length === 0 ? (
-          <div style={{ textAlign: 'center', padding: 40 }}>
-            <p style={{ fontSize: 14, color: THEME.textMuted, fontWeight: 500 }}>No vacant units available for this filter.</p>
+      {/* Main Content Area */}
+      {isLoading ? (
+        <div
+          style={{
+            background: '#FFFFFF',
+            borderRadius: 16,
+            border: '1px solid #E2E8F0',
+            padding: '80px 20px',
+            textAlign: 'center',
+            color: '#64748B',
+            fontWeight: 600,
+          }}
+        >
+          <div style={{ fontSize: 15, color: '#0F172A', fontWeight: 700, marginBottom: 6 }}>
+            Loading vacant properties…
           </div>
-        ) : filteredUnits.length === 0 ? (
-          <div style={{ textAlign: 'center', padding: '40px 20px', background: '#F8FAFC', borderRadius: 12, border: '1px dashed #CBD5E1' }}>
-            <div style={{ width: 44, height: 44, borderRadius: 10, background: '#FEF2F2', color: '#DC2626', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', marginBottom: 10 }}>
-              <Icon path={icons.alert} size={22} />
-            </div>
-            <p style={{ fontSize: 14, fontWeight: 700, color: '#0F172A', margin: '0 0 6px 0' }}>No vacant units match your filter</p>
-            <p style={{ fontSize: 12.5, color: '#64748B', margin: '0 0 14px 0' }}>
-              Try clearing search terms or selecting another property.
-            </p>
+          <div style={{ fontSize: 13, color: '#94A3B8' }}>
+            Fetching available units across your portfolio
+          </div>
+        </div>
+      ) : filteredUnits.length === 0 ? (
+        <div
+          style={{
+            background: '#FFFFFF',
+            borderRadius: 16,
+            border: '1px solid #E2E8F0',
+            padding: '70px 24px',
+            textAlign: 'center',
+            boxShadow: '0 1px 3px rgba(0,0,0,0.02)',
+          }}
+        >
+          <div
+            style={{
+              width: 56,
+              height: 56,
+              borderRadius: 16,
+              background: '#ECFDF8',
+              color: '#0F8A67',
+              display: 'inline-flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              marginBottom: 16,
+            }}
+          >
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+              <polyline points="9 22 9 12 15 12 15 22" />
+            </svg>
+          </div>
+          <h3 style={{ fontSize: 18, fontWeight: 800, color: '#0F172A', margin: '0 0 6px 0' }}>
+            {searchQuery || typeFilter !== 'ALL'
+              ? 'No matching vacant units found'
+              : 'No Vacant Properties at the Moment'}
+          </h3>
+          <p style={{ fontSize: 13.5, color: '#64748B', margin: '0 0 20px 0', maxWidth: 440, marginLeft: 'auto', marginRight: 'auto' }}>
+            {searchQuery || typeFilter !== 'ALL'
+              ? 'Try adjusting your search terms or clearing the type filter to see other units.'
+              : 'All units in your portfolio are currently rented or occupied. When a unit becomes available, it will show up here.'}
+          </p>
+          {(searchQuery || typeFilter !== 'ALL') ? (
             <button
-              type="button"
-              onClick={clearAllFilters}
+              onClick={() => {
+                setSearchParams({}, { replace: true })
+                setTypeFilter('ALL')
+              }}
               style={{
-                padding: '8px 16px',
-                borderRadius: 8,
-                border: 'none',
-                background: '#0E5E48',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 6,
+                background: '#0F8A67',
                 color: '#FFFFFF',
-                fontSize: 12.5,
-                fontWeight: 600,
+                border: 'none',
+                borderRadius: 10,
+                padding: '9px 18px',
+                fontSize: 13,
+                fontWeight: 700,
                 cursor: 'pointer',
               }}
             >
-              Clear all filters
+              Reset Filters
             </button>
-          </div>
-        ) : (
-          <div style={{ overflowX: 'auto' }}>
-            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-              <thead>
-                <tr style={{ borderBottom: `2px solid ${THEME.border}` }}>
-                  {['Property', 'Unit Number', 'Type', 'Floor', 'Rent (AED)', 'Actions'].map(h => (
-                    <th key={h} style={thStyle}>{h}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {filteredUnits.map((unit) => (
-                  <tr key={unit.id} className="gfh-portal-row" style={{ borderBottom: `1px solid ${THEME.border}` }}>
-                    <td style={{ ...tdStyle, fontWeight: 700 }}>{unit.property?.name}</td>
-                    <td style={{ ...tdStyle, fontWeight: 600 }}>{unit.number}</td>
-                    <td style={{ ...tdStyle, textTransform: 'capitalize' }}>{unit.type}</td>
-                    <td style={tdStyle}>{unit.floor}</td>
-                    <td style={{ ...tdStyle, color: '#065f46', fontWeight: 700 }}>{Number(unit.price).toLocaleString()}</td>
-                    <td style={tdStyle}>
-                      <Link to={`/owner/units/${unit.id}`} className="gfh-portal-link" style={{ color: '#0E5E48' }}>View details →</Link>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </div>
+          ) : (
+            <Link
+              to="/owner/units"
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 6,
+                background: '#0F8A67',
+                color: '#FFFFFF',
+                border: 'none',
+                borderRadius: 10,
+                padding: '9px 20px',
+                fontSize: 13,
+                fontWeight: 700,
+                textDecoration: 'none',
+              }}
+            >
+              <span>View All Portfolio Units</span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="9 18 15 12 9 6" />
+              </svg>
+            </Link>
+          )}
+        </div>
+      ) : (
+        /* 5-Column Colorful Card Grid matching client mockup */
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(210px, 1fr))',
+            gap: 16,
+          }}
+        >
+          {filteredUnits.map((unit, idx) => {
+            const theme = PASTEL_THEMES[idx % PASTEL_THEMES.length]
+            const info = getUnitDisplayInfo(unit.type, unit.category)
+            const propName = unit.property?.name || unit.propertyName || 'Property'
+
+            return (
+              <Link
+                key={unit.id}
+                to={`/owner/units/${unit.id}`}
+                className="gfh-vacant-card"
+                style={{
+                  background: theme.bg,
+                  border: `1px solid ${theme.border}`,
+                }}
+                onMouseEnter={e => {
+                  e.currentTarget.style.borderColor = theme.hoverBorder
+                }}
+                onMouseLeave={e => {
+                  e.currentTarget.style.borderColor = theme.border
+                }}
+              >
+                {/* Top Row: Icon + VACANT badge */}
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+                  <div
+                    style={{
+                      width: 32,
+                      height: 32,
+                      borderRadius: 9,
+                      background: theme.iconBg,
+                      color: theme.iconColor,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      flexShrink: 0,
+                    }}
+                  >
+                    {info.isShop ? (
+                      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" />
+                        <line x1="3" y1="6" x2="21" y2="6" />
+                        <path d="M16 10a4 4 0 0 1-8 0" />
+                      </svg>
+                    ) : (
+                      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                        <polyline points="9 22 9 12 15 12 15 22" />
+                      </svg>
+                    )}
+                  </div>
+
+                  {/* Red / Coral VACANT pill badge */}
+                  <span
+                    style={{
+                      background: '#FEF2F2',
+                      color: '#EF4444',
+                      border: '1px solid #FEE2E2',
+                      fontSize: 10,
+                      fontWeight: 800,
+                      letterSpacing: '0.5px',
+                      textTransform: 'uppercase',
+                      padding: '3px 10px',
+                      borderRadius: 999,
+                    }}
+                  >
+                    VACANT
+                  </span>
+                </div>
+
+                {/* Middle Content: Tag + Big Unit Number + Type Label */}
+                <div style={{ marginBottom: 14 }}>
+                  <div
+                    style={{
+                      fontSize: 11,
+                      fontWeight: 700,
+                      color: '#64748B',
+                      letterSpacing: '0.4px',
+                      textTransform: 'uppercase',
+                    }}
+                  >
+                    {info.tag}
+                  </div>
+                  <div
+                    style={{
+                      fontSize: 26,
+                      fontWeight: 800,
+                      color: '#0F172A',
+                      lineHeight: 1.15,
+                      margin: '3px 0 2px 0',
+                      letterSpacing: '-0.02em',
+                    }}
+                  >
+                    {unit.number}
+                  </div>
+                  <div
+                    style={{
+                      fontSize: 12,
+                      color: '#64748B',
+                      fontWeight: 500,
+                    }}
+                  >
+                    {info.label}
+                  </div>
+                </div>
+
+                {/* Bottom Row: Location Pin + Property / Building Name */}
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 6,
+                    paddingTop: 10,
+                    borderTop: `1px solid ${theme.border}`,
+                    color: theme.locColor,
+                    fontSize: 12,
+                    fontWeight: 600,
+                  }}
+                >
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+                    <circle cx="12" cy="10" r="3" />
+                  </svg>
+                  <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    {propName}
+                  </span>
+                </div>
+              </Link>
+            )
+          })}
+        </div>
+      )}
     </div>
   )
 }

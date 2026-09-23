@@ -115,7 +115,7 @@ const PAGE_TITLES: Record<string, string> = {
   '/owner/properties': 'Properties',
   '/owner/properties/add': 'Add Property',
   '/owner/units': 'Units',
-  '/owner/vacant-units': 'Vacant Units',
+  '/owner/vacant-units': 'Vacant Properties',
   '/owner/tenants': 'Tenant List',
   '/owner/tenants/add': 'Add Tenant',
   '/owner/tenants/previous': 'Previous Tenants',
