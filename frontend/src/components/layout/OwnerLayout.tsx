@@ -40,7 +40,7 @@ const icons = {
 /** Owner navigation sections strictly matching Admin structure while preserving Owner features */
 const ownerNavItems = [
   { section: 'MAIN', items: [
-    { to: '/owner/dashboard', icon: icons.dashboard, label: 'Portfolio Overview' },
+    { to: '/owner/dashboard', icon: icons.dashboard, label: 'Dashboard' },
   ]},
   { section: 'Lease & Expense', items: [
     { to: '/owner/call-logs', icon: icons.phone, label: 'Call Logs' },
@@ -111,7 +111,7 @@ const ownerMenuGroups = [
 ]
 
 const PAGE_TITLES: Record<string, string> = {
-  '/owner/dashboard': 'Portfolio Overview',
+  '/owner/dashboard': 'Dashboard',
   '/owner/properties': 'Properties',
   '/owner/properties/add': 'Add Property',
   '/owner/units': 'Units',
