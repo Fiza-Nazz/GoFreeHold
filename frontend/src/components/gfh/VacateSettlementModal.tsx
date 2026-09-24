@@ -175,11 +175,11 @@ export default function VacateSettlementModal({
       <div
         style={{
           width: '100%',
-          maxWidth: 620,
+          maxWidth: 640,
           backgroundColor: '#FFFFFF',
-          borderRadius: 16,
-          boxShadow: '0 25px 60px -15px rgba(15, 23, 42, 0.35)',
-          border: '1px solid #E2E8F0',
+          borderRadius: 12,
+          boxShadow: '0 20px 50px -12px rgba(6, 56, 44, 0.35)',
+          border: '1px solid #CBD5E1',
           overflow: 'hidden',
           fontFamily: "'Poppins', system-ui, sans-serif",
           maxHeight: '92vh',
@@ -187,29 +187,91 @@ export default function VacateSettlementModal({
           flexDirection: 'column',
         }}
       >
-        {/* Modal Header */}
+        <style>{`
+          .gfh-vacate-input {
+            width: 100%;
+            padding: 9px 12px;
+            border-radius: 8px;
+            border: 1px solid #CBD5E1;
+            font-size: 13px;
+            font-weight: 600;
+            color: #0F172A;
+            background: #FFFFFF;
+            box-sizing: border-box;
+            outline: none;
+            transition: all 0.15s ease;
+          }
+          .gfh-vacate-input:focus {
+            border-color: #0E5E48 !important;
+            box-shadow: 0 0 0 3px rgba(14, 94, 72, 0.15) !important;
+          }
+          .gfh-btn-confirm-vacate {
+            padding: 11px 22px;
+            border-radius: 8px;
+            border: 1px solid #064E3B;
+            background: linear-gradient(135deg, #0E5E48 0%, #064E3B 100%);
+            color: #FFFFFF;
+            font-weight: 700;
+            font-size: 13.5px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 3px 12px rgba(14, 94, 72, 0.28);
+            transition: all 0.18s ease;
+          }
+          .gfh-btn-confirm-vacate:hover:not(:disabled) {
+            background: linear-gradient(135deg, #094434 0%, #042B22 100%);
+            box-shadow: 0 5px 16px rgba(14, 94, 72, 0.38);
+            transform: translateY(-1px);
+          }
+          .gfh-btn-confirm-vacate:disabled {
+            opacity: 0.65;
+            cursor: not-allowed;
+          }
+          .gfh-btn-cancel {
+            padding: 10px 18px;
+            border-radius: 8px;
+            border: 1px solid #CBD5E1;
+            background: #FFFFFF;
+            color: #475569;
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+          }
+          .gfh-btn-cancel:hover:not(:disabled) {
+            background: #F8FAFC;
+            color: #0F172A;
+            border-color: #94A3B8;
+          }
+        `}</style>
+
+        {/* Modal Header — GoFreeHold Executive Theme */}
         <div
           style={{
-            background: 'linear-gradient(135deg, #1E1B4B 0%, #312E81 100%)',
-            padding: '20px 24px',
+            background: 'linear-gradient(135deg, #06382C 0%, #0A4D3C 60%, #115E59 100%)',
+            padding: '18px 24px',
             color: '#FFFFFF',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
+            borderBottom: '1px solid rgba(52, 211, 165, 0.25)',
           }}
         >
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
             <div
               style={{
-                width: 42,
-                height: 42,
+                width: 44,
+                height: 44,
                 borderRadius: 10,
-                background: 'rgba(239, 68, 68, 0.2)',
-                border: '1px solid rgba(239, 68, 68, 0.4)',
-                color: '#FCA5A5',
+                background: 'rgba(52, 211, 165, 0.16)',
+                border: '1px solid rgba(52, 211, 165, 0.35)',
+                color: '#34D3A5',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
+                flexShrink: 0,
               }}
             >
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
@@ -219,10 +281,27 @@ export default function VacateSettlementModal({
               </svg>
             </div>
             <div>
-              <h2 style={{ margin: 0, fontSize: 18, fontWeight: 800, letterSpacing: '-0.01em', color: '#FFFFFF' }}>
-                End Contract &amp; Vacate Process
-              </h2>
-              <div style={{ fontSize: 12.5, color: '#C7D2FE', marginTop: 2, fontWeight: 500 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <h2 style={{ margin: 0, fontSize: 17.5, fontWeight: 800, letterSpacing: '-0.01em', color: '#FFFFFF' }}>
+                  End Contract &amp; Vacate Process
+                </h2>
+                <span
+                  style={{
+                    fontSize: 10.5,
+                    fontWeight: 700,
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.8px',
+                    padding: '2px 8px',
+                    borderRadius: 4,
+                    background: 'rgba(52, 211, 165, 0.18)',
+                    color: '#6EE7C4',
+                    border: '1px solid rgba(52, 211, 165, 0.3)',
+                  }}
+                >
+                  Step-by-Step
+                </span>
+              </div>
+              <div style={{ fontSize: 12, color: '#A7F3DC', marginTop: 3, fontWeight: 500 }}>
                 {propertyName} &bull; Unit {unitNumber} &bull; {tenantName}
               </div>
             </div>
@@ -232,17 +311,18 @@ export default function VacateSettlementModal({
             onClick={onClose}
             disabled={isSubmitting}
             style={{
-              background: 'rgba(255, 255, 255, 0.1)',
-              border: 'none',
+              background: 'rgba(255, 255, 255, 0.12)',
+              border: '1px solid rgba(255, 255, 255, 0.2)',
               color: '#FFFFFF',
               width: 32,
               height: 32,
-              borderRadius: '50%',
-              fontSize: 16,
+              borderRadius: 8,
+              fontSize: 18,
               cursor: isSubmitting ? 'not-allowed' : 'pointer',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
+              transition: 'background 0.15s ease',
             }}
           >
             &times;
@@ -253,11 +333,11 @@ export default function VacateSettlementModal({
         <form
           onSubmit={handleConfirmVacate}
           style={{
-            padding: '24px 26px',
+            padding: '20px 24px',
             overflowY: 'auto',
             display: 'flex',
             flexDirection: 'column',
-            gap: 18,
+            gap: 16,
           }}
         >
           {errorMessage && (
@@ -266,8 +346,8 @@ export default function VacateSettlementModal({
                 background: '#FEF2F2',
                 border: '1px solid #FECACA',
                 color: '#991B1B',
-                borderRadius: 10,
-                padding: '12px 16px',
+                borderRadius: 8,
+                padding: '12px 14px',
                 fontSize: 13,
                 fontWeight: 600,
                 display: 'flex',
@@ -284,61 +364,70 @@ export default function VacateSettlementModal({
             </div>
           )}
 
-          {/* Section 1: Vacant Date */}
-          <div>
-            <label
-              style={{
-                display: 'block',
-                fontSize: 12,
-                fontWeight: 700,
-                color: '#334155',
-                textTransform: 'uppercase',
-                letterSpacing: '0.4px',
-                marginBottom: 6,
-              }}
-            >
-              Vacant Date (When unit becomes empty) <span style={{ color: '#DC2626' }}>*</span>
-            </label>
+          {/* Section 1: Vacant Date Card */}
+          <div
+            style={{
+              background: '#F8FAFC',
+              border: '1px solid #E2E8F0',
+              borderRadius: 10,
+              padding: '14px 16px',
+            }}
+          >
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
+              <label
+                style={{
+                  fontSize: 11.5,
+                  fontWeight: 700,
+                  color: '#0E5E48',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.6px',
+                }}
+              >
+                1. Vacant Date (Unit Release Date) <span style={{ color: '#DC2626' }}>*</span>
+              </label>
+              <span style={{ fontSize: 11, fontWeight: 600, color: '#64748B' }}>
+                Frees unit to Available
+              </span>
+            </div>
             <input
               type="date"
               required
               value={vacantDate}
               onChange={(e) => setVacantDate(e.target.value)}
-              style={{
-                width: '100%',
-                padding: '10px 14px',
-                borderRadius: 8,
-                border: '1px solid #CBD5E1',
-                fontSize: 13.5,
-                fontWeight: 600,
-                color: '#0F172A',
-                boxSizing: 'border-box',
-                outline: 'none',
-              }}
+              className="gfh-vacate-input"
             />
           </div>
 
           {/* Section 2: Dues Breakdown Inputs */}
           <div>
-            <div
-              style={{
-                fontSize: 12,
-                fontWeight: 700,
-                color: '#475569',
-                textTransform: 'uppercase',
-                letterSpacing: '0.5px',
-                marginBottom: 10,
-              }}
-            >
-              Settlement Amounts &amp; Dues Calculation (AED)
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
+              <div
+                style={{
+                  fontSize: 11.5,
+                  fontWeight: 700,
+                  color: '#0F172A',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.6px',
+                }}
+              >
+                2. Calculate &amp; Record Settlement Amounts (AED)
+              </div>
+              <span style={{ fontSize: 11, color: '#64748B', fontWeight: 500 }}>
+                Incurred dues to be cleared
+              </span>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
               {/* Rent Still Due */}
-              <div>
-                <label style={{ display: 'block', fontSize: 11.5, fontWeight: 700, color: '#64748B', marginBottom: 5 }}>
-                  Rent Still Due
-                </label>
+              <div style={{ background: '#FFFFFF', border: '1px solid #E2E8F0', borderRadius: 10, padding: '10px 12px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
+                  <label style={{ fontSize: 11, fontWeight: 700, color: '#475569' }}>
+                    Rent Still Due
+                  </label>
+                  <span style={{ fontSize: 10, fontWeight: 700, color: '#0369A1', background: '#F0F9FF', padding: '1px 6px', borderRadius: 4 }}>
+                    Rent
+                  </span>
+                </div>
                 <div style={{ position: 'relative' }}>
                   <span style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', fontSize: 11, fontWeight: 700, color: '#94A3B8' }}>
                     AED
@@ -349,25 +438,22 @@ export default function VacateSettlementModal({
                     step="any"
                     value={rentDue}
                     onChange={(e) => setRentDue(e.target.value)}
-                    style={{
-                      width: '100%',
-                      padding: '9px 12px 9px 40px',
-                      borderRadius: 8,
-                      border: '1px solid #CBD5E1',
-                      fontSize: 13,
-                      fontWeight: 700,
-                      color: '#0F172A',
-                      boxSizing: 'border-box',
-                    }}
+                    className="gfh-vacate-input"
+                    style={{ paddingLeft: 42 }}
                   />
                 </div>
               </div>
 
               {/* DEWA / Utilities */}
-              <div>
-                <label style={{ display: 'block', fontSize: 11.5, fontWeight: 700, color: '#64748B', marginBottom: 5 }}>
-                  DEWA / Utilities
-                </label>
+              <div style={{ background: '#FFFFFF', border: '1px solid #E2E8F0', borderRadius: 10, padding: '10px 12px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
+                  <label style={{ fontSize: 11, fontWeight: 700, color: '#475569' }}>
+                    DEWA / Utilities Due
+                  </label>
+                  <span style={{ fontSize: 10, fontWeight: 700, color: '#B45309', background: '#FFFBEB', padding: '1px 6px', borderRadius: 4 }}>
+                    Utilities
+                  </span>
+                </div>
                 <div style={{ position: 'relative' }}>
                   <span style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', fontSize: 11, fontWeight: 700, color: '#94A3B8' }}>
                     AED
@@ -378,25 +464,22 @@ export default function VacateSettlementModal({
                     step="any"
                     value={dewaDue}
                     onChange={(e) => setDewaDue(e.target.value)}
-                    style={{
-                      width: '100%',
-                      padding: '9px 12px 9px 40px',
-                      borderRadius: 8,
-                      border: '1px solid #CBD5E1',
-                      fontSize: 13,
-                      fontWeight: 700,
-                      color: '#0F172A',
-                      boxSizing: 'border-box',
-                    }}
+                    className="gfh-vacate-input"
+                    style={{ paddingLeft: 42 }}
                   />
                 </div>
               </div>
 
               {/* Other Charges / Damages / Maintenance */}
-              <div>
-                <label style={{ display: 'block', fontSize: 11.5, fontWeight: 700, color: '#64748B', marginBottom: 5 }}>
-                  Other Charges (Damages / Repairs)
-                </label>
+              <div style={{ background: '#FFFFFF', border: '1px solid #E2E8F0', borderRadius: 10, padding: '10px 12px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
+                  <label style={{ fontSize: 11, fontWeight: 700, color: '#475569' }}>
+                    Other Charges (Repairs/Damages)
+                  </label>
+                  <span style={{ fontSize: 10, fontWeight: 700, color: '#991B1B', background: '#FEF2F2', padding: '1px 6px', borderRadius: 4 }}>
+                    Damages
+                  </span>
+                </div>
                 <div style={{ position: 'relative' }}>
                   <span style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', fontSize: 11, fontWeight: 700, color: '#94A3B8' }}>
                     AED
@@ -407,25 +490,22 @@ export default function VacateSettlementModal({
                     step="any"
                     value={otherCharges}
                     onChange={(e) => setOtherCharges(e.target.value)}
-                    style={{
-                      width: '100%',
-                      padding: '9px 12px 9px 40px',
-                      borderRadius: 8,
-                      border: '1px solid #CBD5E1',
-                      fontSize: 13,
-                      fontWeight: 700,
-                      color: '#0F172A',
-                      boxSizing: 'border-box',
-                    }}
+                    className="gfh-vacate-input"
+                    style={{ paddingLeft: 42 }}
                   />
                 </div>
               </div>
 
               {/* Admin / Extra Fees */}
-              <div>
-                <label style={{ display: 'block', fontSize: 11.5, fontWeight: 700, color: '#64748B', marginBottom: 5 }}>
-                  Admin / Extra Fees
-                </label>
+              <div style={{ background: '#FFFFFF', border: '1px solid #E2E8F0', borderRadius: 10, padding: '10px 12px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
+                  <label style={{ fontSize: 11, fontWeight: 700, color: '#475569' }}>
+                    Admin / Extra Fees
+                  </label>
+                  <span style={{ fontSize: 10, fontWeight: 700, color: '#4338CA', background: '#EEF2FF', padding: '1px 6px', borderRadius: 4 }}>
+                    Admin
+                  </span>
+                </div>
                 <div style={{ position: 'relative' }}>
                   <span style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', fontSize: 11, fontWeight: 700, color: '#94A3B8' }}>
                     AED
@@ -436,36 +516,33 @@ export default function VacateSettlementModal({
                     step="any"
                     value={adminFees}
                     onChange={(e) => setAdminFees(e.target.value)}
-                    style={{
-                      width: '100%',
-                      padding: '9px 12px 9px 40px',
-                      borderRadius: 8,
-                      border: '1px solid #CBD5E1',
-                      fontSize: 13,
-                      fontWeight: 700,
-                      color: '#0F172A',
-                      boxSizing: 'border-box',
-                    }}
+                    className="gfh-vacate-input"
+                    style={{ paddingLeft: 42 }}
                   />
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Section 3: Deposit / Receivable Amount */}
+          {/* Section 3: Deposit / Deductible Credit */}
           <div
             style={{
-              background: '#F8FAFC',
-              border: '1px solid #E2E8F0',
-              borderRadius: 12,
-              padding: '14px 16px',
+              background: '#F0FDF4',
+              border: '1px solid #BBF7D0',
+              borderRadius: 10,
+              padding: '12px 16px',
             }}
           >
-            <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: '#0F172A', marginBottom: 6 }}>
-              Security Deposit / Deductible Refund (AED)
-            </label>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
+              <label style={{ fontSize: 11.5, fontWeight: 700, color: '#065F46', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                3. Security Deposit Credit (Deductible Refund)
+              </label>
+              <span style={{ fontSize: 10.5, fontWeight: 700, color: '#047857', background: '#DCFCE7', padding: '2px 8px', borderRadius: 4 }}>
+                Credit / Deductible
+              </span>
+            </div>
             <div style={{ position: 'relative' }}>
-              <span style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', fontSize: 11.5, fontWeight: 700, color: '#64748B' }}>
+              <span style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', fontSize: 11, fontWeight: 700, color: '#059669' }}>
                 AED
               </span>
               <input
@@ -474,40 +551,31 @@ export default function VacateSettlementModal({
                 step="any"
                 value={depositAmount}
                 onChange={(e) => setDepositAmount(e.target.value)}
-                style={{
-                  width: '100%',
-                  padding: '9px 12px 9px 44px',
-                  borderRadius: 8,
-                  border: '1px solid #CBD5E1',
-                  fontSize: 13.5,
-                  fontWeight: 700,
-                  color: '#0F172A',
-                  background: '#FFFFFF',
-                  boxSizing: 'border-box',
-                }}
+                className="gfh-vacate-input"
+                style={{ paddingLeft: 42, borderColor: '#A7F3D0' }}
               />
             </div>
-            <p style={{ margin: '6px 0 0', fontSize: 11.5, color: '#64748B' }}>
-              Holding security deposit will be deducted against dues to determine final balance.
+            <p style={{ margin: '5px 0 0', fontSize: 11, color: '#047857' }}>
+              Holding security deposit will be automatically subtracted from total dues to calculate final net settlement.
             </p>
           </div>
 
           {/* Section 4: Live Calculated Settlement Summary */}
           <div
             style={{
-              background: netBalance > 0 ? '#FEF2F2' : netBalance < 0 ? '#ECFDF5' : '#F1F5F9',
-              border: `1px solid ${netBalance > 0 ? '#FECACA' : netBalance < 0 ? '#A7F3DC' : '#E2E8F0'}`,
-              borderRadius: 12,
-              padding: '16px 18px',
+              background: netBalance > 0 ? '#FEF2F2' : netBalance < 0 ? '#F0FDF4' : '#F8FAFC',
+              border: `1px solid ${netBalance > 0 ? '#FECACA' : netBalance < 0 ? '#BBF7D0' : '#E2E8F0'}`,
+              borderRadius: 10,
+              padding: '14px 16px',
             }}
           >
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 5 }}>
               <span style={{ fontSize: 12, fontWeight: 600, color: '#475569' }}>Total Incurred Dues:</span>
               <span style={{ fontSize: 13, fontWeight: 700, color: '#0F172A' }}>
                 AED {totalDues.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
               </span>
             </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
               <span style={{ fontSize: 12, fontWeight: 600, color: '#475569' }}>Security Deposit Credit:</span>
               <span style={{ fontSize: 13, fontWeight: 700, color: '#059669' }}>
                 - AED {numDeposit.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
@@ -519,17 +587,17 @@ export default function VacateSettlementModal({
                 justifyContent: 'space-between',
                 alignItems: 'center',
                 paddingTop: 8,
-                borderTop: '1px dashed rgba(0,0,0,0.12)',
+                borderTop: '1px dashed rgba(0,0,0,0.14)',
               }}
             >
-              <span style={{ fontSize: 13, fontWeight: 800, color: '#0F172A' }}>
+              <span style={{ fontSize: 12.5, fontWeight: 800, color: '#0F172A' }}>
                 {netBalance > 0 ? 'Net Balance Due (Tenant Pays):' : netBalance < 0 ? 'Net Refund to Tenant:' : 'Settlement Net Balance:'}
               </span>
               <span
                 style={{
                   fontSize: 16,
                   fontWeight: 900,
-                  color: netBalance > 0 ? '#DC2626' : netBalance < 0 ? '#059669' : '#0F172A',
+                  color: netBalance > 0 ? '#991B1B' : netBalance < 0 ? '#065F46' : '#0F172A',
                 }}
               >
                 AED {Math.abs(netBalance).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
@@ -542,33 +610,23 @@ export default function VacateSettlementModal({
             <label
               style={{
                 display: 'block',
-                fontSize: 12,
+                fontSize: 11.5,
                 fontWeight: 700,
                 color: '#334155',
                 textTransform: 'uppercase',
-                letterSpacing: '0.4px',
-                marginBottom: 6,
+                letterSpacing: '0.5px',
+                marginBottom: 5,
               }}
             >
-              Remarks / Move-out Inspection Notes (Optional)
+              Remarks / Handover Notes (Optional)
             </label>
             <textarea
               rows={2}
-              placeholder="Key handover notes, unit condition, utility clearance certificate details..."
+              placeholder="Key handover notes, unit condition inspection, utility clearance details..."
               value={remarks}
               onChange={(e) => setRemarks(e.target.value)}
-              style={{
-                width: '100%',
-                padding: '10px 12px',
-                borderRadius: 8,
-                border: '1px solid #CBD5E1',
-                fontSize: 13,
-                fontWeight: 500,
-                color: '#0F172A',
-                boxSizing: 'border-box',
-                resize: 'vertical',
-                outline: 'none',
-              }}
+              className="gfh-vacate-input"
+              style={{ resize: 'vertical' }}
             />
           </div>
 
@@ -576,15 +634,15 @@ export default function VacateSettlementModal({
           <div
             style={{
               fontSize: 11.5,
-              color: '#64748B',
+              color: '#475569',
               background: '#F8FAFC',
               padding: '10px 14px',
               borderRadius: 8,
-              border: '1px solid #F1F5F9',
+              border: '1px solid #E2E8F0',
               lineHeight: 1.5,
             }}
           >
-            <strong>Upon confirming:</strong> The contract will be marked as ended/vacated, Unit {unitNumber} will immediately become <strong>AVAILABLE</strong> in your portfolio, and you will be redirected to the settlement screen for final financial settlement.
+            <strong style={{ color: '#0E5E48' }}>Workflow Outcome:</strong> On confirmation, this contract will be marked as <strong>vacated</strong>, Unit {unitNumber} will immediately become <strong>AVAILABLE</strong> in your portfolio, and a settlement record will be created for follow-up.
           </div>
 
           {/* Modal Actions */}
@@ -593,36 +651,14 @@ export default function VacateSettlementModal({
               type="button"
               onClick={onClose}
               disabled={isSubmitting}
-              style={{
-                padding: '10px 18px',
-                borderRadius: 8,
-                border: '1px solid #CBD5E1',
-                background: '#FFFFFF',
-                color: '#334155',
-                fontWeight: 700,
-                fontSize: 13,
-                cursor: isSubmitting ? 'not-allowed' : 'pointer',
-              }}
+              className="gfh-btn-cancel"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={isSubmitting}
-              style={{
-                padding: '10px 22px',
-                borderRadius: 8,
-                border: 'none',
-                background: '#DC2626',
-                color: '#FFFFFF',
-                fontWeight: 700,
-                fontSize: 13.5,
-                cursor: isSubmitting ? 'not-allowed' : 'pointer',
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: 8,
-                boxShadow: '0 2px 8px rgba(220, 38, 38, 0.3)',
-              }}
+              className="gfh-btn-confirm-vacate"
             >
               {isSubmitting ? (
                 <>
@@ -640,10 +676,10 @@ export default function VacateSettlementModal({
                 </>
               ) : (
                 <>
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                     <polyline points="20 6 9 17 4 12" />
                   </svg>
-                  <span>Confirm Vacate &amp; Record Settlement</span>
+                  <span>Confirm Vacate &amp; Settle</span>
                 </>
               )}
             </button>
