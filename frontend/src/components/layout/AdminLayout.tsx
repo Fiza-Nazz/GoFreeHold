@@ -85,10 +85,9 @@ const adminMenuGroups = [
     icon: icons.building,
     paths: ['/admin/properties', '/admin/units', '/admin/appliances'],
     items: [
-      { to: '/admin/properties/add', icon: icons.building, label: 'Add Property' },
-      { to: '/admin/properties', icon: icons.building, label: 'Buildings' },
+      { to: '/admin/properties', icon: icons.building, label: 'Properties' },
       { to: '/admin/units', icon: icons.door, label: 'Units' },
-      { to: '/admin/appliances', icon: icons.tv, label: 'Home Appliances' },
+      { to: '/admin/appliances', icon: icons.tv, label: 'Appliance' },
     ],
   },
   {

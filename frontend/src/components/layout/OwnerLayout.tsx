@@ -72,7 +72,7 @@ const ownerNavItems = [
   ]},
   { section: 'Reports & Settings', items: [
     { to: '/owner/reports', icon: icons.chart, label: 'Reports' },
-    { to: '/owner/reports/vacant', icon: icons.building, label: 'Vacant Report' },
+    { to: '/owner/vacant-units', icon: icons.search, label: 'Vacant Units' },
     { to: '/owner/settings', icon: icons.settings, label: 'Settings' },
     { to: '/owner/staff', icon: icons.user, label: 'Manage Staff' },
     { to: '/owner/profile', icon: icons.user, label: 'Profile' },
@@ -84,13 +84,11 @@ const ownerMenuGroups = [
     key: 'properties',
     label: 'Properties',
     icon: icons.building,
-    paths: ['/owner/properties', '/owner/units', '/owner/vacant-units', '/owner/appliances'],
+    paths: ['/owner/properties', '/owner/units', '/owner/appliances'],
     items: [
-      { to: '/owner/properties/add', icon: icons.building, label: 'Add Property' },
-      { to: '/owner/properties', icon: icons.building, label: 'Buildings' },
+      { to: '/owner/properties', icon: icons.building, label: 'Properties' },
       { to: '/owner/units', icon: icons.door, label: 'Units' },
-      { to: '/owner/vacant-units', icon: icons.search, label: 'Vacant Units' },
-      { to: '/owner/appliances', icon: icons.tv, label: 'Home Appliances' },
+      { to: '/owner/appliances', icon: icons.tv, label: 'Appliance' },
     ],
   },
   {
