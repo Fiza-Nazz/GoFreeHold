@@ -8,9 +8,33 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Mail;
 
 class NotificationSettingController extends Controller
 {
+    /**
+     * Diagnostic: reveal server-side mail configuration (mailer, host, port, from, encryption).
+     */
+    public function mailDiagnostic(): JsonResponse
+    {
+        return response()->json([
+            'status' => 'success',
+            'data'   => [
+                'MAIL_MAILER'       => config('mail.default'),
+                'MAIL_HOST'         => config('mail.mailers.smtp.host'),
+                'MAIL_PORT'         => config('mail.mailers.smtp.port'),
+                'MAIL_USERNAME'     => config('mail.mailers.smtp.username') ? '***set***' : '***EMPTY***',
+                'MAIL_PASSWORD'     => config('mail.mailers.smtp.password') ? '***set***' : '***EMPTY***',
+                'MAIL_SCHEME'       => config('mail.mailers.smtp.scheme'),
+                'MAIL_FROM_ADDRESS' => config('mail.from.address'),
+                'MAIL_FROM_NAME'    => config('mail.from.name'),
+                'MAIL_ENCRYPTION'   => env('MAIL_ENCRYPTION', 'NOT_SET_IN_ENV'),
+                'APP_ENV'           => config('app.env'),
+                'APP_DEBUG'         => config('app.debug'),
+            ],
+        ]);
+    }
+
     public function index(): JsonResponse
     {
         if (NotificationSetting::count() === 0) {
