@@ -111,7 +111,7 @@ export default function VacateSettlementModal({
       const settlementStatus = netBalance > 0 ? 'pending' : 'completed'
 
       // Step A: Create settlement record
-      await api.post(`${apiPrefix}/settlements`, {
+      const settlementRes = await api.post(`${apiPrefix}/settlements`, {
         contract_id: contract.id,
         owner_id: contract.owner_id || undefined,
         vacant_date: vacantDate,
@@ -135,6 +135,7 @@ export default function VacateSettlementModal({
       // Step C: Take user to settlement screen to complete payment follow-up
       navigate(`${effectiveBasePath}/settlements`, {
         state: {
+          settlementId: settlementRes.data?.data?.settlement?.id,
           message: `Contract GFH-${String(contract.id).padStart(5, '0')} vacated. Unit is now AVAILABLE. Settlement record created for follow-up.`,
         },
       })
