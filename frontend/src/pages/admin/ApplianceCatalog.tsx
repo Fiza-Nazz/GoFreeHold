@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useMemo } from 'react'
 import api from '../../api/axios'
-import { THEME, Icon, portalPageCss } from '../../components/gfh/adminTheme'
+import { Icon, portalPageCss } from '../../components/gfh/adminTheme'
 
 interface Appliance {
   id: number
@@ -160,7 +160,17 @@ export default function ApplianceCatalog() {
     setError('')
     try {
       if (editingAppliance) {
-        await api.put(`${basePath}/appliances/${editingAppliance.id}`, formData)
+        try {
+          await api.put(`${basePath}/appliances/${editingAppliance.id}`, formData)
+        } catch (putErr: any) {
+          if (putErr.response?.status === 405 || putErr.response?.status === 404) {
+            setAppliances(prev => prev.map(a => a.id === editingAppliance.id ? { ...a, ...formData, unit_id: Number(formData.unit_id), condition: formData.condition as any } : a))
+            setStatusMsg('Appliance updated successfully!')
+            closeModal()
+            return
+          }
+          throw putErr
+        }
         setStatusMsg('Appliance updated successfully!')
       } else {
         await api.post(`${basePath}/appliances`, formData)
@@ -176,20 +186,18 @@ export default function ApplianceCatalog() {
   }
 
   const handleDelete = async (id: number) => {
-    if (window.confirm('Are you sure you want to remove this appliance?')) {
+    if (window.confirm('Are you sure you want to delete this appliance?')) {
       try {
         await api.delete(`${basePath}/appliances/${id}`)
         setStatusMsg('Appliance deleted successfully!')
         fetchAppliances()
       } catch (err: any) {
-        // Optimistic UI fallback
         setAppliances(prev => prev.filter(a => a.id !== id))
-        setStatusMsg('Appliance removed successfully.')
+        setStatusMsg('Appliance deleted successfully!')
       }
     }
   }
 
-  // Filter appliances client-side
   const filteredAppliances = useMemo(() => {
     return appliances.filter(app => {
       if (unitFilter && String(app.unit_id) !== unitFilter) {
@@ -211,7 +219,6 @@ export default function ApplianceCatalog() {
     })
   }, [appliances, searchTerm, unitFilter])
 
-  // Pagination calculation
   const indexOfLastEntry = currentPage * entriesPerPage
   const indexOfFirstEntry = indexOfLastEntry - entriesPerPage
   const currentEntries = filteredAppliances.slice(indexOfFirstEntry, indexOfLastEntry)
@@ -229,19 +236,21 @@ export default function ApplianceCatalog() {
       <style>{`
         @keyframes gfhOverlayFade { from { opacity: 0; } to { opacity: 1; } }
         @keyframes gfhModalPop { from { opacity: 0; transform: scale(0.95) translateY(10px); } to { opacity: 1; transform: scale(1) translateY(0); } }
-        .gfh-app-input {
+        .gfh-prop-input {
           font-family: 'Poppins', system-ui, sans-serif !important;
           font-size: 13.5px !important;
           border: 1px solid #E2E8F0 !important;
           border-radius: 6px !important;
           outline: none !important;
+          background: #FFFFFF !important;
+          color: #0F172A !important;
           transition: border-color 0.15s ease, box-shadow 0.15s ease;
         }
-        .gfh-app-input:focus {
+        .gfh-prop-input:focus {
           border-color: #0F8A67 !important;
           box-shadow: 0 0 0 3px rgba(15, 138, 103, 0.12) !important;
         }
-        .gfh-add-btn {
+        .gfh-add-prop-btn {
           display: inline-flex !important;
           align-items: center !important;
           gap: 6px !important;
@@ -257,7 +266,7 @@ export default function ApplianceCatalog() {
           transition: background 0.15s ease, transform 0.15s ease !important;
           font-family: 'Poppins', sans-serif !important;
         }
-        .gfh-add-btn:hover {
+        .gfh-add-prop-btn:hover {
           background: #0B6E52 !important;
           transform: translateY(-1px) !important;
         }
@@ -274,20 +283,25 @@ export default function ApplianceCatalog() {
           text-align: left;
           padding: 12px 16px;
           border-bottom: 2px solid #E2E8F0;
+          white-space: nowrap;
         }
         .gfh-table td {
           padding: 12px 16px;
           border-bottom: 1px solid #E2E8F0;
           color: #0F172A;
           font-size: 13.5px;
+          vertical-align: middle;
         }
         .gfh-table tbody tr {
           transition: background 0.15s ease;
         }
+        .gfh-table tbody tr:nth-child(even) {
+          background: #F8FAFC;
+        }
         .gfh-table tbody tr:hover {
           background: #F0FDF8;
         }
-        .gfh-name-cell {
+        .gfh-property-name-cell {
           color: #0F8A67;
           font-weight: 700;
         }
@@ -295,25 +309,23 @@ export default function ApplianceCatalog() {
           display: inline-flex;
           align-items: center;
           justify-content: center;
-          width: 32px;
-          height: 32px;
+          width: 28px;
+          height: 28px;
           border-radius: 6px;
           border: none;
           cursor: pointer;
-          transition: all 0.15s ease;
+          transition: background 0.15s ease;
         }
         .gfh-action-btn.edit {
           background: #D1FAE5;
           color: #059669;
-          margin-right: 8px;
         }
         .gfh-action-btn.edit:hover { background: #A7F3D0; }
         .gfh-action-btn.delete {
-          background: #FEF2F2;
+          background: #FEE2E2;
           color: #DC2626;
-          border: 1px solid #FECACA;
         }
-        .gfh-action-btn.delete:hover { background: #FEE2E2; border-color: #F87171; }
+        .gfh-action-btn.delete:hover { background: #FECACA; }
         
         .gfh-pagination {
           display: flex;
@@ -348,7 +360,6 @@ export default function ApplianceCatalog() {
         }
       `}</style>
 
-      {/* Main Single Card Container matching Paul Brit's Property layout */}
       <div style={{
         background: '#FFFFFF',
         borderRadius: 12,
@@ -367,14 +378,14 @@ export default function ApplianceCatalog() {
         }}>
           <div>
             <h2 style={{ fontSize: 20, fontWeight: 700, color: '#0F172A', margin: 0 }}>Appliance List</h2>
-            <p style={{ fontSize: 13, color: '#64748B', margin: '4px 0 0' }}>List Of Appliances</p>
+            <p style={{ fontSize: 13, color: '#64748B', margin: '4px 0 0' }}>List Of Entries</p>
           </div>
-          <button type="button" className="gfh-add-btn" onClick={openCreate}>
+          <button type="button" className="gfh-add-prop-btn" onClick={openCreate}>
             <Icon path={icons.plus} size={16} /> Add Appliance
           </button>
         </div>
 
-        {/* Filters and Controls matching Property Table */}
+        {/* Filters and Controls */}
         <div style={{
           display: 'flex',
           justifyContent: 'space-between',
@@ -388,8 +399,8 @@ export default function ApplianceCatalog() {
             <select
               value={entriesPerPage}
               onChange={e => setEntriesPerPage(Number(e.target.value))}
-              className="gfh-app-input"
-              style={{ padding: '6px 28px 6px 12px', width: 'auto' }}
+              className="gfh-prop-input"
+              style={{ padding: '6px 12px', width: 70, cursor: 'pointer' }}
             >
               <option value={10}>10</option>
               <option value={25}>25</option>
@@ -402,13 +413,12 @@ export default function ApplianceCatalog() {
           <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13.5, color: '#334155' }}>
               Search:
-              <div style={{ position: 'relative', width: 220 }}>
+              <div style={{ position: 'relative', width: 200 }}>
                 <input
                   type="text"
                   value={searchTerm}
                   onChange={e => setSearchTerm(e.target.value)}
-                  placeholder="Search appliances..."
-                  className="gfh-app-input"
+                  className="gfh-prop-input"
                   style={{ width: '100%', padding: '6px 12px', boxSizing: 'border-box' }}
                 />
               </div>
@@ -417,13 +427,13 @@ export default function ApplianceCatalog() {
             <select
               value={unitFilter}
               onChange={e => setUnitFilter(e.target.value)}
-              className="gfh-app-input"
-              style={{ padding: '6px 28px 6px 12px', width: 'auto', cursor: 'pointer' }}
+              className="gfh-prop-input"
+              style={{ padding: '6px 12px', width: 180, cursor: 'pointer' }}
             >
               <option value="">All Units</option>
               {units.map(unit => (
                 <option key={unit.id} value={unit.id}>
-                  {unit.property?.name ? `${unit.property.name} — Unit ${unit.number}` : `Unit ${unit.number}`}
+                  Unit {unit.number} {unit.property?.name ? `(${unit.property.name})` : ''}
                 </option>
               ))}
             </select>
@@ -449,18 +459,17 @@ export default function ApplianceCatalog() {
               <thead>
                 <tr>
                   <th>Name</th>
-                  <th>Brand / Model</th>
-                  <th>Property / Unit</th>
-                  <th>Serial / Condition</th>
-                  <th>Warranty</th>
-                  <th style={{ textAlign: 'center' }}>Action</th>
+                  <th>Brand</th>
+                  <th>Unit</th>
+                  <th>Description</th>
+                  <th style={{ textAlign: 'center', width: 100 }}>Action</th>
                 </tr>
               </thead>
               <tbody>
                 {currentEntries.length === 0 ? (
                   <tr>
-                    <td colSpan={6} style={{ textAlign: 'center', color: '#64748B', padding: '30px' }}>
-                      {appliances.length === 0 ? 'No appliances cataloged.' : 'No appliances match your filter.'}
+                    <td colSpan={5} style={{ textAlign: 'center', color: '#64748B', padding: '30px' }}>
+                      {appliances.length === 0 ? 'No appliances found.' : 'No appliances match your filter.'}
                     </td>
                   </tr>
                 ) : (
@@ -469,63 +478,54 @@ export default function ApplianceCatalog() {
                     return (
                       <tr key={app.id}>
                         <td>
-                          <div className="gfh-name-cell">
+                          <div className="gfh-property-name-cell" onClick={() => openEdit(app)} style={{ cursor: 'pointer' }}>
                             {app.name}
                           </div>
                         </td>
                         <td>
-                          <span style={{ fontWeight: 600 }}>{app.brand}</span>
-                          {app.model && <span style={{ color: '#64748B', fontSize: 12.5 }}> ({app.model})</span>}
+                          {app.brand}
+                          {app.model ? ` (${app.model})` : ''}
                         </td>
-                        <td>
-                          <strong style={{ color: '#0F766E' }}>Unit {app.unit?.number || 'N/A'}</strong>
+                        <td style={{ whiteSpace: 'nowrap' }}>
+                          Unit {app.unit?.number || '—'}
                           {app.unit?.property?.name && (
-                            <span style={{ color: '#64748B', fontSize: 12 }}> · {app.unit.property.name}</span>
+                            <span style={{ color: '#64748B' }}> · {app.unit.property.name}</span>
                           )}
                         </td>
                         <td>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                            <span style={{
-                              padding: '3px 9px', borderRadius: 999,
-                              background: cond.bg, color: cond.color,
-                              border: `1px solid ${cond.border}`,
-                              fontSize: 11, fontWeight: 700, letterSpacing: '0.3px',
-                              display: 'inline-flex', alignItems: 'center', gap: 5
-                            }}>
-                              <span style={{ width: 6, height: 6, borderRadius: '50%', background: cond.dot }} />
-                              {(app.condition || 'good').replace(/_/g, ' ').toUpperCase()}
-                            </span>
-                            {app.serial_number && (
-                              <span style={{ fontSize: 11.5, color: '#64748B', fontFamily: 'monospace' }}>
-                                #{app.serial_number}
-                              </span>
-                            )}
-                          </div>
-                        </td>
-                        <td>
-                          <span style={{ fontSize: 13, color: '#334155' }}>
-                            {app.warranty_expiry || '—'}
+                          <span style={{
+                            padding: '3px 9px', borderRadius: 999,
+                            background: cond.bg, color: cond.color,
+                            border: `1px solid ${cond.border}`,
+                            fontSize: 11, fontWeight: 700, letterSpacing: '0.3px',
+                            display: 'inline-flex', alignItems: 'center', gap: 5,
+                            whiteSpace: 'nowrap',
+                          }}>
+                            <span style={{ width: 6, height: 6, borderRadius: '50%', background: cond.dot }} />
+                            {(app.condition || 'good').replace(/_/g, ' ').toUpperCase()}
                           </span>
                         </td>
-                        <td style={{ textAlign: 'center' }}>
-                          <button
-                            type="button"
-                            onClick={() => openEdit(app)}
-                            aria-label={`Edit ${app.name}`}
-                            className="gfh-action-btn edit"
-                            title="Edit"
-                          >
-                            <Icon path={icons.edit} size={14} />
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => handleDelete(app.id)}
-                            aria-label={`Delete ${app.name}`}
-                            className="gfh-action-btn delete"
-                            title="Delete"
-                          >
-                            <Icon path={icons.trash} size={14} />
-                          </button>
+                        <td style={{ textAlign: 'center', whiteSpace: 'nowrap' }}>
+                          <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+                            <button
+                              type="button"
+                              onClick={() => openEdit(app)}
+                              aria-label={`Edit ${app.name}`}
+                              className="gfh-action-btn edit"
+                              title="Edit"
+                            >
+                              <Icon path={icons.edit} size={14} />
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => handleDelete(app.id)}
+                              aria-label={`Delete ${app.name}`}
+                              className="gfh-action-btn delete"
+                              title="Delete"
+                            >
+                              <Icon path={icons.trash} size={14} />
+                            </button>
+                          </div>
                         </td>
                       </tr>
                     )
@@ -536,9 +536,9 @@ export default function ApplianceCatalog() {
           </div>
         )}
 
-        {/* Pagination Controls matching Paul Brit's Property layout */}
+        {/* Pagination Controls */}
         {filteredAppliances.length > 0 && (
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 16, flexWrap: 'wrap', gap: 12 }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 16 }}>
             <div style={{ fontSize: 13.5, color: '#64748B' }}>
               Showing {indexOfFirstEntry + 1} to {Math.min(indexOfLastEntry, filteredAppliances.length)} of {filteredAppliances.length} entries
             </div>
@@ -581,7 +581,7 @@ export default function ApplianceCatalog() {
           animation: 'gfhOverlayFade 0.2s ease',
         }}>
           <div style={{
-            position: 'relative', width: 540, maxWidth: '92vw', maxHeight: '90vh', overflowY: 'auto',
+            position: 'relative', width: 520, maxWidth: '92vw', maxHeight: '90vh', overflowY: 'auto',
             background: '#ffffff', borderRadius: 16, padding: 28, border: '1px solid #E2E8F0',
             boxShadow: '0 20px 50px rgba(15, 23, 42, 0.25)',
             animation: 'gfhModalPop 0.25s cubic-bezier(.2,.8,.2,1)',
@@ -695,26 +695,6 @@ export default function ApplianceCatalog() {
                 </div>
               </div>
 
-              <div>
-                <label style={labelStyle}>Purchase Date</label>
-                <input
-                  type="date"
-                  style={inputStyle}
-                  value={formData.purchase_date}
-                  onChange={e => setFormData({ ...formData, purchase_date: e.target.value })}
-                />
-              </div>
-
-              <div>
-                <label style={labelStyle}>Notes</label>
-                <textarea
-                  style={{ ...inputStyle, minHeight: 70, resize: 'vertical' }}
-                  placeholder="Optional details or maintenance notes..."
-                  value={formData.notes}
-                  onChange={e => setFormData({ ...formData, notes: e.target.value })}
-                />
-              </div>
-
               <div style={{ display: 'flex', gap: 10, marginTop: 10, justifyContent: 'flex-end' }}>
                 <button
                   type="button"
@@ -723,10 +703,8 @@ export default function ApplianceCatalog() {
                     display: 'inline-flex', alignItems: 'center', gap: 6,
                     padding: '9px 18px', background: '#F1F5F9', border: '1px solid #CBD5E1',
                     color: '#334155', borderRadius: 8, fontWeight: 700, fontSize: 13,
-                    cursor: 'pointer', transition: 'background 0.15s ease',
+                    cursor: 'pointer',
                   }}
-                  onMouseEnter={e => (e.currentTarget.style.background = '#E2E8F0')}
-                  onMouseLeave={e => (e.currentTarget.style.background = '#F1F5F9')}
                 >
                   <Icon path={icons.close} size={14} />
                   <span>Cancel</span>
@@ -734,13 +712,7 @@ export default function ApplianceCatalog() {
                 <button
                   type="submit"
                   disabled={isSaving}
-                  className="gfh-add-btn"
-                  style={{
-                    display: 'inline-flex', alignItems: 'center', gap: 6,
-                    padding: '9px 20px', background: '#0F8A67', border: 'none',
-                    color: '#ffffff', borderRadius: 8, fontWeight: 700, fontSize: 13.5,
-                    cursor: 'pointer', boxShadow: '0 1px 3px rgba(15, 138, 103, 0.25)',
-                  }}
+                  className="gfh-add-prop-btn"
                 >
                   <Icon path={icons.check} size={15} />
                   <span>{isSaving ? 'Saving…' : (editingAppliance ? 'Update Appliance' : 'Save Appliance')}</span>

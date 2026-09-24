@@ -609,13 +609,15 @@ export default function BuildingManagement() {
                           <span style={{ color: '#64748B' }}> · {property.owner.name}</span>
                         )}
                       </td>
-                      <td style={{ textAlign: 'center' }}>
-                        <button type="button" onClick={() => openEdit(property)} aria-label={`Edit ${property.name}`} className="gfh-action-btn edit">
-                          <Icon path={icons.edit} size={14} />
-                        </button>
-                        <button type="button" onClick={() => handleDelete(property.id)} aria-label={`Delete ${property.name}`} className="gfh-action-btn delete">
-                          <Icon path={icons.trash} size={14} />
-                        </button>
+                      <td style={{ textAlign: 'center', whiteSpace: 'nowrap' }}>
+                        <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+                          <button type="button" onClick={() => openEdit(property)} aria-label={`Edit ${property.name}`} className="gfh-action-btn edit" style={{ marginRight: 0 }}>
+                            <Icon path={icons.edit} size={14} />
+                          </button>
+                          <button type="button" onClick={() => handleDelete(property.id)} aria-label={`Delete ${property.name}`} className="gfh-action-btn delete">
+                            <Icon path={icons.trash} size={14} />
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))
