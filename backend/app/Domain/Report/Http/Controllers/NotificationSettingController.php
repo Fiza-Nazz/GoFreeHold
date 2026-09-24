@@ -52,8 +52,19 @@ class NotificationSettingController extends Controller
         return response()->json([
             'status' => 'success',
             'data'   => [
-                'settings' => $settings,
-                'logs'     => $logs,
+                'settings'    => $settings,
+                'logs'        => $logs,
+                'mail_config' => [
+                    'MAIL_MAILER'       => config('mail.default'),
+                    'MAIL_HOST'         => config('mail.mailers.smtp.host'),
+                    'MAIL_PORT'         => config('mail.mailers.smtp.port'),
+                    'MAIL_USERNAME'     => config('mail.mailers.smtp.username') ? '***set***' : '***EMPTY***',
+                    'MAIL_PASSWORD'     => config('mail.mailers.smtp.password') ? '***set***' : '***EMPTY***',
+                    'MAIL_SCHEME'       => config('mail.mailers.smtp.scheme'),
+                    'MAIL_FROM_ADDRESS' => config('mail.from.address'),
+                    'MAIL_FROM_NAME'    => config('mail.from.name'),
+                    'APP_ENV'           => config('app.env'),
+                ],
             ],
         ]);
     }
