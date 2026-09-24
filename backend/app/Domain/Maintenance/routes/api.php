@@ -81,6 +81,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/appliances', [ApplianceController::class, 'index']);
         Route::post('/appliances', [ApplianceController::class, 'store']);
         Route::get('/appliances/{appliance}', [ApplianceController::class, 'show']);
+        Route::put('/appliances/{appliance}', [ApplianceController::class, 'update']);
         Route::delete('/appliances/{appliance}', [ApplianceController::class, 'destroy']);
 
         Route::get('/jobs', [JobController::class, 'index']);
