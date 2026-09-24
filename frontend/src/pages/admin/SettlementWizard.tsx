@@ -477,62 +477,96 @@ export default function SettlementWizard() {
               <thead>
                 <tr style={{ borderBottom: `2px solid ${THEME.border}` }}>
                   {['Owner', 'Contract / Unit', 'Vacant Date', 'Dues (AED)', 'Receivable (AED)', 'On Case', 'Status', 'Actions'].map(h => (
-                    <th key={h} style={thStyle}>{h}</th>
+                    <th key={h} style={h === 'Actions' ? { ...thStyle, whiteSpace: 'nowrap', minWidth: 260 } : { ...thStyle, whiteSpace: 'nowrap' }}>{h}</th>
                   ))}
                 </tr>
               </thead>
               <tbody>
                 {settlements.map(s => (
                   <tr key={s.id} className="gfh-portal-row" style={{ borderBottom: `1px solid ${THEME.border}` }}>
-                    <td style={{ ...tdStyle, fontWeight: 700 }}>{s.owner?.name || `Owner #${s.owner_id}`}</td>
+                    <td style={{ ...tdStyle, fontWeight: 700, whiteSpace: 'nowrap' }}>
+                      {s.owner?.name || (s.owner_id ? `Owner #${s.owner_id}` : 'General Settlement')}
+                    </td>
                     <td style={{ ...tdStyle, fontSize: 13, fontWeight: 600 }}>
                       {s.contract_id ? (
                         <>
-                          GFH-{String(s.contract_id).padStart(5, '0')}
+                          <span style={{ color: THEME.ink, fontWeight: 700 }}>GFH-{String(s.contract_id).padStart(5, '0')}</span>
                           <br />
-                          <span style={{ color: THEME.textMuted, fontWeight: 500 }}>
+                          <span style={{ color: THEME.textMuted, fontWeight: 500, fontSize: 12 }}>
                             {s.contract?.unit?.number || '—'} {s.contract?.unit?.property?.name ? `(${s.contract.unit.property.name})` : ''}
                             {s.contract?.tenant?.name ? ` · ${s.contract.tenant.name}` : ''}
                           </span>
                         </>
                       ) : '—'}
                     </td>
-                    <td style={{ ...tdStyle, fontWeight: 600 }}>{formatDate(s.vacant_date)}</td>
-                    <td style={{ ...tdStyle, color: '#991b1b', fontWeight: 700 }}>AED {Number(s.dues).toLocaleString()}</td>
-                    <td style={{ ...tdStyle, color: '#065f46', fontWeight: 800 }}>AED {Number(s.receivable).toLocaleString()}</td>
-                    <td style={{ ...tdStyle, fontWeight: 700 }}>
+                    <td style={{ ...tdStyle, fontWeight: 600, whiteSpace: 'nowrap' }}>{formatDate(s.vacant_date)}</td>
+                    <td style={{ ...tdStyle, color: '#991b1b', fontWeight: 700, whiteSpace: 'nowrap' }}>AED {Number(s.dues).toLocaleString()}</td>
+                    <td style={{ ...tdStyle, color: '#065f46', fontWeight: 800, whiteSpace: 'nowrap' }}>AED {Number(s.receivable).toLocaleString()}</td>
+                    <td style={{ ...tdStyle, whiteSpace: 'nowrap' }}>
                       {s.on_case ? (
-                        <span style={{ backgroundColor: '#fee2e2', color: '#991b1b', border: '1px solid #fecaca', padding: '3px 8px', fontSize: 11, fontWeight: 700, borderRadius: 8 }}>LEGAL CASE ACTIVE</span>
+                        <span style={{ backgroundColor: '#fee2e2', color: '#991b1b', border: '1px solid #fecaca', padding: '4px 10px', fontSize: 11, fontWeight: 700, borderRadius: 6, whiteSpace: 'nowrap', display: 'inline-block' }}>
+                          LEGAL CASE ACTIVE
+                        </span>
                       ) : (
-                        <span style={{ color: THEME.textMuted }}>No</span>
+                        <span style={{ color: THEME.textMuted, fontSize: 12.5, fontWeight: 600 }}>No</span>
                       )}
                     </td>
-                    <td style={tdStyle}>
-                      <span style={{ backgroundColor: s.status === 'completed' ? '#f0fdf4' : '#fffbeb', color: s.status === 'completed' ? '#065f46' : '#b45309', border: `1px solid ${s.status === 'completed' ? '#bbf7d0' : '#fde68a'}`, padding: '4px 11px', borderRadius: 8, fontSize: 11.5, fontWeight: 700, letterSpacing: '0.3px' }}>
+                    <td style={{ ...tdStyle, whiteSpace: 'nowrap' }}>
+                      <span style={{ backgroundColor: s.status === 'completed' ? '#f0fdf4' : '#fffbeb', color: s.status === 'completed' ? '#065f46' : '#b45309', border: `1px solid ${s.status === 'completed' ? '#bbf7d0' : '#fde68a'}`, padding: '4px 11px', borderRadius: 8, fontSize: 11.5, fontWeight: 700, letterSpacing: '0.3px', whiteSpace: 'nowrap', display: 'inline-block' }}>
                         {(s.status || '—').toString().toUpperCase()}
                       </span>
                     </td>
-                    <td style={tdStyle}>
-                      <button
-                        type="button"
-                        className="gfh-portal-btn"
-                        onClick={() => openManageModal(s)}
-                        style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '6px 12px', fontSize: 12, fontWeight: 700, borderRadius: 6, border: '1px solid #075985', background: '#075985', color: '#fff', cursor: 'pointer', marginRight: 6 }}
-                      >
-                        Update / Details
-                      </button>
-                      {s.status !== 'completed' && s.contract_id && (
+                    <td style={{ ...tdStyle, whiteSpace: 'nowrap', minWidth: 260 }}>
+                      <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, flexWrap: 'nowrap' }}>
                         <button
                           type="button"
                           className="gfh-portal-btn"
-                          disabled={busy}
-                          onClick={() => markCompleted(s.id)}
-                          style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '6px 10px', fontSize: 12, fontWeight: 700, borderRadius: 6, border: 'none', background: '#065f46', color: '#fff', cursor: 'pointer' }}
+                          onClick={() => openManageModal(s)}
+                          style={{
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: 5,
+                            padding: '7px 14px',
+                            fontSize: 12,
+                            fontWeight: 700,
+                            borderRadius: 6,
+                            border: '1px solid #0284c7',
+                            background: '#0284c7',
+                            color: '#ffffff',
+                            cursor: 'pointer',
+                            whiteSpace: 'nowrap',
+                            boxShadow: '0 1px 2px rgba(2, 132, 199, 0.2)',
+                          }}
                         >
-                          <Icon path={ICONS.check} size={13} />
-                          Mark Completed
+                          Update / Details
                         </button>
-                      )}
+                        {s.status !== 'completed' && s.contract_id && (
+                          <button
+                            type="button"
+                            className="gfh-portal-btn"
+                            disabled={busy}
+                            onClick={() => markCompleted(s.id)}
+                            style={{
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: 5,
+                              padding: '7px 14px',
+                              fontSize: 12,
+                              fontWeight: 700,
+                              borderRadius: 6,
+                              border: 'none',
+                              background: '#065f46',
+                              color: '#ffffff',
+                              cursor: 'pointer',
+                              whiteSpace: 'nowrap',
+                              boxShadow: '0 1px 2px rgba(6, 95, 70, 0.2)',
+                            }}
+                          >
+                            <Icon path={ICONS.check} size={13} />
+                            Mark Completed
+                          </button>
+                        )}
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -543,158 +577,346 @@ export default function SettlementWizard() {
       </div>
 
       {isModalOpen && (
-        <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(15,61,58,0.55)', backdropFilter: 'blur(3px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: 16 }}>
-          <div className="fade-in" style={{ position: 'relative', width: '100%', maxWidth: 840, padding: 26, maxHeight: '92vh', overflowY: 'auto', background: '#ffffff', borderRadius: 8, border: `1px solid ${THEME.border}`, boxShadow: '0 24px 55px -18px rgba(15,61,58,0.35)' }}>
+        <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(15,23,42,0.65)', backdropFilter: 'blur(5px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: 20 }}>
+          <div className="fade-in" style={{ position: 'relative', width: '100%', maxWidth: 940, maxHeight: '92vh', overflowY: 'auto', background: '#ffffff', borderRadius: 12, border: `1px solid ${THEME.border}`, boxShadow: '0 25px 60px -15px rgba(15,61,58,0.35)', display: 'flex', flexDirection: 'column' }}>
             <CornerBrackets />
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 12 }}>
+
+            {/* Modal Header */}
+            <div style={{ padding: '20px 26px', borderBottom: '1px solid #e2e8f0', background: '#f8fafc', borderTopLeftRadius: 12, borderTopRightRadius: 12, display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
               <div>
-                <h2 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 22, fontWeight: 800, margin: 0, color: THEME.ink }}>
-                  {createdSettlement ? `Settlement Management — GFH-${String(createdSettlement.contract_id || createdSettlement.id).padStart(5, '0')}` : 'New Settlement'}
-                </h2>
-                <p style={{ marginTop: 4, marginBottom: 0, fontSize: 13, color: THEME.textMuted, fontWeight: 600 }}>
-                  {createdSettlement
-                    ? `Unit ${createdSettlement.contract?.unit?.number || '—'} · ${createdSettlement.contract?.unit?.property?.name || ''} · Tenant: ${createdSettlement.contract?.tenant?.name || '—'} · Status: ${(createdSettlement.status || 'pending').toUpperCase()}`
-                    : 'Select an active contract (unit/tenant). Completing will vacate the contract and set the unit AVAILABLE.'}
-                </p>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+                  <h2 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 21, fontWeight: 800, margin: 0, color: THEME.ink }}>
+                    {createdSettlement ? `Settlement Management — GFH-${String(createdSettlement.contract_id || createdSettlement.id).padStart(5, '0')}` : 'New Settlement'}
+                  </h2>
+                  {createdSettlement && (
+                    <span style={{
+                      backgroundColor: createdSettlement.status === 'completed' ? '#f0fdf4' : '#fffbeb',
+                      color: createdSettlement.status === 'completed' ? '#065f46' : '#b45309',
+                      border: `1px solid ${createdSettlement.status === 'completed' ? '#bbf7d0' : '#fde68a'}`,
+                      padding: '3px 12px',
+                      borderRadius: 999,
+                      fontSize: 11,
+                      fontWeight: 700,
+                      letterSpacing: '0.4px',
+                      whiteSpace: 'nowrap',
+                    }}>
+                      {(createdSettlement.status || 'pending').toUpperCase()}
+                    </span>
+                  )}
+                </div>
+                {createdSettlement ? (
+                  <div style={{ display: 'flex', gap: 16, marginTop: 8, fontSize: 12.5, color: '#64748b', fontWeight: 600, flexWrap: 'wrap' }}>
+                    <span>Unit: <strong style={{ color: '#1e293b' }}>{createdSettlement.contract?.unit?.number || '—'} {createdSettlement.contract?.unit?.property?.name ? `(${createdSettlement.contract.unit.property.name})` : ''}</strong></span>
+                    <span>•</span>
+                    <span>Tenant: <strong style={{ color: '#1e293b' }}>{createdSettlement.contract?.tenant?.name || '—'}</strong></span>
+                    <span>•</span>
+                    <span>Owner: <strong style={{ color: '#1e293b' }}>{createdSettlement.owner?.name || 'Owner'}</strong></span>
+                    <span>•</span>
+                    <span>Dues: <strong style={{ color: '#991b1b' }}>AED {Number(createdSettlement.dues || 0).toLocaleString()}</strong></span>
+                    <span>•</span>
+                    <span>Receivable: <strong style={{ color: '#065f46' }}>AED {Number(createdSettlement.receivable || 0).toLocaleString()}</strong></span>
+                  </div>
+                ) : (
+                  <p style={{ margin: '6px 0 0', fontSize: 13, color: THEME.textMuted, fontWeight: 500 }}>
+                    Select an active contract (unit/tenant). Completing will vacate the contract and set the unit AVAILABLE.
+                  </p>
+                )}
               </div>
               <button
                 type="button"
                 onClick={closeModal}
-                style={{ background: 'none', border: 'none', fontSize: 22, color: '#94a3b8', cursor: 'pointer', lineHeight: 1, padding: '0 4px' }}
+                style={{ background: '#ffffff', border: '1px solid #cbd5e1', borderRadius: 8, width: 34, height: 34, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 16, color: '#64748b', cursor: 'pointer', transition: 'all 0.15s' }}
               >
                 ✕
               </button>
             </div>
 
-            {actionSuccess && (
-              <div style={{ marginBottom: 14, padding: '10px 14px', background: '#ecfdf5', border: '1px solid #a7f3d0', color: '#065f46', borderRadius: 6, fontSize: 13, fontWeight: 600 }}>
-                {actionSuccess}
-              </div>
-            )}
-
-            {message && !actionSuccess && (
-              <div style={{ marginBottom: 14, padding: '10px 14px', background: '#f0f9ff', border: '1px solid #bae6fd', color: '#075985', borderRadius: 6, fontSize: 13, fontWeight: 600 }}>
-                {message}
-              </div>
-            )}
-
-            {!createdSettlement ? (
-              <form onSubmit={handleCreate} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-                <div>
-                  <label style={labelStyle}>Active Contract (Unit / Tenant)</label>
-                  <select style={inputStyle} value={formData.contract_id} onChange={e => pickContract(e.target.value)} required>
-                    <option value="">Select active contract</option>
-                    {activeContracts.map(c => (
-                      <option key={c.id} value={c.id}>
-                        #{c.id} · Unit {c.unit?.number || '?'} · {c.tenant?.name || 'Tenant'} · {c.unit?.property?.name || ''}
-                      </option>
-                    ))}
-                  </select>
-                  {selectedContract && (
-                    <p style={{ marginTop: 8, fontSize: 12.5, color: THEME.purple, fontWeight: 600 }}>
-                      Unit {selectedContract.unit?.number} ({selectedContract.unit?.status || '—'}) · Rent AED {Number(selectedContract.rent_amount).toLocaleString()}
-                    </p>
-                  )}
+            {/* Modal Body */}
+            <div style={{ padding: '24px 26px', display: 'flex', flexDirection: 'column', gap: 18 }}>
+              {actionSuccess && (
+                <div style={{ padding: '12px 16px', background: '#ecfdf5', border: '1px solid #a7f3d0', color: '#065f46', borderRadius: 8, fontSize: 13, fontWeight: 600 }}>
+                  ✓ {actionSuccess}
                 </div>
+              )}
 
-                <div>
-                  <label style={labelStyle} htmlFor="settlement-owner">Owner Profile</label>
-                  <select id="settlement-owner" style={inputStyle} value={formData.owner_id} disabled={!!formData.contract_id} onChange={e => setFormData({ ...formData, owner_id: e.target.value })} required>
-                    <option value="">Select owner</option>
-                    {owners.map(o => (
-                      <option key={o.id} value={o.id}>{o.name}</option>
-                    ))}
-                  </select>
+              {message && !actionSuccess && (
+                <div style={{ padding: '12px 16px', background: '#f0f9ff', border: '1px solid #bae6fd', color: '#075985', borderRadius: 8, fontSize: 13, fontWeight: 600 }}>
+                  ℹ {message}
                 </div>
+              )}
 
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
+              {!createdSettlement ? (
+                <form onSubmit={handleCreate} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
                   <div>
-                    <label style={labelStyle}>Vacant Date</label>
-                    <input type="date" style={inputStyle} value={formData.vacant_date} onChange={e => setFormData({ ...formData, vacant_date: e.target.value })} required />
+                    <label style={labelStyle}>Active Contract (Unit / Tenant)</label>
+                    <select style={inputStyle} value={formData.contract_id} onChange={e => pickContract(e.target.value)} required>
+                      <option value="">Select active contract</option>
+                      {activeContracts.map(c => (
+                        <option key={c.id} value={c.id}>
+                          #{c.id} · Unit {c.unit?.number || '?'} · {c.tenant?.name || 'Tenant'} · {c.unit?.property?.name || ''}
+                        </option>
+                      ))}
+                    </select>
+                    {selectedContract && (
+                      <p style={{ marginTop: 8, fontSize: 12.5, color: THEME.purple, fontWeight: 600 }}>
+                        Unit {selectedContract.unit?.number} ({selectedContract.unit?.status || '—'}) · Rent AED {Number(selectedContract.rent_amount).toLocaleString()}
+                      </p>
+                    )}
                   </div>
+
                   <div>
-                    <label style={labelStyle}>Initial Status</label>
-                    <select style={inputStyle} value={formData.status} onChange={e => setFormData({ ...formData, status: e.target.value })}>
-                      <option value="pending">Pending</option>
-                      <option value="completed">Completed (vacates immediately)</option>
+                    <label style={labelStyle} htmlFor="settlement-owner">Owner Profile</label>
+                    <select id="settlement-owner" style={inputStyle} value={formData.owner_id} disabled={!!formData.contract_id} onChange={e => setFormData({ ...formData, owner_id: e.target.value })} required>
+                      <option value="">Select owner</option>
+                      {owners.map(o => (
+                        <option key={o.id} value={o.id}>{o.name}</option>
+                      ))}
                     </select>
                   </div>
-                </div>
 
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
-                  <div>
-                    <label style={labelStyle}>Dues (AED)</label>
-                    <input type="number" style={inputStyle} value={formData.dues} onChange={e => setFormData({ ...formData, dues: e.target.value })} required min={0} />
-                  </div>
-                  <div>
-                    <label style={labelStyle}>Receivable (AED)</label>
-                    <input type="number" style={inputStyle} value={formData.receivable} onChange={e => setFormData({ ...formData, receivable: e.target.value })} required min={0} />
-                  </div>
-                </div>
-
-                <label style={{ display: 'flex', alignItems: 'center', gap: 10, fontSize: 14, fontWeight: 600, color: THEME.purple, cursor: 'pointer' }}>
-                  <input type="checkbox" checked={formData.on_case} onChange={e => setFormData({ ...formData, on_case: e.target.checked })} />
-                  Mark as on case (legal)
-                </label>
-
-                <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 10 }}>
-                  <button type="button" className="gfh-portal-btn" onClick={closeModal} style={{ display: 'inline-flex', alignItems: 'center', gap: 7, borderRadius: 8, fontWeight: 700, fontSize: 13.5, padding: '10px 18px', backgroundColor: '#f0fdfa', color: THEME.purple, border: `1px solid ${THEME.border}`, cursor: 'pointer' }}>
-                    Cancel
-                  </button>
-                  <button type="submit" disabled={busy} className="gfh-portal-btn" style={ghostBtnStyle}>
-                    Save Settlement
-                  </button>
-                </div>
-              </form>
-            ) : (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
-                {/* Row 1: Upload Documents & Update Settlement */}
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(360px, 1fr))', gap: 16 }}>
-                  {/* Panel 1: Upload Documents */}
-                  <div style={cardStyle}>
-                    <div style={cardHeaderStyle}>Upload Documents</div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 12, flexWrap: 'wrap' }}>
-                      <label style={{ fontSize: 13, fontWeight: 600, color: '#334155', minWidth: 50 }}>Doc</label>
-                      <input
-                        type="file"
-                        onChange={e => setDocFile(e.target.files?.[0] || null)}
-                        style={{ fontSize: 13, color: '#334155' }}
-                      />
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
+                    <div>
+                      <label style={labelStyle}>Vacant Date</label>
+                      <input type="date" style={inputStyle} value={formData.vacant_date} onChange={e => setFormData({ ...formData, vacant_date: e.target.value })} required />
                     </div>
-                    <button
-                      type="button"
-                      disabled={!docFile || busy}
-                      onClick={() => uploadDoc()}
-                      style={{ ...panelBtnStyle, opacity: !docFile ? 0.6 : 1 }}
-                    >
-                      Update
-                    </button>
+                    <div>
+                      <label style={labelStyle}>Initial Status</label>
+                      <select style={inputStyle} value={formData.status} onChange={e => setFormData({ ...formData, status: e.target.value })}>
+                        <option value="pending">Pending</option>
+                        <option value="completed">Completed (vacates immediately)</option>
+                      </select>
+                    </div>
+                  </div>
 
-                    {/* Uploaded Documents List */}
-                    <div style={{ marginTop: 14 }}>
-                      <div style={{ fontSize: 12, fontWeight: 700, color: '#64748b', marginBottom: 6 }}>
-                        Uploaded Documents ({(createdSettlement.docs || []).length})
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
+                    <div>
+                      <label style={labelStyle}>Dues (AED)</label>
+                      <input type="number" style={inputStyle} value={formData.dues} onChange={e => setFormData({ ...formData, dues: e.target.value })} required min={0} />
+                    </div>
+                    <div>
+                      <label style={labelStyle}>Receivable (AED)</label>
+                      <input type="number" style={inputStyle} value={formData.receivable} onChange={e => setFormData({ ...formData, receivable: e.target.value })} required min={0} />
+                    </div>
+                  </div>
+
+                  <label style={{ display: 'flex', alignItems: 'center', gap: 10, fontSize: 14, fontWeight: 600, color: THEME.purple, cursor: 'pointer' }}>
+                    <input type="checkbox" checked={formData.on_case} onChange={e => setFormData({ ...formData, on_case: e.target.checked })} />
+                    Mark as on case (legal)
+                  </label>
+
+                  <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 10 }}>
+                    <button type="button" className="gfh-portal-btn" onClick={closeModal} style={{ display: 'inline-flex', alignItems: 'center', gap: 7, borderRadius: 8, fontWeight: 700, fontSize: 13.5, padding: '10px 18px', backgroundColor: '#f0fdfa', color: THEME.purple, border: `1px solid ${THEME.border}`, cursor: 'pointer' }}>
+                      Cancel
+                    </button>
+                    <button type="submit" disabled={busy} className="gfh-portal-btn" style={ghostBtnStyle}>
+                      Save Settlement
+                    </button>
+                  </div>
+                </form>
+              ) : (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
+                  {/* Row 1: Upload Documents & Update Settlement */}
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(360px, 1fr))', gap: 18 }}>
+                    {/* Panel 1: Upload Documents */}
+                    <div style={cardStyle}>
+                      <div style={cardHeaderStyle}>
+                        <span>Upload Documents</span>
+                        <span style={{ fontSize: 12, fontWeight: 600, color: '#64748b', background: '#f1f5f9', padding: '2px 8px', borderRadius: 999 }}>
+                          {(createdSettlement.docs || []).length} attached
+                        </span>
                       </div>
-                      {(!createdSettlement.docs || createdSettlement.docs.length === 0) ? (
-                        <p style={{ fontSize: 12, color: '#94a3b8', margin: 0 }}>No documents uploaded yet.</p>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 14, flexWrap: 'wrap' }}>
+                        <label style={{ fontSize: 13, fontWeight: 600, color: '#334155', minWidth: 50 }}>Doc</label>
+                        <input
+                          type="file"
+                          onChange={e => setDocFile(e.target.files?.[0] || null)}
+                          style={{ fontSize: 13, color: '#334155' }}
+                        />
+                      </div>
+                      <div>
+                        <button
+                          type="button"
+                          disabled={!docFile || busy}
+                          onClick={() => uploadDoc()}
+                          style={{ ...panelBtnStyle, opacity: !docFile ? 0.6 : 1, cursor: docFile ? 'pointer' : 'not-allowed' }}
+                        >
+                          Update
+                        </button>
+                      </div>
+
+                      {/* Uploaded Documents List */}
+                      <div style={{ marginTop: 16 }}>
+                        <div style={{ fontSize: 12, fontWeight: 700, color: '#64748b', marginBottom: 8 }}>
+                          Attached Documents:
+                        </div>
+                        {(!createdSettlement.docs || createdSettlement.docs.length === 0) ? (
+                          <p style={{ fontSize: 12, color: '#94a3b8', margin: 0, fontStyle: 'italic' }}>No documents uploaded yet.</p>
+                        ) : (
+                          <div style={{ border: '1px solid #e2e8f0', borderRadius: 6, overflow: 'hidden' }}>
+                            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
+                              <tbody>
+                                {createdSettlement.docs.map(d => (
+                                  <tr key={d.id} style={{ borderBottom: '1px solid #f1f5f9', background: '#ffffff' }}>
+                                    <td style={{ padding: '7px 12px', color: '#1e293b', fontWeight: 500, wordBreak: 'break-all' }}>
+                                      📄 {d.file_name}
+                                    </td>
+                                    <td style={{ padding: '7px 12px', textAlign: 'right', whiteSpace: 'nowrap' }}>
+                                      <button
+                                        type="button"
+                                        disabled={busy}
+                                        onClick={() => deleteDoc(d.id)}
+                                        title="Delete document"
+                                        style={{ background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer', padding: 4, borderRadius: 4 }}
+                                      >
+                                        <Icon path={icons.trash} size={15} />
+                                      </button>
+                                    </td>
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </table>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Panel 2: Update Settlement */}
+                    <div style={cardStyle}>
+                      <div style={cardHeaderStyle}>
+                        <span>Update Settlement</span>
+                      </div>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+                        <div style={{ display: 'grid', gridTemplateColumns: '140px 1fr', alignItems: 'center', gap: 10 }}>
+                          <label style={{ fontSize: 13, fontWeight: 600, color: '#334155' }}>Settlement Remarks</label>
+                          <input
+                            type="text"
+                            value={settlementRemarks}
+                            onChange={e => setSettlementRemarks(e.target.value)}
+                            placeholder="Enter remarks..."
+                            style={panelInputStyle}
+                          />
+                        </div>
+                        <div style={{ display: 'grid', gridTemplateColumns: '140px 1fr', alignItems: 'center', gap: 10 }}>
+                          <label style={{ fontSize: 13, fontWeight: 600, color: '#334155' }}>Status</label>
+                          <select
+                            value={settlementStatus}
+                            onChange={e => setSettlementStatus(e.target.value)}
+                            style={panelInputStyle}
+                          >
+                            <option value="completed">Cleared</option>
+                            <option value="pending">Pending</option>
+                          </select>
+                        </div>
+                        <div style={{ marginTop: 4 }}>
+                          <button
+                            type="button"
+                            disabled={busy}
+                            onClick={() => updateSettlementDetails()}
+                            style={panelBtnStyle}
+                          >
+                            Update
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Row 2: Update Payments & Recent Payments */}
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(360px, 1fr))', gap: 18 }}>
+                    {/* Panel 3: Update Payments */}
+                    <div style={cardStyle}>
+                      <div style={cardHeaderStyle}>
+                        <span>Update Payments</span>
+                      </div>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+                        <div style={{ display: 'grid', gridTemplateColumns: '140px 1fr', alignItems: 'center', gap: 10 }}>
+                          <label style={{ fontSize: 13, fontWeight: 600, color: '#334155' }}>Payment Date</label>
+                          <input
+                            type="date"
+                            value={payForm.payment_date}
+                            onChange={e => setPayForm({ ...payForm, payment_date: e.target.value })}
+                            style={panelInputStyle}
+                          />
+                        </div>
+                        <div style={{ display: 'grid', gridTemplateColumns: '140px 1fr', alignItems: 'center', gap: 10 }}>
+                          <label style={{ fontSize: 13, fontWeight: 600, color: '#334155' }}>Amount</label>
+                          <input
+                            type="number"
+                            step="0.01"
+                            placeholder="0.00"
+                            value={payForm.amount}
+                            onChange={e => setPayForm({ ...payForm, amount: e.target.value })}
+                            style={panelInputStyle}
+                          />
+                        </div>
+                        <div style={{ display: 'grid', gridTemplateColumns: '140px 1fr', alignItems: 'center', gap: 10 }}>
+                          <label style={{ fontSize: 13, fontWeight: 600, color: '#334155' }}>Payment Type</label>
+                          <select
+                            value={payForm.payment_method}
+                            onChange={e => setPayForm({ ...payForm, payment_method: e.target.value })}
+                            style={panelInputStyle}
+                          >
+                            <option value="Cash">Cash</option>
+                            <option value="Bank Transfer">Bank Transfer</option>
+                            <option value="Cheque">Cheque</option>
+                            <option value="Card">Card</option>
+                          </select>
+                        </div>
+                        <div style={{ marginTop: 4 }}>
+                          <button
+                            type="button"
+                            disabled={busy}
+                            onClick={() => recordPayment()}
+                            style={panelBtnStyle}
+                          >
+                            Save
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Panel 4: Recent Payments */}
+                    <div style={cardStyle}>
+                      <div style={cardHeaderStyle}>
+                        <span>Recent Payments</span>
+                        <span style={{ fontSize: 12, fontWeight: 600, color: '#64748b', background: '#f1f5f9', padding: '2px 8px', borderRadius: 999 }}>
+                          {(createdSettlement.payments || []).length} records
+                        </span>
+                      </div>
+                      {(!createdSettlement.payments || createdSettlement.payments.length === 0) ? (
+                        <p style={{ fontSize: 12.5, color: '#94a3b8', margin: '8px 0', fontStyle: 'italic' }}>No recent payments recorded.</p>
                       ) : (
-                        <div style={{ border: '1px solid #f1f5f9', borderRadius: 4, overflow: 'hidden' }}>
-                          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
+                        <div style={{ overflowX: 'auto', border: '1px solid #e2e8f0', borderRadius: 6 }}>
+                          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12.5 }}>
+                            <thead>
+                              <tr style={{ borderBottom: '1px solid #e2e8f0', background: '#f8fafc' }}>
+                                <th style={{ padding: '8px 10px', textAlign: 'left', fontWeight: 700, color: '#475569' }}>Date</th>
+                                <th style={{ padding: '8px 10px', textAlign: 'left', fontWeight: 700, color: '#475569' }}>Amount</th>
+                                <th style={{ padding: '8px 10px', textAlign: 'left', fontWeight: 700, color: '#475569' }}>Paymode</th>
+                                <th style={{ padding: '8px 10px', textAlign: 'right', fontWeight: 700, color: '#475569' }}>Action</th>
+                              </tr>
+                            </thead>
                             <tbody>
-                              {createdSettlement.docs.map(d => (
-                                <tr key={d.id} style={{ borderBottom: '1px solid #f1f5f9' }}>
-                                  <td style={{ padding: '6px 10px', color: '#1e293b', fontWeight: 500, wordBreak: 'break-all' }}>
-                                    {d.file_name}
+                              {createdSettlement.payments.map(p => (
+                                <tr key={p.id} style={{ borderBottom: '1px solid #f1f5f9', background: '#ffffff' }}>
+                                  <td style={{ padding: '8px 10px', color: '#1e293b' }}>
+                                    {formatDate(p.payment_date)}
                                   </td>
-                                  <td style={{ padding: '6px 10px', textAlign: 'right', whiteSpace: 'nowrap' }}>
+                                  <td style={{ padding: '8px 10px', fontWeight: 700, color: '#065f46' }}>
+                                    AED {Number(p.amount).toFixed(2)}
+                                  </td>
+                                  <td style={{ padding: '8px 10px', color: '#475569', textTransform: 'capitalize' }}>
+                                    {p.payment_method || 'Cash'}
+                                  </td>
+                                  <td style={{ padding: '8px 10px', textAlign: 'right' }}>
                                     <button
                                       type="button"
                                       disabled={busy}
-                                      onClick={() => deleteDoc(d.id)}
-                                      title="Delete document"
-                                      style={{ background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer', padding: 2 }}
+                                      onClick={() => deletePayment(p.id)}
+                                      title="Delete payment"
+                                      style={{ background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer', padding: 4, borderRadius: 4 }}
                                     >
-                                      <Icon path={icons.trash} size={14} />
+                                      <Icon path={icons.trash} size={15} />
                                     </button>
                                   </td>
                                 </tr>
@@ -706,240 +928,103 @@ export default function SettlementWizard() {
                     </div>
                   </div>
 
-                  {/* Panel 2: Update Settlement */}
-                  <div style={cardStyle}>
-                    <div style={cardHeaderStyle}>Update Settlement</div>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-                      <div style={{ display: 'grid', gridTemplateColumns: '130px 1fr', alignItems: 'center', gap: 10 }}>
-                        <label style={{ fontSize: 13, fontWeight: 600, color: '#334155' }}>Settlement Remarks</label>
-                        <input
-                          type="text"
-                          value={settlementRemarks}
-                          onChange={e => setSettlementRemarks(e.target.value)}
-                          placeholder="Remarks..."
-                          style={panelInputStyle}
-                        />
-                      </div>
-                      <div style={{ display: 'grid', gridTemplateColumns: '130px 1fr', alignItems: 'center', gap: 10 }}>
-                        <label style={{ fontSize: 13, fontWeight: 600, color: '#334155' }}>Status</label>
-                        <select
-                          value={settlementStatus}
-                          onChange={e => setSettlementStatus(e.target.value)}
-                          style={panelInputStyle}
-                        >
-                          <option value="completed">Cleared</option>
-                          <option value="pending">Pending</option>
-                        </select>
+                  {/* Row 3: Case Details (Yellow Header Banner) */}
+                  <div style={{ borderRadius: 8, overflow: 'hidden', border: '1px solid #fcd34d', boxShadow: '0 2px 6px rgba(245, 158, 11, 0.08)' }}>
+                    {/* Banner */}
+                    <div style={{ background: '#f59e0b', padding: '10px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#0f172a' }}>
+                        <Icon path={icons.gavel} size={18} />
+                        <span style={{ fontSize: 14, fontWeight: 800, color: '#0f172a', letterSpacing: '0.2px' }}>Case Details</span>
                       </div>
                       <div>
+                        {caseStatus === 'active' || createdSettlement.on_case ? (
+                          <span style={{ background: '#dc2626', color: '#ffffff', padding: '4px 12px', borderRadius: 4, fontSize: 11.5, fontWeight: 700, whiteSpace: 'nowrap' }}>
+                            Active Case
+                          </span>
+                        ) : (
+                          <span style={{ background: '#475569', color: '#ffffff', padding: '4px 12px', borderRadius: 4, fontSize: 11.5, fontWeight: 700, whiteSpace: 'nowrap' }}>
+                            No Active Case
+                          </span>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Form Body */}
+                    <div style={{ background: '#ffffff', padding: '18px 20px', display: 'flex', flexDirection: 'column', gap: 14 }}>
+                      <div style={{ display: 'grid', gridTemplateColumns: '140px 1fr', alignItems: 'center', gap: 10 }}>
+                        <label style={{ fontSize: 13, fontWeight: 600, color: '#334155' }}>Case Status</label>
+                        <select
+                          value={caseStatus}
+                          onChange={e => setCaseStatus(e.target.value)}
+                          style={{ ...panelInputStyle, maxWidth: 260 }}
+                        >
+                          <option value="no_case">No Case</option>
+                          <option value="active">Active Case</option>
+                        </select>
+                      </div>
+
+                      <div style={{ display: 'grid', gridTemplateColumns: '140px 1fr', alignItems: 'flex-start', gap: 10 }}>
+                        <label style={{ fontSize: 13, fontWeight: 600, color: '#334155', paddingTop: 6 }}>Case Remarks</label>
+                        <textarea
+                          rows={3}
+                          value={caseRemarks}
+                          onChange={e => setCaseRemarks(e.target.value)}
+                          placeholder="Case remarks..."
+                          style={{ ...panelInputStyle, width: '100%', maxWidth: '100%', resize: 'vertical' }}
+                        />
+                      </div>
+
+                      <div style={{ marginTop: 2 }}>
                         <button
                           type="button"
                           disabled={busy}
-                          onClick={() => updateSettlementDetails()}
-                          style={panelBtnStyle}
+                          onClick={() => updateCaseDetails()}
+                          style={{
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: 6,
+                            background: '#f59e0b',
+                            color: '#0f172a',
+                            border: '1px solid #d97706',
+                            borderRadius: 6,
+                            padding: '8px 22px',
+                            fontWeight: 800,
+                            fontSize: 13,
+                            cursor: 'pointer',
+                            boxShadow: '0 1px 2px rgba(217, 119, 6, 0.3)',
+                          }}
                         >
+                          <Icon path={icons.floppy} size={15} />
                           Update
                         </button>
                       </div>
                     </div>
                   </div>
                 </div>
+              )}
+            </div>
 
-                {/* Row 2: Update Payments & Recent Payments */}
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(360px, 1fr))', gap: 16 }}>
-                  {/* Panel 3: Update Payments */}
-                  <div style={cardStyle}>
-                    <div style={cardHeaderStyle}>Update Payments</div>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-                      <div style={{ display: 'grid', gridTemplateColumns: '130px 1fr', alignItems: 'center', gap: 10 }}>
-                        <label style={{ fontSize: 13, fontWeight: 600, color: '#334155' }}>Payment Date</label>
-                        <input
-                          type="date"
-                          value={payForm.payment_date}
-                          onChange={e => setPayForm({ ...payForm, payment_date: e.target.value })}
-                          style={panelInputStyle}
-                        />
-                      </div>
-                      <div style={{ display: 'grid', gridTemplateColumns: '130px 1fr', alignItems: 'center', gap: 10 }}>
-                        <label style={{ fontSize: 13, fontWeight: 600, color: '#334155' }}>Amount</label>
-                        <input
-                          type="number"
-                          step="0.01"
-                          placeholder="0.00"
-                          value={payForm.amount}
-                          onChange={e => setPayForm({ ...payForm, amount: e.target.value })}
-                          style={panelInputStyle}
-                        />
-                      </div>
-                      <div style={{ display: 'grid', gridTemplateColumns: '130px 1fr', alignItems: 'center', gap: 10 }}>
-                        <label style={{ fontSize: 13, fontWeight: 600, color: '#334155' }}>Payment Type</label>
-                        <select
-                          value={payForm.payment_method}
-                          onChange={e => setPayForm({ ...payForm, payment_method: e.target.value })}
-                          style={panelInputStyle}
-                        >
-                          <option value="Cash">Cash</option>
-                          <option value="Bank Transfer">Bank Transfer</option>
-                          <option value="Cheque">Cheque</option>
-                          <option value="Card">Card</option>
-                        </select>
-                      </div>
-                      <div>
-                        <button
-                          type="button"
-                          disabled={busy}
-                          onClick={() => recordPayment()}
-                          style={panelBtnStyle}
-                        >
-                          Save
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Panel 4: Recent Payments */}
-                  <div style={cardStyle}>
-                    <div style={cardHeaderStyle}>Recent Payments</div>
-                    {(!createdSettlement.payments || createdSettlement.payments.length === 0) ? (
-                      <p style={{ fontSize: 12.5, color: '#94a3b8', margin: '8px 0' }}>No recent payments recorded.</p>
-                    ) : (
-                      <div style={{ overflowX: 'auto' }}>
-                        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12.5 }}>
-                          <thead>
-                            <tr style={{ borderBottom: '1px solid #e2e8f0', background: '#f8fafc' }}>
-                              <th style={{ padding: '7px 8px', textAlign: 'left', fontWeight: 700, color: '#475569' }}>Date</th>
-                              <th style={{ padding: '7px 8px', textAlign: 'left', fontWeight: 700, color: '#475569' }}>Amount</th>
-                              <th style={{ padding: '7px 8px', textAlign: 'left', fontWeight: 700, color: '#475569' }}>Paymode</th>
-                              <th style={{ padding: '7px 8px', textAlign: 'right', fontWeight: 700, color: '#475569' }}>Action</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {createdSettlement.payments.map(p => (
-                              <tr key={p.id} style={{ borderBottom: '1px solid #f1f5f9' }}>
-                                <td style={{ padding: '7px 8px', color: '#1e293b' }}>
-                                  {formatDate(p.payment_date)}
-                                </td>
-                                <td style={{ padding: '7px 8px', fontWeight: 700, color: '#065f46' }}>
-                                  {Number(p.amount).toFixed(2)}
-                                </td>
-                                <td style={{ padding: '7px 8px', color: '#475569', textTransform: 'capitalize' }}>
-                                  {p.payment_method || 'Cash'}
-                                </td>
-                                <td style={{ padding: '7px 8px', textAlign: 'right' }}>
-                                  <button
-                                    type="button"
-                                    disabled={busy}
-                                    onClick={() => deletePayment(p.id)}
-                                    title="Delete payment"
-                                    style={{ background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer', padding: 2 }}
-                                  >
-                                    <Icon path={icons.trash} size={14} />
-                                  </button>
-                                </td>
-                              </tr>
-                            ))}
-                          </tbody>
-                        </table>
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-                {/* Row 3: Case Details (Yellow Header Banner) */}
-                <div style={{ borderRadius: 6, overflow: 'hidden', border: '1px solid #fcd34d' }}>
-                  {/* Banner */}
-                  <div style={{ background: '#f59e0b', padding: '9px 14px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#0f172a' }}>
-                      <Icon path={icons.gavel} size={18} />
-                      <span style={{ fontSize: 13.5, fontWeight: 700, color: '#0f172a' }}>Case Details</span>
-                    </div>
-                    <div>
-                      {caseStatus === 'active' || createdSettlement.on_case ? (
-                        <span style={{ background: '#dc2626', color: '#ffffff', padding: '3px 10px', borderRadius: 4, fontSize: 11.5, fontWeight: 700 }}>
-                          Active Case
-                        </span>
-                      ) : (
-                        <span style={{ background: '#3b82f6', color: '#ffffff', padding: '3px 10px', borderRadius: 4, fontSize: 11.5, fontWeight: 700 }}>
-                          No Active Case
-                        </span>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Form Body */}
-                  <div style={{ background: '#ffffff', padding: '16px 18px', display: 'flex', flexDirection: 'column', gap: 12 }}>
-                    <div style={{ display: 'grid', gridTemplateColumns: '130px 1fr', alignItems: 'center', gap: 10 }}>
-                      <label style={{ fontSize: 13, fontWeight: 600, color: '#334155' }}>Case Status</label>
-                      <select
-                        value={caseStatus}
-                        onChange={e => setCaseStatus(e.target.value)}
-                        style={panelInputStyle}
-                      >
-                        <option value="no_case">No Case</option>
-                        <option value="active">Active Case</option>
-                      </select>
-                    </div>
-
-                    <div style={{ display: 'grid', gridTemplateColumns: '130px 1fr', alignItems: 'flex-start', gap: 10 }}>
-                      <label style={{ fontSize: 13, fontWeight: 600, color: '#334155', paddingTop: 6 }}>Case Remarks</label>
-                      <textarea
-                        rows={3}
-                        value={caseRemarks}
-                        onChange={e => setCaseRemarks(e.target.value)}
-                        placeholder="Case remarks..."
-                        style={{ ...panelInputStyle, width: '100%', maxWidth: '100%', resize: 'vertical' }}
-                      />
-                    </div>
-
-                    <div>
-                      <button
-                        type="button"
-                        disabled={busy}
-                        onClick={() => updateCaseDetails()}
-                        style={{
-                          display: 'inline-flex',
-                          alignItems: 'center',
-                          gap: 6,
-                          background: '#f59e0b',
-                          color: '#0f172a',
-                          border: '1px solid #d97706',
-                          borderRadius: 4,
-                          padding: '6px 18px',
-                          fontWeight: 700,
-                          fontSize: 13,
-                          cursor: 'pointer',
-                        }}
-                      >
-                        <Icon path={icons.floppy} size={15} />
-                        Update
-                      </button>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Footer Controls */}
-                <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10, paddingTop: 10, borderTop: '1px solid #e2e8f0' }}>
-                  {createdSettlement.status !== 'completed' && (
-                    <button
-                      type="button"
-                      disabled={busy}
-                      onClick={() => markCompleted(createdSettlement.id)}
-                      style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '9px 18px', fontWeight: 700, fontSize: 13, borderRadius: 6, border: 'none', background: '#065f46', color: '#fff', cursor: 'pointer' }}
-                    >
-                      <Icon path={ICONS.check} size={14} />
-                      Mark as Completed (Free Unit)
-                    </button>
-                  )}
-                  <button
-                    type="button"
-                    onClick={closeModal}
-                    style={{ padding: '9px 18px', fontWeight: 700, fontSize: 13, borderRadius: 6, backgroundColor: '#f1f5f9', color: '#475569', border: '1px solid #cbd5e1', cursor: 'pointer' }}
-                  >
-                    Close
-                  </button>
-                </div>
-              </div>
-            )}
+            {/* Modal Footer */}
+            <div style={{ padding: '16px 26px', borderTop: '1px solid #e2e8f0', background: '#f8fafc', display: 'flex', justifyContent: 'flex-end', gap: 12, borderBottomLeftRadius: 12, borderBottomRightRadius: 12 }}>
+              {createdSettlement && createdSettlement.status !== 'completed' && (
+                <button
+                  type="button"
+                  disabled={busy}
+                  onClick={() => markCompleted(createdSettlement.id)}
+                  style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '9px 20px', fontWeight: 700, fontSize: 13, borderRadius: 6, border: 'none', background: '#065f46', color: '#fff', cursor: 'pointer', boxShadow: '0 1px 3px rgba(6, 95, 70, 0.3)' }}
+                >
+                  <Icon path={ICONS.check} size={14} />
+                  Mark as Completed (Free Unit)
+                </button>
+              )}
+              <button
+                type="button"
+                onClick={closeModal}
+                style={{ padding: '9px 22px', fontWeight: 700, fontSize: 13, borderRadius: 6, backgroundColor: '#ffffff', color: '#475569', border: '1px solid #cbd5e1', cursor: 'pointer' }}
+              >
+                Close
+              </button>
+            </div>
           </div>
         </div>
       )}
