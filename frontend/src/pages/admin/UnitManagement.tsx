@@ -36,6 +36,9 @@ export default function UnitManagement() {
   const [searchTerm, setSearchTerm] = useState<string>('')
   const [isLoading, setIsLoading] = useState(true)
 
+  const [entriesPerPage, setEntriesPerPage] = useState<number>(10)
+  const [currentPage, setCurrentPage] = useState<number>(1)
+
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [formData, setFormData] = useState({
     property_id: '', number: '', dhewa_no: '', category: '', floor: 1,
@@ -51,6 +54,10 @@ export default function UnitManagement() {
   useEffect(() => {
     fetchUnits()
   }, [selectedPropertyId, statusFilter])
+
+  useEffect(() => {
+    setCurrentPage(1)
+  }, [searchTerm, entriesPerPage, selectedPropertyId, statusFilter])
 
   const fetchProperties = async () => {
     try {
@@ -142,6 +149,9 @@ export default function UnitManagement() {
     )
   }, [units, searchTerm])
 
+  const totalPages = Math.ceil(filteredUnits.length / entriesPerPage) || 1
+  const paginatedUnits = filteredUnits.slice((currentPage - 1) * entriesPerPage, currentPage * entriesPerPage)
+
   // Real-time metric counts
   const totalUnits = units.length
   const occupiedUnits = units.filter(u => u.status === 'OCCUPIED').length
@@ -165,17 +175,50 @@ export default function UnitManagement() {
           border-color: #0F8A67;
           box-shadow: 0 0 0 3px rgba(15, 138, 103, 0.12);
         }
-        .gfh-unit-card {
-          background: #FFFFFF;
-          border: 1px solid #E2E8F0;
-          border-radius: 14px;
-          padding: 18px;
-          transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+        .gfh-table {
+          width: 100%;
+          border-collapse: collapse;
+          text-align: left;
         }
-        .gfh-unit-card:hover {
-          transform: translateY(-2px);
-          box-shadow: 0 10px 22px -6px rgba(15, 23, 42, 0.08);
-          border-color: #CBD5E1;
+        .gfh-table th {
+          background-color: #F8FAFC;
+          color: #64748B;
+          font-weight: 600;
+          font-size: 13px;
+          padding: 12px 16px;
+          border-bottom: 1px solid #E2E8F0;
+        }
+        .gfh-table td {
+          padding: 14px 16px;
+          border-bottom: 1px solid #E2E8F0;
+          font-size: 14px;
+          color: #334155;
+          vertical-align: middle;
+        }
+        .gfh-table tr:hover {
+          background-color: #F8FAFC;
+        }
+        .gfh-pagination-btn {
+          padding: 6px 12px;
+          border: 1px solid #E2E8F0;
+          background: #FFF;
+          color: #334155;
+          border-radius: 6px;
+          font-size: 13px;
+          cursor: pointer;
+          transition: all 0.2s;
+        }
+        .gfh-pagination-btn:hover:not(:disabled) {
+          background: #F1F5F9;
+        }
+        .gfh-pagination-btn:disabled {
+          opacity: 0.5;
+          cursor: not-allowed;
+        }
+        .gfh-pagination-btn.active {
+          background: #0F8A67;
+          color: #FFF;
+          border-color: #0F8A67;
         }
       `}</style>
 
@@ -200,7 +243,7 @@ export default function UnitManagement() {
               Unit Management
             </h2>
             <p style={{ fontSize: 13.5, color: '#64748B', margin: '4px 0 0', fontWeight: 500 }}>
-              Manage apartments, shops, and their status
+              List Of Units
             </p>
           </div>
 
@@ -483,178 +526,183 @@ export default function UnitManagement() {
           </div>
         </div>
 
-        {/* Units Grid List */}
-        {isLoading ? (
-          <div style={{ textAlign: 'center', padding: '60px 20px', color: '#64748B', fontWeight: 600 }}>
-            Loading units…
+        {/* Entries Dropdown */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px', color: '#64748B' }}>
+            Show 
+            <select
+              value={entriesPerPage}
+              onChange={e => setEntriesPerPage(Number(e.target.value))}
+              className="gfh-unit-input"
+              style={{ padding: '4px 8px', width: '60px' }}
+            >
+              <option value={10}>10</option>
+              <option value={25}>25</option>
+              <option value={50}>50</option>
+              <option value={100}>100</option>
+            </select>
+            entries
           </div>
-        ) : filteredUnits.length === 0 ? (
-          <div style={{ textAlign: 'center', padding: '60px 20px', color: '#64748B', fontWeight: 600 }}>
-            No units found matching your filters.
-          </div>
-        ) : (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: 18 }}>
-            {filteredUnits.map(unit => {
-              const statusStyle = getStatusColor(unit.status)
-              return (
-                <div key={unit.id} className="gfh-unit-card">
-                  {/* Top line with purple type pill & status badge */}
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
-                    <span style={{
-                      padding: '3px 9px',
-                      borderRadius: 6,
-                      background: '#4C1D95',
-                      color: '#FFFFFF',
-                      fontSize: 11,
-                      fontWeight: 800,
-                      letterSpacing: '0.4px',
-                    }}>
-                      {getTypeLabel(unit.type)}
-                    </span>
-                    <span style={{
-                      padding: '4px 12px',
-                      borderRadius: 999,
-                      background: statusStyle.bg,
-                      color: statusStyle.color,
-                      border: `1px solid ${statusStyle.border}`,
-                      fontSize: 11,
-                      fontWeight: 700,
-                      letterSpacing: '0.4px',
-                    }}>
-                      {unit.status}
-                    </span>
-                  </div>
+        </div>
 
-                  {/* Unit Title */}
-                  <div style={{ fontSize: 17, fontWeight: 800, color: '#0F172A', marginBottom: 8 }}>
-                    Unit {unit.number}
-                  </div>
-
-                  {/* Details with green Property & Price */}
-                  <div style={{ fontSize: 13, color: '#64748B', marginBottom: 18, display: 'flex', flexDirection: 'column', gap: 4 }}>
-                    <div>Property: <strong style={{ color: '#0F766E', fontWeight: 700 }}>{unit.property?.name || 'N/A'}</strong></div>
-                    <div>Type: <strong style={{ color: '#0F172A', fontWeight: 600 }}>{unit.type ? unit.type.charAt(0).toUpperCase() + unit.type.slice(1) : '1BR'} {unit.floor ? `(Floor ${unit.floor})` : ''}</strong></div>
-                    <div>Price: <strong style={{ color: '#065F46', fontWeight: 800 }}>AED {Number(unit.price).toLocaleString()}</strong></div>
-                    <div>Service Charge: <strong style={{ color: '#0284C7', fontWeight: 700 }}>AED {Number(unit.monthly_service_charge || 0).toLocaleString()} / mo</strong> <span style={{ fontSize: 11, color: '#64748B', fontWeight: 500 }}>(Q: AED {(Number(unit.monthly_service_charge || 0) * 3).toLocaleString()})</span></div>
-                  </div>
-
-                  {/* Actions Row matching reference layout */}
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                    <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-                      <div style={{ position: 'relative', flex: 1 }}>
+        {/* Units Table */}
+        <div style={{ overflowX: 'auto', border: '1px solid #E2E8F0', borderRadius: '8px' }}>
+          <table className="gfh-table">
+            <thead>
+              <tr>
+                <th>Property</th>
+                <th>Number</th>
+                <th>Type</th>
+                <th>Owner</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {isLoading ? (
+                <tr>
+                  <td colSpan={6} style={{ textAlign: 'center', padding: '40px', color: '#64748B' }}>
+                    Loading units...
+                  </td>
+                </tr>
+              ) : paginatedUnits.length === 0 ? (
+                <tr>
+                  <td colSpan={6} style={{ textAlign: 'center', padding: '40px', color: '#64748B' }}>
+                    No units found matching your filters.
+                  </td>
+                </tr>
+              ) : (
+                paginatedUnits.map(unit => {
+                  const statusStyle = getStatusColor(unit.status)
+                  return (
+                    <tr key={unit.id}>
+                      <td style={{ fontWeight: 600, color: '#0F172A' }}>{unit.property?.name || 'N/A'}</td>
+                      <td>{unit.number}</td>
+                      <td>
+                        {unit.type ? unit.type.charAt(0).toUpperCase() + unit.type.slice(1) : '1BR'} {unit.floor ? `(Floor ${unit.floor})` : ''}
+                      </td>
+                      <td>{unit.owner?.name || 'N/A'}</td>
+                      <td>
                         <span style={{
-                          position: 'absolute',
-                          left: 10,
-                          top: '50%',
-                          transform: 'translateY(-50%)',
-                          width: 8,
-                          height: 8,
-                          borderRadius: '50%',
-                          background: statusStyle.dot,
-                          pointerEvents: 'none',
-                        }} />
-                        <select
-                          value={unit.status}
-                          onChange={e => handleStatusChange(unit.id, e.target.value)}
-                          className="gfh-unit-input"
-                          style={{
-                            width: '100%',
-                            padding: '7px 10px 7px 24px',
-                            fontSize: 12,
-                            fontWeight: 700,
-                            color: '#0F172A',
-                            background: '#FFFFFF',
-                            cursor: 'pointer',
-                          }}
-                        >
-                          <option value="AVAILABLE">AVAILABLE</option>
-                          <option value="BOOKED">BOOKED</option>
-                          <option value="OCCUPIED">OCCUPIED</option>
-                          <option value="SOLD">SOLD</option>
-                        </select>
-                      </div>
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '6px',
+                          padding: '4px 10px',
+                          borderRadius: '999px',
+                          background: statusStyle.bg,
+                          color: statusStyle.color,
+                          border: `1px solid ${statusStyle.border}`,
+                          fontSize: '12px',
+                          fontWeight: 600,
+                        }}>
+                          <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: statusStyle.dot }} />
+                          {unit.status}
+                        </span>
+                      </td>
+                      <td>
+                        <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                          <select
+                            value={unit.status}
+                            onChange={e => handleStatusChange(unit.id, e.target.value)}
+                            className="gfh-unit-input"
+                            style={{
+                              padding: '6px 8px',
+                              fontSize: '12px',
+                              fontWeight: 600,
+                              color: '#0F172A',
+                              background: '#FFFFFF',
+                              cursor: 'pointer',
+                              width: '110px'
+                            }}
+                          >
+                            <option value="AVAILABLE">AVAILABLE</option>
+                            <option value="BOOKED">BOOKED</option>
+                            <option value="OCCUPIED">OCCUPIED</option>
+                            <option value="SOLD">SOLD</option>
+                          </select>
 
-                      {unit.status === 'AVAILABLE' && (
-                        <button
-                          onClick={() => setBookingUnit(unit)}
-                          style={{
-                            display: 'inline-flex',
-                            alignItems: 'center',
-                            gap: 6,
-                            padding: '7px 16px',
-                            borderRadius: 8,
-                            border: 'none',
-                            background: '#064E3B',
-                            color: '#FFFFFF',
-                            fontSize: 12,
-                            fontWeight: 700,
-                            cursor: 'pointer',
-                            whiteSpace: 'nowrap',
-                          }}
-                        >
-                          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
-                            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
-                          </svg>
-                          <span>Book</span>
-                        </button>
-                      )}
+                          {unit.status === 'AVAILABLE' && (
+                            <button
+                              onClick={() => setBookingUnit(unit)}
+                              style={{
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: '4px',
+                                padding: '6px 12px',
+                                borderRadius: '6px',
+                                border: 'none',
+                                background: '#0F8A67',
+                                color: '#FFFFFF',
+                                fontSize: '12px',
+                                fontWeight: 600,
+                                cursor: 'pointer',
+                              }}
+                            >
+                              Book
+                            </button>
+                          )}
 
-                      {unit.status !== 'AVAILABLE' && (
-                        <button
-                          onClick={() => handleDelete(unit.id)}
-                          style={{
-                            display: 'inline-flex',
-                            alignItems: 'center',
-                            gap: 6,
-                            padding: '7px 14px',
-                            borderRadius: 8,
-                            border: '1px solid #FECACA',
-                            background: '#FFFFFF',
-                            color: '#DC2626',
-                            fontSize: 12,
-                            fontWeight: 700,
-                            cursor: 'pointer',
-                            whiteSpace: 'nowrap',
-                          }}
-                          onMouseEnter={e => (e.currentTarget.style.background = '#FEF2F2')}
-                          onMouseLeave={e => (e.currentTarget.style.background = '#FFFFFF')}
-                        >
-                          <Icon path={ICONS.trash} size={13} />
-                          <span>Delete</span>
-                        </button>
-                      )}
-                    </div>
+                          <button
+                            onClick={() => handleDelete(unit.id)}
+                            style={{
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              width: '30px',
+                              height: '30px',
+                              borderRadius: '6px',
+                              border: '1px solid #FECACA',
+                              background: '#FEF2F2',
+                              color: '#DC2626',
+                              cursor: 'pointer',
+                            }}
+                            title="Delete"
+                          >
+                            <Icon path={ICONS.trash} size={14} />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  )
+                })
+              )}
+            </tbody>
+          </table>
+        </div>
 
-                    {unit.status === 'AVAILABLE' && (
-                      <div>
-                        <button
-                          onClick={() => handleDelete(unit.id)}
-                          style={{
-                            display: 'inline-flex',
-                            alignItems: 'center',
-                            gap: 6,
-                            padding: '6px 12px',
-                            borderRadius: 8,
-                            border: '1px solid #FECACA',
-                            background: '#FFFFFF',
-                            color: '#DC2626',
-                            fontSize: 12,
-                            fontWeight: 700,
-                            cursor: 'pointer',
-                          }}
-                          onMouseEnter={e => (e.currentTarget.style.background = '#FEF2F2')}
-                          onMouseLeave={e => (e.currentTarget.style.background = '#FFFFFF')}
-                        >
-                          <Icon path={ICONS.trash} size={13} />
-                          <span>Delete</span>
-                        </button>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              )
-            })}
+        {/* Pagination Controls */}
+        {!isLoading && filteredUnits.length > 0 && (
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '16px' }}>
+            <div style={{ fontSize: '14px', color: '#64748B' }}>
+              Showing {(currentPage - 1) * entriesPerPage + 1} to {Math.min(currentPage * entriesPerPage, filteredUnits.length)} of {filteredUnits.length} entries
+            </div>
+            <div style={{ display: 'flex', gap: '6px' }}>
+              <button 
+                className="gfh-pagination-btn" 
+                onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                disabled={currentPage === 1}
+              >
+                Previous
+              </button>
+              
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+                <button
+                  key={page}
+                  className={`gfh-pagination-btn ${currentPage === page ? 'active' : ''}`}
+                  onClick={() => setCurrentPage(page)}
+                >
+                  {page}
+                </button>
+              ))}
+
+              <button 
+                className="gfh-pagination-btn" 
+                onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                disabled={currentPage === totalPages}
+              >
+                Next
+              </button>
+            </div>
           </div>
         )}
       </div>

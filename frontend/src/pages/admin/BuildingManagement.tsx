@@ -80,6 +80,10 @@ export default function BuildingManagement() {
   const [propertyUnits, setPropertyUnits] = useState<Unit[]>([])
   const [isUnitsLoading, setIsUnitsLoading] = useState(false)
   const [unitsError, setUnitsError] = useState('')
+  
+  // Pagination states
+  const [currentPage, setCurrentPage] = useState(1)
+  const [entriesPerPage, setEntriesPerPage] = useState(10)
 
   useEffect(() => {
     fetchData()
@@ -178,8 +182,6 @@ export default function BuildingManagement() {
   }, [selectedProperty])
 
   const isCommercialUnit = (unit: Unit) => {
-    // A single-use property's saved classification controls its units section.
-    // Mixed properties retain the individual unit classifications.
     const propertyType = selectedProperty?.type?.trim().toLowerCase()
     if (propertyType === 'commercial') return true
     if (propertyType === 'residential') return false
@@ -218,6 +220,19 @@ export default function BuildingManagement() {
       return true
     })
   }, [properties, searchTerm, typeFilter])
+
+  // Pagination calculation
+  const indexOfLastEntry = currentPage * entriesPerPage
+  const indexOfFirstEntry = indexOfLastEntry - entriesPerPage
+  const currentEntries = filteredProperties.slice(indexOfFirstEntry, indexOfLastEntry)
+  const totalPages = Math.ceil(filteredProperties.length / entriesPerPage)
+
+  const paginate = (pageNumber: number) => setCurrentPage(pageNumber)
+
+  // Reset to page 1 when filter/search changes
+  useEffect(() => {
+    setCurrentPage(1)
+  }, [searchTerm, typeFilter, entriesPerPage])
 
   const renderUnitSection = (title: string, units: Unit[]) => (
     <section className="gfh-property-unit-section" aria-labelledby={`${title.toLowerCase()}-units-heading`}>
@@ -347,7 +362,7 @@ export default function BuildingManagement() {
           font-family: 'Poppins', system-ui, sans-serif !important;
           font-size: 13.5px !important;
           border: 1px solid #E2E8F0 !important;
-          border-radius: 10px !important;
+          border-radius: 6px !important;
           outline: none !important;
           transition: border-color 0.15s ease, box-shadow 0.15s ease;
         }
@@ -362,7 +377,7 @@ export default function BuildingManagement() {
           background: #0F8A67 !important;
           color: #FFFFFF !important;
           border: none !important;
-          border-radius: 10px !important;
+          border-radius: 6px !important;
           padding: 9px 18px !important;
           font-size: 13.5px !important;
           font-weight: 700 !important;
@@ -375,226 +390,172 @@ export default function BuildingManagement() {
           background: #0B6E52 !important;
           transform: translateY(-1px) !important;
         }
-        .gfh-del-btn {
-          display: inline-flex !important;
-          align-items: center !important;
-          gap: 6px !important;
-          padding: 7px 14px !important;
-          background: #EF4444 !important;
-          border: none !important;
-          color: #ffffff !important;
-          border-radius: 8px !important;
-          font-weight: 700 !important;
-          font-size: 12px !important;
-          cursor: pointer !important;
-          box-shadow: 0 1px 2px rgba(239, 68, 68, 0.2) !important;
-          transition: background 0.15s ease !important;
-        }
-        .gfh-del-btn:hover {
-          background: #DC2626 !important;
-        }
-        .gfh-cancel-btn {
-          display: inline-flex !important;
-          align-items: center !important;
-          gap: 6px !important;
-          padding: 9px 18px !important;
-          background: #F1F5F9 !important;
-          border: 1px solid #CBD5E1 !important;
-          color: #334155 !important;
-          border-radius: 8px !important;
-          font-weight: 700 !important;
-          font-size: 13px !important;
-          cursor: pointer !important;
-          transition: background 0.15s ease !important;
-        }
-        .gfh-cancel-btn:hover {
-          background: #E2E8F0 !important;
-        }
-        .gfh-property-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fill, minmax(235px, 1fr));
-          gap: 14px;
-        }
-        .gfh-property-card {
-          overflow: hidden;
-          background: #FFFFFF;
-          border: 1px solid #DDE7E3;
-          border-radius: 11px;
-          box-shadow: 0 3px 10px rgba(6, 56, 44, 0.08);
-          transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
-        }
-        .gfh-property-card:hover {
-          transform: translateY(-2px);
-          border-color: #7DD3B7;
-          box-shadow: 0 8px 18px rgba(6, 56, 44, 0.13);
-        }
-        .gfh-property-open {
-          display: flex;
-          align-items: center;
-          gap: 12px;
+        .gfh-table {
           width: 100%;
-          padding: 15px;
-          text-align: left;
-          background: #FFFFFF;
-          border: 0;
-          border-radius: 0 !important;
-          cursor: pointer;
+          border-collapse: collapse;
+          margin-top: 20px;
         }
-        .gfh-property-open:hover { background: #F0FDF8; }
-        .gfh-property-icon {
-          display: inline-flex;
-          align-items: center;
-          justify-content: center;
-          width: 43px;
-          height: 43px;
-          flex: 0 0 43px;
-          border-radius: 8px;
-          color: #FFFFFF;
-          background: #0F8A67;
-        }
-        .gfh-property-name {
-          display: block;
-          overflow: hidden;
-          color: #06382C;
-          font-size: 13px;
-          font-weight: 800;
-          line-height: 1.25;
-          text-overflow: ellipsis;
-          white-space: nowrap;
-        }
-        .gfh-property-city, .gfh-property-address {
-          display: block;
-          overflow: hidden;
-          color: #64748B;
-          font-size: 10.5px;
-          font-weight: 500;
-          line-height: 1.4;
-          text-overflow: ellipsis;
-          white-space: nowrap;
-        }
-        .gfh-property-count {
-          display: inline-flex;
-          align-items: center;
-          justify-content: center;
-          min-width: 25px;
-          height: 25px;
-          padding: 0 6px;
-          border-radius: 999px;
-          color: #065F46;
-          background: #D1FAE5;
-          font-size: 11px;
-          font-weight: 800;
-        }
-        .gfh-property-actions {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          gap: 8px;
-          padding: 8px 11px;
-          color: #64748B;
+        .gfh-table th {
           background: #F8FAFC;
-          border-top: 1px solid #EEF2F0;
-          font-size: 9.5px;
-          font-weight: 600;
-          text-transform: capitalize;
+          color: #334155;
+          font-weight: 700;
+          font-size: 13px;
+          text-align: left;
+          padding: 12px 16px;
+          border-bottom: 2px solid #E2E8F0;
         }
-        .gfh-property-actions > div { display: flex; gap: 5px; }
-        .gfh-property-action-edit, .gfh-property-action-delete {
-          display: inline-flex;
-          align-items: center;
-          gap: 4px;
-          padding: 5px 7px;
-          border: 0;
-          color: #FFFFFF;
-          font-size: 9px;
+        .gfh-table td {
+          padding: 12px 16px;
+          border-bottom: 1px solid #E2E8F0;
+          color: #0F172A;
+          font-size: 13.5px;
+        }
+        .gfh-table tbody tr {
+          transition: background 0.15s ease;
+        }
+        .gfh-table tbody tr:hover {
+          background: #F0FDF8;
+        }
+        .gfh-property-name-cell {
+          color: #0F8A67;
           font-weight: 700;
           cursor: pointer;
+          text-decoration: none;
         }
-        .gfh-property-action-edit { background: #0F8A67; }
-        .gfh-property-action-delete { background: #DC2626; }
-        @media (max-width: 640px) {
-          .gfh-property-grid { grid-template-columns: 1fr; }
+        .gfh-property-name-cell:hover {
+          text-decoration: underline;
+        }
+        .gfh-action-btn {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          width: 28px;
+          height: 28px;
+          border-radius: 6px;
+          border: none;
+          cursor: pointer;
+          transition: background 0.15s ease;
+        }
+        .gfh-action-btn.edit {
+          background: #D1FAE5;
+          color: #059669;
+          margin-right: 8px;
+        }
+        .gfh-action-btn.edit:hover { background: #A7F3D0; }
+        .gfh-action-btn.delete {
+          background: #FEE2E2;
+          color: #DC2626;
+        }
+        .gfh-action-btn.delete:hover { background: #FECACA; }
+        
+        .gfh-pagination {
+          display: flex;
+          align-items: center;
+          justify-content: flex-end;
+          gap: 6px;
+          margin-top: 20px;
+        }
+        .gfh-page-btn {
+          padding: 6px 12px;
+          border: 1px solid #E2E8F0;
+          background: #FFFFFF;
+          color: #334155;
+          border-radius: 6px;
+          font-size: 13px;
+          font-weight: 500;
+          cursor: pointer;
+          transition: all 0.15s ease;
+        }
+        .gfh-page-btn:hover:not(:disabled) {
+          background: #F8FAFC;
+          border-color: #CBD5E1;
+        }
+        .gfh-page-btn.active {
+          background: #0F8A67;
+          color: #FFFFFF;
+          border-color: #0F8A67;
+        }
+        .gfh-page-btn:disabled {
+          opacity: 0.5;
+          cursor: not-allowed;
         }
       `}</style>
 
-      {/* Main Single Card Container matching media_1788523948275.png & media_1788526951091.png */}
       <div style={{
         background: '#FFFFFF',
-        borderRadius: 16,
+        borderRadius: 12,
         border: '1px solid #E2E8F0',
-        padding: '24px 28px',
+        padding: '24px',
         boxShadow: '0 1px 3px rgba(0, 0, 0, 0.03)',
       }}>
-        {/* Property search and type filter */}
+        {/* Header section */}
         <div style={{
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
           flexWrap: 'wrap',
           gap: 16,
-          marginBottom: 20,
+          marginBottom: 24,
         }}>
           <div>
-            <h2 style={{ fontSize: 22, fontWeight: 800, color: '#0F172A', margin: 0, letterSpacing: '-0.01em' }}>
-              Property Management
-            </h2>
-            <p style={{ fontSize: 13.5, color: '#64748B', margin: '4px 0 0', fontWeight: 500 }}>
-              {isOwner ? 'Manage your properties and buildings' : 'Manage all properties, buildings and owners'}
-            </p>
+            <h2 style={{ fontSize: 20, fontWeight: 700, color: '#0F172A', margin: 0 }}>Property List</h2>
+            <p style={{ fontSize: 13, color: '#64748B', margin: '4px 0 0' }}>List Of Entries</p>
+          </div>
+          <button type="button" className="gfh-add-prop-btn" onClick={() => { setEditingProperty(null); setFormData({ owner_id: '', name: '', address: '', city: '', type: 'residential' }); setIsModalOpen(true); }}>
+            <Icon path={icons.plus} size={16} /> Add Property
+          </button>
+        </div>
+
+        {/* Filters and Controls */}
+        <div style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          flexWrap: 'wrap',
+          gap: 16,
+          marginBottom: 16,
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13.5, color: '#334155' }}>
+            Show
+            <select
+              value={entriesPerPage}
+              onChange={e => setEntriesPerPage(Number(e.target.value))}
+              className="gfh-prop-input"
+              style={{ padding: '6px 28px 6px 12px', width: 'auto' }}
+            >
+              <option value={10}>10</option>
+              <option value={25}>25</option>
+              <option value={50}>50</option>
+              <option value={100}>100</option>
+            </select>
+            entries
           </div>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
-            {/* Search Input */}
-            <div style={{ position: 'relative', width: 220 }}>
-              <input
-                type="text"
-                value={searchTerm}
-                onChange={e => setSearchTerm(e.target.value)}
-                placeholder="Search properties..."
-                className="gfh-prop-input"
-                style={{
-                  width: '100%',
-                  padding: '9px 36px 9px 14px',
-                  background: '#F8FAFC',
-                  color: '#0F172A',
-                  boxSizing: 'border-box',
-                }}
-              />
-              <svg
-                style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', color: '#64748B', pointerEvents: 'none' }}
-                width="15"
-                height="15"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <circle cx="11" cy="11" r="8" />
-                <line x1="21" y1="21" x2="16.65" y2="16.65" />
-              </svg>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13.5, color: '#334155' }}>
+              Search:
+              <div style={{ position: 'relative', width: 220 }}>
+                <input
+                  type="text"
+                  value={searchTerm}
+                  onChange={e => setSearchTerm(e.target.value)}
+                  className="gfh-prop-input"
+                  style={{ width: '100%', padding: '6px 12px', boxSizing: 'border-box' }}
+                />
+              </div>
             </div>
 
-            {/* Type Dropdown */}
             <select
               value={typeFilter}
               onChange={e => setTypeFilter(e.target.value)}
               className="gfh-prop-input"
-              style={{
-                padding: '9px 30px 9px 14px',
-                background: '#FFFFFF',
-                color: '#334155',
-                fontWeight: 500,
-                cursor: 'pointer',
-              }}
+              style={{ padding: '6px 28px 6px 12px', width: 'auto', cursor: 'pointer' }}
             >
               <option value="">All Types</option>
               <option value="residential">Residential</option>
               <option value="commercial">Commercial</option>
               <option value="mixed">Mixed</option>
             </select>
-
           </div>
         </div>
 
@@ -611,41 +572,92 @@ export default function BuildingManagement() {
 
         {isLoading ? (
           <div style={{ textAlign: 'center', padding: 40 }}><span className="spinner" /></div>
-        ) : filteredProperties.length === 0 ? (
-          <p style={{ fontSize: 14, color: '#64748B', fontWeight: 500, textAlign: 'center', padding: 30 }}>
-            {properties.length === 0 ? 'No properties found.' : 'No properties match your filter.'}
-          </p>
         ) : (
-          <div className="gfh-property-grid">
-            {filteredProperties.map(property => (
-              <article key={property.id} className="gfh-property-card">
+          <div style={{ overflowX: 'auto' }}>
+            <table className="gfh-table">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Address</th>
+                  <th>City</th>
+                  <th>Description</th>
+                  <th style={{ textAlign: 'center' }}>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {currentEntries.length === 0 ? (
+                  <tr>
+                    <td colSpan={5} style={{ textAlign: 'center', color: '#64748B', padding: '30px' }}>
+                      {properties.length === 0 ? 'No properties found.' : 'No properties match your filter.'}
+                    </td>
+                  </tr>
+                ) : (
+                  currentEntries.map(property => (
+                    <tr key={property.id}>
+                      <td>
+                        <div className="gfh-property-name-cell" onClick={() => openProperty(property)}>
+                          {property.name}
+                        </div>
+                      </td>
+                      <td>{property.address}</td>
+                      <td>{property.city || '—'}</td>
+                      <td>
+                        <span style={{ textTransform: 'capitalize' }}>
+                          {property.type || 'residential'}
+                        </span>
+                        {!isOwner && property.owner?.name && (
+                          <span style={{ color: '#64748B' }}> · {property.owner.name}</span>
+                        )}
+                      </td>
+                      <td style={{ textAlign: 'center' }}>
+                        <button type="button" onClick={() => openEdit(property)} aria-label={`Edit ${property.name}`} className="gfh-action-btn edit">
+                          <Icon path={icons.edit} size={14} />
+                        </button>
+                        <button type="button" onClick={() => handleDelete(property.id)} aria-label={`Delete ${property.name}`} className="gfh-action-btn delete">
+                          <Icon path={icons.trash} size={14} />
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+        )}
+
+        {/* Pagination Controls */}
+        {filteredProperties.length > 0 && (
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 16 }}>
+            <div style={{ fontSize: 13.5, color: '#64748B' }}>
+              Showing {indexOfFirstEntry + 1} to {Math.min(indexOfLastEntry, filteredProperties.length)} of {filteredProperties.length} entries
+            </div>
+            <div className="gfh-pagination">
+              <button 
+                className="gfh-page-btn" 
+                onClick={() => paginate(currentPage - 1)} 
+                disabled={currentPage === 1}
+              >
+                Previous
+              </button>
+              
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map(number => (
                 <button
-                  type="button"
-                  className="gfh-property-open"
-                  onClick={() => openProperty(property)}
-                  aria-label={`Open ${property.name} units`}
+                  key={number}
+                  className={`gfh-page-btn ${currentPage === number ? 'active' : ''}`}
+                  onClick={() => paginate(number)}
                 >
-                  <span className="gfh-property-icon"><Icon path={ICONS.building} size={22} /></span>
-                  <span style={{ minWidth: 0, flex: 1 }}>
-                    <strong className="gfh-property-name">{property.name}</strong>
-                    <span className="gfh-property-city">{property.city || 'City not set'}</span>
-                    <span className="gfh-property-address">{property.address}</span>
-                  </span>
-                  <span className="gfh-property-count">{unitCounts[property.id] || 0}</span>
+                  {number}
                 </button>
-                <div className="gfh-property-actions">
-                  <span>{property.type || 'residential'}{!isOwner && property.owner?.name ? ` · ${property.owner.name}` : ''}</span>
-                  <div>
-                    <button type="button" onClick={() => openEdit(property)} aria-label={`Edit ${property.name}`} className="gfh-property-action-edit">
-                      <Icon path={icons.edit} size={12} /> Edit
-                    </button>
-                    <button type="button" onClick={() => handleDelete(property.id)} aria-label={`Delete ${property.name}`} className="gfh-property-action-delete">
-                      <Icon path={icons.trash} size={12} /> Delete
-                    </button>
-                  </div>
-                </div>
-              </article>
-            ))}
+              ))}
+
+              <button 
+                className="gfh-page-btn" 
+                onClick={() => paginate(currentPage + 1)} 
+                disabled={currentPage === totalPages}
+              >
+                Next
+              </button>
+            </div>
           </div>
         )}
       </div>
