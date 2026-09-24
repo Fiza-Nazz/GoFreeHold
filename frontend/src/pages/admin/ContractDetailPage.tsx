@@ -4,6 +4,7 @@ import api from '../../api/axios'
 import ChequeDetails, { type ChequeDetailsData } from '../../components/gfh/ChequeDetails'
 import { formatDate } from '../../utils/formatDate'
 import { THEME, Icon, CornerBrackets, portalPageCss, heroStyle, panelStyle, thStyle, tdStyle, ghostBtnStyle } from '../../components/gfh/adminTheme'
+import VacateSettlementModal from '../../components/gfh/VacateSettlementModal'
 
 interface ContractDetail {
   id: number
@@ -149,6 +150,13 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
   useEffect(() => {
     if (id) fetchContract()
   }, [id])
+
+  useEffect(() => {
+    const sp = new URLSearchParams(location.search)
+    if (sp.get('action') === 'vacate' && contract?.status === 'active') {
+      setVacateModalOpen(true)
+    }
+  }, [location.search, contract?.status])
 
   // Close action menus when clicking anywhere outside
   useEffect(() => {
@@ -954,31 +962,52 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
                 <span>Other Payments</span>
               </button>
 
-              <button
-                type="button"
-                onClick={() => setVacateModalOpen(true)}
-                style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: 6,
-                  padding: '9px 18px',
-                  borderRadius: 8,
-                  border: 'none',
-                  background: '#DC2626',
-                  color: '#FFFFFF',
-                  fontSize: 13,
-                  fontWeight: 700,
-                  cursor: 'pointer',
-                  boxShadow: '0 1px 2px rgba(220, 38, 38, 0.2)',
-                }}
-              >
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-                  <polyline points="16 17 21 12 16 7" />
-                  <line x1="21" y1="12" x2="9" y2="12" />
-                </svg>
-                <span>Vacate</span>
-              </button>
+              {contract.status === 'active' ? (
+                <button
+                  type="button"
+                  onClick={() => setVacateModalOpen(true)}
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: 6,
+                    padding: '9px 18px',
+                    borderRadius: 8,
+                    border: 'none',
+                    background: '#DC2626',
+                    color: '#FFFFFF',
+                    fontSize: 13,
+                    fontWeight: 700,
+                    cursor: 'pointer',
+                    boxShadow: '0 1px 2px rgba(220, 38, 38, 0.2)',
+                  }}
+                  title="Start end contract, record settlement, and free unit"
+                >
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                    <polyline points="16 17 21 12 16 7" />
+                    <line x1="21" y1="12" x2="9" y2="12" />
+                  </svg>
+                  <span>Vacate / End Contract</span>
+                </button>
+              ) : (
+                <span
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: 6,
+                    padding: '8px 14px',
+                    borderRadius: 8,
+                    background: '#FEF2F2',
+                    border: '1px solid #FECACA',
+                    color: '#991B1B',
+                    fontSize: 12,
+                    fontWeight: 800,
+                    textTransform: 'uppercase',
+                  }}
+                >
+                  Status: {contract.status}
+                </span>
+              )}
             </div>
           </div>
 
@@ -2678,22 +2707,14 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
         </div>
       )}
 
-      {/* VACATE MODAL */}
-      {vacateModalOpen && (
-        <div style={{ position: 'fixed', inset: 0, background: 'rgba(15,23,42,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
-          <div style={{ background: '#fff', padding: 28, width: 420, borderRadius: 16, position: 'relative', boxShadow: '0 20px 50px rgba(15,23,42,0.25)' }}>
-            <h3 style={{ margin: '0 0 8px 0', color: '#991b1b', fontSize: 17, fontWeight: 800 }}>Vacate Contract</h3>
-            <p style={{ fontSize: 13, color: '#334155', fontWeight: 600, marginBottom: 14 }}>This will vacate the contract and set unit back to AVAILABLE.</p>
-            <form onSubmit={handleVacateSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-              <textarea placeholder="Reason / notes..." value={vacateNote} onChange={e => setVacateNote(e.target.value)} rows={3} style={{ width: '100%', padding: '10px 12px', borderRadius: 8, border: '1px solid #94a3b8', background: '#ffffff', color: '#0f172a', fontWeight: 600, fontSize: 14, boxSizing: 'border-box', resize: 'vertical' }} />
-              <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 10 }}>
-                <button type="button" onClick={() => setVacateModalOpen(false)} style={{ padding: '9px 16px', borderRadius: 8, border: '1px solid #cbd5e1', background: '#f1f5f9', color: '#0f172a', fontWeight: 700, fontSize: 13, cursor: 'pointer' }}>Cancel</button>
-                <button type="submit" style={{ padding: '9px 18px', borderRadius: 8, background: '#991b1b', color: '#fff', border: 'none', fontWeight: 700, fontSize: 13, cursor: 'pointer' }}>Confirm Vacate</button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
+      {/* VACATE & MOVE-OUT SETTLEMENT MODAL */}
+      <VacateSettlementModal
+        isOpen={vacateModalOpen}
+        onClose={() => setVacateModalOpen(false)}
+        contract={contract}
+        basePath={effectiveBasePath}
+        onSuccess={fetchContract}
+      />
 
       {/* ADD PAYMENT MODAL */}
       {paymentModalOpen && (

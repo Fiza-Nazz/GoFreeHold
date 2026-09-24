@@ -6,6 +6,7 @@ import { formatDate } from '../../utils/formatDate'
 import { THEME, Icon, ICONS, CornerBrackets, portalPageCss, heroStyle, panelStyle, thStyle, tdStyle, ghostBtnStyle } from '../../components/gfh/adminTheme'
 import TenancyContractTemplate, { type ContractData } from '../../components/gfh/TenancyContractTemplate'
 import { generateContractPDF } from '../../utils/generateContractPDF'
+import VacateSettlementModal from '../../components/gfh/VacateSettlementModal'
 
 interface Contract {
   id: number
@@ -1255,76 +1256,14 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
         </div>
       )}
 
-      {/* Modern Rounded Modal: Vacate Contract */}
-      {vacateContract && (
-        <div style={{
-          position: 'fixed', inset: 0,
-          backgroundColor: 'rgba(15, 23, 42, 0.45)',
-          backdropFilter: 'blur(3px)',
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          zIndex: 1000,
-          padding: 16,
-        }}>
-          <div style={{
-            width: '100%',
-            maxWidth: 420,
-            padding: '24px 28px',
-            backgroundColor: '#FFFFFF',
-            borderRadius: 16,
-            boxShadow: '0 20px 45px -10px rgba(15, 23, 42, 0.22)',
-            border: '1px solid #E2E8F0',
-          }}>
-            <h2 style={{ fontSize: 18, fontWeight: 800, color: '#D97706', margin: 0 }}>
-              Vacate Contract
-            </h2>
-            <p style={{ fontSize: 13, color: '#64748B', margin: '4px 0 14px' }}>
-              Unit will be marked as AVAILABLE upon vacating.
-            </p>
-
-            <textarea
-              rows={3}
-              placeholder="Reason / remarks for vacating..."
-              value={vacateNote}
-              onChange={e => setVacateNote(e.target.value)}
-              className="gfh-contract-filter"
-              style={{ width: '100%', marginBottom: 14, resize: 'vertical' }}
-            />
-
-            <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end' }}>
-              <button
-                type="button"
-                onClick={() => setVacateContract(null)}
-                style={{
-                  padding: '8px 16px',
-                  borderRadius: 8,
-                  border: '1px solid #E2E8F0',
-                  background: '#F8FAFC',
-                  color: '#475569',
-                  fontWeight: 600,
-                  cursor: 'pointer',
-                }}
-              >
-                Cancel
-              </button>
-              <button
-                type="button"
-                onClick={handleVacate}
-                style={{
-                  padding: '8px 18px',
-                  borderRadius: 8,
-                  border: 'none',
-                  background: '#D97706',
-                  color: '#FFFFFF',
-                  fontWeight: 700,
-                  cursor: 'pointer',
-                }}
-              >
-                Confirm Vacate
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Modern Rounded Modal: Vacate Contract & Settlement */}
+      <VacateSettlementModal
+        isOpen={Boolean(vacateContract)}
+        onClose={() => setVacateContract(null)}
+        contract={vacateContract}
+        basePath={effectiveBasePath}
+        onSuccess={fetchAll}
+      />
     </div>
   )
 }

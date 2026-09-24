@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { useLocation } from 'react-router-dom'
 import api from '../../api/axios'
 import { formatDate } from '../../utils/formatDate'
 import { THEME, Icon, ICONS, CornerBrackets, portalPageCss, heroStyle, panelStyle, thStyle, tdStyle, ghostBtnStyle } from '../../components/gfh/adminTheme'
@@ -77,6 +78,7 @@ const emptyForm = () => ({
 })
 
 export default function SettlementWizard() {
+  const location = useLocation()
   const basePath = typeof window !== 'undefined' && window.location.pathname.startsWith('/owner') ? '/owner' : '/admin'
   const [settlements, setSettlements] = useState<Settlement[]>([])
   const [owners, setOwners] = useState<Owner[]>([])
@@ -89,6 +91,12 @@ export default function SettlementWizard() {
   const [payForm, setPayForm] = useState({ amount: '', payment_method: 'bank_transfer', payment_date: new Date().toISOString().split('T')[0] })
   const [busy, setBusy] = useState(false)
   const [message, setMessage] = useState('')
+
+  useEffect(() => {
+    if (location.state?.message) {
+      setMessage(location.state.message)
+    }
+  }, [location.state])
 
   useEffect(() => {
     fetchSettlements()

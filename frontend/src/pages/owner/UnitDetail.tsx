@@ -286,6 +286,23 @@ export default function UnitDetailPage() {
             </Link>
           )}
 
+          {activeContract && (
+            <Link
+              to={`/owner/contracts/${activeContract.id}?action=vacate`}
+              className="gfh-portal-btn"
+              style={{
+                ...ghostBtnStyle,
+                background: '#DC2626',
+                color: '#FFFFFF',
+                boxShadow: '0 2px 8px rgba(220, 38, 38, 0.25)',
+              }}
+              title="Start vacate and move-out settlement process for this unit"
+            >
+              <Icon path={ICONS.door} size={15} />
+              Vacate / End Contract
+            </Link>
+          )}
+
           <Link
             to="/owner/complaints"
             className="gfh-portal-btn"
