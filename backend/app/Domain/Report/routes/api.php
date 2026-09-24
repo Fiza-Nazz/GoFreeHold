@@ -24,8 +24,8 @@ Route::middleware(['auth:sanctum', 'role:admin'])->prefix('admin')->group(functi
     Route::get('/settings/notifications/logs', [NotificationSettingController::class, 'logs']);
     Route::match(['get', 'post', 'put'], '/settings/notifications/run-scheduler', [NotificationSettingController::class, 'runScheduler']);
     Route::match(['get', 'post', 'put'], '/settings/notifications/trigger/{key}', [NotificationSettingController::class, 'trigger']);
-    Route::put('/settings/notifications/{notificationSetting}', [NotificationSettingController::class, 'update']);
     Route::get('/settings/notifications/mail-diagnostic', [NotificationSettingController::class, 'mailDiagnostic']);
+    Route::put('/settings/notifications/{notificationSetting}', [NotificationSettingController::class, 'update']);
 });
 
 Route::middleware(['auth:sanctum', 'role:owner,cashier,accountant'])->prefix('owner')->group(function () {
@@ -40,6 +40,6 @@ Route::middleware(['auth:sanctum', 'role:owner,cashier,accountant'])->prefix('ow
     Route::get('/settings/notifications/logs', [NotificationSettingController::class, 'logs']);
     Route::match(['get', 'post', 'put'], '/settings/notifications/run-scheduler', [NotificationSettingController::class, 'runScheduler']);
     Route::match(['get', 'post', 'put'], '/settings/notifications/trigger/{key}', [NotificationSettingController::class, 'trigger']);
-    Route::put('/settings/notifications/{notificationSetting}', [NotificationSettingController::class, 'update']);
     Route::get('/settings/notifications/mail-diagnostic', [NotificationSettingController::class, 'mailDiagnostic']);
+    Route::put('/settings/notifications/{notificationSetting}', [NotificationSettingController::class, 'update']);
 });
