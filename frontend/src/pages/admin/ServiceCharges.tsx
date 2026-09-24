@@ -123,6 +123,17 @@ export default function ServiceCharges() {
     })
   }
 
+  const handleResetFilter = () => {
+    setFilterOwner('all')
+    setFilterProperty('all')
+    setFilterPeriod('all')
+    setAppliedFilters({
+      owner: 'all',
+      property: 'all',
+      period: 'all',
+    })
+  }
+
   // Filtered properties based on selected owner
   const filteredProperties = useMemo(() => {
     return properties.filter(p => {
@@ -303,89 +314,96 @@ export default function ServiceCharges() {
       <style>{portalPageCss}</style>
 
       {/* Top Header */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20, flexWrap: 'wrap', gap: 12 }}>
-        <div>
-          <h1 style={{ fontSize: 24, fontWeight: 700, color: '#0f172a', margin: 0, letterSpacing: '-0.3px' }}>
-            Service charge analytics
-          </h1>
+      <div style={{ marginBottom: 20 }}>
+        <div style={{ fontSize: 12, color: '#64748b', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: 4 }}>
+          Financial Management &bull; Service Charges
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <button
-            type="button"
-            onClick={() => setIsQuartersOpen(true)}
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: 6,
-              padding: '6px 14px',
-              fontSize: 12.5,
-              fontWeight: 600,
-              borderRadius: 4,
-              border: '1px solid #f59e0b',
-              background: '#fffbeb',
-              color: '#d97706',
-              cursor: 'pointer',
-              transition: 'all 0.15s ease',
-            }}
-          >
-            Service charge quarters
-          </button>
-          <button
-            type="button"
-            onClick={() => navigate(-1)}
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: 6,
-              padding: '6px 14px',
-              fontSize: 12.5,
-              fontWeight: 600,
-              borderRadius: 4,
-              border: '1px solid #cbd5e1',
-              background: '#ffffff',
-              color: '#475569',
-              cursor: 'pointer',
-            }}
-          >
-            <Icon path={icons.arrowLeft} size={13} />
-            Back
-          </button>
-          <button
-            type="button"
-            onClick={() => setIsAddModalOpen(true)}
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: 6,
-              padding: '6px 14px',
-              fontSize: 12.5,
-              fontWeight: 600,
-              borderRadius: 4,
-              border: 'none',
-              background: '#065f46',
-              color: '#ffffff',
-              cursor: 'pointer',
-            }}
-          >
-            <Icon path={icons.plus} size={13} />
-            Add Charge
-          </button>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12 }}>
+          <div>
+            <h1 style={{ fontSize: 24, fontWeight: 700, color: '#0f172a', margin: 0, letterSpacing: '-0.3px' }}>
+              Service charge analytics
+            </h1>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <button
+              type="button"
+              onClick={() => setIsQuartersOpen(true)}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 6,
+                padding: '7px 16px',
+                fontSize: 12.5,
+                fontWeight: 600,
+                borderRadius: 4,
+                border: '1px solid #f59e0b',
+                background: '#fffbeb',
+                color: '#d97706',
+                cursor: 'pointer',
+                transition: 'all 0.15s ease',
+              }}
+            >
+              <Icon path={icons.calendar} size={14} />
+              Service charge quarters
+            </button>
+            <button
+              type="button"
+              onClick={() => navigate(-1)}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 6,
+                padding: '7px 14px',
+                fontSize: 12.5,
+                fontWeight: 600,
+                borderRadius: 4,
+                border: '1px solid #cbd5e1',
+                background: '#ffffff',
+                color: '#475569',
+                cursor: 'pointer',
+              }}
+            >
+              <Icon path={icons.arrowLeft} size={13} />
+              Back
+            </button>
+            <button
+              type="button"
+              onClick={() => setIsAddModalOpen(true)}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 6,
+                padding: '7px 16px',
+                fontSize: 12.5,
+                fontWeight: 600,
+                borderRadius: 4,
+                border: 'none',
+                background: '#065f46',
+                color: '#ffffff',
+                cursor: 'pointer',
+                boxShadow: '0 1px 2px rgba(6, 95, 70, 0.25)',
+              }}
+            >
+              <Icon path={icons.plus} size={13} />
+              Add Service Charge
+            </button>
+          </div>
         </div>
       </div>
 
       {/* Filter Card */}
-      <div style={{ background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: 4, padding: '16px 20px', marginBottom: 16, boxShadow: '0 1px 3px rgba(0,0,0,0.03)' }}>
-        <form onSubmit={handleApplyFilter} style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr)) 120px', gap: 16, alignItems: 'flex-end' }}>
+      <div style={{ background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: 6, padding: '16px 20px', marginBottom: 18, boxShadow: '0 1px 3px rgba(0,0,0,0.03)' }}>
+        <form onSubmit={handleApplyFilter} style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr)) 180px', gap: 16, alignItems: 'flex-end' }}>
           <div>
-            <label style={{ display: 'block', fontSize: 12.5, fontWeight: 600, color: '#475569', marginBottom: 6 }}>
+            <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#475569', marginBottom: 6 }}>
               Owner
             </label>
             <select
               value={filterOwner}
               onChange={e => setFilterOwner(e.target.value)}
-              style={{ width: '100%', padding: '7px 10px', fontSize: 13, borderRadius: 4, border: '1px solid #cbd5e1', background: '#fff', color: '#0f172a' }}
+              style={{ width: '100%', height: 38, padding: '7px 10px', fontSize: 13, borderRadius: 4, border: '1px solid #cbd5e1', background: '#fff', color: '#0f172a' }}
             >
-              <option value="all">All</option>
+              <option value="all">All Owners</option>
               {owners.map(o => (
                 <option key={o.id} value={String(o.id)}>{o.name}</option>
               ))}
@@ -393,15 +411,15 @@ export default function ServiceCharges() {
           </div>
 
           <div>
-            <label style={{ display: 'block', fontSize: 12.5, fontWeight: 600, color: '#475569', marginBottom: 6 }}>
+            <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#475569', marginBottom: 6 }}>
               Property
             </label>
             <select
               value={filterProperty}
               onChange={e => setFilterProperty(e.target.value)}
-              style={{ width: '100%', padding: '7px 10px', fontSize: 13, borderRadius: 4, border: '1px solid #cbd5e1', background: '#fff', color: '#0f172a' }}
+              style={{ width: '100%', height: 38, padding: '7px 10px', fontSize: 13, borderRadius: 4, border: '1px solid #cbd5e1', background: '#fff', color: '#0f172a' }}
             >
-              <option value="all">All</option>
+              <option value="all">All Properties</option>
               {properties.map(p => (
                 <option key={p.id} value={String(p.id)}>{p.name}</option>
               ))}
@@ -409,25 +427,26 @@ export default function ServiceCharges() {
           </div>
 
           <div>
-            <label style={{ display: 'block', fontSize: 12.5, fontWeight: 600, color: '#475569', marginBottom: 6 }}>
+            <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#475569', marginBottom: 6 }}>
               Period
             </label>
             <select
               value={filterPeriod}
               onChange={e => setFilterPeriod(e.target.value)}
-              style={{ width: '100%', padding: '7px 10px', fontSize: 13, borderRadius: 4, border: '1px solid #cbd5e1', background: '#fff', color: '#0f172a' }}
+              style={{ width: '100%', height: 38, padding: '7px 10px', fontSize: 13, borderRadius: 4, border: '1px solid #cbd5e1', background: '#fff', color: '#0f172a' }}
             >
-              <option value="all">All</option>
+              <option value="all">All Periods</option>
               <option value="2026">Year 2026</option>
               <option value="2025">Year 2025</option>
             </select>
           </div>
 
-          <div>
+          <div style={{ display: 'flex', gap: 8 }}>
             <button
               type="submit"
               style={{
-                width: '100%',
+                flex: 1,
+                height: 38,
                 padding: '8px 16px',
                 fontSize: 13,
                 fontWeight: 700,
@@ -441,6 +460,23 @@ export default function ServiceCharges() {
             >
               Filter
             </button>
+            <button
+              type="button"
+              onClick={handleResetFilter}
+              style={{
+                height: 38,
+                padding: '8px 14px',
+                fontSize: 13,
+                fontWeight: 600,
+                borderRadius: 4,
+                border: '1px solid #cbd5e1',
+                background: '#ffffff',
+                color: '#475569',
+                cursor: 'pointer',
+              }}
+            >
+              Reset
+            </button>
           </div>
         </form>
       </div>
@@ -451,68 +487,83 @@ export default function ServiceCharges() {
         border: '1px solid #fef08a',
         borderLeft: '4px solid #f59e0b',
         borderRadius: 4,
-        padding: '10px 16px',
+        padding: '12px 18px',
         marginBottom: 20,
         display: 'flex',
         alignItems: 'center',
         gap: 10,
+        boxShadow: '0 1px 2px rgba(0,0,0,0.02)',
       }}>
+        <div style={{ color: '#d97706', display: 'flex', alignItems: 'center' }}>
+          <Icon path={icons.alert} size={18} />
+        </div>
         <span style={{ fontSize: 13, color: '#b45309', fontWeight: 600 }}>
           {unitsMissingEstimate} Units missing service charge estimate
+        </span>
+        <span style={{ fontSize: 11.5, color: '#92400e', marginLeft: 4 }}>
+          &mdash; SqFt unit size needed for automated rate calculation
         </span>
       </div>
 
       {/* 4 Summary KPI Cards */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 16, marginBottom: 24 }}>
         {/* Card 1: Approx Yearly */}
-        <div style={{ background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: 4, padding: '16px 18px', display: 'flex', alignItems: 'center', gap: 14, boxShadow: '0 1px 2px rgba(0,0,0,0.03)' }}>
-          <div style={{ width: 44, height: 44, borderRadius: 4, background: '#06b6d4', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff' }}>
+        <div style={{ background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: 6, padding: '16px 18px', display: 'flex', alignItems: 'center', gap: 14, boxShadow: '0 1px 3px rgba(0,0,0,0.03)' }}>
+          <div style={{ width: 44, height: 44, borderRadius: 6, background: '#06b6d4', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff' }}>
             <Icon path={icons.calendar} size={20} />
           </div>
           <div>
             <div style={{ fontSize: 12, color: '#64748b', fontWeight: 600 }}>Approx yearly</div>
             <div style={{ fontSize: 18, fontWeight: 800, color: '#0f172a', marginTop: 2 }}>
+              <span style={{ fontSize: 12.5, fontWeight: 700, color: '#0f172a', marginRight: 3 }}>AED</span>
               {approxYearlyTotal.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
             </div>
+            <div style={{ fontSize: 11, color: '#64748b', marginTop: 2 }}>Annualized projection</div>
           </div>
         </div>
 
         {/* Card 2: Approx Quarter */}
-        <div style={{ background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: 4, padding: '16px 18px', display: 'flex', alignItems: 'center', gap: 14, boxShadow: '0 1px 2px rgba(0,0,0,0.03)' }}>
-          <div style={{ width: 44, height: 44, borderRadius: 4, background: '#475569', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff' }}>
+        <div style={{ background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: 6, padding: '16px 18px', display: 'flex', alignItems: 'center', gap: 14, boxShadow: '0 1px 3px rgba(0,0,0,0.03)' }}>
+          <div style={{ width: 44, height: 44, borderRadius: 6, background: '#475569', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff' }}>
             <Icon path={icons.calendar} size={20} />
           </div>
           <div>
             <div style={{ fontSize: 12, color: '#64748b', fontWeight: 600 }}>Approx quarter</div>
             <div style={{ fontSize: 18, fontWeight: 800, color: '#0f172a', marginTop: 2 }}>
+              <span style={{ fontSize: 12.5, fontWeight: 700, color: '#0f172a', marginRight: 3 }}>AED</span>
               {approxQuarterTotal.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
             </div>
+            <div style={{ fontSize: 11, color: '#64748b', marginTop: 2 }}>Quarterly cycle baseline</div>
           </div>
         </div>
 
         {/* Card 3: Paid */}
-        <div style={{ background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: 4, padding: '16px 18px', display: 'flex', alignItems: 'center', gap: 14, boxShadow: '0 1px 2px rgba(0,0,0,0.03)' }}>
-          <div style={{ width: 44, height: 44, borderRadius: 4, background: '#16a34a', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff' }}>
+        <div style={{ background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: 6, padding: '16px 18px', display: 'flex', alignItems: 'center', gap: 14, boxShadow: '0 1px 3px rgba(0,0,0,0.03)' }}>
+          <div style={{ width: 44, height: 44, borderRadius: 6, background: '#16a34a', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff' }}>
             <Icon path={icons.check} size={20} />
           </div>
           <div>
             <div style={{ fontSize: 12, color: '#64748b', fontWeight: 600 }}>Paid</div>
             <div style={{ fontSize: 18, fontWeight: 800, color: '#0f172a', marginTop: 2 }}>
+              <span style={{ fontSize: 12.5, fontWeight: 700, color: '#0f172a', marginRight: 3 }}>AED</span>
               {totalPaid.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
             </div>
+            <div style={{ fontSize: 11, color: '#065f46', fontWeight: 600, marginTop: 2 }}>{donutData.paidPct}% collected</div>
           </div>
         </div>
 
         {/* Card 4: Outstanding */}
-        <div style={{ background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: 4, padding: '16px 18px', display: 'flex', alignItems: 'center', gap: 14, boxShadow: '0 1px 2px rgba(0,0,0,0.03)' }}>
-          <div style={{ width: 44, height: 44, borderRadius: 4, background: '#dc2626', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff', fontWeight: 900, fontSize: 20 }}>
+        <div style={{ background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: 6, padding: '16px 18px', display: 'flex', alignItems: 'center', gap: 14, boxShadow: '0 1px 3px rgba(0,0,0,0.03)' }}>
+          <div style={{ width: 44, height: 44, borderRadius: 6, background: '#dc2626', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff', fontWeight: 900, fontSize: 20 }}>
             !
           </div>
           <div>
             <div style={{ fontSize: 12, color: '#64748b', fontWeight: 600 }}>Outstanding</div>
             <div style={{ fontSize: 18, fontWeight: 800, color: '#0f172a', marginTop: 2 }}>
+              <span style={{ fontSize: 12.5, fontWeight: 700, color: '#0f172a', marginRight: 3 }}>AED</span>
               {totalOutstanding.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
             </div>
+            <div style={{ fontSize: 11, color: '#b91c1c', fontWeight: 600, marginTop: 2 }}>{donutData.outPct}% pending</div>
           </div>
         </div>
       </div>
@@ -698,11 +749,29 @@ export default function ServiceCharges() {
 
             {/* Center Label */}
             <div style={{ position: 'absolute', textAlign: 'center' }}>
-              <div style={{ fontSize: 18, fontWeight: 800, color: '#0f172a' }}>
+              <div style={{ fontSize: 20, fontWeight: 800, color: '#0f172a' }}>
                 {donutData.paidPct}%
               </div>
-              <div style={{ fontSize: 10.5, color: '#10b981', fontWeight: 700 }}>
-                Paid
+              <div style={{ fontSize: 11, color: '#10b981', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                Collected
+              </div>
+            </div>
+          </div>
+
+          {/* Donut Metric Footer */}
+          <div style={{ marginTop: 14, paddingTop: 14, borderTop: '1px solid #f1f5f9', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+            <div style={{ background: '#f0fdf4', padding: '8px 12px', borderRadius: 4, border: '1px solid #dcfce7' }}>
+              <div style={{ fontSize: 11, color: '#065f46', fontWeight: 600 }}>Paid</div>
+              <div style={{ fontSize: 13, fontWeight: 800, color: '#065f46', marginTop: 2 }}>
+                <span style={{ fontSize: 11, fontWeight: 700, marginRight: 2 }}>AED</span>
+                {totalPaid.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+              </div>
+            </div>
+            <div style={{ background: '#fef2f2', padding: '8px 12px', borderRadius: 4, border: '1px solid #fee2e2' }}>
+              <div style={{ fontSize: 11, color: '#991b1b', fontWeight: 600 }}>Outstanding</div>
+              <div style={{ fontSize: 13, fontWeight: 800, color: '#991b1b', marginTop: 2 }}>
+                <span style={{ fontSize: 11, fontWeight: 700, marginRight: 2 }}>AED</span>
+                {totalOutstanding.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
               </div>
             </div>
           </div>
@@ -710,10 +779,37 @@ export default function ServiceCharges() {
       </div>
 
       {/* Property Breakdown Table */}
-      <div style={{ background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: 4, padding: '20px 22px', boxShadow: '0 1px 3px rgba(0,0,0,0.03)' }}>
-        <h3 style={{ fontSize: 14.5, fontWeight: 700, color: '#0f172a', margin: '0 0 16px 0', borderBottom: '1px solid #f1f5f9', paddingBottom: 10 }}>
-          Property breakdown
-        </h3>
+      <div style={{ background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: 6, padding: '20px 22px', boxShadow: '0 1px 3px rgba(0,0,0,0.03)' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16, borderBottom: '1px solid #f1f5f9', paddingBottom: 10 }}>
+          <div>
+            <h3 style={{ fontSize: 15, fontWeight: 700, color: '#0f172a', margin: 0 }}>
+              Property breakdown
+            </h3>
+            <div style={{ fontSize: 12, color: '#64748b', marginTop: 2 }}>
+              Aggregated collection metrics by property (click a property name to filter)
+            </div>
+          </div>
+          {appliedFilters.property !== 'all' && (
+            <button
+              type="button"
+              onClick={() => {
+                setFilterProperty('all')
+                setAppliedFilters(prev => ({ ...prev, property: 'all' }))
+              }}
+              style={{
+                fontSize: 12,
+                padding: '4px 10px',
+                borderRadius: 4,
+                border: '1px solid #cbd5e1',
+                background: '#f8fafc',
+                color: '#475569',
+                cursor: 'pointer',
+              }}
+            >
+              Clear Property Filter
+            </button>
+          )}
+        </div>
 
         {isLoading ? (
           <div style={{ textAlign: 'center', padding: 40 }}><span className="spinner" /></div>
@@ -724,13 +820,13 @@ export default function ServiceCharges() {
             <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12.5 }}>
               <thead>
                 <tr style={{ borderBottom: '1px solid #e2e8f0', background: '#f8fafc' }}>
-                  <th style={{ padding: '9px 12px', textAlign: 'left', fontWeight: 700, color: '#475569' }}>Property</th>
-                  <th style={{ padding: '9px 12px', textAlign: 'center', fontWeight: 700, color: '#475569' }}>Units</th>
-                  <th style={{ padding: '9px 12px', textAlign: 'right', fontWeight: 700, color: '#475569' }}>Approx monthly</th>
-                  <th style={{ padding: '9px 12px', textAlign: 'right', fontWeight: 700, color: '#475569' }}>Approx quarter</th>
-                  <th style={{ padding: '9px 12px', textAlign: 'right', fontWeight: 700, color: '#475569' }}>Billed</th>
-                  <th style={{ padding: '9px 12px', textAlign: 'right', fontWeight: 700, color: '#475569' }}>Paid</th>
-                  <th style={{ padding: '9px 12px', textAlign: 'right', fontWeight: 700, color: '#475569' }}>Outstanding</th>
+                  <th style={{ padding: '10px 12px', textAlign: 'left', fontWeight: 700, color: '#475569' }}>Property</th>
+                  <th style={{ padding: '10px 12px', textAlign: 'center', fontWeight: 700, color: '#475569' }}>Units</th>
+                  <th style={{ padding: '10px 12px', textAlign: 'right', fontWeight: 700, color: '#475569' }}>Approx monthly</th>
+                  <th style={{ padding: '10px 12px', textAlign: 'right', fontWeight: 700, color: '#475569' }}>Approx quarter</th>
+                  <th style={{ padding: '10px 12px', textAlign: 'right', fontWeight: 700, color: '#475569' }}>Billed</th>
+                  <th style={{ padding: '10px 12px', textAlign: 'right', fontWeight: 700, color: '#475569' }}>Paid</th>
+                  <th style={{ padding: '10px 12px', textAlign: 'right', fontWeight: 700, color: '#475569' }}>Outstanding</th>
                 </tr>
               </thead>
               <tbody>
@@ -743,7 +839,14 @@ export default function ServiceCharges() {
                       background: idx % 2 === 0 ? '#ffffff' : '#fafafa',
                     }}
                   >
-                    <td style={{ padding: '10px 12px', fontWeight: 600, color: '#0284c7' }}>
+                    <td
+                      style={{ padding: '10px 12px', fontWeight: 600, color: '#0284c7', cursor: 'pointer' }}
+                      title={`Click to filter by ${row.name}`}
+                      onClick={() => {
+                        setFilterProperty(String(row.id))
+                        setAppliedFilters(prev => ({ ...prev, property: String(row.id) }))
+                      }}
+                    >
                       {row.name}
                     </td>
                     <td style={{ padding: '10px 12px', textAlign: 'center', color: '#1e293b' }}>
@@ -767,6 +870,29 @@ export default function ServiceCharges() {
                   </tr>
                 ))}
               </tbody>
+              <tfoot>
+                <tr style={{ background: '#f8fafc', borderTop: '2px solid #cbd5e1', fontWeight: 800 }}>
+                  <td style={{ padding: '12px', color: '#0f172a' }}>Total Portfolio</td>
+                  <td style={{ padding: '12px', textAlign: 'center', color: '#0f172a' }}>
+                    {propertyBreakdown.reduce((s, p) => s + p.units, 0)}
+                  </td>
+                  <td style={{ padding: '12px', textAlign: 'right', color: '#0f172a' }}>
+                    {approxMonthlyTotal.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                  </td>
+                  <td style={{ padding: '12px', textAlign: 'right', color: '#0f172a' }}>
+                    {approxQuarterTotal.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                  </td>
+                  <td style={{ padding: '12px', textAlign: 'right', color: '#0284c7' }}>
+                    {totalBilled.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                  </td>
+                  <td style={{ padding: '12px', textAlign: 'right', color: '#065f46' }}>
+                    {totalPaid.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                  </td>
+                  <td style={{ padding: '12px', textAlign: 'right', color: '#dc2626' }}>
+                    {totalOutstanding.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                  </td>
+                </tr>
+              </tfoot>
             </table>
           </div>
         )}
@@ -786,26 +912,30 @@ export default function ServiceCharges() {
 
           <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
             {/* Status tabs */}
-            <div style={{ display: 'flex', background: '#f1f5f9', borderRadius: 4, padding: 2 }}>
-              {(['all', 'pending', 'paid', 'waived'] as const).map(tab => (
+            <div style={{ display: 'flex', background: '#f1f5f9', borderRadius: 4, padding: 3, gap: 2 }}>
+              {[
+                { id: 'all', label: `All (${filteredCharges.length})` },
+                { id: 'pending', label: `Pending (${filteredCharges.filter(c => c.status === 'pending').length})` },
+                { id: 'paid', label: `Paid (${filteredCharges.filter(c => c.status === 'paid').length})` },
+                { id: 'waived', label: `Waived (${filteredCharges.filter(c => c.status === 'waived').length})` },
+              ].map(tab => (
                 <button
-                  key={tab}
+                  key={tab.id}
                   type="button"
-                  onClick={() => setStatusTab(tab)}
+                  onClick={() => setStatusTab(tab.id as any)}
                   style={{
                     border: 'none',
-                    background: statusTab === tab ? '#ffffff' : 'transparent',
-                    color: statusTab === tab ? '#0f172a' : '#64748b',
-                    fontWeight: statusTab === tab ? 700 : 500,
+                    background: statusTab === tab.id ? '#ffffff' : 'transparent',
+                    color: statusTab === tab.id ? '#0f172a' : '#64748b',
+                    fontWeight: statusTab === tab.id ? 700 : 500,
                     fontSize: 12,
                     padding: '5px 12px',
                     borderRadius: 3,
                     cursor: 'pointer',
-                    boxShadow: statusTab === tab ? '0 1px 2px rgba(0,0,0,0.05)' : 'none',
-                    textTransform: 'capitalize',
+                    boxShadow: statusTab === tab.id ? '0 1px 2px rgba(0,0,0,0.08)' : 'none',
                   }}
                 >
-                  {tab}
+                  {tab.label}
                 </button>
               ))}
             </div>
@@ -813,10 +943,10 @@ export default function ServiceCharges() {
             {/* Search */}
             <input
               type="text"
-              placeholder="Search unit, property, notes..."
+              placeholder="Search by unit, property, notes..."
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
-              style={{ padding: '6px 12px', fontSize: 12.5, borderRadius: 4, border: '1px solid #cbd5e1', width: 220 }}
+              style={{ height: 34, padding: '6px 12px', fontSize: 12.5, borderRadius: 4, border: '1px solid #cbd5e1', width: 240 }}
             />
           </div>
         </div>
