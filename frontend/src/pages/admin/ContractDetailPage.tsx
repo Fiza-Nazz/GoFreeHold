@@ -692,9 +692,14 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
 
   if (!contract) {
     return (
-      <div className="gfh-portal-page" style={{ padding: 40, textAlign: 'center' }}>
-        <h2>Contract Not Found</h2>
-        <button onClick={() => navigate(`${effectiveBasePath}/contracts`)} className="gfh-portal-btn" style={ghostBtnStyle}>
+      <div className="gfh-portal-page" style={{ padding: '60px 20px', textAlign: 'center' }}>
+        <h2 style={{ color: '#0f172a', fontSize: '22px', fontWeight: 700, marginBottom: 10 }}>
+          Contract Not Found or Access Restricted
+        </h2>
+        <p style={{ color: '#64748b', fontSize: '14px', maxWidth: 480, margin: '0 auto 24px' }}>
+          This contract either does not exist or belongs to another owner account. Please select a contract from your active contracts list.
+        </p>
+        <button onClick={() => navigate(`${effectiveBasePath}/contracts`)} className="gfh-portal-btn" style={{ ...ghostBtnStyle, margin: '0 auto' }}>
           Back to Contracts
         </button>
       </div>
