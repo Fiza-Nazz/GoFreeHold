@@ -14,6 +14,9 @@ interface Unit {
   size: number
   furnished?: boolean
   price: number
+  monthly_service_charge?: number | string
+  quarterly_service_charge?: number | string
+  yearly_service_charge?: number | string
   status: 'AVAILABLE' | 'BOOKED' | 'OCCUPIED' | 'SOLD'
   property?: { id: number; name: string }
   propertyName?: string
@@ -538,6 +541,7 @@ export default function OwnerUnits() {
                     <div>Property: <strong style={{ color: '#0F766E', fontWeight: 700 }}>{getPropertyName(unit)}</strong></div>
                     <div>Type: <strong style={{ color: '#0F172A', fontWeight: 600 }}>{unit.type ? unit.type.charAt(0).toUpperCase() + unit.type.slice(1) : 'Apartment'} {unit.floor ? `(Floor ${unit.floor})` : ''}</strong></div>
                     <div>Price: <strong style={{ color: '#065F46', fontWeight: 800 }}>AED {Number(unit.price).toLocaleString()}</strong></div>
+                    <div>Service Charge: <strong style={{ color: '#0284C7', fontWeight: 700 }}>AED {Number(unit.monthly_service_charge || 0).toLocaleString()} / mo</strong> <span style={{ fontSize: 11, color: '#64748B', fontWeight: 500 }}>(Q: AED {(Number(unit.monthly_service_charge || 0) * 3).toLocaleString()})</span></div>
                   </div>
 
                   {/* Status Change Dropdown & Details link */}

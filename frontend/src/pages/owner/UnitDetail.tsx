@@ -55,6 +55,9 @@ interface UnitDetail {
   size: number | string | null
   furnished: boolean
   price: number | string
+  monthly_service_charge?: number | string | null
+  quarterly_service_charge?: number | string | null
+  yearly_service_charge?: number | string | null
   status: string
   dhewa_no?: string | null
   category?: string | null
@@ -75,6 +78,7 @@ const LOCAL_ICONS = {
   layers: 'M12 2L2 7l10 5 10-5-10-5z M2 17l10 5 10-5 M2 12l10 5 10-5',
   checkCircle: 'M22 11.08V12a10 10 0 1 1-5.93-9.14 M22 4L12 14.01l-3-3',
   clock: 'M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20z M12 6v6l4 2',
+  bolt: 'M13 10V3L4 14h7v7l9-11h-7z',
 }
 
 function formatDate(dateStr?: string | null): string {
@@ -495,6 +499,40 @@ export default function UnitDetailPage() {
                 </div>
                 <div style={{ fontSize: 12.5, fontWeight: 600, color: '#64748B', marginTop: 4 }}>
                   {unit.dhewa_no ? `DEWA: ${unit.dhewa_no}` : (unit.category ? `Category: ${unit.category}` : 'Standard residential')}
+                </div>
+              </div>
+            </div>
+
+            {/* Card 5: Service Charge & Maintenance Cost */}
+            <div
+              className="gfh-portal-stat"
+              style={{
+                background: '#FFFFFF',
+                borderRadius: 14,
+                padding: '20px 22px',
+                border: '1px solid #E2E8F0',
+                boxShadow: '0 1px 3px rgba(16,24,40,0.04)',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'space-between',
+                minHeight: 124,
+                animationDelay: '0.2s',
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
+                <div style={{ width: 42, height: 42, borderRadius: 10, background: '#F0F9FF', color: '#0284C7', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <Icon path={LOCAL_ICONS.bolt} size={20} />
+                </div>
+                <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.4px', textTransform: 'uppercase', background: '#F0F9FF', color: '#0284C7', border: '1px solid #BAE6FD', padding: '3px 9px', borderRadius: 999 }}>
+                  SERVICE CHARGE
+                </span>
+              </div>
+              <div>
+                <div style={{ fontSize: 24, fontWeight: 800, color: '#0F172A', lineHeight: 1.15, letterSpacing: '-0.02em' }}>
+                  AED {Number(unit.monthly_service_charge || 0).toLocaleString()} <span style={{ fontSize: 13, fontWeight: 600, color: '#64748B' }}>/ MO</span>
+                </div>
+                <div style={{ fontSize: 12, fontWeight: 600, color: '#0284C7', marginTop: 4 }}>
+                  Quarterly: AED {(Number(unit.monthly_service_charge || 0) * 3).toLocaleString()} • Yearly: AED {(Number(unit.monthly_service_charge || 0) * 12).toLocaleString()}
                 </div>
               </div>
             </div>

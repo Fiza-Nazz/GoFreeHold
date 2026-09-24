@@ -26,12 +26,29 @@ class Unit extends Model
         'size',
         'furnished',
         'price',
+        'monthly_service_charge',
         'status',
     ];
 
     protected $casts = [
         'furnished' => 'boolean',
+        'monthly_service_charge' => 'decimal:2',
     ];
+
+    protected $appends = [
+        'quarterly_service_charge',
+        'yearly_service_charge',
+    ];
+
+    public function getQuarterlyServiceChargeAttribute(): float
+    {
+        return round((float) ($this->monthly_service_charge ?? 0) * 3, 2);
+    }
+
+    public function getYearlyServiceChargeAttribute(): float
+    {
+        return round((float) ($this->monthly_service_charge ?? 0) * 12, 2);
+    }
 
     public function property(): BelongsTo
     {

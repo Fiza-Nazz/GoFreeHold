@@ -15,6 +15,9 @@ interface Unit {
   size: number
   furnished?: boolean
   price: number
+  monthly_service_charge?: number | string
+  quarterly_service_charge?: number | string
+  yearly_service_charge?: number | string
   status: 'AVAILABLE' | 'BOOKED' | 'OCCUPIED' | 'SOLD'
   property?: { id: number, name: string }
   owner?: { id: number, name: string }
@@ -36,7 +39,7 @@ export default function UnitManagement() {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [formData, setFormData] = useState({
     property_id: '', number: '', dhewa_no: '', category: '', floor: 1,
-    type: 'apartment', size: '', furnished: false, price: '', status: 'AVAILABLE',
+    type: 'apartment', size: '', furnished: false, price: '', monthly_service_charge: '', status: 'AVAILABLE',
   })
 
   const [bookingUnit, setBookingUnit] = useState<Unit | null>(null)
@@ -82,7 +85,7 @@ export default function UnitManagement() {
       fetchUnits()
       setFormData({
         property_id: '', number: '', dhewa_no: '', category: '', floor: 1,
-        type: 'apartment', size: '', furnished: false, price: '', status: 'AVAILABLE',
+        type: 'apartment', size: '', furnished: false, price: '', monthly_service_charge: '', status: 'AVAILABLE',
       })
     } catch (err: any) {
       alert('Error creating unit')
@@ -532,6 +535,7 @@ export default function UnitManagement() {
                     <div>Property: <strong style={{ color: '#0F766E', fontWeight: 700 }}>{unit.property?.name || 'N/A'}</strong></div>
                     <div>Type: <strong style={{ color: '#0F172A', fontWeight: 600 }}>{unit.type ? unit.type.charAt(0).toUpperCase() + unit.type.slice(1) : '1BR'} {unit.floor ? `(Floor ${unit.floor})` : ''}</strong></div>
                     <div>Price: <strong style={{ color: '#065F46', fontWeight: 800 }}>AED {Number(unit.price).toLocaleString()}</strong></div>
+                    <div>Service Charge: <strong style={{ color: '#0284C7', fontWeight: 700 }}>AED {Number(unit.monthly_service_charge || 0).toLocaleString()} / mo</strong> <span style={{ fontSize: 11, color: '#64748B', fontWeight: 500 }}>(Q: AED {(Number(unit.monthly_service_charge || 0) * 3).toLocaleString()})</span></div>
                   </div>
 
                   {/* Actions Row matching reference layout */}
@@ -796,6 +800,29 @@ export default function UnitManagement() {
                     <option value="SOLD">SOLD</option>
                   </select>
                 </div>
+              </div>
+
+              <div>
+                <label style={{ fontSize: 12, fontWeight: 700, color: '#334155', display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
+                  <span>Monthly Service Charge (AED)</span>
+                  {Number(formData.monthly_service_charge) > 0 && (
+                    <span style={{ color: '#0F8A67', fontWeight: 600 }}>
+                      Quarterly: AED {(Number(formData.monthly_service_charge) * 3).toLocaleString()} | Yearly: AED {(Number(formData.monthly_service_charge) * 12).toLocaleString()}
+                    </span>
+                  )}
+                </label>
+                <input
+                  type="number"
+                  step="0.01"
+                  value={formData.monthly_service_charge}
+                  onChange={e => setFormData({ ...formData, monthly_service_charge: e.target.value })}
+                  placeholder="e.g. 250"
+                  className="gfh-unit-input"
+                  style={{ width: '100%', padding: '9px 12px' }}
+                />
+                <span style={{ fontSize: 11, color: '#64748B', marginTop: 4, display: 'block' }}>
+                  Calculation rule: Monthly × 3 = Quarterly | Monthly × 12 = Yearly
+                </span>
               </div>
 
               <div style={{ display: 'flex', gap: 10, marginTop: 14, justifyContent: 'flex-end' }}>

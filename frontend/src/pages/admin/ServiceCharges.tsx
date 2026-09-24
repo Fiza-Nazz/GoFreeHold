@@ -37,6 +37,9 @@ interface Unit {
   owner_id?: number
   size?: number | string
   price?: number | string
+  monthly_service_charge?: number | string
+  quarterly_service_charge?: number | string
+  yearly_service_charge?: number | string
   status?: string
 }
 
@@ -178,22 +181,29 @@ export default function ServiceCharges() {
       const outstanding = Math.max(0, billed - paid)
 
       const unitCount = Math.max(propUnits.length, Number(prop.total_units || 0), 1)
-      const sizeTotal = propUnits.reduce((sum, u) => sum + Number(u.size || 550), 0)
 
-      // Service charge estimate based on square footage rate or unit count or billed
+      // Paul Brit Simple Calculation Rule:
+      // 1. Each unit has a defined monthly cost of service charge (monthly_service_charge)
+      // 2. monthly X 3 = quarter charge
+      // 3. monthly X 12 = yearly cost (quarterly X 4)
+      const unitsWithSC = propUnits.filter(u => Number(u.monthly_service_charge || 0) > 0)
       let approxMonthly = 0
-      let approxQuarter = 0
-      let approxYearly = 0
 
-      if (billed > 0) {
-        approxYearly = billed
-        approxMonthly = approxYearly / 12
-        approxQuarter = approxYearly / 4
+      if (unitsWithSC.length > 0) {
+        const sumSC = unitsWithSC.reduce((sum, u) => sum + Number(u.monthly_service_charge || 0), 0)
+        const avgRate = sumSC / unitsWithSC.length
+        approxMonthly = sumSC + Math.max(0, unitCount - unitsWithSC.length) * avgRate
+      } else if (billed > 0) {
+        approxMonthly = billed / 12
       } else {
-        approxYearly = sizeTotal > 0 ? sizeTotal * 14.5 : unitCount * 6500
-        approxMonthly = approxYearly / 12
-        approxQuarter = approxYearly / 4
+        // Paul Brit standard default: AED 250 / unit / month
+        approxMonthly = unitCount * 250
       }
+
+      // monthly X 3 = quarter charge, likewise
+      const approxQuarter = approxMonthly * 3
+      // then calculate yearly cost
+      const approxYearly = approxMonthly * 12
 
       return {
         id: prop.id,
@@ -213,16 +223,16 @@ export default function ServiceCharges() {
   }, [filteredProperties, properties, units, filteredCharges])
 
   // Aggregated KPI Stats
-  const approxYearlyTotal = useMemo(() => propertyBreakdown.reduce((sum, p) => sum + p.approxYearly, 0), [propertyBreakdown])
-  const approxQuarterTotal = useMemo(() => approxYearlyTotal / 4, [approxYearlyTotal])
-  const approxMonthlyTotal = useMemo(() => approxYearlyTotal / 12, [approxYearlyTotal])
+  const approxMonthlyTotal = useMemo(() => propertyBreakdown.reduce((sum, p) => sum + p.approxMonthly, 0), [propertyBreakdown])
+  const approxQuarterTotal = useMemo(() => approxMonthlyTotal * 3, [approxMonthlyTotal])
+  const approxYearlyTotal = useMemo(() => approxMonthlyTotal * 12, [approxMonthlyTotal])
   const totalBilled = useMemo(() => propertyBreakdown.reduce((sum, p) => sum + p.billed, 0), [propertyBreakdown])
   const totalPaid = useMemo(() => propertyBreakdown.reduce((sum, p) => sum + p.paid, 0), [propertyBreakdown])
   const totalOutstanding = useMemo(() => Math.max(0, totalBilled - totalPaid), [totalBilled, totalPaid])
 
-  // Units Missing Estimate
+  // Units Missing Monthly Service Charge
   const unitsMissingEstimate = useMemo(() => {
-    return units.filter(u => !u.size || Number(u.size) <= 0).length
+    return units.filter(u => !u.monthly_service_charge || Number(u.monthly_service_charge) <= 0).length
   }, [units])
 
   // Monthly Billed vs Paid Data for Chart
@@ -498,10 +508,10 @@ export default function ServiceCharges() {
           <Icon path={icons.alert} size={18} />
         </div>
         <span style={{ fontSize: 13, color: '#b45309', fontWeight: 600 }}>
-          {unitsMissingEstimate} Units missing service charge estimate
+          {unitsMissingEstimate} Units missing monthly service charge
         </span>
         <span style={{ fontSize: 11.5, color: '#92400e', marginLeft: 4 }}>
-          &mdash; SqFt unit size needed for automated rate calculation
+          &mdash; Monthly cost of service charge field needed on units (Quarterly = Monthly &times; 3)
         </span>
       </div>
 
@@ -1151,11 +1161,38 @@ export default function ServiceCharges() {
                   />
                 </div>
                 <div>
-                  <label style={{ fontSize: 12, fontWeight: 600, color: '#475569', display: 'block', marginBottom: 4 }}>Unit ID</label>
+                  <label style={{ fontSize: 12, fontWeight: 600, color: '#475569', display: 'flex', justifyContent: 'space-between', marginBottom: 4 }}>
+                    <span>Unit ID</span>
+                    {(() => {
+                      const selUnit = units.find(u => String(u.id) === String(formData.unit_id))
+                      const mSC = Number(selUnit?.monthly_service_charge || 0)
+                      if (mSC > 0) {
+                        return (
+                          <span
+                            onClick={() => setFormData(prev => ({ ...prev, amount: String(mSC * 3) }))}
+                            style={{ color: '#0284c7', cursor: 'pointer', fontSize: 11, fontWeight: 600 }}
+                            title="Click to apply Quarterly amount (Monthly × 3)"
+                          >
+                            Q: AED {(mSC * 3).toLocaleString()} (apply)
+                          </span>
+                        )
+                      }
+                      return null
+                    })()}
+                  </label>
                   <input
                     type="number"
                     value={formData.unit_id}
-                    onChange={e => setFormData({ ...formData, unit_id: e.target.value })}
+                    onChange={e => {
+                      const val = e.target.value
+                      const selUnit = units.find(u => String(u.id) === String(val))
+                      const mSC = Number(selUnit?.monthly_service_charge || 0)
+                      setFormData(prev => ({
+                        ...prev,
+                        unit_id: val,
+                        amount: mSC > 0 && !prev.amount ? String(mSC * 3) : prev.amount
+                      }))
+                    }}
                     required
                     style={{ width: '100%', padding: '7px 10px', fontSize: 13, border: '1px solid #cbd5e1', borderRadius: 4 }}
                   />

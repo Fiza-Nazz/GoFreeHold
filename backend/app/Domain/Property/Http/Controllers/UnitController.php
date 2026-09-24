@@ -77,8 +77,9 @@ class UnitController extends Controller
             'type'      => 'string|max:50',
             'size'      => 'nullable|numeric',
             'furnished' => 'boolean',
-            'price'     => 'numeric|min:0',
-            'status'    => 'in:AVAILABLE,BOOKED,OCCUPIED,SOLD',
+            'price'                  => 'numeric|min:0',
+            'monthly_service_charge' => 'nullable|numeric|min:0',
+            'status'                 => 'in:AVAILABLE,BOOKED,OCCUPIED,SOLD',
         ]);
 
         $unit->update($validated);
