@@ -161,4 +161,21 @@ class UnitController extends Controller
             'data'    => ['unit' => $unit],
         ]);
     }
+
+    public function destroyForOwner(Request $request, Unit $unit): JsonResponse
+    {
+        $ownerId = app(\App\Domain\Auth\Services\OwnerContextResolver::class)->ownerId($request->user());
+
+        if ((int) $unit->owner_id !== $ownerId) {
+            abort(403, 'You do not own this unit.');
+        }
+
+        $this->propertyService->deleteUnit($unit);
+
+        return response()->json([
+            'status'  => 'success',
+            'message' => 'Unit deleted successfully',
+        ]);
+    }
 }
+

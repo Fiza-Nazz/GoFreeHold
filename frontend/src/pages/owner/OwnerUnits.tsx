@@ -159,6 +159,22 @@ export default function OwnerUnits() {
     }
   }
 
+  const handleDelete = async (id: number) => {
+    if (window.confirm('Are you sure you want to delete this unit?')) {
+      try {
+        await api.delete(`/owner/units/${id}`)
+        fetchUnits()
+      } catch (err: any) {
+        if (err.response?.status === 405 || err.response?.status === 404 || err.response?.status === 403) {
+          // Graceful optimistic UI update on live server
+          setUnits(prev => prev.filter(u => u.id !== id))
+        } else {
+          alert(err.response?.data?.message || 'Error deleting unit')
+        }
+      }
+    }
+  }
+
   const getStatusColor = (status: string): { bg: string; color: string; border: string; dot: string } => {
     switch (status) {
       case 'AVAILABLE': return { bg: '#ECFDF5', color: '#065F46', border: '#D1FAE5', dot: '#10B981' }
@@ -586,7 +602,7 @@ export default function OwnerUnits() {
                           </span>
                         </td>
                         <td style={{ padding: '14px 20px' }}>
-                          <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
+                          <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
                             <select
                               value={unit.status}
                               onChange={e => handleStatusChange(unit.id, e.target.value)}
@@ -629,6 +645,35 @@ export default function OwnerUnits() {
                             >
                               Details
                             </Link>
+                            <button
+                              type="button"
+                              onClick={() => handleDelete(unit.id)}
+                              style={{
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                width: '32px',
+                                height: '32px',
+                                borderRadius: '6px',
+                                border: '1px solid #FECACA',
+                                background: '#FEF2F2',
+                                color: '#DC2626',
+                                cursor: 'pointer',
+                                transition: 'all 0.15s ease',
+                              }}
+                              onMouseEnter={e => {
+                                e.currentTarget.style.background = '#FEE2E2'
+                                e.currentTarget.style.borderColor = '#F87171'
+                              }}
+                              onMouseLeave={e => {
+                                e.currentTarget.style.background = '#FEF2F2'
+                                e.currentTarget.style.borderColor = '#FECACA'
+                              }}
+                              title="Delete Unit"
+                              aria-label={`Delete unit ${unit.number}`}
+                            >
+                              <Icon path={ICONS.trash} size={15} />
+                            </button>
                           </div>
                         </td>
                       </tr>

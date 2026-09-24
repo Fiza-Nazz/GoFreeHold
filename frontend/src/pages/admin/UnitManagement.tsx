@@ -643,22 +643,33 @@ export default function UnitManagement() {
                           )}
 
                           <button
+                            type="button"
                             onClick={() => handleDelete(unit.id)}
                             style={{
                               display: 'inline-flex',
                               alignItems: 'center',
                               justifyContent: 'center',
-                              width: '30px',
-                              height: '30px',
+                              width: '32px',
+                              height: '32px',
                               borderRadius: '6px',
                               border: '1px solid #FECACA',
                               background: '#FEF2F2',
                               color: '#DC2626',
                               cursor: 'pointer',
+                              transition: 'all 0.15s ease',
                             }}
-                            title="Delete"
+                            onMouseEnter={e => {
+                              e.currentTarget.style.background = '#FEE2E2'
+                              e.currentTarget.style.borderColor = '#F87171'
+                            }}
+                            onMouseLeave={e => {
+                              e.currentTarget.style.background = '#FEF2F2'
+                              e.currentTarget.style.borderColor = '#FECACA'
+                            }}
+                            title="Delete Unit"
+                            aria-label={`Delete unit ${unit.number}`}
                           >
-                            <Icon path={ICONS.trash} size={14} />
+                            <Icon path={ICONS.trash} size={15} />
                           </button>
                         </div>
                       </td>
