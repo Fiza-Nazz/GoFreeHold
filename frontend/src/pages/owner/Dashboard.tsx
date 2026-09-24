@@ -360,10 +360,13 @@ export default function OwnerDashboard() {
           transition: transform 0.2s ease, box-shadow 0.2s ease;
           position: relative;
           overflow: hidden;
+          cursor: pointer;
+          text-decoration: none;
         }
         .gfh-dash-card:hover {
-          transform: translateY(-2px);
-          box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+          transform: translateY(-3px);
+          box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+          color: #ffffff;
         }
         .gfh-dash-panel {
           background: #ffffff;
@@ -419,7 +422,12 @@ export default function OwnerDashboard() {
         marginBottom: 20,
       }}>
         {/* Card 1: Total Properties */}
-        <div className="gfh-dash-card" style={{ background: '#2563EB' }}>
+        <Link
+          to="/owner/properties"
+          className="gfh-dash-card"
+          style={{ background: '#2563EB' }}
+          title="View all properties"
+        >
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <span style={{ fontSize: 13, fontWeight: 600, color: 'rgba(255, 255, 255, 0.85)' }}>
               Total Properties
@@ -444,10 +452,15 @@ export default function OwnerDashboard() {
               Active in portfolio
             </div>
           </div>
-        </div>
+        </Link>
 
         {/* Card 2: Total Rented */}
-        <div className="gfh-dash-card" style={{ background: '#0D9488' }}>
+        <Link
+          to="/owner/units?status=OCCUPIED"
+          className="gfh-dash-card"
+          style={{ background: '#0D9488' }}
+          title="View occupied units"
+        >
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <span style={{ fontSize: 13, fontWeight: 600, color: 'rgba(255, 255, 255, 0.85)' }}>
               Total Rented
@@ -472,10 +485,15 @@ export default function OwnerDashboard() {
               Occupied units
             </div>
           </div>
-        </div>
+        </Link>
 
         {/* Card 3: Vacant Properties */}
-        <div className="gfh-dash-card" style={{ background: '#334155' }}>
+        <Link
+          to="/owner/vacant-units"
+          className="gfh-dash-card"
+          style={{ background: '#334155' }}
+          title="View vacant properties"
+        >
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <span style={{ fontSize: 13, fontWeight: 600, color: 'rgba(255, 255, 255, 0.85)' }}>
               Vacant Properties
@@ -500,10 +518,15 @@ export default function OwnerDashboard() {
               Ready for lease
             </div>
           </div>
-        </div>
+        </Link>
 
         {/* Card 4: Rent Collection */}
-        <div className="gfh-dash-card" style={{ background: '#D97706' }}>
+        <Link
+          to="/owner/payments"
+          className="gfh-dash-card"
+          style={{ background: '#D97706' }}
+          title="View rent collection & payments"
+        >
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <span style={{ fontSize: 13, fontWeight: 600, color: 'rgba(255, 255, 255, 0.85)' }}>
               Rent Collection
@@ -528,7 +551,7 @@ export default function OwnerDashboard() {
               Current month
             </div>
           </div>
-        </div>
+        </Link>
       </div>
 
       {/* ── MIDDLE ROW: Occupancy Overview & Quick Actions ───────────────── */}

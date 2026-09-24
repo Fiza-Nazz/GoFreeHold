@@ -1,5 +1,5 @@
 import { useEffect, useState, useMemo } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import api from '../../api/axios'
 import { THEME, portalPageCss, Icon, ICONS } from '../../components/gfh/adminTheme'
 
@@ -25,10 +25,14 @@ interface Property {
 }
 
 export default function OwnerUnits() {
+  const [searchParams, setSearchParams] = useSearchParams()
+  const initialStatus = searchParams.get('status') || ''
+  const initialProperty = searchParams.get('property_id') || ''
+
   const [units, setUnits] = useState<Unit[]>([])
   const [properties, setProperties] = useState<Property[]>([])
-  const [selectedPropertyId, setSelectedPropertyId] = useState<string>('')
-  const [statusFilter, setStatusFilter] = useState<string>('')
+  const [selectedPropertyId, setSelectedPropertyId] = useState<string>(initialProperty)
+  const [statusFilter, setStatusFilter] = useState<string>(initialStatus)
   const [searchTerm, setSearchTerm] = useState<string>('')
   const [isLoading, setIsLoading] = useState(true)
 
@@ -37,6 +41,18 @@ export default function OwnerUnits() {
     property_id: '', number: '', dhewa_no: '', category: '', floor: 1,
     type: 'apartment', size: '', furnished: false, price: '', status: 'AVAILABLE',
   })
+
+  // Sync state if URL search parameters change (e.g. back/forward navigation or link click)
+  useEffect(() => {
+    const s = searchParams.get('status')
+    if (s !== null && s !== statusFilter) {
+      setStatusFilter(s)
+    }
+    const p = searchParams.get('property_id')
+    if (p !== null && p !== selectedPropertyId) {
+      setSelectedPropertyId(p)
+    }
+  }, [searchParams])
 
   useEffect(() => {
     fetchProperties()
@@ -313,11 +329,22 @@ export default function OwnerUnits() {
           marginBottom: 26,
         }}>
           {/* Card 1: Total Units */}
-          <div style={{
-            background: '#FFFFFF', border: '1px solid #F1F5F9', borderRadius: 14,
-            padding: '16px 18px', display: 'flex', alignItems: 'center', gap: 14,
-            boxShadow: '0 1px 2px rgba(0,0,0,0.02)',
-          }}>
+          <div
+            onClick={() => { setStatusFilter(''); setSearchParams({}) }}
+            style={{
+              background: '#FFFFFF',
+              border: statusFilter === '' ? '2px solid #0F8A67' : '1px solid #F1F5F9',
+              borderRadius: 14,
+              padding: '16px 18px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 14,
+              boxShadow: '0 1px 2px rgba(0,0,0,0.02)',
+              cursor: 'pointer',
+              transition: 'all 0.15s ease',
+            }}
+            title="Click to show all units"
+          >
             <div style={{
               width: 44, height: 44, borderRadius: 12, background: '#ECFDF8', color: '#0F8A67',
               display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
@@ -335,11 +362,22 @@ export default function OwnerUnits() {
           </div>
 
           {/* Card 2: Occupied */}
-          <div style={{
-            background: '#FFFFFF', border: '1px solid #F1F5F9', borderRadius: 14,
-            padding: '16px 18px', display: 'flex', alignItems: 'center', gap: 14,
-            boxShadow: '0 1px 2px rgba(0,0,0,0.02)',
-          }}>
+          <div
+            onClick={() => { setStatusFilter('OCCUPIED'); setSearchParams({ status: 'OCCUPIED' }) }}
+            style={{
+              background: '#FFFFFF',
+              border: statusFilter === 'OCCUPIED' ? '2px solid #2563EB' : '1px solid #F1F5F9',
+              borderRadius: 14,
+              padding: '16px 18px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 14,
+              boxShadow: '0 1px 2px rgba(0,0,0,0.02)',
+              cursor: 'pointer',
+              transition: 'all 0.15s ease',
+            }}
+            title="Click to filter by Occupied"
+          >
             <div style={{
               width: 44, height: 44, borderRadius: 12, background: '#EFF6FF', color: '#2563EB',
               display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
@@ -358,11 +396,22 @@ export default function OwnerUnits() {
           </div>
 
           {/* Card 3: Available */}
-          <div style={{
-            background: '#FFFFFF', border: '1px solid #F1F5F9', borderRadius: 14,
-            padding: '16px 18px', display: 'flex', alignItems: 'center', gap: 14,
-            boxShadow: '0 1px 2px rgba(0,0,0,0.02)',
-          }}>
+          <div
+            onClick={() => { setStatusFilter('AVAILABLE'); setSearchParams({ status: 'AVAILABLE' }) }}
+            style={{
+              background: '#FFFFFF',
+              border: statusFilter === 'AVAILABLE' ? '2px solid #059669' : '1px solid #F1F5F9',
+              borderRadius: 14,
+              padding: '16px 18px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 14,
+              boxShadow: '0 1px 2px rgba(0,0,0,0.02)',
+              cursor: 'pointer',
+              transition: 'all 0.15s ease',
+            }}
+            title="Click to filter by Available"
+          >
             <div style={{
               width: 44, height: 44, borderRadius: 12, background: '#ECFDF8', color: '#059669',
               display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
@@ -380,11 +429,22 @@ export default function OwnerUnits() {
           </div>
 
           {/* Card 4: Booked */}
-          <div style={{
-            background: '#FFFFFF', border: '1px solid #F1F5F9', borderRadius: 14,
-            padding: '16px 18px', display: 'flex', alignItems: 'center', gap: 14,
-            boxShadow: '0 1px 2px rgba(0,0,0,0.02)',
-          }}>
+          <div
+            onClick={() => { setStatusFilter('BOOKED'); setSearchParams({ status: 'BOOKED' }) }}
+            style={{
+              background: '#FFFFFF',
+              border: statusFilter === 'BOOKED' ? '2px solid #EA580C' : '1px solid #F1F5F9',
+              borderRadius: 14,
+              padding: '16px 18px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 14,
+              boxShadow: '0 1px 2px rgba(0,0,0,0.02)',
+              cursor: 'pointer',
+              transition: 'all 0.15s ease',
+            }}
+            title="Click to filter by Booked"
+          >
             <div style={{
               width: 44, height: 44, borderRadius: 12, background: '#FFF7ED', color: '#EA580C',
               display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
@@ -403,11 +463,22 @@ export default function OwnerUnits() {
           </div>
 
           {/* Card 5: Sold */}
-          <div style={{
-            background: '#FFFFFF', border: '1px solid #F1F5F9', borderRadius: 14,
-            padding: '16px 18px', display: 'flex', alignItems: 'center', gap: 14,
-            boxShadow: '0 1px 2px rgba(0,0,0,0.02)',
-          }}>
+          <div
+            onClick={() => { setStatusFilter('SOLD'); setSearchParams({ status: 'SOLD' }) }}
+            style={{
+              background: '#FFFFFF',
+              border: statusFilter === 'SOLD' ? '2px solid #7C3AED' : '1px solid #F1F5F9',
+              borderRadius: 14,
+              padding: '16px 18px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 14,
+              boxShadow: '0 1px 2px rgba(0,0,0,0.02)',
+              cursor: 'pointer',
+              transition: 'all 0.15s ease',
+            }}
+            title="Click to filter by Sold"
+          >
             <div style={{
               width: 44, height: 44, borderRadius: 12, background: '#FAF5FF', color: '#7C3AED',
               display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
