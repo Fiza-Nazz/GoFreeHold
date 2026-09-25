@@ -1,5 +1,5 @@
 import { useEffect, useState, useMemo } from 'react'
-import { Link, useSearchParams } from 'react-router-dom'
+import { Link, useSearchParams, useNavigate } from 'react-router-dom'
 import api from '../../api/axios'
 import { THEME, portalPageCss } from '../../components/gfh/adminTheme'
 
@@ -100,6 +100,7 @@ function getUnitDisplayInfo(type?: string, category?: string) {
 }
 
 export default function VacantUnits() {
+  const navigate = useNavigate()
   const [searchParams, setSearchParams] = useSearchParams()
   const [units, setUnits] = useState<Unit[]>([])
   const [typeFilter, setTypeFilter] = useState<string>('ALL')
@@ -627,26 +628,32 @@ export default function VacantUnits() {
                       {propName}
                     </span>
                   </div>
-                  <Link
-                    to={`/owner/contracts?create=1&unit_id=${unit.id}&property_id=${unit.property?.id || unit.property_id || ''}`}
-                    onClick={e => e.stopPropagation()}
+                  <button
+                    type="button"
+                    onClick={e => {
+                      e.preventDefault()
+                      e.stopPropagation()
+                      navigate(`/owner/contracts?create=1&unit_id=${unit.id}&property_id=${unit.property?.id || unit.property_id || ''}`)
+                    }}
                     style={{
                       display: 'inline-flex',
                       alignItems: 'center',
                       gap: 4,
                       background: '#0F8A67',
                       color: '#FFFFFF',
+                      border: 'none',
                       padding: '4px 9px',
                       borderRadius: 6,
                       fontSize: 11,
                       fontWeight: 700,
-                      textDecoration: 'none',
+                      cursor: 'pointer',
                       whiteSpace: 'nowrap',
                       flexShrink: 0,
+                      fontFamily: "'Poppins', sans-serif",
                     }}
                   >
                     + Create Contract
-                  </Link>
+                  </button>
                 </div>
               </Link>
             )

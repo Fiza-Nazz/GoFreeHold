@@ -411,64 +411,17 @@ export default function OwnerUnits() {
           alignItems: 'center',
           flexWrap: 'wrap',
           gap: 16,
-          marginBottom: 18,
+          marginBottom: 24,
         }}>
           <div>
             <h2 style={{ fontSize: 20, fontWeight: 700, color: '#0F172A', margin: 0 }}>Units</h2>
-            <p style={{ fontSize: 13, color: '#64748B', margin: '4px 0 0' }}>
-              Quickly identify available units and start a guided contract in one click
-            </p>
+            <p style={{ fontSize: 13, color: '#64748B', margin: '4px 0 0' }}>List Of Units</p>
           </div>
           {!isCashier && (
             <button type="button" className="gfh-add-prop-btn" onClick={openCreate}>
               <Icon path={icons.plus} size={16} /> Add Unit
             </button>
           )}
-        </div>
-
-        {/* Quick Status Filter Pills (Available / Occupied / Under Maintenance) */}
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: 10,
-          flexWrap: 'wrap',
-          marginBottom: 18,
-          paddingBottom: 14,
-          borderBottom: '1px solid #F1F5F9',
-        }}>
-          {[
-            { key: '', label: 'All Units', dot: '#64748B' },
-            { key: 'AVAILABLE', label: 'Available', dot: '#10B981' },
-            { key: 'OCCUPIED', label: 'Occupied', dot: '#2563EB' },
-            { key: 'BOOKED', label: 'Under Maintenance / Booked', dot: '#F59E0B' },
-            { key: 'SOLD', label: 'Sold', dot: '#7C3AED' },
-          ].map(tab => {
-            const active = statusFilter === tab.key
-            return (
-              <button
-                key={tab.key || 'ALL'}
-                type="button"
-                onClick={() => setStatusFilter(tab.key)}
-                style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: 7,
-                  padding: '7px 14px',
-                  borderRadius: 999,
-                  fontSize: 12.5,
-                  fontWeight: 700,
-                  cursor: 'pointer',
-                  border: active ? '1px solid #0F8A67' : '1px solid #E2E8F0',
-                  background: active ? '#ECFDF5' : '#FFFFFF',
-                  color: active ? '#065F46' : '#475569',
-                  transition: 'all 0.15s ease',
-                }}
-              >
-                <span style={{ width: 7, height: 7, borderRadius: '50%', background: tab.dot }} />
-                <span>{tab.label}</span>
-              </button>
-            )
-          })}
         </div>
 
         {/* Filters and Controls */}
@@ -526,12 +479,12 @@ export default function OwnerUnits() {
               value={statusFilter}
               onChange={e => setStatusFilter(e.target.value)}
               className="gfh-prop-input"
-              style={{ padding: '6px 12px', width: 140, cursor: 'pointer' }}
+              style={{ padding: '6px 12px', width: 155, cursor: 'pointer' }}
             >
               <option value="">All Statuses</option>
               <option value="AVAILABLE">Available</option>
               <option value="OCCUPIED">Occupied</option>
-              <option value="BOOKED">Under Maintenance / Booked</option>
+              <option value="BOOKED">Under Maintenance</option>
               <option value="SOLD">Sold</option>
             </select>
           </div>
@@ -559,13 +512,14 @@ export default function OwnerUnits() {
                   <th>Number</th>
                   <th>Type</th>
                   <th>Status</th>
-                  <th style={{ textAlign: 'center', width: 210 }}>Action</th>
+                  <th style={{ textAlign: 'center', width: 160 }}>Contract</th>
+                  {!isCashier && <th style={{ textAlign: 'center', width: 100 }}>Action</th>}
                 </tr>
               </thead>
               <tbody>
                 {currentEntries.length === 0 ? (
                   <tr>
-                    <td colSpan={5} style={{ textAlign: 'center', color: '#64748B', padding: '30px' }}>
+                    <td colSpan={isCashier ? 5 : 6} style={{ textAlign: 'center', color: '#64748B', padding: '30px' }}>
                       {units.length === 0 ? 'No units found.' : 'No units match your filter.'}
                     </td>
                   </tr>
@@ -600,52 +554,67 @@ export default function OwnerUnits() {
                           </span>
                         </td>
                         <td style={{ textAlign: 'center', whiteSpace: 'nowrap' }}>
-                          <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
-                            {unit.status === 'AVAILABLE' && (
-                              <Link
-                                to={`${basePath}/contracts?create=1&unit_id=${unit.id}&property_id=${unit.property_id}`}
-                                style={{
-                                  display: 'inline-flex',
-                                  alignItems: 'center',
-                                  gap: 5,
-                                  padding: '6px 12px',
-                                  borderRadius: 7,
-                                  background: '#0F8A67',
-                                  color: '#FFFFFF',
-                                  fontSize: 12,
-                                  fontWeight: 700,
-                                  textDecoration: 'none',
-                                  boxShadow: '0 1px 2px rgba(15, 138, 103, 0.25)',
-                                }}
-                              >
-                                <Icon path={icons.plus} size={13} />
-                                <span>Create Contract</span>
-                              </Link>
-                            )}
-                            {!isCashier && (
-                              <>
-                                <button
-                                  type="button"
-                                  onClick={() => openEdit(unit)}
-                                  aria-label={`Edit unit ${unit.number}`}
-                                  className="gfh-action-btn edit"
-                                  title="Edit"
-                                >
-                                  <Icon path={icons.edit} size={14} />
-                                </button>
-                                <button
-                                  type="button"
-                                  onClick={() => handleDelete(unit.id)}
-                                  aria-label={`Delete unit ${unit.number}`}
-                                  className="gfh-action-btn delete"
-                                  title="Delete"
-                                >
-                                  <Icon path={icons.trash} size={14} />
-                                </button>
-                              </>
-                            )}
-                          </div>
+                          {unit.status === 'AVAILABLE' ? (
+                            <Link
+                              to={`${basePath}/contracts?create=1&unit_id=${unit.id}&property_id=${unit.property_id}`}
+                              style={{
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                gap: 5,
+                                height: 28,
+                                padding: '0 12px',
+                                borderRadius: 6,
+                                background: '#ECFDF5',
+                                color: '#059669',
+                                border: '1px solid #A7F3D0',
+                                fontSize: 12,
+                                fontWeight: 600,
+                                textDecoration: 'none',
+                                transition: 'all 0.15s ease',
+                              }}
+                              onMouseEnter={e => {
+                                e.currentTarget.style.background = '#0F8A67'
+                                e.currentTarget.style.color = '#FFFFFF'
+                                e.currentTarget.style.borderColor = '#0F8A67'
+                              }}
+                              onMouseLeave={e => {
+                                e.currentTarget.style.background = '#ECFDF5'
+                                e.currentTarget.style.color = '#059669'
+                                e.currentTarget.style.borderColor = '#A7F3D0'
+                              }}
+                            >
+                              <Icon path={icons.plus} size={12} />
+                              <span>Create Contract</span>
+                            </Link>
+                          ) : (
+                            <span style={{ color: '#94A3B8', fontSize: 13 }}>—</span>
+                          )}
                         </td>
+                        {!isCashier && (
+                          <td style={{ textAlign: 'center', whiteSpace: 'nowrap' }}>
+                            <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+                              <button
+                                type="button"
+                                onClick={() => openEdit(unit)}
+                                aria-label={`Edit unit ${unit.number}`}
+                                className="gfh-action-btn edit"
+                                title="Edit"
+                              >
+                                <Icon path={icons.edit} size={14} />
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => handleDelete(unit.id)}
+                                aria-label={`Delete unit ${unit.number}`}
+                                className="gfh-action-btn delete"
+                                title="Delete"
+                              >
+                                <Icon path={icons.trash} size={14} />
+                              </button>
+                            </div>
+                          </td>
+                        )}
                       </tr>
                     )
                   })

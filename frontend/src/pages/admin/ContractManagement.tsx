@@ -67,6 +67,7 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
     '/admin'
   )
   const isOwnerStaff = effectiveBasePath !== '/admin'
+  const isCashier = effectiveBasePath === '/cashier'
   const apiPrefix = isOwnerStaff ? '/owner' : '/admin'
   const [contracts, setContracts] = useState<Contract[]>([])
   const [units, setUnits] = useState<Unit[]>([])
@@ -925,7 +926,7 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
                             </button>
 
                             {/* Renew button */}
-                            {c.status?.toLowerCase() === 'active' ? (
+                            {!isCashier && c.status?.toLowerCase() === 'active' ? (
                               <button
                                 onClick={() => {
                                   setRenewModal(c)
@@ -954,7 +955,7 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
                             ) : <div />}
 
                             {/* Vacate button */}
-                            {c.status?.toLowerCase() === 'active' ? (
+                            {!isCashier && c.status?.toLowerCase() === 'active' ? (
                               <button
                                 onClick={() => setVacateContract(c)}
                                 style={{
