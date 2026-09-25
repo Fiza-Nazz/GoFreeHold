@@ -75,12 +75,13 @@ class ApplianceController extends Controller
     public function update(Request $request, Appliance $appliance): JsonResponse
     {
         $validated = $request->validate([
-            'name'          => 'string|max:255',
-            'brand'         => 'string|max:255',
-            'model'         => 'nullable|string|max:255',
-            'model_number'  => 'nullable|string|max:255',
-            'serial_number' => 'nullable|string|max:255',
-            'purchase_date' => 'nullable|date',
+            'unit_id'         => 'sometimes|required|exists:units,id',
+            'name'            => 'string|max:255',
+            'brand'           => 'string|max:255',
+            'model'           => 'nullable|string|max:255',
+            'model_number'    => 'nullable|string|max:255',
+            'serial_number'   => 'nullable|string|max:255',
+            'purchase_date'   => 'nullable|date',
             'warranty_expiry' => 'nullable|date',
             'condition'       => 'nullable|in:brand_new,good,needs_repair,replaced',
             'notes'           => 'nullable|string',

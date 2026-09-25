@@ -70,13 +70,14 @@ class UnitController extends Controller
     public function update(Request $request, Unit $unit): JsonResponse
     {
         $validated = $request->validate([
-            'number'    => 'string|max:50',
-            'dhewa_no'  => 'nullable|string|max:100',
-            'category'  => 'nullable|string|max:100',
-            'floor'     => 'integer',
-            'type'      => 'string|max:50',
-            'size'      => 'nullable|numeric',
-            'furnished' => 'boolean',
+            'property_id'            => 'sometimes|required|exists:properties,id',
+            'number'                 => 'string|max:50',
+            'dhewa_no'               => 'nullable|string|max:100',
+            'category'               => 'nullable|string|max:100',
+            'floor'                  => 'integer',
+            'type'                   => 'string|max:50',
+            'size'                   => 'nullable|numeric',
+            'furnished'              => 'boolean',
             'price'                  => 'numeric|min:0',
             'monthly_service_charge' => 'nullable|numeric|min:0',
             'status'                 => 'in:AVAILABLE,BOOKED,OCCUPIED,SOLD',
@@ -106,20 +107,21 @@ class UnitController extends Controller
         $ownerId = app(\App\Domain\Auth\Services\OwnerContextResolver::class)->ownerId($request->user());
 
         $validated = $request->validate([
-            'property_id' => 'required|exists:properties,id',
-            'number'      => 'required|string|max:50',
-            'dhewa_no'    => 'nullable|string|max:100',
-            'category'    => 'nullable|string|max:100',
-            'floor'       => 'required|integer',
-            'type'        => 'required|string|max:50',
-            'size'        => 'required|numeric|min:0',
-            'furnished'   => 'nullable|boolean',
-            'price'       => 'required|numeric|min:0',
-            'status'      => 'nullable|in:AVAILABLE,BOOKED,OCCUPIED,SOLD',
+            'property_id'            => 'required|exists:properties,id',
+            'number'                 => 'required|string|max:50',
+            'dhewa_no'               => 'nullable|string|max:100',
+            'category'               => 'nullable|string|max:100',
+            'floor'                  => 'required|integer',
+            'type'                   => 'required|string|max:50',
+            'size'                   => 'required|numeric|min:0',
+            'furnished'              => 'nullable|boolean',
+            'price'                  => 'required|numeric|min:0',
+            'monthly_service_charge' => 'nullable|numeric|min:0',
+            'status'                 => 'nullable|in:AVAILABLE,BOOKED,OCCUPIED,SOLD',
         ]);
 
         $property = \App\Domain\Property\Models\Property::findOrFail($validated['property_id']);
-        if ((int) $property->owner_id !== $ownerId) {
+        if ((int) $property->owner_id !== (int) $ownerId) {
             abort(403, 'You do not own this property.');
         }
 
@@ -137,21 +139,34 @@ class UnitController extends Controller
     {
         $ownerId = app(\App\Domain\Auth\Services\OwnerContextResolver::class)->ownerId($request->user());
 
-        if ((int) $unit->owner_id !== $ownerId) {
+        $unit->loadMissing('property');
+        $ownsUnit = ((int) $unit->owner_id === (int) $ownerId)
+            || ($unit->property && (int) $unit->property->owner_id === (int) $ownerId);
+
+        if (!$ownsUnit) {
             abort(403, 'You do not own this unit.');
         }
 
         $validated = $request->validate([
-            'number'    => 'sometimes|required|string|max:50',
-            'dhewa_no'  => 'nullable|string|max:100',
-            'category'  => 'nullable|string|max:100',
-            'floor'     => 'sometimes|required|integer',
-            'type'      => 'sometimes|required|string|max:50',
-            'size'      => 'nullable|numeric|min:0',
-            'furnished' => 'nullable|boolean',
-            'price'     => 'sometimes|required|numeric|min:0',
-            'status'    => 'nullable|in:AVAILABLE,BOOKED,OCCUPIED,SOLD',
+            'property_id'            => 'sometimes|required|exists:properties,id',
+            'number'                 => 'sometimes|required|string|max:50',
+            'dhewa_no'               => 'nullable|string|max:100',
+            'category'               => 'nullable|string|max:100',
+            'floor'                  => 'sometimes|required|integer',
+            'type'                   => 'sometimes|required|string|max:50',
+            'size'                   => 'nullable|numeric|min:0',
+            'furnished'              => 'nullable|boolean',
+            'price'                  => 'sometimes|required|numeric|min:0',
+            'monthly_service_charge' => 'nullable|numeric|min:0',
+            'status'                 => 'nullable|in:AVAILABLE,BOOKED,OCCUPIED,SOLD',
         ]);
+
+        if (isset($validated['property_id'])) {
+            $targetProperty = \App\Domain\Property\Models\Property::findOrFail($validated['property_id']);
+            if ((int) $targetProperty->owner_id !== (int) $ownerId) {
+                abort(403, 'You do not own the selected property.');
+            }
+        }
 
         $unit->update($validated);
 
@@ -166,7 +181,11 @@ class UnitController extends Controller
     {
         $ownerId = app(\App\Domain\Auth\Services\OwnerContextResolver::class)->ownerId($request->user());
 
-        if ((int) $unit->owner_id !== $ownerId) {
+        $unit->loadMissing('property');
+        $ownsUnit = ((int) $unit->owner_id === (int) $ownerId)
+            || ($unit->property && (int) $unit->property->owner_id === (int) $ownerId);
+
+        if (!$ownsUnit) {
             abort(403, 'You do not own this unit.');
         }
 

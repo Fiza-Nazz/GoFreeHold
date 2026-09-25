@@ -160,17 +160,7 @@ export default function ApplianceCatalog() {
     setError('')
     try {
       if (editingAppliance) {
-        try {
-          await api.put(`${basePath}/appliances/${editingAppliance.id}`, formData)
-        } catch (putErr: any) {
-          if (putErr.response?.status === 405 || putErr.response?.status === 404) {
-            setAppliances(prev => prev.map(a => a.id === editingAppliance.id ? { ...a, ...formData, unit_id: Number(formData.unit_id), condition: formData.condition as any } : a))
-            setStatusMsg('Appliance updated successfully!')
-            closeModal()
-            return
-          }
-          throw putErr
-        }
+        await api.put(`${basePath}/appliances/${editingAppliance.id}`, formData)
         setStatusMsg('Appliance updated successfully!')
       } else {
         await api.post(`${basePath}/appliances`, formData)
@@ -192,8 +182,7 @@ export default function ApplianceCatalog() {
         setStatusMsg('Appliance deleted successfully!')
         fetchAppliances()
       } catch (err: any) {
-        setAppliances(prev => prev.filter(a => a.id !== id))
-        setStatusMsg('Appliance deleted successfully!')
+        alert(err.response?.data?.message || 'Error deleting appliance')
       }
     }
   }

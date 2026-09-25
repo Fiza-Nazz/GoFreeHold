@@ -70,7 +70,7 @@ class PropertyService
             $property = Property::lockForUpdate()->find($unit->property_id);
             $unit->delete();
 
-            if ($property) {
+            if ($property && $property->total_units > 0) {
                 $property->decrement('total_units');
             }
         });

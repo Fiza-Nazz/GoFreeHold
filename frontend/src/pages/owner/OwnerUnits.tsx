@@ -226,12 +226,7 @@ export default function OwnerUnits() {
         setStatusMsg('Unit deleted successfully!')
         fetchUnits()
       } catch (err: any) {
-        if (err.response?.status === 405 || err.response?.status === 404 || err.response?.status === 403) {
-          setUnits(prev => prev.filter(u => u.id !== id))
-          setStatusMsg('Unit deleted successfully!')
-        } else {
-          alert(err.response?.data?.message || 'Error deleting unit')
-        }
+        alert(err.response?.data?.message || 'Error deleting unit')
       }
     }
   }
