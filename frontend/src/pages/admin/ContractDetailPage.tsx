@@ -819,32 +819,31 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
         }
       `}</style>
 
-      {/* ─── PAUL BRIT SECTION 6: ACTIVE CONTRACT WORKSPACE HEADER & SUMMARY ─── */}
+      {/* ─── CLEAN PROFESSIONAL CONTRACT HEADER CARD (Exact Match to Paul's Mockup) ─── */}
       <div
         style={{
           background: '#FFFFFF',
           borderRadius: 14,
           border: '1px solid #E2E8F0',
-          padding: '22px 26px 0 26px',
-          marginBottom: 20,
-          boxShadow: '0 2px 8px rgba(15, 23, 42, 0.04)',
+          padding: '24px 28px',
+          marginBottom: 16,
+          boxShadow: '0 1px 3px rgba(15, 23, 42, 0.03)',
         }}
       >
-        {/* Top Row: Unit – Tenant + Status Badge + Back */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 16, marginBottom: 20 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+        {/* Top Row: Unit Badge + Title + Status Pill (Left) | View Contract Button (Right) */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 16 }}>
+          <div style={{ display: 'flex', alignItems: 'flex-start', gap: 16 }}>
             <div
               style={{
                 width: 52,
                 height: 52,
                 borderRadius: 12,
-                background: '#ECFDF5',
-                border: '1px solid #A7F3D0',
-                color: '#065F46',
+                background: '#E6F7F0',
+                color: '#0F8A67',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                fontWeight: 900,
+                fontWeight: 800,
                 fontSize: 17,
                 flexShrink: 0,
               }}
@@ -852,480 +851,215 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
               {unitNumber}
             </div>
             <div>
-              <div style={{ fontSize: 12.5, color: '#64748B', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-                {propertyName} • {contractType} • Contract GFH-{String(contract.id).padStart(5, '0')}
+              <div style={{ fontSize: 11.5, color: '#64748B', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                {propertyName} • {contractType} • CONTRACT GFH-{String(contract.id).padStart(5, '0')}
               </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap', marginTop: 3 }}>
-                <h1 style={{ margin: 0, fontSize: 23, fontWeight: 800, color: '#0F172A', letterSpacing: '-0.02em' }}>
-                  {unitNumber} – {tenantName}
-                </h1>
+              <h1 style={{ margin: '4px 0 8px 0', fontSize: 20, fontWeight: 800, color: '#0F172A', letterSpacing: '-0.01em' }}>
+                {unitNumber} – {tenantName}
+              </h1>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
                 <span
                   style={{
                     display: 'inline-flex',
                     alignItems: 'center',
                     gap: 6,
-                    padding: '4px 12px',
+                    padding: '3px 10px',
                     borderRadius: 999,
                     background: contract.status === 'active' ? '#ECFDF5' : (contract.status === 'vacated' ? '#FEF2F2' : '#FFFBEB'),
-                    border: `1px solid ${contract.status === 'active' ? '#A7F3D0' : (contract.status === 'vacated' ? '#FECACA' : '#FDE68A')}`,
-                    color: contract.status === 'active' ? '#065F46' : (contract.status === 'vacated' ? '#991B1B' : '#B45309'),
+                    color: contract.status === 'active' ? '#059669' : (contract.status === 'vacated' ? '#DC2626' : '#D97706'),
                     fontSize: 12,
-                    fontWeight: 800,
+                    fontWeight: 700,
                   }}
                 >
                   <span
                     style={{
-                      width: 8,
-                      height: 8,
+                      width: 7,
+                      height: 7,
                       borderRadius: '50%',
                       background: contract.status === 'active' ? '#10B981' : (contract.status === 'vacated' ? '#EF4444' : '#F59E0B'),
                     }}
                   />
-                  Status: {contract.status === 'active' ? 'Active' : contract.status.toUpperCase()}
+                  {contract.status === 'active' ? 'Active' : (contract.status === 'vacated' ? 'Vacated' : contract.status)}
                 </span>
                 <LegalCaseBadge active={contract.on_case} />
               </div>
             </div>
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <button
-              type="button"
-              onClick={downloadPdf}
-              disabled={pdfLoading}
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: 6,
-                padding: '8px 16px',
-                borderRadius: 8,
-                background: '#EFF6FF',
-                border: '1px solid #BFDBFE',
-                color: '#1D4ED8',
-                fontSize: 12.5,
-                fontWeight: 700,
-                cursor: 'pointer',
-              }}
-            >
-              {pdfLoading ? 'Preparing PDF...' : 'Print Contract'}
-            </button>
-            <button
-              type="button"
-              onClick={() => navigate(`${effectiveBasePath}/contracts`)}
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: 6,
-                padding: '8px 16px',
-                borderRadius: 8,
-                background: '#FFFFFF',
-                border: '1px solid #CBD5E1',
-                color: '#334155',
-                fontSize: 12.5,
-                fontWeight: 700,
-                cursor: 'pointer',
-              }}
-            >
-              ← Back to Contracts
-            </button>
-          </div>
-        </div>
-
-        {/* Financial Summary 4-Card Bar: Rent | Outstanding | Deposit | Next Due */}
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(190px, 1fr))',
-            gap: 12,
-            marginBottom: 18,
-          }}
-        >
-          <div style={{ background: '#F8FAFC', border: '1px solid #E2E8F0', borderRadius: 10, padding: '14px 16px' }}>
-            <div style={{ fontSize: 11.5, fontWeight: 700, color: '#64748B', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Rent</div>
-            <div style={{ fontSize: 19, fontWeight: 800, color: '#0F172A', marginTop: 4 }}>AED {totalRentFormatted}</div>
-            <div style={{ fontSize: 11.5, color: '#64748B', marginTop: 2 }}>{contract.lease_term || '1 Year'} • {startDateStr} → {endDateStr}</div>
-          </div>
-
-          <div style={{ background: balanceDue > 0 ? '#FEF2F2' : '#F0FDF4', border: `1px solid ${balanceDue > 0 ? '#FECACA' : '#BBF7D0'}`, borderRadius: 10, padding: '14px 16px' }}>
-            <div style={{ fontSize: 11.5, fontWeight: 700, color: balanceDue > 0 ? '#991B1B' : '#065F46', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Outstanding</div>
-            <div style={{ fontSize: 19, fontWeight: 800, color: balanceDue > 0 ? '#DC2626' : '#059669', marginTop: 4 }}>
-              AED {Number(balanceDue).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-            </div>
-            <div style={{ fontSize: 11.5, color: '#64748B', marginTop: 2 }}>Received: AED {Number(totalReceived).toLocaleString()}</div>
-          </div>
-
-          <div style={{ background: '#F8FAFC', border: '1px solid #E2E8F0', borderRadius: 10, padding: '14px 16px' }}>
-            <div style={{ fontSize: 11.5, fontWeight: 700, color: '#64748B', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Deposit</div>
-            <div style={{ fontSize: 19, fontWeight: 800, color: '#0F172A', marginTop: 4 }}>
-              AED {Number(contract.security_deposit || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-            </div>
-            <div style={{ fontSize: 11.5, color: '#64748B', marginTop: 2 }}>Mode: {contract.deposit_type || 'CHEQUE'}</div>
-          </div>
-
-          <div style={{ background: '#F8FAFC', border: '1px solid #E2E8F0', borderRadius: 10, padding: '14px 16px' }}>
-            <div style={{ fontSize: 11.5, fontWeight: 700, color: '#64748B', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Next Due</div>
-            <div style={{ fontSize: 19, fontWeight: 800, color: '#0E7490', marginTop: 4 }}>{nextDueDateStr}</div>
-            <div style={{ fontSize: 11.5, color: '#64748B', marginTop: 2 }}>
-              {nextPendingCheque ? `Cheque #${nextPendingCheque.cheque_number || 'Pending'}` : `${contract.cheques?.length || 0} Cheques on file`}
-            </div>
-          </div>
-        </div>
-
-        {/* Main Actions Bar: [ + Collect Payment ] [ Manage Cheques ] [ Add Charge ] [ Edit Contract ] [ Vacate Unit ] */}
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 10,
-            flexWrap: 'wrap',
-            paddingBottom: 18,
-            borderBottom: '1px solid #E2E8F0',
-          }}
-        >
           <button
             type="button"
-            onClick={() => openPaymentModal('rent')}
+            onClick={downloadPdf}
+            disabled={pdfLoading}
             style={{
               display: 'inline-flex',
               alignItems: 'center',
-              gap: 6,
+              gap: 7,
               padding: '9px 18px',
               borderRadius: 8,
+              background: '#0F8A67',
               border: 'none',
-              background: '#065F46',
               color: '#FFFFFF',
               fontSize: 13,
               fontWeight: 700,
               cursor: 'pointer',
-              boxShadow: '0 2px 6px rgba(6, 95, 70, 0.2)',
+              boxShadow: '0 1px 2px rgba(15, 138, 103, 0.2)',
             }}
           >
-            + Collect Payment
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+              <polyline points="14 2 14 8 20 8" />
+              <line x1="16" y1="13" x2="8" y2="13" />
+              <line x1="16" y1="17" x2="8" y2="17" />
+            </svg>
+            <span>{pdfLoading ? 'Preparing...' : 'View Contract'}</span>
           </button>
-
-          <button
-            type="button"
-            onClick={() => handleWorkspaceTabChange('cheques')}
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: 6,
-              padding: '9px 18px',
-              borderRadius: 8,
-              border: '1px solid #CBD5E1',
-              background: workspaceTab === 'cheques' ? '#0F172A' : '#FFFFFF',
-              color: workspaceTab === 'cheques' ? '#FFFFFF' : '#0F172A',
-              fontSize: 13,
-              fontWeight: 700,
-              cursor: 'pointer',
-            }}
-          >
-            Manage Cheques ({contract.cheques?.length || 0})
-          </button>
-
-          {!isCashier && (
-            <button
-              type="button"
-              onClick={() => setChargeModalOpen(true)}
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: 6,
-                padding: '9px 18px',
-                borderRadius: 8,
-                border: '1px solid #BAE6FD',
-                background: '#F0F9FF',
-                color: '#0369A1',
-                fontSize: 13,
-                fontWeight: 700,
-                cursor: 'pointer',
-              }}
-            >
-              Add Charge
-            </button>
-          )}
-
-          {!isCashier && (
-            <button
-              type="button"
-              onClick={() => handleWorkspaceTabChange('contract')}
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: 6,
-                padding: '9px 18px',
-                borderRadius: 8,
-                border: '1px solid #CBD5E1',
-                background: workspaceTab === 'contract' ? '#0E5E48' : '#FFFFFF',
-                color: workspaceTab === 'contract' ? '#FFFFFF' : '#0F172A',
-                fontSize: 13,
-                fontWeight: 700,
-                cursor: 'pointer',
-              }}
-            >
-              Edit Contract
-            </button>
-          )}
-
-          {!isCashier && contract.status === 'active' && (
-            <button
-              type="button"
-              onClick={() => setVacateModalOpen(true)}
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: 6,
-                padding: '9px 18px',
-                borderRadius: 8,
-                border: '1px solid #FECACA',
-                background: '#FEF2F2',
-                color: '#991B1B',
-                fontSize: 13,
-                fontWeight: 700,
-                cursor: 'pointer',
-                marginLeft: 'auto',
-              }}
-            >
-              Vacate Unit
-            </button>
-          )}
         </div>
 
-        {/* Workspace 5 Tabs: Overview | Payments | Cheques | Documents | Contract */}
-        <div style={{ display: 'flex', gap: 26, overflowX: 'auto', paddingTop: 12 }}>
-          {[
-            { key: 'overview' as WorkspaceTabType, label: 'Overview' },
-            { key: 'payments' as WorkspaceTabType, label: `Payments (${contract.payments?.length || 0})` },
-            { key: 'cheques' as WorkspaceTabType, label: `Cheques (${contract.cheques?.length || 0})` },
-            { key: 'documents' as WorkspaceTabType, label: 'Documents' },
-            { key: 'contract' as WorkspaceTabType, label: 'Contract' },
-          ].map(t => {
-            const active = workspaceTab === t.key
-            return (
-              <button
-                key={t.key}
-                type="button"
-                onClick={() => handleWorkspaceTabChange(t.key)}
-                style={{
-                  padding: '6px 4px 12px 4px',
-                  background: 'transparent',
-                  border: 'none',
-                  borderBottom: active ? '3px solid #065F46' : '3px solid transparent',
-                  color: active ? '#065F46' : '#64748B',
-                  fontSize: 13.5,
-                  fontWeight: active ? 800 : 600,
-                  cursor: 'pointer',
-                  whiteSpace: 'nowrap',
-                }}
-              >
-                {t.label}
-              </button>
-            )
-          })}
+        {/* 4-Column Inline Summary Metrics with Subtle Dividers: Rent | Outstanding | Deposit | Next Due */}
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))',
+            borderTop: '1px solid #F1F5F9',
+            marginTop: 22,
+            paddingTop: 18,
+            gap: 16,
+          }}
+        >
+          <div style={{ borderRight: '1px solid #F1F5F9', paddingRight: 16 }}>
+            <div style={{ fontSize: 12, color: '#64748B', fontWeight: 500 }}>Rent</div>
+            <div style={{ fontSize: 16, fontWeight: 800, color: '#0F172A', marginTop: 4 }}>
+              AED {totalRentFormatted}
+            </div>
+          </div>
+
+          <div style={{ borderRight: '1px solid #F1F5F9', paddingRight: 16 }}>
+            <div style={{ fontSize: 12, color: '#64748B', fontWeight: 500 }}>Outstanding</div>
+            <div style={{ fontSize: 16, fontWeight: 800, color: balanceDue > 0 ? '#EF4444' : '#059669', marginTop: 4 }}>
+              AED {Number(balanceDue).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+            </div>
+          </div>
+
+          <div style={{ borderRight: '1px solid #F1F5F9', paddingRight: 16 }}>
+            <div style={{ fontSize: 12, color: '#64748B', fontWeight: 500 }}>Deposit</div>
+            <div style={{ fontSize: 16, fontWeight: 800, color: '#0F172A', marginTop: 4 }}>
+              AED {Number(contract.security_deposit || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+            </div>
+          </div>
+
+          <div>
+            <div style={{ fontSize: 12, color: '#64748B', fontWeight: 500 }}>Next Due</div>
+            <div style={{ fontSize: 16, fontWeight: 800, color: '#0F172A', marginTop: 4 }}>
+              {nextDueDateStr}
+            </div>
+          </div>
         </div>
       </div>
 
-      {/* ─── VIEW MODE: OVERVIEW TAB ──────────────── */}
-      {mode === 'view' && (
-        <div className="fade-in" style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
+      {/* ─── CLEAN 5-TAB NAVIGATION BAR: Overview | Payments | Cheques | Documents | Contract ─── */}
+      <div
+        style={{
+          display: 'flex',
+          gap: 28,
+          overflowX: 'auto',
+          borderBottom: '1px solid #E2E8F0',
+          marginBottom: 20,
+          paddingLeft: 4,
+        }}
+      >
+        {[
+          { key: 'overview' as WorkspaceTabType, label: 'Overview' },
+          { key: 'payments' as WorkspaceTabType, label: 'Payments' },
+          { key: 'cheques' as WorkspaceTabType, label: 'Cheques' },
+          { key: 'documents' as WorkspaceTabType, label: 'Documents' },
+          { key: 'contract' as WorkspaceTabType, label: 'Contract' },
+        ].map(t => {
+          const active = workspaceTab === t.key
+          return (
+            <button
+              key={t.key}
+              type="button"
+              onClick={() => handleWorkspaceTabChange(t.key)}
+              style={{
+                padding: '6px 2px 12px 2px',
+                background: 'transparent',
+                border: 'none',
+                borderBottom: active ? '2.5px solid #0F8A67' : '2.5px solid transparent',
+                color: active ? '#0F8A67' : '#64748B',
+                fontSize: 13.5,
+                fontWeight: active ? 700 : 500,
+                cursor: 'pointer',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              {t.label}
+            </button>
+          )
+        })}
+      </div>
 
-          {/* Middle Card: Tenant & Quick Actions */}
+      {/* ─── VIEW MODE: OVERVIEW TAB (2 Clean Cards Side-by-Side) ──────────────── */}
+      {mode === 'view' && (
+        <div className="fade-in" style={{ display: 'grid', gridTemplateColumns: '1.65fr 1fr', gap: 20 }}>
+          {/* Left: Recent Payments Card */}
           <div
             style={{
               background: '#FFFFFF',
               borderRadius: 14,
               border: '1px solid #E2E8F0',
-              padding: '18px 24px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              gap: 16,
-              flexWrap: 'wrap',
+              padding: '22px 24px',
               boxShadow: '0 1px 3px rgba(16, 24, 40, 0.03)',
+              display: 'flex',
+              flexDirection: 'column',
             }}
           >
-            <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 18 }}>
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#64748B" strokeWidth="2">
+                <circle cx="12" cy="12" r="10" />
+                <polyline points="12 6 12 12 16 14" />
+              </svg>
+              <h3 style={{ fontSize: 15.5, fontWeight: 800, color: '#0F172A', margin: 0 }}>
+                Recent Payments
+              </h3>
+            </div>
+
+            {recentPaymentsList.length === 0 ? (
               <div
                 style={{
-                  width: 50,
-                  height: 50,
-                  borderRadius: '50%',
-                  background: '#D1FAE5',
-                  color: '#065F46',
-                  fontWeight: 800,
-                  fontSize: 16,
+                  flex: 1,
                   display: 'flex',
+                  flexDirection: 'column',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  flexShrink: 0,
+                  padding: '56px 20px',
+                  textAlign: 'center',
                 }}
               >
-                {tenantInitials}
-              </div>
-              <div>
-                <div style={{ fontSize: 16, fontWeight: 800, color: '#0F172A', letterSpacing: '0.2px' }}>
-                  {tenantName}
+                <div
+                  style={{
+                    width: 48,
+                    height: 48,
+                    borderRadius: '50%',
+                    background: '#F1F5F9',
+                    color: '#64748B',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    marginBottom: 12,
+                  }}
+                >
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                    <polyline points="14 2 14 8 20 8" />
+                    <line x1="16" y1="13" x2="8" y2="13" />
+                    <line x1="16" y1="17" x2="8" y2="17" />
+                  </svg>
                 </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginTop: 4, fontSize: 13, color: '#334155', fontWeight: 600 }}>
-                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}>
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
-                      <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.362 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.338 1.85.573 2.81.7A2 2 0 0 1 22 16.92z" />
-                    </svg>
-                    {tenantContact}
-                  </span>
-                  <span style={{ color: '#CBD5E1' }}>|</span>
-                  <span style={{ color: '#0284C7', display: 'inline-flex', alignItems: 'center' }}>
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
-                      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-                      <circle cx="12" cy="7" r="4" />
-                    </svg>
-                  </span>
+                <div style={{ fontSize: 13, color: '#64748B', fontWeight: 500 }}>
+                  No payments recorded yet for this contract.
                 </div>
               </div>
-            </div>
-
-            {/* Quick Action Buttons */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
-              <button
-                type="button"
-                onClick={() => openPaymentModal('rent')}
-                style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: 6,
-                  padding: '9px 18px',
-                  borderRadius: 8,
-                  border: 'none',
-                  background: '#065F46',
-                  color: '#FFFFFF',
-                  fontSize: 13,
-                  fontWeight: 700,
-                  cursor: 'pointer',
-                  boxShadow: '0 1px 2px rgba(6, 95, 70, 0.2)',
-                }}
-              >
-                <span>+ Add Rent</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => openPaymentModal('dewa')}
-                style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: 6,
-                  padding: '9px 18px',
-                  borderRadius: 8,
-                  border: 'none',
-                  background: '#0E7490',
-                  color: '#FFFFFF',
-                  fontSize: 13,
-                  fontWeight: 700,
-                  cursor: 'pointer',
-                  boxShadow: '0 1px 2px rgba(14, 116, 144, 0.2)',
-                }}
-              >
-                <span>+ Add Dewa</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => openPaymentModal('other')}
-                style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: 6,
-                  padding: '9px 18px',
-                  borderRadius: 8,
-                  border: 'none',
-                  background: '#475569',
-                  color: '#FFFFFF',
-                  fontSize: 13,
-                  fontWeight: 700,
-                  cursor: 'pointer',
-                  boxShadow: '0 1px 2px rgba(71, 85, 105, 0.2)',
-                }}
-              >
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <rect x="1" y="4" width="22" height="16" rx="2" ry="2" />
-                  <line x1="1" y1="10" x2="23" y2="10" />
-                </svg>
-                <span>Other Payments</span>
-              </button>
-
-              {!isCashier && (
-                contract.status === 'active' ? (
-                  <button
-                    type="button"
-                    onClick={() => setVacateModalOpen(true)}
-                    style={{
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      gap: 6,
-                      padding: '9px 18px',
-                      borderRadius: 8,
-                      border: 'none',
-                      background: '#DC2626',
-                      color: '#FFFFFF',
-                      fontSize: 13,
-                      fontWeight: 700,
-                      cursor: 'pointer',
-                      boxShadow: '0 1px 2px rgba(220, 38, 38, 0.2)',
-                    }}
-                    title="Start end contract, record settlement, and free unit"
-                  >
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-                      <polyline points="16 17 21 12 16 7" />
-                      <line x1="21" y1="12" x2="9" y2="12" />
-                    </svg>
-                    <span>Vacate / End Contract</span>
-                  </button>
-                ) : (
-                  <span
-                    style={{
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      gap: 6,
-                      padding: '8px 14px',
-                      borderRadius: 8,
-                      background: '#FEF2F2',
-                      border: '1px solid #FECACA',
-                      color: '#991B1B',
-                      fontSize: 12,
-                      fontWeight: 800,
-                      textTransform: 'uppercase',
-                    }}
-                  >
-                    Status: {contract.status}
-                  </span>
-                )
-              )}
-            </div>
-          </div>
-
-          {/* Bottom Grid: Recent Payments (Left) + Contract Details (Right) */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1.8fr 1fr', gap: 20 }}>
-            {/* Left: Recent Payments Table */}
-            <div
-              style={{
-                background: '#FFFFFF',
-                borderRadius: 14,
-                border: '1px solid #E2E8F0',
-                padding: '22px 24px',
-                boxShadow: '0 1px 3px rgba(16, 24, 40, 0.03)',
-              }}
-            >
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 18 }}>
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0F172A" strokeWidth="2">
-                  <circle cx="12" cy="12" r="10" />
-                  <polyline points="12 6 12 12 16 14" />
-                </svg>
-                <h3 style={{ fontSize: 16, fontWeight: 800, color: '#0F172A', margin: 0 }}>
-                  Recent Payments
-                </h3>
-              </div>
-
+            ) : (
               <div style={{ overflowX: 'auto' }}>
                 <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
                   <thead>
@@ -1339,833 +1073,181 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
                     </tr>
                   </thead>
                   <tbody>
-                    {recentPaymentsList.length === 0 ? (
-                      <tr>
-                        <td colSpan={6} style={{ textAlign: 'center', padding: '36px 14px', color: '#64748B', fontSize: 13.5 }}>
-                          No payments recorded yet for this contract.
+                    {recentPaymentsList.map((p) => (
+                      <tr key={p.id} style={{ borderBottom: '1px solid #F1F5F9' }}>
+                        <td style={{ padding: '14px', fontWeight: 600, fontSize: 13, color: '#334155' }}>
+                          {p.date}
                         </td>
-                      </tr>
-                    ) : (
-                      recentPaymentsList.map((p) => (
-                        <tr key={p.id} style={{ borderBottom: '1px solid #F1F5F9' }}>
-                          <td style={{ padding: '14px', fontWeight: 600, fontSize: 13, color: '#334155' }}>
-                            {p.date}
-                          </td>
-                          <td style={{ padding: '14px', fontWeight: 800, fontSize: 12.5, color: '#0F172A', textTransform: 'uppercase' }}>
-                            {p.type}
-                          </td>
-                          <td style={{ padding: '14px', fontWeight: 700, fontSize: 13.5, color: '#0F172A' }}>
-                            {p.amount}
-                          </td>
-                          <td style={{ padding: '14px', fontWeight: 600, fontSize: 12, color: '#334155', textTransform: 'uppercase' }}>
-                            {p.mode}
-                          </td>
-                          <td style={{ padding: '14px', color: '#64748B', fontSize: 12.5 }}>
-                            {p.remarks || '—'}
-                          </td>
-                          <td style={{ padding: '14px', textAlign: 'center' }}>
-                            <div style={{ position: 'relative', display: 'inline-block' }}>
-                              <button
-                                type="button"
-                                className="gfh-action-menu-btn"
-                                onClick={(e) => {
-                                  e.stopPropagation()
-                                  setActionMenuOpen(actionMenuOpen === p.id ? null : p.id)
-                                }}
-                                title="Payment Actions"
+                        <td style={{ padding: '14px', fontWeight: 800, fontSize: 12.5, color: '#0F172A', textTransform: 'uppercase' }}>
+                          {p.type}
+                        </td>
+                        <td style={{ padding: '14px', fontWeight: 700, fontSize: 13.5, color: '#0F172A' }}>
+                          {p.amount}
+                        </td>
+                        <td style={{ padding: '14px', fontWeight: 600, fontSize: 12, color: '#334155', textTransform: 'uppercase' }}>
+                          {p.mode}
+                        </td>
+                        <td style={{ padding: '14px', color: '#64748B', fontSize: 12.5 }}>
+                          {p.remarks || '—'}
+                        </td>
+                        <td style={{ padding: '14px', textAlign: 'center' }}>
+                          <div style={{ position: 'relative', display: 'inline-block' }}>
+                            <button
+                              type="button"
+                              className="gfh-action-menu-btn"
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                setActionMenuOpen(actionMenuOpen === p.id ? null : p.id)
+                              }}
+                              title="Payment Actions"
+                              style={{
+                                width: 32,
+                                height: 32,
+                                borderRadius: '50%',
+                                border: '1px solid #E2E8F0',
+                                background: '#FFFFFF',
+                                color: '#64748B',
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                cursor: 'pointer',
+                              }}
+                            >
+                              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                                <circle cx="12" cy="5" r="2" />
+                                <circle cx="12" cy="12" r="2" />
+                                <circle cx="12" cy="19" r="2" />
+                              </svg>
+                            </button>
+                            {actionMenuOpen === p.id && (
+                              <div
+                                className="gfh-action-menu-dropdown"
                                 style={{
-                                  width: 32,
-                                  height: 32,
-                                  borderRadius: '50%',
-                                  border: '1px solid #E2E8F0',
-                                  background: '#FFFFFF',
-                                  color: '#64748B',
-                                  display: 'inline-flex',
-                                  alignItems: 'center',
-                                  justifyContent: 'center',
-                                  cursor: 'pointer',
+                                  position: 'absolute', right: 0, top: 36, background: '#FFFFFF',
+                                  border: '1px solid #E2E8F0', borderRadius: 8, boxShadow: '0 8px 24px rgba(15,23,42,0.18)',
+                                  zIndex: 9999, minWidth: 145, overflow: 'hidden',
                                 }}
                               >
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-                                  <circle cx="12" cy="5" r="2" />
-                                  <circle cx="12" cy="12" r="2" />
-                                  <circle cx="12" cy="19" r="2" />
-                                </svg>
-                              </button>
-                              {actionMenuOpen === p.id && (
-                                <div
-                                  className="gfh-action-menu-dropdown"
-                                  style={{
-                                    position: 'absolute', right: 0, top: 36, background: '#FFFFFF',
-                                    border: '1px solid #E2E8F0', borderRadius: 8, boxShadow: '0 8px 24px rgba(15,23,42,0.18)',
-                                    zIndex: 9999, minWidth: 145, overflow: 'hidden',
+                                <button
+                                  type="button"
+                                  onClick={(e) => {
+                                    e.stopPropagation()
+                                    setActionMenuOpen(null)
+                                    printPaymentReceipt(p)
                                   }}
+                                  style={{
+                                    width: '100%', padding: '10px 14px', background: 'none', border: 'none',
+                                    color: '#065F46', fontSize: 13, fontWeight: 700, cursor: 'pointer',
+                                    textAlign: 'left', display: 'flex', alignItems: 'center', gap: 8,
+                                  }}
+                                  onMouseEnter={e => (e.currentTarget.style.background = '#ECFDF5')}
+                                  onMouseLeave={e => (e.currentTarget.style.background = 'none')}
                                 >
+                                  Print Receipt
+                                </button>
+                                {!isCashier && (
                                   <button
                                     type="button"
                                     onClick={(e) => {
                                       e.stopPropagation()
-                                      setActionMenuOpen(null)
-                                      printPaymentReceipt(p)
+                                      handleDeletePayment(p.id)
                                     }}
                                     style={{
                                       width: '100%', padding: '10px 14px', background: 'none', border: 'none',
-                                      color: '#065F46', fontSize: 13, fontWeight: 700, cursor: 'pointer',
+                                      color: '#991B1B', fontSize: 13, fontWeight: 700, cursor: 'pointer',
                                       textAlign: 'left', display: 'flex', alignItems: 'center', gap: 8,
                                     }}
-                                    onMouseEnter={e => (e.currentTarget.style.background = '#ECFDF5')}
+                                    onMouseEnter={e => (e.currentTarget.style.background = '#FEF2F2')}
                                     onMouseLeave={e => (e.currentTarget.style.background = 'none')}
                                   >
-                                    Print Receipt
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                      <polyline points="3 6 5 6 21 6" />
+                                      <path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" />
+                                    </svg>
+                                    Delete
                                   </button>
-                                  {!isCashier && (
-                                    <button
-                                      type="button"
-                                      onClick={(e) => {
-                                        e.stopPropagation()
-                                        handleDeletePayment(p.id)
-                                      }}
-                                      style={{
-                                        width: '100%', padding: '10px 14px', background: 'none', border: 'none',
-                                        color: '#991B1B', fontSize: 13, fontWeight: 700, cursor: 'pointer',
-                                        textAlign: 'left', display: 'flex', alignItems: 'center', gap: 8,
-                                      }}
-                                      onMouseEnter={e => (e.currentTarget.style.background = '#FEF2F2')}
-                                      onMouseLeave={e => (e.currentTarget.style.background = 'none')}
-                                    >
-                                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                        <polyline points="3 6 5 6 21 6" />
-                                        <path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" />
-                                      </svg>
-                                      Delete
-                                    </button>
-                                  )}
-                                </div>
-                              )}
-                            </div>
-                          </td>
-                        </tr>
-                      ))
-                    )}
+                                )}
+                              </div>
+                            )}
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
                   </tbody>
                 </table>
-              </div>
-            </div>
-
-            {/* Right: Contract Details Card */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-              <div
-                style={{
-                  background: '#FFFFFF',
-                  borderRadius: 14,
-                  border: '1px solid #E2E8F0',
-                  padding: '22px 24px',
-                  boxShadow: '0 1px 3px rgba(16, 24, 40, 0.03)',
-                }}
-              >
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 18 }}>
-                  <h3 style={{ fontSize: 16, fontWeight: 800, color: '#0F172A', margin: 0 }}>
-                    Contract Details
-                  </h3>
-                  {!isCashier && (
-                    <button
-                      type="button"
-                      onClick={() => handleWorkspaceTabChange('contract')}
-                      style={{
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        gap: 5,
-                        background: 'transparent',
-                        border: 'none',
-                        color: '#059669',
-                        fontSize: 13,
-                        fontWeight: 700,
-                        cursor: 'pointer',
-                      }}
-                    >
-                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
-                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
-                      </svg>
-                      <span>Edit</span>
-                    </button>
-                  )}
-                </div>
-
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 14, fontSize: 13.5 }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <span style={{ color: '#64748B', fontWeight: 500 }}>Lease Term</span>
-                    <strong style={{ color: '#0F172A', fontWeight: 700 }}>{contract.lease_term || editForm.lease_term || 'Monthly'}</strong>
-                  </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <span style={{ color: '#64748B', fontWeight: 500 }}>Rent Amount</span>
-                    <strong style={{ color: '#0F172A', fontWeight: 700 }}>{totalRentFormatted}</strong>
-                  </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <span style={{ color: '#64748B', fontWeight: 500 }}>Security Deposit</span>
-                    <strong style={{ color: '#0F172A', fontWeight: 700 }}>{editForm.security_deposit || '10,000.00'}</strong>
-                  </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <span style={{ color: '#64748B', fontWeight: 500 }}>Dewa Deposit</span>
-                    <strong style={{ color: '#0F172A', fontWeight: 700 }}>{editForm.dewa_deposit || '1,000.00'}</strong>
-                  </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <span style={{ color: '#64748B', fontWeight: 500 }}>Start Date</span>
-                    <strong style={{ color: '#0F172A', fontWeight: 700 }}>{startDateStr}</strong>
-                  </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <span style={{ color: '#64748B', fontWeight: 500 }}>End Date</span>
-                    <strong style={{ color: '#0F172A', fontWeight: 700 }}>{endDateStr}</strong>
-                  </div>
-
-                  {/* Dewa Due Box */}
-                  <div
-                    style={{
-                      background: '#FEF2F2',
-                      borderRadius: 8,
-                      padding: '12px 16px',
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      alignItems: 'center',
-                      marginTop: 8,
-                    }}
-                  >
-                    <span style={{ color: '#DC2626', fontWeight: 800, fontSize: 13.5 }}>Dewa Due</span>
-                    <span style={{ color: '#DC2626', fontWeight: 800, fontSize: 14 }}>AED 0.00</span>
-                  </div>
-
-                  {/* Action buttons matching Image 2 right column */}
-                  <button
-                    type="button"
-                    onClick={() => openPaymentModal('dewa')}
-                    style={{
-                      width: '100%',
-                      padding: '10px 14px',
-                      borderRadius: 8,
-                      border: 'none',
-                      background: '#0F8A67',
-                      color: '#FFFFFF',
-                      fontSize: 13,
-                      fontWeight: 700,
-                      cursor: 'pointer',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      gap: 6,
-                      marginTop: 10,
-                      boxShadow: '0 1px 2px rgba(15, 138, 103, 0.2)',
-                      transition: 'background 0.15s ease',
-                    }}
-                    onMouseEnter={e => (e.currentTarget.style.background = '#0E5E48')}
-                    onMouseLeave={e => (e.currentTarget.style.background = '#0F8A67')}
-                  >
-                    <span>Add Utility Bill / Other Charges</span>
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => setCallLogModalOpen(true)}
-                    style={{
-                      width: '100%',
-                      padding: '10px 14px',
-                      borderRadius: 8,
-                      border: 'none',
-                      background: '#0284C7',
-                      color: '#FFFFFF',
-                      fontSize: 13,
-                      fontWeight: 700,
-                      cursor: 'pointer',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      gap: 6,
-                      marginTop: 6,
-                      boxShadow: '0 1px 2px rgba(2, 132, 199, 0.2)',
-                      transition: 'background 0.15s ease',
-                    }}
-                    onMouseEnter={e => (e.currentTarget.style.background = '#0369A1')}
-                    onMouseLeave={e => (e.currentTarget.style.background = '#0284C7')}
-                  >
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
-                    </svg>
-                    <span>Add Call Log</span>
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {mode === 'view' && (
-        <section
-          style={{
-            marginTop: 20,
-            padding: '24px 28px',
-            background: '#FFFFFF',
-            border: '1px solid #E2E8F0',
-            borderRadius: 14,
-            boxShadow: '0 1px 3px rgba(16, 24, 40, 0.03)',
-          }}
-        >
-          {/* Top Bar: Title & Tabs & Green Export Button (Left) + Totals Box (Right) */}
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'flex-start',
-              flexWrap: 'wrap',
-              gap: 20,
-              paddingBottom: 20,
-              borderBottom: '1px solid #F1F5F9',
-              marginBottom: 16,
-            }}
-          >
-            {/* Left: Title, View Switcher, and Green Export to Excel button */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 14, flexWrap: 'wrap' }}>
-                <h3 style={{ fontSize: 18, fontWeight: 800, color: '#0F172A', margin: 0, letterSpacing: '-0.01em' }}>
-                  {bottomTab === 'statement' ? 'Rent Statement' : 'Contract Cheques'}
-                </h3>
-
-                {/* View Switcher Tabs */}
-                <div style={{ display: 'inline-flex', background: '#F1F5F9', padding: 3, borderRadius: 8, gap: 4 }}>
-                  <button
-                    type="button"
-                    onClick={() => setBottomTab('statement')}
-                    style={{
-                      padding: '6px 14px',
-                      borderRadius: 6,
-                      border: 'none',
-                      background: bottomTab === 'statement' ? '#0E5E48' : 'transparent',
-                      color: bottomTab === 'statement' ? '#FFFFFF' : '#64748B',
-                      fontSize: 12.5,
-                      fontWeight: 700,
-                      cursor: 'pointer',
-                      transition: 'all 0.15s ease',
-                    }}
-                  >
-                    Rent Statement
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setBottomTab('cheques')}
-                    style={{
-                      padding: '6px 14px',
-                      borderRadius: 6,
-                      border: 'none',
-                      background: bottomTab === 'cheques' ? '#0E5E48' : 'transparent',
-                      color: bottomTab === 'cheques' ? '#FFFFFF' : '#64748B',
-                      fontSize: 12.5,
-                      fontWeight: 700,
-                      cursor: 'pointer',
-                      transition: 'all 0.15s ease',
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      gap: 6,
-                    }}
-                  >
-                    <span>Cheques</span>
-                    <span
-                      style={{
-                        fontSize: 10.5,
-                        padding: '1px 6px',
-                        borderRadius: 999,
-                        background: bottomTab === 'cheques' ? 'rgba(255,255,255,0.25)' : '#E2E8F0',
-                        color: bottomTab === 'cheques' ? '#FFFFFF' : '#475569',
-                      }}
-                    >
-                      {contract.cheques?.length || 0}
-                    </span>
-                  </button>
-                </div>
-              </div>
-
-              {/* Green [Export to Excel] Button (Matches Image 2 exactly) */}
-              {bottomTab === 'statement' && (
-                <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                  <button
-                    type="button"
-                    onClick={handleExportExcel}
-                    disabled={exportLoading}
-                    style={{
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      gap: 8,
-                      padding: '8px 18px',
-                      borderRadius: 8,
-                      border: 'none',
-                      background: '#0F8A67',
-                      color: '#FFFFFF',
-                      fontSize: 13,
-                      fontWeight: 700,
-                      cursor: exportLoading ? 'not-allowed' : 'pointer',
-                      boxShadow: '0 2px 4px rgba(15, 138, 103, 0.25)',
-                      opacity: exportLoading ? 0.75 : 1,
-                      transition: 'all 0.15s ease',
-                    }}
-                    onMouseEnter={(e) => (e.currentTarget.style.background = '#0E5E48')}
-                    onMouseLeave={(e) => (e.currentTarget.style.background = '#0F8A67')}
-                  >
-                    {/* Excel File Icon */}
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                      <polyline points="14 2 14 8 20 8" />
-                      <line x1="8" y1="13" x2="16" y2="13" />
-                      <line x1="8" y1="17" x2="16" y2="17" />
-                      <polyline points="10 9 9 9 8 9" />
-                    </svg>
-                    <span>{exportLoading ? 'Exporting...' : 'Export to Excel'}</span>
-                  </button>
-                </div>
-              )}
-            </div>
-
-            {/* Right Side: Totals Summary Box (Matches Image 2 exactly) */}
-            {bottomTab === 'statement' && (
-              <div
-                style={{
-                  background: '#F8FAFC',
-                  border: '1px solid #E2E8F0',
-                  borderRadius: 10,
-                  padding: '12px 20px',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: 8,
-                  minWidth: 260,
-                }}
-              >
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: 13 }}>
-                  <span style={{ color: '#64748B', fontWeight: 600 }}>Receivable</span>
-                  <strong style={{ color: '#0F172A', fontWeight: 800, fontSize: 14 }}>
-                    AED {Number(ledgerSummary.total_debit).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                  </strong>
-                </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: 13 }}>
-                  <span style={{ color: '#64748B', fontWeight: 600 }}>Received</span>
-                  <strong style={{ color: '#059669', fontWeight: 800, fontSize: 14 }}>
-                    AED {Number(ledgerSummary.total_credit).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                  </strong>
-                </div>
-                <div
-                  style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    fontSize: 13,
-                    borderTop: '1px solid #E2E8F0',
-                    paddingTop: 8,
-                    marginTop: 2,
-                  }}
-                >
-                  <span style={{ color: '#0F172A', fontWeight: 700 }}>Other Due</span>
-                  <strong
-                    style={{
-                      color: Number(ledgerSummary.total_balance) > 0 ? '#DC2626' : '#059669',
-                      fontWeight: 800,
-                      fontSize: 15,
-                    }}
-                  >
-                    AED {Number(ledgerSummary.total_balance).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                  </strong>
-                </div>
               </div>
             )}
           </div>
 
-          {/* TAB 1: RENT STATEMENT TABLE (Exact Match to Image 2) */}
-          {bottomTab === 'statement' && (
-            <div style={{ overflowX: 'auto' }}>
-              <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
-                <thead>
-                  <tr style={{ borderBottom: '1px solid #E2E8F0' }}>
-                    <th style={{ padding: '12px 14px', fontSize: 12, fontWeight: 700, color: '#64748B', width: '15%' }}>Date</th>
-                    <th style={{ padding: '12px 14px', fontSize: 12, fontWeight: 700, color: '#64748B', width: '37%' }}>Description</th>
-                    <th style={{ padding: '12px 14px', fontSize: 12, fontWeight: 700, color: '#64748B', width: '16%' }}>Debit</th>
-                    <th style={{ padding: '12px 14px', fontSize: 12, fontWeight: 700, color: '#64748B', width: '16%' }}>Credit</th>
-                    <th style={{ padding: '12px 14px', fontSize: 12, fontWeight: 700, color: '#64748B', width: '16%' }}>Balance</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {ledgerLoading ? (
-                    <tr>
-                      <td colSpan={5} style={{ textAlign: 'center', padding: '36px 14px', color: '#64748B', fontSize: 13.5 }}>
-                        Loading statement records...
-                      </td>
-                    </tr>
-                  ) : ledgerEntries.length === 0 ? (
-                    <tr>
-                      <td colSpan={5} style={{ textAlign: 'center', padding: '36px 14px', color: '#64748B', fontSize: 13.5 }}>
-                        No statement records recorded yet for this contract.
-                      </td>
-                    </tr>
-                  ) : (
-                    ledgerEntries.map((row) => (
-                      <tr key={row.id} style={{ borderBottom: '1px solid #F1F5F9' }}>
-                        <td style={{ padding: '14px', fontWeight: 600, fontSize: 13, color: '#0F172A' }}>
-                          {formatDate(row.date)}
-                        </td>
-                        <td style={{ padding: '14px', fontWeight: 700, fontSize: 13.5, color: '#0F172A' }}>
-                          {row.description || 'Rent Entry'}
-                        </td>
-                        <td style={{ padding: '14px', fontWeight: 700, fontSize: 13.5, color: Number(row.debit) > 0 ? '#0F172A' : '#475569' }}>
-                          {Number(row.debit) > 0 ? Number(row.debit).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '0.00'}
-                        </td>
-                        <td style={{ padding: '14px', fontWeight: 800, fontSize: 13.5, color: Number(row.credit) > 0 ? '#065F46' : '#475569' }}>
-                          {Number(row.credit) > 0 ? Number(row.credit).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '0.00'}
-                        </td>
-                        <td style={{ padding: '14px', fontWeight: 800, fontSize: 14, color: Number(row.running_balance) > 0 ? '#0F172A' : '#065F46' }}>
-                          {Number(row.running_balance || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                        </td>
-                      </tr>
-                    ))
-                  )}
-                </tbody>
-              </table>
-            </div>
-          )}
-
-          {/* TAB 2: CHEQUES TABLE (Original Preserved) */}
-          {bottomTab === 'cheques' && (
-            <div>
-              {!contract.cheques?.length ? (
-                <p style={{ color: '#64748B', margin: 0, padding: '24px 0', textAlign: 'center', fontSize: 13.5 }}>
-                  No cheques recorded for this contract.
-                </p>
-              ) : (
-                <div style={{ overflowX: 'auto' }}>
-                  <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
-                    <thead>
-                      <tr style={{ borderBottom: '1px solid #E2E8F0' }}>
-                        {['Cheque No / Details', 'Bank', 'Amount (AED)', 'Date', 'Status'].map(label => (
-                          <th key={label} style={{ padding: '12px 14px', color: '#64748B', fontSize: 12, fontWeight: 700 }}>
-                            {label}
-                          </th>
-                        ))}
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {contract.cheques.map(cheque => (
-                        <tr key={cheque.id} style={{ borderTop: '1px solid #E2E8F0' }}>
-                          <td style={{ padding: 14 }}>
-                            <div style={{ fontSize: 14, fontWeight: 800, color: '#0F172A', letterSpacing: '0.3px', marginBottom: 4 }}>
-                              {cheque.cheque_number || 'Not provided'}
-                            </div>
-                            <ChequeDetails cheque={cheque} contractId={contract.id} />
-                          </td>
-                          <td style={{ padding: 14, fontWeight: 700, color: '#0F172A', fontSize: 13.5 }}>
-                            {cheque.bank_name}
-                          </td>
-                          <td style={{ padding: 14, color: '#065F46', fontWeight: 800, fontSize: 14 }}>
-                            {Number(cheque.amount).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                          </td>
-                          <td style={{ padding: 14, color: '#0F172A', fontWeight: 600, fontSize: 13.5 }}>
-                            {formatDate(cheque.due_date)}
-                          </td>
-                          <td style={{ padding: 14 }}>
-                            <span
-                              style={{
-                                display: 'inline-block',
-                                padding: '4px 12px',
-                                borderRadius: 999,
-                                fontSize: 11,
-                                fontWeight: 800,
-                                textTransform: 'uppercase',
-                                letterSpacing: '0.4px',
-                                background: cheque.status === 'cleared' ? '#F0FDF4' : (cheque.status === 'bounced' ? '#FEF2F2' : '#FFFBEB'),
-                                color: cheque.status === 'cleared' ? '#065F46' : (cheque.status === 'bounced' ? '#991B1B' : '#B45309'),
-                                border: `1px solid ${cheque.status === 'cleared' ? '#BBF7D0' : (cheque.status === 'bounced' ? '#FECACA' : '#FDE68A')}`,
-                              }}
-                            >
-                              {cheque.status}
-                            </span>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              )}
-            </div>
-          )}
-        </section>
-      )}
-
-      {/* ─── EDIT MODE: IMAGE 2 (Full Lease & Contract Edit with Tabs) ───── */}
-      {mode === 'edit' && (
-        <div className="fade-in">
-          {/* CARD 1: UNIT & CONTRACT HEADER (Exact Match to Reference Image 2) */}
-          <div
-        className="fade-in"
-        style={{
-          background: '#FFFFFF',
-          borderRadius: 14,
-          border: '1px solid #E2E8F0',
-          padding: '20px 24px',
-          boxShadow: '0 1px 3px rgba(16, 24, 40, 0.03)',
-          marginBottom: 20,
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'flex-start',
-          flexWrap: 'wrap',
-          gap: 16,
-        }}
-      >
-        {/* Left Side: Circular Icon + Property/Unit + Subtitle Info */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+          {/* Right: Contract Details Card */}
           <div
             style={{
-              width: 50,
-              height: 50,
-              borderRadius: '50%',
-              background: '#E6F7F0',
-              color: '#0F8A67',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              flexShrink: 0,
+              background: '#FFFFFF',
+              borderRadius: 14,
+              border: '1px solid #E2E8F0',
+              padding: '22px 24px',
+              boxShadow: '0 1px 3px rgba(16, 24, 40, 0.03)',
             }}
           >
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <rect x="4" y="2" width="16" height="20" rx="2" />
-              <path d="M9 22v-4h6v4" />
-              <line x1="8" y1="6" x2="10" y2="6" />
-              <line x1="14" y1="6" x2="16" y2="6" />
-              <line x1="8" y1="10" x2="10" y2="10" />
-              <line x1="14" y1="10" x2="16" y2="10" />
-              <line x1="8" y1="14" x2="10" y2="14" />
-              <line x1="14" y1="14" x2="16" y2="14" />
-            </svg>
-          </div>
-
-          <div>
-            {/* Property Name */}
-            <div style={{ fontSize: 13, color: '#64748B', fontWeight: 600 }}>
-              {propertyName}
-            </div>
-
-            {/* Unit Number - Type */}
-            <div style={{ fontSize: 24, fontWeight: 800, color: '#0E5E48', letterSpacing: '-0.01em', marginTop: 2 }}>
-              {unitNumber} - {contractType}
-            </div>
-
-            {/* Subtitle Info Row */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap', marginTop: 6, fontSize: 13 }}>
-              {/* Tenant Icon & Name */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontWeight: 700, color: '#1E293B' }}>
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#64748B" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-                  <circle cx="12" cy="7" r="4" />
-                </svg>
-                <span style={{ textTransform: 'uppercase' }}>{tenantName}</span>
-              </div>
-
-              <span style={{ color: '#CBD5E1' }}>|</span>
-
-              {/* Rent Amount */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: 5, color: '#64748B', fontWeight: 500 }}>
-                <span>Rent</span>
-                <strong style={{ color: '#1E293B', fontWeight: 700 }}>{totalRentFormatted}</strong>
-              </div>
-
-              <span style={{ color: '#CBD5E1' }}>|</span>
-
-              {/* Date Range with Calendar Icon */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: 6, color: '#64748B', fontWeight: 500 }}>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#64748B" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
-                  <line x1="16" y1="2" x2="16" y2="6" />
-                  <line x1="8" y1="2" x2="8" y2="6" />
-                  <line x1="3" y1="10" x2="21" y2="10" />
-                </svg>
-                <span>{startDateStr} &nbsp;→&nbsp; {endDateStr}</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Right Side: Status Badge + Action Buttons (Unit, Print SEC, Print DEWA) */}
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 12 }}>
-          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8, flexWrap: 'wrap' }}>
-            <LegalCaseBadge active={contract.on_case} />
-            <span
-              style={{
-                background: contract.status === 'vacated' ? '#DC2626' : '#16A34A',
-                color: '#FFFFFF',
-                fontSize: 11,
-                fontWeight: 800,
-                letterSpacing: '0.6px',
-                textTransform: 'uppercase',
-                padding: '4px 12px',
-                borderRadius: 6,
-              }}
-            >
-              {contract.status === 'vacated' ? 'VACATED' : 'CURRENT'}
-            </span>
-          </div>
-
-          {/* Action Buttons Row */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
-            {/* ← Unit button */}
-            <button
-              type="button"
-              onClick={() => setMode('view')}
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: 6,
-                padding: '6px 14px',
-                borderRadius: 6,
-                background: '#FFFFFF',
-                border: '1px solid #D1D5DB',
-                color: '#374151',
-                fontSize: 12.5,
-                fontWeight: 600,
-                cursor: 'pointer',
-                transition: 'all 0.15s ease',
-              }}
-              onMouseEnter={e => (e.currentTarget.style.background = '#F9FAFB')}
-              onMouseLeave={e => (e.currentTarget.style.background = '#FFFFFF')}
-            >
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                <line x1="19" y1="12" x2="5" y2="12" />
-                <polyline points="12 19 5 12 12 5" />
-              </svg>
-              <span>Unit</span>
-            </button>
-
-            {/* Print SEC button */}
-            <button
-              type="button"
-              onClick={() => printReceipt('SEC')}
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                padding: '6px 14px',
-                borderRadius: 6,
-                background: '#FFFFFF',
-                border: '1px solid #3B82F6',
-                color: '#2563EB',
-                fontSize: 12.5,
-                fontWeight: 600,
-                cursor: 'pointer',
-                transition: 'all 0.15s ease',
-              }}
-              onMouseEnter={e => (e.currentTarget.style.background = '#EFF6FF')}
-              onMouseLeave={e => (e.currentTarget.style.background = '#FFFFFF')}
-            >
-              <span>Print SEC</span>
-            </button>
-
-            {/* Print DEWA button */}
-            <button
-              type="button"
-              onClick={() => printReceipt('DEWA')}
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                padding: '6px 14px',
-                borderRadius: 6,
-                background: '#FFFFFF',
-                border: '1px solid #3B82F6',
-                color: '#2563EB',
-                fontSize: 12.5,
-                fontWeight: 600,
-                cursor: 'pointer',
-                transition: 'all 0.15s ease',
-              }}
-              onMouseEnter={e => (e.currentTarget.style.background = '#EFF6FF')}
-              onMouseLeave={e => (e.currentTarget.style.background = '#FFFFFF')}
-            >
-              <span>Print DEWA</span>
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* ─── TABS ROW (Lease, Documents, Cheques, Statement) ────────────────── */}
-      <div
-        className="fade-in"
-        style={{
-          display: 'flex',
-          gap: 28,
-          borderBottom: '1px solid #E5E7EB',
-          padding: '0 4px',
-          marginBottom: 20,
-        }}
-      >
-        {[
-          {
-            key: 'lease' as TabType,
-            label: 'Lease',
-            icon: (
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-              </svg>
-            ),
-          },
-          {
-            key: 'documents' as TabType,
-            label: 'Documents',
-            icon: (
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 18 }}>
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#64748B" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
                 <polyline points="14 2 14 8 20 8" />
                 <line x1="16" y1="13" x2="8" y2="13" />
                 <line x1="16" y1="17" x2="8" y2="17" />
               </svg>
-            ),
-          },
-          {
-            key: 'cheques' as TabType,
-            label: 'Cheques',
-            icon: (
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <rect x="1" y="4" width="22" height="16" rx="2" ry="2" />
-                <line x1="1" y1="10" x2="23" y2="10" />
-              </svg>
-            ),
-          },
-          {
-            key: 'statement' as TabType,
-            label: 'Statement',
-            icon: (
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <line x1="18" y1="20" x2="18" y2="10" />
-                <line x1="12" y1="20" x2="12" y2="4" />
-                <line x1="6" y1="20" x2="6" y2="14" />
-              </svg>
-            ),
-          },
-        ].map(tab => {
-          const isActive = activeTab === tab.key
-          return (
-            <button
-              key={tab.key}
-              type="button"
-              onClick={() => setActiveTab(tab.key)}
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: 8,
-                padding: '0 0 12px 0',
-                background: 'transparent',
-                border: 'none',
-                borderBottom: isActive ? '3px solid #0E5E48' : '3px solid transparent',
-                color: isActive ? '#0E5E48' : '#6B7280',
-                fontSize: 14,
-                fontWeight: isActive ? 700 : 600,
-                cursor: 'pointer',
-                transition: 'all 0.15s ease',
-              }}
-            >
-              {tab.icon}
-              <span>{tab.label}</span>
-            </button>
-          )
-        })}
-      </div>
+              <h3 style={{ fontSize: 15.5, fontWeight: 800, color: '#0F172A', margin: 0 }}>
+                Contract Details
+              </h3>
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', fontSize: 13.5 }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', padding: '11px 0', borderBottom: '1px solid #F1F5F9' }}>
+                <span style={{ color: '#64748B', fontWeight: 500 }}>Lease Term</span>
+                <strong style={{ color: '#0F172A', fontWeight: 700 }}>{contract.lease_term || editForm.lease_term || '1 Year'}</strong>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', padding: '11px 0', borderBottom: '1px solid #F1F5F9' }}>
+                <span style={{ color: '#64748B', fontWeight: 500 }}>Rent Amount</span>
+                <strong style={{ color: '#0F172A', fontWeight: 700 }}>{totalRentFormatted}</strong>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', padding: '11px 0', borderBottom: '1px solid #F1F5F9' }}>
+                <span style={{ color: '#64748B', fontWeight: 500 }}>Security Deposit</span>
+                <strong style={{ color: '#0F172A', fontWeight: 700 }}>
+                  {Number(contract.security_deposit || editForm.security_deposit || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                </strong>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', padding: '11px 0', borderBottom: '1px solid #F1F5F9' }}>
+                <span style={{ color: '#64748B', fontWeight: 500 }}>Start Date</span>
+                <strong style={{ color: '#0F172A', fontWeight: 700 }}>{startDateStr}</strong>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', padding: '11px 0' }}>
+                <span style={{ color: '#64748B', fontWeight: 500 }}>End Date</span>
+                <strong style={{ color: '#0F172A', fontWeight: 700 }}>{endDateStr}</strong>
+              </div>
+
+              {/* Dewa Due Box */}
+              <div
+                style={{
+                  background: '#FEF2F2',
+                  borderRadius: 8,
+                  padding: '12px 16px',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  marginTop: 12,
+                }}
+              >
+                <span style={{ color: '#EF4444', fontWeight: 700, fontSize: 13 }}>Dewa Due</span>
+                <span style={{ color: '#EF4444', fontWeight: 800, fontSize: 13.5 }}>AED 0.00</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ─── OTHER TABS CONTENT: Payments | Cheques | Documents | Contract ───── */}
+      {mode === 'edit' && (
+        <div className="fade-in">
 
       {/* ─── TAB 1: LEASE (Exact Match to Reference Image) ──────────────────── */}
       {activeTab === 'lease' && (
@@ -2877,6 +1959,28 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
                   </svg>
                   <span>{exportLoading ? 'Exporting...' : 'Export to Excel'}</span>
                 </button>
+
+                {!isCashier && (
+                  <button
+                    type="button"
+                    onClick={() => setChargeModalOpen(true)}
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: 6,
+                      padding: '9px 18px',
+                      borderRadius: 8,
+                      background: '#FFFFFF',
+                      color: '#0F172A',
+                      fontSize: 13,
+                      fontWeight: 700,
+                      border: '1px solid #E2E8F0',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    + Add Charge
+                  </button>
+                )}
 
                 <button
                   type="button"
