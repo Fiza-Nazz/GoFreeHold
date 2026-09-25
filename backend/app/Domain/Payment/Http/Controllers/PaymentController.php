@@ -106,6 +106,7 @@ class PaymentController extends Controller
     public function destroy(Request $request, Payment $payment): JsonResponse
     {
         $user = $request->user();
+        abort_if($user?->role === 'cashier', 403, 'Cashiers are not authorized to delete existing payment records.');
         if ($user && in_array($user->role, ['owner', 'cashier', 'accountant'], true)) {
             $ownerId = app(\App\Domain\Auth\Services\OwnerContextResolver::class)->ownerId($user);
             $contractOwnerId = (int) ($payment->contract?->owner_id ?: $payment->contract?->unit?->property?->owner_id);

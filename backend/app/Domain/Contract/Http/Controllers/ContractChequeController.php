@@ -138,6 +138,7 @@ class ContractChequeController extends Controller
     public function destroy(Contract $contract, ContractCheque $cheque): JsonResponse
     {
         $user = request()->user();
+        abort_if($user?->role === 'cashier', 403, 'Cashiers are not authorized to delete existing cheque records.');
         if ($user && in_array($user->role, ['owner', 'cashier', 'accountant'], true)) {
             $ownerId = app(\App\Domain\Auth\Services\OwnerContextResolver::class)->ownerId($user);
             $contractOwnerId = (int) ($contract->owner_id ?: $contract->unit?->property?->owner_id);
