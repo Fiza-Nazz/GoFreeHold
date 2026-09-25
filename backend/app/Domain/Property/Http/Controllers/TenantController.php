@@ -61,11 +61,11 @@ class TenantController extends Controller
         $user = $request->user();
         if ($user && in_array($user->role, ['owner', 'cashier', 'accountant'], true)) {
             $ownerId = app(\App\Domain\Auth\Services\OwnerContextResolver::class)->ownerId($user);
-            $hasContract = $tenant->contracts()->where(function ($q) use ($ownerId) {
+            $belongsToOwner = ((int) $tenant->owner_id === (int) $ownerId) || $tenant->contracts()->where(function ($q) use ($ownerId) {
                 $q->where('contracts.owner_id', $ownerId)
                   ->orWhereHas('unit.property', fn ($p) => $p->where('owner_id', $ownerId));
             })->exists();
-            abort_unless($hasContract, 403, 'Unauthorized access to this tenant.');
+            abort_unless($belongsToOwner, 403, 'Unauthorized access to this tenant.');
         }
 
         $rules = $this->rules($tenant);

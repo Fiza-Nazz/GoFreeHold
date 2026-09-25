@@ -71,6 +71,8 @@ class RentTransactionController extends Controller
 
     public function store(Request $request): JsonResponse
     {
+        abort_if($request->user()?->role === 'cashier', 403, 'Cashiers are not permitted to add or remove contract charges.');
+
         $validated = $request->validate([
             'contract_id' => 'required|exists:contracts,id',
             'date'        => 'required|date',
@@ -78,6 +80,8 @@ class RentTransactionController extends Controller
             'debit'       => 'nullable|numeric|min:0',
             'credit'      => 'nullable|numeric|min:0',
         ]);
+
+        $this->assertContractAccess($request, (int) $validated['contract_id']);
 
         $debit = (float) ($validated['debit'] ?? 0);
         $credit = (float) ($validated['credit'] ?? 0);

@@ -88,6 +88,8 @@ export default function AppRouter() {
         {(['cashier','accountant'] as const).map(role => <Route key={role} element={<ProtectedRoute allowedRoles={[role]} />}>
           <Route path={'/'+role} element={<StaffLayout />}>
             <Route index element={<Navigate to="dashboard" replace />} />
+            <Route path="units" element={<OwnerUnits />} />
+            <Route path="units/:unitId" element={<UnitDetailPage />} />
             <Route path="contracts" element={<ContractManagement basePath={'/' + role} />} />
             <Route path="contracts/:id" element={<ContractDetailPage basePath={'/' + role} />} />
             {['dashboard','payments','payments/new','receivables','profile',...(role==='accountant'?['ledger']:[])].map(path=><Route key={path} path={path} element={<FinancePage key={role+'/'+path} />} />)}

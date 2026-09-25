@@ -101,6 +101,11 @@ Route::middleware(['auth:sanctum', 'role:owner,cashier,accountant'])->prefix('ow
     Route::delete('/legal-cases/{legalCase}', [LegalCaseController::class, 'destroy']);
     Route::post('/legal-cases/{legalCase}/documents', [LegalCaseController::class, 'storeDocument']);
     Route::delete('/legal-cases/{legalCase}/documents/{legalCaseDocument}', [LegalCaseController::class, 'destroyDocument']);
-    Route::get('/tenancy-res', [TenancyResController::class, 'index']);
-    Route::get('/terms', [TermController::class, 'index']);
+    Route::apiResource('tenancy-res', TenancyResController::class)->parameters(['tenancy-res' => 'tenancyRes']);
+    Route::apiResource('tenancy-contracts', TenancyContractController::class);
+    Route::apiResource('terms', TermController::class);
+
+    Route::get('/contract-docs', [ContractDocController::class, 'index']);
+    Route::post('/contract-docs', [ContractDocController::class, 'store']);
+    Route::delete('/contract-docs/{contractDoc}', [ContractDocController::class, 'destroy']);
 });

@@ -27,9 +27,34 @@ interface Contract {
   owner?: { id: number; name: string }
 }
 
-interface Unit { id: number; number: string; property?: { id: number; name: string } }
-interface Tenant { id: number; name: string; email: string }
+interface Unit {
+  id: number
+  number: string
+  status?: string
+  price?: number
+  property_id?: number
+  property?: { id: number; name: string }
+}
+interface Tenant {
+  id: number
+  name: string
+  email: string
+  phone?: string
+  contact?: string
+  emirates_id?: string
+  nationality?: string
+  address?: string
+}
 interface Owner { id: number; name: string }
+
+function computeOneYearLater(startStr: string): string {
+  if (!startStr) return ''
+  const d = new Date(startStr)
+  if (isNaN(d.getTime())) return ''
+  d.setFullYear(d.getFullYear() + 1)
+  d.setDate(d.getDate() - 1)
+  return d.toISOString().split('T')[0]
+}
 
 export default function ContractManagement({ basePath }: { basePath?: string } = {}) {
   const navigate = useNavigate()
@@ -54,6 +79,14 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
   const [renewModal, setRenewModal] = useState<Contract | null>(null)
   const [vacateContract, setVacateContract] = useState<Contract | null>(null)
 
+  // Guided Contract Creation Wizard states
+  const [wizardStep, setWizardStep] = useState<1 | 2 | 3 | 'success'>(1)
+  const [tenantMode, setTenantMode] = useState<'existing' | 'new'>('existing')
+  const [tenantSearch, setTenantSearch] = useState('')
+  const [showMoreDetails, setShowMoreDetails] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [createdContract, setCreatedContract] = useState<Contract | null>(null)
+
   // Filters
   const [selectedPropertyId, setSelectedPropertyId] = useState<string>('')
   const [selectedUnitId, setSelectedUnitId] = useState<string>('')
@@ -66,10 +99,19 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
   const [currentPage, setCurrentPage] = useState<number>(1)
   const [pageSize, setPageSize] = useState<number>(5)
 
+  const todayStr = new Date().toISOString().split('T')[0]
+  const defaultEndStr = computeOneYearLater(todayStr)
+
   const [formData, setFormData] = useState({ 
-    unit_id: '', tenant_id: '', owner_id: '', start_date: '', end_date: '', 
-    rent_amount: '', security_deposit: '', type: 'residential', notes: '',
-    mode_of_payment: 'cash', contract_value: '', discount_type: '', discount_info: '',
+    unit_id: '', tenant_id: '', owner_id: '',
+    tenant_name: '', tenant_phone: '', tenant_emirates_id: '', tenant_email: '', tenant_nationality: '', tenant_address: '',
+    start_date: todayStr, end_date: defaultEndStr,
+    rent_amount: '', security_deposit: '5000',
+    payment_frequency: '4 Cheques', number_of_cheques: '4', first_payment_due_date: todayStr,
+    first_cheque_number: '', cheque_bank: 'Emirates NBD',
+    dewa_deposit: '', deposit_type: 'CHEQUE',
+    type: 'residential', notes: '',
+    mode_of_payment: 'cheque', contract_value: '', discount_type: '', discount_info: '',
     passport_image: null as File | null, visa_page: null as File | null, 
     tenant_id_image: null as File | null, tenant_id_back_image: null as File | null 
   })
@@ -77,10 +119,14 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
   const [vacateNote, setVacateNote] = useState('')
   const [modalPropertyId, setModalPropertyId] = useState<string>('')
 
+  const availableUnits = useMemo(() => {
+    return units.filter(u => !u.status || u.status === 'AVAILABLE' || String(u.id) === String(formData.unit_id))
+  }, [units, formData.unit_id])
+
   const modalUnits = useMemo(() => {
-    if (!modalPropertyId) return units
-    return units.filter(u => String(u.property?.id || '') === String(modalPropertyId))
-  }, [units, modalPropertyId])
+    if (!modalPropertyId) return availableUnits
+    return availableUnits.filter(u => String(u.property?.id || u.property_id || '') === String(modalPropertyId))
+  }, [availableUnits, modalPropertyId])
 
   const unitsByProperty = useMemo(() => {
     const map = new Map<string, Unit[]>()
@@ -92,7 +138,101 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
     return map
   }, [modalUnits])
 
+  const filteredExistingTenants = useMemo(() => {
+    const q = tenantSearch.trim().toLowerCase()
+    if (!q) return tenants
+    return tenants.filter(t =>
+      (t.name && t.name.toLowerCase().includes(q)) ||
+      (t.phone && t.phone.toLowerCase().includes(q)) ||
+      (t.contact && t.contact.toLowerCase().includes(q)) ||
+      (t.emirates_id && t.emirates_id.toLowerCase().includes(q)) ||
+      (t.email && t.email.toLowerCase().includes(q))
+    )
+  }, [tenants, tenantSearch])
+
+  const selectedTenantObj = useMemo(() => {
+    if (!formData.tenant_id) return null
+    return tenants.find(t => String(t.id) === String(formData.tenant_id)) || null
+  }, [tenants, formData.tenant_id])
+
+  const duplicateTenantMatch = useMemo(() => {
+    if (tenantMode !== 'new') return null
+    const phone = formData.tenant_phone.trim().toLowerCase()
+    const eid = formData.tenant_emirates_id.trim().toLowerCase()
+    const email = formData.tenant_email.trim().toLowerCase()
+    if (!phone && !eid && !email) return null
+    return tenants.find(t =>
+      (phone && ((t.phone || '').toLowerCase() === phone || (t.contact || '').toLowerCase() === phone)) ||
+      (eid && (t.emirates_id || '').toLowerCase() === eid) ||
+      (email && (t.email || '').toLowerCase() === email)
+    ) || null
+  }, [tenantMode, formData.tenant_phone, formData.tenant_emirates_id, formData.tenant_email, tenants])
+
+  const selectedUnitObj = useMemo(() => {
+    if (!formData.unit_id) return null
+    return units.find(u => String(u.id) === String(formData.unit_id)) || null
+  }, [units, formData.unit_id])
+
+  const openGuidedWizard = (preUnitId = '', prePropertyId = '') => {
+    const matchedUnit = preUnitId ? units.find(u => String(u.id) === String(preUnitId)) : null
+    const defaultRent = matchedUnit?.price ? String(matchedUnit.price) : ''
+    const resolvedPropId = prePropertyId || (matchedUnit?.property?.id ? String(matchedUnit.property.id) : (matchedUnit?.property_id ? String(matchedUnit.property_id) : ''))
+    setModalPropertyId(resolvedPropId)
+    setWizardStep(1)
+    setTenantMode('existing')
+    setTenantSearch('')
+    setShowMoreDetails(false)
+    setCreatedContract(null)
+    setFormData({
+      unit_id: preUnitId,
+      tenant_id: '',
+      owner_id: owners[0]?.id ? String(owners[0].id) : '',
+      tenant_name: '',
+      tenant_phone: '',
+      tenant_emirates_id: '',
+      tenant_email: '',
+      tenant_nationality: '',
+      tenant_address: '',
+      start_date: todayStr,
+      end_date: defaultEndStr,
+      rent_amount: defaultRent,
+      security_deposit: '5000',
+      payment_frequency: '4 Cheques',
+      number_of_cheques: '4',
+      first_payment_due_date: todayStr,
+      first_cheque_number: '',
+      cheque_bank: 'Emirates NBD',
+      dewa_deposit: '',
+      deposit_type: 'CHEQUE',
+      type: 'residential',
+      notes: '',
+      mode_of_payment: 'cheque',
+      contract_value: defaultRent,
+      discount_type: '',
+      discount_info: '',
+      passport_image: null,
+      visa_page: null,
+      tenant_id_image: null,
+      tenant_id_back_image: null,
+    })
+    setIsModalOpen(true)
+  }
+
   useEffect(() => { fetchAll() }, [])
+
+  // Auto-open guided wizard when navigated with ?create=1&unit_id=...
+  useEffect(() => {
+    if (!isLoading && searchParams.get('create') === '1') {
+      const uId = searchParams.get('unit_id') || ''
+      const pId = searchParams.get('property_id') || ''
+      openGuidedWizard(uId, pId)
+      const nextParams = new URLSearchParams(searchParams)
+      nextParams.delete('create')
+      nextParams.delete('unit_id')
+      nextParams.delete('property_id')
+      setSearchParams(nextParams, { replace: true })
+    }
+  }, [isLoading, searchParams])
 
   const fetchAll = async () => {
     setIsLoading(true)
@@ -113,21 +253,38 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
     finally { setIsLoading(false) }
   }
 
-  const handleCreate = async (e: React.FormEvent) => {
-    e.preventDefault()
+  const handleCreate = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault()
+    if (isSubmitting) return
+    setIsSubmitting(true)
     try {
       const data = new FormData()
       Object.entries(formData).forEach(([key, value]) => {
+        if (tenantMode === 'existing' && key.startsWith('tenant_') && key !== 'tenant_id' && !key.includes('image')) {
+          return
+        }
+        if (tenantMode === 'new' && key === 'tenant_id') {
+          return
+        }
         if (value !== null && value !== '') {
           data.append(key, value as any)
         }
       })
-      await api.post(`${apiPrefix}/contracts`, data, {
+      if (!data.has('contract_value') && formData.rent_amount) {
+        data.append('contract_value', formData.rent_amount)
+      }
+      const res = await api.post(`${apiPrefix}/contracts`, data, {
         headers: { 'Content-Type': 'multipart/form-data' }
       })
-      setIsModalOpen(false)
+      const created = res.data?.data?.contract || null
+      setCreatedContract(created)
+      setWizardStep('success')
       fetchAll()
-    } catch (err: any) { alert(err.response?.data?.message || 'Error creating contract') }
+    } catch (err: any) {
+      alert(err.response?.data?.message || 'Error creating contract')
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   const handleRenew = async (e: React.FormEvent) => {
@@ -431,7 +588,7 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
 
           {/* + New Contract Button matching media_1788524086753.png */}
           <button
-            onClick={() => setIsModalOpen(true)}
+            onClick={() => openGuidedWizard()}
             style={{
               display: 'inline-flex',
               alignItems: 'center',
@@ -461,7 +618,7 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
               <line x1="12" y1="5" x2="12" y2="19" />
               <line x1="5" y1="12" x2="19" y2="12" />
             </svg>
-            <span>New Contract</span>
+            <span>Create Contract</span>
           </button>
         </div>
 
@@ -826,7 +983,7 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
 
                           {/* 3-dot vertical menu button */}
                           <button
-                            onClick={() => navigate(`/admin/contracts/${c.id}`)}
+                            onClick={() => navigate(`${effectiveBasePath}/contracts/${c.id}`)}
                             title="More Options"
                             style={{
                               width: 30,
@@ -927,11 +1084,11 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
         </div>
       </div>
 
-      {/* Modern Rounded Modal: Create New Contract */}
+      {/* Guided 3-Step Contract Creation Wizard + Post-Save Confirmation */}
       {isModalOpen && (
         <div style={{
           position: 'fixed', inset: 0,
-          backgroundColor: 'rgba(15, 23, 42, 0.45)',
+          backgroundColor: 'rgba(15, 23, 42, 0.5)',
           backdropFilter: 'blur(3px)',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
           zIndex: 1000,
@@ -939,25 +1096,35 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
         }}>
           <div style={{
             width: '100%',
-            maxWidth: 580,
+            maxWidth: 660,
             padding: '28px 32px',
-            maxHeight: '90vh',
+            maxHeight: '92vh',
             overflowY: 'auto',
             backgroundColor: '#FFFFFF',
             borderRadius: 16,
-            boxShadow: '0 20px 45px -10px rgba(15, 23, 42, 0.22)',
+            boxShadow: '0 20px 45px -10px rgba(15, 23, 42, 0.25)',
             border: '1px solid #E2E8F0',
           }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 18 }}>
+            {/* Wizard Header */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 18 }}>
               <div>
                 <h2 style={{ fontSize: 20, fontWeight: 800, color: '#0F172A', margin: 0 }}>
-                  New Contract
+                  {wizardStep === 'success'
+                    ? 'Contract Created'
+                    : wizardStep === 1
+                      ? 'Create Contract – Step 1: Tenant'
+                      : wizardStep === 2
+                        ? 'Create Contract – Step 2: Contract Details'
+                        : 'Create Contract – Step 3: Review'}
                 </h2>
-                <p style={{ fontSize: 13, color: '#64748B', margin: '3px 0 0' }}>
-                  Fill in the details to create a lease agreement
+                <p style={{ fontSize: 13, color: '#64748B', margin: '4px 0 0' }}>
+                  {wizardStep === 'success'
+                    ? 'System automatically updated unit occupancy, default addendum, and rent ledger'
+                    : 'Simple, guided contract creation'}
                 </p>
               </div>
               <button
+                type="button"
                 onClick={() => setIsModalOpen(false)}
                 style={{ background: 'transparent', border: 'none', color: '#64748B', cursor: 'pointer', fontSize: 18 }}
               >
@@ -965,203 +1132,984 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
               </button>
             </div>
 
-            <form onSubmit={handleCreate} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-              {/* Property Filter & Unit & Owner */}
-              <div style={{ display: 'grid', gridTemplateColumns: isOwnerStaff ? '1fr 1fr' : '1fr 1fr 1fr', gap: 12 }}>
-                <div>
-                  <label style={{ fontSize: 12, fontWeight: 700, color: '#334155', display: 'block', marginBottom: 5 }}>
-                    Property / Building
-                  </label>
-                  <select
-                    value={modalPropertyId}
-                    onChange={e => {
-                      setModalPropertyId(e.target.value)
-                      setFormData({ ...formData, unit_id: '' })
-                    }}
-                    className="gfh-contract-filter"
-                    style={{ width: '100%' }}
-                  >
-                    <option value="">All Properties ({properties.length})</option>
-                    {properties.map(p => (
-                      <option key={p.id} value={p.id}>{p.name}</option>
-                    ))}
-                  </select>
-                </div>
-
-                <div>
-                  <label style={{ fontSize: 12, fontWeight: 700, color: '#334155', display: 'block', marginBottom: 5 }}>Unit *</label>
-                  <select
-                    value={formData.unit_id}
-                    onChange={e => setFormData({ ...formData, unit_id: e.target.value })}
-                    required
-                    className="gfh-contract-filter"
-                    style={{ width: '100%' }}
-                  >
-                    <option value="">Select Unit</option>
-                    {Array.from(unitsByProperty.entries()).map(([propName, pUnits]) => (
-                      <optgroup key={propName} label={propName}>
-                        {pUnits.map(u => (
-                          <option key={u.id} value={u.id}>
-                            Unit {u.number} ({propName})
-                          </option>
-                        ))}
-                      </optgroup>
-                    ))}
-                  </select>
-                </div>
-
-                {!isOwnerStaff && (
-                  <div>
-                    <label style={{ fontSize: 12, fontWeight: 700, color: '#334155', display: 'block', marginBottom: 5 }}>Owner *</label>
-                    <select
-                      value={formData.owner_id}
-                      onChange={e => setFormData({ ...formData, owner_id: e.target.value })}
-                      required={!isOwnerStaff}
-                      className="gfh-contract-filter"
-                      style={{ width: '100%' }}
+            {/* Step Progress Indicator (Steps 1, 2, 3) */}
+            {wizardStep !== 'success' && (
+              <div style={{
+                display: 'grid',
+                gridTemplateColumns: '1fr 1fr 1fr',
+                gap: 8,
+                marginBottom: 22,
+                padding: '10px 12px',
+                background: '#F8FAFC',
+                borderRadius: 12,
+                border: '1px solid #E2E8F0',
+              }}>
+                {[
+                  { num: 1, label: 'Step 1: Tenant' },
+                  { num: 2, label: 'Step 2: Contract Details' },
+                  { num: 3, label: 'Step 3: Review' },
+                ].map(st => {
+                  const isCurrent = wizardStep === st.num
+                  const isDone = typeof wizardStep === 'number' && wizardStep > st.num
+                  return (
+                    <div
+                      key={st.num}
+                      onClick={() => {
+                        if (isDone) setWizardStep(st.num as 1 | 2 | 3)
+                      }}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 8,
+                        padding: '7px 10px',
+                        borderRadius: 8,
+                        background: isCurrent ? '#0E5E48' : isDone ? '#ECFDF5' : 'transparent',
+                        color: isCurrent ? '#FFFFFF' : isDone ? '#065F46' : '#64748B',
+                        fontWeight: 700,
+                        fontSize: 12,
+                        cursor: isDone ? 'pointer' : 'default',
+                      }}
                     >
-                      <option value="">Select Owner</option>
-                      {owners.map(o => <option key={o.id} value={o.id}>{o.name}</option>)}
-                    </select>
+                      <span style={{
+                        width: 20,
+                        height: 20,
+                        borderRadius: '50%',
+                        background: isCurrent ? '#FFFFFF' : isDone ? '#10B981' : '#E2E8F0',
+                        color: isCurrent ? '#0E5E48' : isDone ? '#FFFFFF' : '#475569',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontSize: 11,
+                        fontWeight: 800,
+                        flexShrink: 0,
+                      }}>
+                        {isDone ? '✓' : st.num}
+                      </span>
+                      <span style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                        {st.label}
+                      </span>
+                    </div>
+                  )
+                })}
+              </div>
+            )}
+
+            {/* ── STEP 1: TENANT ───────────────────────────────────────────────── */}
+            {wizardStep === 1 && (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+                {/* Pre-selected Unit Banner if launched from [ Create Contract ] on a unit */}
+                {selectedUnitObj && (
+                  <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    padding: '10px 14px',
+                    background: '#ECFDF5',
+                    border: '1px solid #A7F3DC',
+                    borderRadius: 10,
+                    fontSize: 13,
+                    color: '#065F46',
+                    fontWeight: 600,
+                  }}>
+                    <span>
+                      Selected Unit: <strong>{selectedUnitObj.number}</strong>
+                      {selectedUnitObj.property?.name ? ` (${selectedUnitObj.property.name})` : ''}
+                    </span>
+                    <span style={{ fontSize: 11.5, background: '#10B981', color: '#FFFFFF', padding: '2px 8px', borderRadius: 999, fontWeight: 700 }}>
+                      AVAILABLE
+                    </span>
                   </div>
                 )}
-              </div>
 
-              {/* Tenant */}
-              <div>
-                <label style={{ fontSize: 12, fontWeight: 700, color: '#334155', display: 'block', marginBottom: 5 }}>Tenant</label>
-                <select
-                  value={formData.tenant_id}
-                  onChange={e => setFormData({ ...formData, tenant_id: e.target.value })}
-                  required
-                  className="gfh-contract-filter"
-                  style={{ width: '100%' }}
-                >
-                  <option value="">Select Tenant</option>
-                  {tenants.map(t => (
-                    <option key={t.id} value={t.id}>{t.name}{t.email ? ` (${t.email})` : ''}</option>
-                  ))}
-                </select>
-              </div>
+                <div style={{ fontSize: 13, fontWeight: 700, color: '#0F172A' }}>
+                  Tenant Information
+                </div>
 
-              {/* Dates */}
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
-                <div>
-                  <label style={{ fontSize: 12, fontWeight: 700, color: '#334155', display: 'block', marginBottom: 5 }}>Start Date</label>
-                  <input
-                    type="date"
-                    required
-                    value={formData.start_date}
-                    onChange={e => setFormData({ ...formData, start_date: e.target.value })}
-                    className="gfh-contract-filter"
-                    style={{ width: '100%' }}
-                  />
-                </div>
-                <div>
-                  <label style={{ fontSize: 12, fontWeight: 700, color: '#334155', display: 'block', marginBottom: 5 }}>End Date</label>
-                  <input
-                    type="date"
-                    required
-                    value={formData.end_date}
-                    onChange={e => setFormData({ ...formData, end_date: e.target.value })}
-                    className="gfh-contract-filter"
-                    style={{ width: '100%' }}
-                  />
-                </div>
-              </div>
-
-              {/* Rent & Deposit */}
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
-                <div>
-                  <label style={{ fontSize: 12, fontWeight: 700, color: '#334155', display: 'block', marginBottom: 5 }}>Rent Amount (AED)</label>
-                  <input
-                    type="number"
-                    required
-                    placeholder="e.g. 95000"
-                    value={formData.rent_amount}
-                    onChange={e => setFormData({ ...formData, rent_amount: e.target.value })}
-                    className="gfh-contract-filter"
-                    style={{ width: '100%' }}
-                  />
-                </div>
-                <div>
-                  <label style={{ fontSize: 12, fontWeight: 700, color: '#334155', display: 'block', marginBottom: 5 }}>Security Deposit (AED)</label>
-                  <input
-                    type="number"
-                    required
-                    placeholder="e.g. 5000"
-                    value={formData.security_deposit}
-                    onChange={e => setFormData({ ...formData, security_deposit: e.target.value })}
-                    className="gfh-contract-filter"
-                    style={{ width: '100%' }}
-                  />
-                </div>
-              </div>
-
-              {/* Payment Mode & Type */}
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
-                <div>
-                  <label style={{ fontSize: 12, fontWeight: 700, color: '#334155', display: 'block', marginBottom: 5 }}>Payment Mode</label>
-                  <select
-                    value={formData.mode_of_payment}
-                    onChange={e => setFormData({ ...formData, mode_of_payment: e.target.value })}
-                    className="gfh-contract-filter"
-                    style={{ width: '100%' }}
+                {/* Toggle Buttons: [ Select Existing Tenant ] | [ + Create New Tenant ] */}
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+                  <button
+                    type="button"
+                    onClick={() => setTenantMode('existing')}
+                    style={{
+                      padding: '11px 14px',
+                      borderRadius: 10,
+                      border: tenantMode === 'existing' ? '2px solid #0E5E48' : '1px solid #CBD5E1',
+                      background: tenantMode === 'existing' ? '#ECFDF5' : '#FFFFFF',
+                      color: tenantMode === 'existing' ? '#065F46' : '#334155',
+                      fontWeight: 700,
+                      fontSize: 13,
+                      cursor: 'pointer',
+                    }}
                   >
-                    <option value="cash">Cash</option>
-                    <option value="cheque">Cheque</option>
-                    <option value="bank_transfer">Bank Transfer</option>
-                  </select>
-                </div>
-                <div>
-                  <label style={{ fontSize: 12, fontWeight: 700, color: '#334155', display: 'block', marginBottom: 5 }}>Contract Type</label>
-                  <select
-                    value={formData.type}
-                    onChange={e => setFormData({ ...formData, type: e.target.value })}
-                    className="gfh-contract-filter"
-                    style={{ width: '100%' }}
+                    Select Existing Tenant
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setTenantMode('new')
+                      setFormData(prev => ({ ...prev, tenant_id: '' }))
+                    }}
+                    style={{
+                      padding: '11px 14px',
+                      borderRadius: 10,
+                      border: tenantMode === 'new' ? '2px solid #0E5E48' : '1px solid #CBD5E1',
+                      background: tenantMode === 'new' ? '#ECFDF5' : '#FFFFFF',
+                      color: tenantMode === 'new' ? '#065F46' : '#334155',
+                      fontWeight: 700,
+                      fontSize: 13,
+                      cursor: 'pointer',
+                    }}
                   >
-                    <option value="residential">Residential</option>
-                    <option value="commercial">Commercial</option>
-                    <option value="industrial">Industrial</option>
-                  </select>
+                    + Create New Tenant
+                  </button>
+                </div>
+
+                {tenantMode === 'existing' ? (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                    <div>
+                      <label style={{ fontSize: 12, fontWeight: 700, color: '#334155', display: 'block', marginBottom: 5 }}>
+                        Search existing tenant (by Name / Mobile / Emirates ID)
+                      </label>
+                      <input
+                        type="text"
+                        placeholder="Type Name, Mobile number, or Emirates ID..."
+                        value={tenantSearch}
+                        onChange={e => setTenantSearch(e.target.value)}
+                        className="gfh-contract-filter"
+                        style={{ width: '100%' }}
+                      />
+                    </div>
+
+                    <div>
+                      <label style={{ fontSize: 12, fontWeight: 700, color: '#334155', display: 'block', marginBottom: 5 }}>
+                        Choose Tenant ({filteredExistingTenants.length} found) *
+                      </label>
+                      <select
+                        value={formData.tenant_id}
+                        onChange={e => setFormData({ ...formData, tenant_id: e.target.value })}
+                        className="gfh-contract-filter"
+                        style={{ width: '100%' }}
+                      >
+                        <option value="">-- Select Existing Tenant --</option>
+                        {filteredExistingTenants.map(t => (
+                          <option key={t.id} value={t.id}>
+                            {t.name}
+                            {t.phone || t.contact ? ` • ${t.phone || t.contact}` : ''}
+                            {t.emirates_id ? ` • EID: ${t.emirates_id}` : ''}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+
+                    {/* Selected Tenant Basic Information Confirmation Card */}
+                    {selectedTenantObj && (
+                      <div style={{
+                        background: '#F8FAFC',
+                        border: '1px solid #CBD5E1',
+                        borderLeft: '4px solid #0F8A67',
+                        borderRadius: 10,
+                        padding: '14px 16px',
+                      }}>
+                        <div style={{ fontSize: 11.5, fontWeight: 800, color: '#0F8A67', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: 8 }}>
+                          ✓ Selected Tenant Confirmation
+                        </div>
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, fontSize: 13, color: '#1E293B' }}>
+                          <div><strong>Name:</strong> {selectedTenantObj.name}</div>
+                          <div><strong>Mobile:</strong> {selectedTenantObj.phone || selectedTenantObj.contact || '—'}</div>
+                          <div><strong>Emirates ID:</strong> {selectedTenantObj.emirates_id || '—'}</div>
+                          <div><strong>Email:</strong> {selectedTenantObj.email || '—'}</div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                    {/* Duplicate Prevention Alert */}
+                    {duplicateTenantMatch && (
+                      <div style={{
+                        background: '#FFFBEB',
+                        border: '1px solid #FDE68A',
+                        borderRadius: 10,
+                        padding: '12px 14px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        gap: 10,
+                        flexWrap: 'wrap',
+                      }}>
+                        <div style={{ fontSize: 12.5, color: '#92400E', fontWeight: 600 }}>
+                          ⚠️ Matching tenant already exists: <strong>{duplicateTenantMatch.name}</strong> ({duplicateTenantMatch.phone || duplicateTenantMatch.contact || duplicateTenantMatch.emirates_id || duplicateTenantMatch.email})
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setTenantMode('existing')
+                            setFormData(prev => ({ ...prev, tenant_id: String(duplicateTenantMatch.id) }))
+                          }}
+                          style={{
+                            padding: '5px 10px',
+                            borderRadius: 6,
+                            border: '1px solid #D97706',
+                            background: '#FFFFFF',
+                            color: '#B45309',
+                            fontSize: 12,
+                            fontWeight: 700,
+                            cursor: 'pointer',
+                          }}
+                        >
+                          Use Existing Tenant
+                        </button>
+                      </div>
+                    )}
+
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+                      <div>
+                        <label style={{ fontSize: 12, fontWeight: 700, color: '#334155', display: 'block', marginBottom: 5 }}>
+                          Tenant Name *
+                        </label>
+                        <input
+                          type="text"
+                          placeholder="e.g. John Smith"
+                          value={formData.tenant_name}
+                          onChange={e => setFormData({ ...formData, tenant_name: e.target.value })}
+                          className="gfh-contract-filter"
+                          style={{ width: '100%' }}
+                        />
+                      </div>
+                      <div>
+                        <label style={{ fontSize: 12, fontWeight: 700, color: '#334155', display: 'block', marginBottom: 5 }}>
+                          Mobile Number *
+                        </label>
+                        <input
+                          type="text"
+                          placeholder="e.g. +971 50 123 4567"
+                          value={formData.tenant_phone}
+                          onChange={e => setFormData({ ...formData, tenant_phone: e.target.value })}
+                          className="gfh-contract-filter"
+                          style={{ width: '100%' }}
+                        />
+                      </div>
+                    </div>
+
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+                      <div>
+                        <label style={{ fontSize: 12, fontWeight: 700, color: '#334155', display: 'block', marginBottom: 5 }}>
+                          Emirates ID
+                        </label>
+                        <input
+                          type="text"
+                          placeholder="784-XXXX-XXXXXXX-X"
+                          value={formData.tenant_emirates_id}
+                          onChange={e => setFormData({ ...formData, tenant_emirates_id: e.target.value })}
+                          className="gfh-contract-filter"
+                          style={{ width: '100%' }}
+                        />
+                      </div>
+                      <div>
+                        <label style={{ fontSize: 12, fontWeight: 700, color: '#334155', display: 'block', marginBottom: 5 }}>
+                          Email Address
+                        </label>
+                        <input
+                          type="email"
+                          placeholder="john@example.com"
+                          value={formData.tenant_email}
+                          onChange={e => setFormData({ ...formData, tenant_email: e.target.value })}
+                          className="gfh-contract-filter"
+                          style={{ width: '100%' }}
+                        />
+                      </div>
+                    </div>
+
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+                      <div>
+                        <label style={{ fontSize: 12, fontWeight: 700, color: '#334155', display: 'block', marginBottom: 5 }}>
+                          Nationality
+                        </label>
+                        <input
+                          type="text"
+                          placeholder="e.g. British / UAE"
+                          value={formData.tenant_nationality}
+                          onChange={e => setFormData({ ...formData, tenant_nationality: e.target.value })}
+                          className="gfh-contract-filter"
+                          style={{ width: '100%' }}
+                        />
+                      </div>
+                      <div>
+                        <label style={{ fontSize: 12, fontWeight: 700, color: '#334155', display: 'block', marginBottom: 5 }}>
+                          Address
+                        </label>
+                        <input
+                          type="text"
+                          placeholder="Dubai, UAE"
+                          value={formData.tenant_address}
+                          onChange={e => setFormData({ ...formData, tenant_address: e.target.value })}
+                          className="gfh-contract-filter"
+                          style={{ width: '100%' }}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10, marginTop: 8 }}>
+                  <button
+                    type="button"
+                    onClick={() => setIsModalOpen(false)}
+                    style={{
+                      padding: '9px 18px',
+                      borderRadius: 8,
+                      border: '1px solid #E2E8F0',
+                      backgroundColor: '#F8FAFC',
+                      color: '#475569',
+                      fontWeight: 600,
+                      cursor: 'pointer',
+                    }}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (tenantMode === 'existing' && !formData.tenant_id) {
+                        alert('Please select an existing tenant or click "+ Create New Tenant".')
+                        return
+                      }
+                      if (tenantMode === 'new' && !formData.tenant_name.trim()) {
+                        alert('Please enter the new tenant name.')
+                        return
+                      }
+                      setWizardStep(2)
+                    }}
+                    style={{
+                      padding: '9px 22px',
+                      borderRadius: 8,
+                      border: 'none',
+                      background: '#0E5E48',
+                      color: '#FFFFFF',
+                      fontWeight: 700,
+                      cursor: 'pointer',
+                    }}
+                  >
+                    Next: Contract Details →
+                  </button>
                 </div>
               </div>
+            )}
 
-              {/* Action buttons */}
-              <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 12 }}>
-                <button
-                  type="button"
-                  onClick={() => setIsModalOpen(false)}
-                  style={{
-                    padding: '9px 18px',
-                    borderRadius: 8,
-                    border: '1px solid #E2E8F0',
-                    backgroundColor: '#F8FAFC',
-                    color: '#475569',
-                    fontWeight: 600,
-                    cursor: 'pointer',
-                  }}
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  style={{
-                    padding: '9px 20px',
-                    borderRadius: 8,
-                    border: 'none',
-                    background: '#0E5E48',
-                    color: '#FFFFFF',
-                    fontWeight: 700,
-                    cursor: 'pointer',
-                    boxShadow: '0 1px 3px rgba(14, 94, 72, 0.25)',
-                  }}
-                >
-                  Create Contract
-                </button>
+            {/* ── STEP 2: CONTRACT DETAILS ─────────────────────────────────────── */}
+            {wizardStep === 2 && (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 15 }}>
+                {/* Unit Section: Building & Unit number */}
+                <div style={{ background: '#F8FAFC', border: '1px solid #E2E8F0', borderRadius: 10, padding: '14px 16px' }}>
+                  <div style={{ fontSize: 12, fontWeight: 800, color: '#0F8A67', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: 10 }}>
+                    Unit
+                  </div>
+                  <div style={{ display: 'grid', gridTemplateColumns: isOwnerStaff ? '1fr 1fr' : '1fr 1fr 1fr', gap: 12 }}>
+                    <div>
+                      <label style={{ fontSize: 12, fontWeight: 700, color: '#334155', display: 'block', marginBottom: 5 }}>
+                        Building
+                      </label>
+                      <select
+                        value={modalPropertyId}
+                        onChange={e => {
+                          setModalPropertyId(e.target.value)
+                          setFormData({ ...formData, unit_id: '' })
+                        }}
+                        className="gfh-contract-filter"
+                        style={{ width: '100%' }}
+                      >
+                        <option value="">All Buildings ({properties.length})</option>
+                        {properties.map(p => (
+                          <option key={p.id} value={p.id}>{p.name}</option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <div>
+                      <label style={{ fontSize: 12, fontWeight: 700, color: '#334155', display: 'block', marginBottom: 5 }}>
+                        Unit Number *
+                      </label>
+                      <select
+                        value={formData.unit_id}
+                        onChange={e => {
+                          const newUnitId = e.target.value
+                          const uObj = units.find(u => String(u.id) === String(newUnitId))
+                          setFormData(prev => ({
+                            ...prev,
+                            unit_id: newUnitId,
+                            rent_amount: prev.rent_amount || (uObj?.price ? String(uObj.price) : ''),
+                            contract_value: prev.contract_value || (uObj?.price ? String(uObj.price) : ''),
+                          }))
+                        }}
+                        required
+                        className="gfh-contract-filter"
+                        style={{ width: '100%' }}
+                      >
+                        <option value="">Select Available Unit</option>
+                        {Array.from(unitsByProperty.entries()).map(([propName, pUnits]) => (
+                          <optgroup key={propName} label={propName}>
+                            {pUnits.map(u => (
+                              <option key={u.id} value={u.id}>
+                                {u.number} ({propName}){u.price ? ` — AED ${Number(u.price).toLocaleString()}` : ''}
+                              </option>
+                            ))}
+                          </optgroup>
+                        ))}
+                      </select>
+                    </div>
+
+                    {!isOwnerStaff && (
+                      <div>
+                        <label style={{ fontSize: 12, fontWeight: 700, color: '#334155', display: 'block', marginBottom: 5 }}>Owner *</label>
+                        <select
+                          value={formData.owner_id}
+                          onChange={e => setFormData({ ...formData, owner_id: e.target.value })}
+                          required={!isOwnerStaff}
+                          className="gfh-contract-filter"
+                          style={{ width: '100%' }}
+                        >
+                          <option value="">Select Owner</option>
+                          {owners.map(o => <option key={o.id} value={o.id}>{o.name}</option>)}
+                        </select>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Contract Period Section */}
+                <div style={{ background: '#F8FAFC', border: '1px solid #E2E8F0', borderRadius: 10, padding: '14px 16px' }}>
+                  <div style={{ fontSize: 12, fontWeight: 800, color: '#0F8A67', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: 10 }}>
+                    Contract Period
+                  </div>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+                    <div>
+                      <label style={{ fontSize: 12, fontWeight: 700, color: '#334155', display: 'block', marginBottom: 5 }}>
+                        Start Date *
+                      </label>
+                      <input
+                        type="date"
+                        required
+                        value={formData.start_date}
+                        onChange={e => {
+                          const s = e.target.value
+                          const autoEnd = computeOneYearLater(s)
+                          setFormData(prev => ({
+                            ...prev,
+                            start_date: s,
+                            end_date: autoEnd || prev.end_date,
+                            first_payment_due_date: s || prev.first_payment_due_date,
+                          }))
+                        }}
+                        className="gfh-contract-filter"
+                        style={{ width: '100%' }}
+                      />
+                    </div>
+                    <div>
+                      <label style={{ fontSize: 12, fontWeight: 700, color: '#334155', display: 'block', marginBottom: 5 }}>
+                        End Date *
+                      </label>
+                      <input
+                        type="date"
+                        required
+                        value={formData.end_date}
+                        onChange={e => setFormData({ ...formData, end_date: e.target.value })}
+                        className="gfh-contract-filter"
+                        style={{ width: '100%' }}
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Financial Details Section */}
+                <div style={{ background: '#F8FAFC', border: '1px solid #E2E8F0', borderRadius: 10, padding: '14px 16px' }}>
+                  <div style={{ fontSize: 12, fontWeight: 800, color: '#0F8A67', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: 10 }}>
+                    Financial Details
+                  </div>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 12 }}>
+                    <div>
+                      <label style={{ fontSize: 12, fontWeight: 700, color: '#334155', display: 'block', marginBottom: 5 }}>
+                        Annual / Contract Rent (AED) *
+                      </label>
+                      <input
+                        type="number"
+                        required
+                        placeholder="e.g. 60000"
+                        value={formData.rent_amount}
+                        onChange={e => setFormData({
+                          ...formData,
+                          rent_amount: e.target.value,
+                          contract_value: e.target.value,
+                        })}
+                        className="gfh-contract-filter"
+                        style={{ width: '100%' }}
+                      />
+                      {Number(formData.rent_amount) > 0 && (
+                        <div style={{ fontSize: 11, color: '#64748B', marginTop: 4 }}>
+                          Monthly Equivalent: AED {Math.round(Number(formData.rent_amount) / 12).toLocaleString()} / mo
+                        </div>
+                      )}
+                    </div>
+                    <div>
+                      <label style={{ fontSize: 12, fontWeight: 700, color: '#334155', display: 'block', marginBottom: 5 }}>
+                        Security Deposit (AED) *
+                      </label>
+                      <input
+                        type="number"
+                        required
+                        placeholder="e.g. 5000"
+                        value={formData.security_deposit}
+                        onChange={e => setFormData({ ...formData, security_deposit: e.target.value })}
+                        className="gfh-contract-filter"
+                        style={{ width: '100%' }}
+                      />
+                    </div>
+                  </div>
+
+                  <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 0.8fr 1fr', gap: 12 }}>
+                    <div>
+                      <label style={{ fontSize: 12, fontWeight: 700, color: '#334155', display: 'block', marginBottom: 5 }}>
+                        Payment Frequency
+                      </label>
+                      <select
+                        value={formData.payment_frequency}
+                        onChange={e => {
+                          const freq = e.target.value
+                          const m = freq.match(/^(\d+)\s*Cheque/i)
+                          const chequesCount = m ? m[1] : (freq === 'Cash' || freq === 'Bank Transfer' ? '0' : formData.number_of_cheques)
+                          const mode = freq === 'Cash' ? 'cash' : freq === 'Bank Transfer' ? 'bank_transfer' : 'cheque'
+                          setFormData({
+                            ...formData,
+                            payment_frequency: freq,
+                            number_of_cheques: chequesCount,
+                            mode_of_payment: mode,
+                          })
+                        }}
+                        className="gfh-contract-filter"
+                        style={{ width: '100%' }}
+                      >
+                        <option value="1 Cheque">1 Cheque (Annual)</option>
+                        <option value="2 Cheques">2 Cheques (Semi-Annual)</option>
+                        <option value="4 Cheques">4 Cheques (Quarterly)</option>
+                        <option value="6 Cheques">6 Cheques (Bi-Monthly)</option>
+                        <option value="12 Cheques">12 Cheques (Monthly)</option>
+                        <option value="Cash">Cash</option>
+                        <option value="Bank Transfer">Bank Transfer</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <label style={{ fontSize: 12, fontWeight: 700, color: '#334155', display: 'block', marginBottom: 5 }}>
+                        Number of Cheques
+                      </label>
+                      <input
+                        type="number"
+                        min={0}
+                        max={24}
+                        value={formData.number_of_cheques}
+                        onChange={e => setFormData({ ...formData, number_of_cheques: e.target.value })}
+                        className="gfh-contract-filter"
+                        style={{ width: '100%' }}
+                      />
+                    </div>
+
+                    <div>
+                      <label style={{ fontSize: 12, fontWeight: 700, color: '#334155', display: 'block', marginBottom: 5 }}>
+                        First Payment Due Date
+                      </label>
+                      <input
+                        type="date"
+                        value={formData.first_payment_due_date}
+                        onChange={e => setFormData({ ...formData, first_payment_due_date: e.target.value })}
+                        className="gfh-contract-filter"
+                        style={{ width: '100%' }}
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Collapsible [ More Contract Details ] */}
+                <div>
+                  <button
+                    type="button"
+                    onClick={() => setShowMoreDetails(prev => !prev)}
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: 6,
+                      padding: '7px 14px',
+                      borderRadius: 8,
+                      border: '1px solid #CBD5E1',
+                      background: '#FFFFFF',
+                      color: '#334155',
+                      fontSize: 12.5,
+                      fontWeight: 700,
+                      cursor: 'pointer',
+                    }}
+                  >
+                    <span>{showMoreDetails ? '▾ Hide More Contract Details' : '▸ More Contract Details'}</span>
+                  </button>
+
+                  {showMoreDetails && (
+                    <div style={{
+                      marginTop: 10,
+                      padding: '14px 16px',
+                      background: '#F8FAFC',
+                      border: '1px solid #E2E8F0',
+                      borderRadius: 10,
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: 12,
+                    }}>
+                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 12 }}>
+                        <div>
+                          <label style={{ fontSize: 12, fontWeight: 700, color: '#334155', display: 'block', marginBottom: 5 }}>
+                            Contract Type
+                          </label>
+                          <select
+                            value={formData.type}
+                            onChange={e => setFormData({ ...formData, type: e.target.value })}
+                            className="gfh-contract-filter"
+                            style={{ width: '100%' }}
+                          >
+                            <option value="residential">Residential</option>
+                            <option value="commercial">Commercial</option>
+                            <option value="industrial">Industrial</option>
+                          </select>
+                        </div>
+                        <div>
+                          <label style={{ fontSize: 12, fontWeight: 700, color: '#334155', display: 'block', marginBottom: 5 }}>
+                            DEWA Deposit (AED)
+                          </label>
+                          <input
+                            type="number"
+                            placeholder="e.g. 2000"
+                            value={formData.dewa_deposit}
+                            onChange={e => setFormData({ ...formData, dewa_deposit: e.target.value })}
+                            className="gfh-contract-filter"
+                            style={{ width: '100%' }}
+                          />
+                        </div>
+                        <div>
+                          <label style={{ fontSize: 12, fontWeight: 700, color: '#334155', display: 'block', marginBottom: 5 }}>
+                            Cheque Bank Name
+                          </label>
+                          <input
+                            type="text"
+                            placeholder="e.g. Emirates NBD"
+                            value={formData.cheque_bank}
+                            onChange={e => setFormData({ ...formData, cheque_bank: e.target.value })}
+                            className="gfh-contract-filter"
+                            style={{ width: '100%' }}
+                          />
+                        </div>
+                      </div>
+
+                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: 12 }}>
+                        <div>
+                          <label style={{ fontSize: 12, fontWeight: 700, color: '#334155', display: 'block', marginBottom: 5 }}>
+                            First Cheque Number
+                          </label>
+                          <input
+                            type="text"
+                            placeholder="e.g. 100201"
+                            value={formData.first_cheque_number}
+                            onChange={e => setFormData({ ...formData, first_cheque_number: e.target.value })}
+                            className="gfh-contract-filter"
+                            style={{ width: '100%' }}
+                          />
+                        </div>
+                        <div>
+                          <label style={{ fontSize: 12, fontWeight: 700, color: '#334155', display: 'block', marginBottom: 5 }}>
+                            Special Notes
+                          </label>
+                          <input
+                            type="text"
+                            placeholder="Optional remarks or contract notes..."
+                            value={formData.notes}
+                            onChange={e => setFormData({ ...formData, notes: e.target.value })}
+                            className="gfh-contract-filter"
+                            style={{ width: '100%' }}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Step 2 Navigation Buttons */}
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 8 }}>
+                  <button
+                    type="button"
+                    onClick={() => setWizardStep(1)}
+                    style={{
+                      padding: '9px 18px',
+                      borderRadius: 8,
+                      border: '1px solid #CBD5E1',
+                      background: '#FFFFFF',
+                      color: '#334155',
+                      fontWeight: 600,
+                      cursor: 'pointer',
+                    }}
+                  >
+                    ← Back: Tenant
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (!formData.unit_id) {
+                        alert('Please select a unit.')
+                        return
+                      }
+                      if (!formData.start_date || !formData.end_date) {
+                        alert('Please select the contract start and end dates.')
+                        return
+                      }
+                      if (!formData.rent_amount || Number(formData.rent_amount) <= 0) {
+                        alert('Please enter a valid rent amount.')
+                        return
+                      }
+                      setWizardStep(3)
+                    }}
+                    style={{
+                      padding: '9px 22px',
+                      borderRadius: 8,
+                      border: 'none',
+                      background: '#0E5E48',
+                      color: '#FFFFFF',
+                      fontWeight: 700,
+                      cursor: 'pointer',
+                    }}
+                  >
+                    Next: Review Contract →
+                  </button>
+                </div>
               </div>
-            </form>
+            )}
+
+            {/* ── STEP 3: REVIEW ───────────────────────────────────────────────── */}
+            {wizardStep === 3 && (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
+                <div style={{
+                  background: '#F8FAFC',
+                  border: '1px solid #CBD5E1',
+                  borderLeft: '4px solid #0E5E48',
+                  borderRadius: 12,
+                  padding: '20px 22px',
+                }}>
+                  <div style={{ fontSize: 13, fontWeight: 800, color: '#0E5E48', textTransform: 'uppercase', letterSpacing: '0.6px', marginBottom: 14 }}>
+                    Contract Summary
+                  </div>
+
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 10, fontSize: 14, color: '#0F172A' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid #E2E8F0', paddingBottom: 8 }}>
+                      <span style={{ color: '#64748B', fontWeight: 600 }}>Tenant:</span>
+                      <span style={{ fontWeight: 800 }}>
+                        {tenantMode === 'existing' ? (selectedTenantObj?.name || '—') : (formData.tenant_name || '—')}
+                      </span>
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid #E2E8F0', paddingBottom: 8 }}>
+                      <span style={{ color: '#64748B', fontWeight: 600 }}>Unit:</span>
+                      <span style={{ fontWeight: 800 }}>
+                        {selectedUnitObj?.number || '—'}
+                        {selectedUnitObj?.property?.name ? ` (${selectedUnitObj.property.name})` : ''}
+                      </span>
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid #E2E8F0', paddingBottom: 8 }}>
+                      <span style={{ color: '#64748B', fontWeight: 600 }}>Contract:</span>
+                      <span style={{ fontWeight: 700 }}>
+                        {formatDate(formData.start_date)} – {formatDate(formData.end_date)}
+                      </span>
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid #E2E8F0', paddingBottom: 8 }}>
+                      <span style={{ color: '#64748B', fontWeight: 600 }}>Annual Rent:</span>
+                      <span style={{ fontWeight: 800, color: '#0E5E48' }}>
+                        AED {Number(formData.rent_amount || 0).toLocaleString()}
+                      </span>
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid #E2E8F0', paddingBottom: 8 }}>
+                      <span style={{ color: '#64748B', fontWeight: 600 }}>Security Deposit:</span>
+                      <span style={{ fontWeight: 700 }}>
+                        AED {Number(formData.security_deposit || 0).toLocaleString()}
+                      </span>
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid #E2E8F0', paddingBottom: 8 }}>
+                      <span style={{ color: '#64748B', fontWeight: 600 }}>Payment Frequency:</span>
+                      <span style={{ fontWeight: 700 }}>
+                        {formData.payment_frequency}
+                        {Number(formData.number_of_cheques) > 0 ? ` (${formData.number_of_cheques} Cheques)` : ''}
+                      </span>
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                      <span style={{ color: '#64748B', fontWeight: 600 }}>First Payment Due:</span>
+                      <span style={{ fontWeight: 700 }}>
+                        {formatDate(formData.first_payment_due_date || formData.start_date)}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Automatic system transitions note */}
+                <div style={{
+                  background: '#ECFDF5',
+                  border: '1px solid #A7F3DC',
+                  borderRadius: 10,
+                  padding: '12px 16px',
+                  fontSize: 12.5,
+                  color: '#065F46',
+                  lineHeight: 1.6,
+                }}>
+                  <strong>Upon Save, the system will automatically:</strong>
+                  <div>• Set contract status to <strong>Active (Current)</strong> & change unit status from <strong>Available → Occupied</strong></div>
+                  <div>• Create the default Ejari addendum, post the first rent due, and prepare the contract PDF</div>
+                </div>
+
+                {/* Actions: [ Edit ] | [ Save Contract ] */}
+                <div style={{ display: 'flex', justifyContent: 'space-between', gap: 12 }}>
+                  <button
+                    type="button"
+                    onClick={() => setWizardStep(2)}
+                    style={{
+                      padding: '10px 20px',
+                      borderRadius: 8,
+                      border: '1px solid #CBD5E1',
+                      background: '#FFFFFF',
+                      color: '#1E293B',
+                      fontWeight: 700,
+                      cursor: 'pointer',
+                    }}
+                  >
+                    Edit
+                  </button>
+                  <button
+                    type="button"
+                    disabled={isSubmitting}
+                    onClick={() => handleCreate()}
+                    style={{
+                      padding: '10px 26px',
+                      borderRadius: 8,
+                      border: 'none',
+                      background: '#0E5E48',
+                      color: '#FFFFFF',
+                      fontWeight: 800,
+                      fontSize: 14,
+                      cursor: isSubmitting ? 'wait' : 'pointer',
+                      boxShadow: '0 2px 6px rgba(14, 94, 72, 0.25)',
+                    }}
+                  >
+                    {isSubmitting ? 'Saving Contract...' : 'Save Contract'}
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* ── STEP 4 (AFTER SAVE): CONFIRMATION ────────────────────────────── */}
+            {wizardStep === 'success' && createdContract && (
+              <div style={{ textAlign: 'center', padding: '16px 8px' }}>
+                <div style={{
+                  width: 56,
+                  height: 56,
+                  borderRadius: '50%',
+                  background: '#ECFDF5',
+                  border: '2px solid #10B981',
+                  color: '#059669',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: 28,
+                  fontWeight: 800,
+                  marginBottom: 14,
+                }}>
+                  ✓
+                </div>
+
+                <h3 style={{ fontSize: 20, fontWeight: 800, color: '#065F46', margin: '0 0 8px' }}>
+                  ✓ Contract Created Successfully
+                </h3>
+                <p style={{ fontSize: 13.5, color: '#475569', margin: '0 0 18px' }}>
+                  Contract <strong>GFH-{String(createdContract.id).padStart(5, '0')}</strong> for Unit{' '}
+                  <strong>{createdContract.unit?.number || selectedUnitObj?.number}</strong> is now{' '}
+                  <strong style={{ color: '#059669' }}>Active</strong> and the unit is marked{' '}
+                  <strong style={{ color: '#2563EB' }}>Occupied</strong>.
+                </p>
+
+                <div style={{
+                  background: '#F8FAFC',
+                  border: '1px solid #E2E8F0',
+                  borderRadius: 10,
+                  padding: '12px 16px',
+                  textAlign: 'left',
+                  fontSize: 12.5,
+                  color: '#334155',
+                  marginBottom: 22,
+                  display: 'grid',
+                  gridTemplateColumns: '1fr 1fr',
+                  gap: 8,
+                }}>
+                  <div>✓ Contract Status: <strong>Active</strong></div>
+                  <div>✓ Unit Status: <strong>Available → Occupied</strong></div>
+                  <div>✓ Default Addendum: <strong>Created</strong></div>
+                  <div>✓ First Rent Due: <strong>Posted</strong></div>
+                </div>
+
+                {/* [ Print Contract ] | [ View Contract ] | [ Done ] */}
+                <div style={{ display: 'flex', justifyContent: 'center', gap: 12, flexWrap: 'wrap' }}>
+                  <button
+                    type="button"
+                    onClick={() => downloadPdf(createdContract.id)}
+                    disabled={pdfLoading === createdContract.id}
+                    style={{
+                      padding: '10px 20px',
+                      borderRadius: 8,
+                      border: '1px solid #0E5E48',
+                      background: '#FFFFFF',
+                      color: '#0E5E48',
+                      fontWeight: 700,
+                      fontSize: 13.5,
+                      cursor: 'pointer',
+                    }}
+                  >
+                    {pdfLoading === createdContract.id ? 'Generating PDF...' : 'Print Contract'}
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsModalOpen(false)
+                      navigate(`${effectiveBasePath}/contracts/${createdContract.id}`)
+                    }}
+                    style={{
+                      padding: '10px 22px',
+                      borderRadius: 8,
+                      border: 'none',
+                      background: '#0E5E48',
+                      color: '#FFFFFF',
+                      fontWeight: 700,
+                      fontSize: 13.5,
+                      cursor: 'pointer',
+                    }}
+                  >
+                    View Contract
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setIsModalOpen(false)}
+                    style={{
+                      padding: '10px 20px',
+                      borderRadius: 8,
+                      border: '1px solid #CBD5E1',
+                      background: '#F8FAFC',
+                      color: '#334155',
+                      fontWeight: 700,
+                      fontSize: 13.5,
+                      cursor: 'pointer',
+                    }}
+                  >
+                    Done
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       )}

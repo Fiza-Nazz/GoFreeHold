@@ -28,8 +28,13 @@ apiClient.interceptors.request.use(
       config.headers.Authorization = `Bearer ${token}`
     }
 
-    // Automatically route requests to owner endpoints when active in the Owner portal
-    if (typeof window !== 'undefined' && window.location.pathname.startsWith('/owner')) {
+    // Automatically route requests to owner endpoints when active in the Owner, Cashier, or Accountant portal
+    if (
+      typeof window !== 'undefined' &&
+      (window.location.pathname.startsWith('/owner') ||
+        window.location.pathname.startsWith('/cashier') ||
+        window.location.pathname.startsWith('/accountant'))
+    ) {
       if (config.url) {
         if (config.url.startsWith('/admin/')) {
           config.url = config.url.replace(/^\/admin\//, '/owner/')

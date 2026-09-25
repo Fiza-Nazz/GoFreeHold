@@ -274,6 +274,22 @@ export default function UnitDetailPage() {
             ← Back to Units
           </Link>
 
+          {!activeContract && (unit?.status === 'AVAILABLE' || unit?.status === 'VACANT') && (
+            <Link
+              to={`/owner/contracts?create=1&unit_id=${unit.id}&property_id=${unit.property?.id || ''}`}
+              className="gfh-portal-btn"
+              style={{
+                ...ghostBtnStyle,
+                background: '#0F8A67',
+                color: '#FFFFFF',
+                boxShadow: '0 2px 8px rgba(15, 138, 103, 0.25)',
+              }}
+            >
+              <Icon path={ICONS.plus} size={15} />
+              Create Contract
+            </Link>
+          )}
+
           {activeContract && (
             <Link
               to={`/owner/contracts/${activeContract.id}`}
@@ -712,9 +728,28 @@ export default function UnitDetailPage() {
                       <Icon path={ICONS.door} size={22} />
                     </div>
                     <div style={{ fontSize: 15, fontWeight: 700, color: '#1E293B' }}>Unit is Currently Vacant</div>
-                    <div style={{ fontSize: 13, color: '#64748B', marginTop: 4, maxWidth: 380, margin: '4px auto 0' }}>
-                      There is no active tenant lease registered for this unit. You can view previous lease agreements in the history section below.
+                    <div style={{ fontSize: 13, color: '#64748B', marginTop: 4, maxWidth: 380, margin: '4px auto 16px' }}>
+                      There is no active tenant lease registered for this unit. Start a guided contract directly from here.
                     </div>
+                    <Link
+                      to={`/owner/contracts?create=1&unit_id=${unit.id}&property_id=${unit.property?.id || ''}`}
+                      style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: 7,
+                        padding: '9px 18px',
+                        borderRadius: 8,
+                        background: '#0F8A67',
+                        color: '#FFFFFF',
+                        fontSize: 13,
+                        fontWeight: 700,
+                        textDecoration: 'none',
+                        boxShadow: '0 2px 6px rgba(15, 138, 103, 0.25)',
+                      }}
+                    >
+                      <Icon path={ICONS.plus} size={15} />
+                      <span>Create Contract</span>
+                    </Link>
                   </div>
                 )}
               </div>

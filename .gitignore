@@ -33,3 +33,5 @@ frontend/dist-ssr/
 Thumbs.db
 *.zip
 backend/gofreehold
+
+profile-readme/

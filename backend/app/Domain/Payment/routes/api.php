@@ -53,6 +53,8 @@ Route::middleware(['auth:sanctum', 'role:owner,cashier,accountant'])->prefix('ow
     Route::get('/ledger', [RentTransactionController::class, 'index']);
     Route::get('/ledger/receivables', [RentTransactionController::class, 'receivablesSummary']);
     Route::get('/receivables', [RentTransactionController::class, 'receivablesSummary']);
+    Route::post('/rent-transactions', [RentTransactionController::class, 'store']);
+    Route::delete('/ledger/{rentTransaction}/soft-delete', [RentTransactionController::class, 'softDelete']);
     Route::get('/service-charges', [ServiceChargeController::class, 'index']);
     Route::post('/service-charges', [ServiceChargeController::class, 'store']);
     Route::put('/service-charges/{serviceCharge}', [ServiceChargeController::class, 'update']);

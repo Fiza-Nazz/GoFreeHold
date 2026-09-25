@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import api from '../../api/axios'
+import { useAuthStore } from '../../store/authStore'
 import ChequeDetails, { type ChequeDetailsData } from '../../components/gfh/ChequeDetails'
 import { formatDate } from '../../utils/formatDate'
 import { THEME, Icon, CornerBrackets, portalPageCss, heroStyle, panelStyle, thStyle, tdStyle, ghostBtnStyle } from '../../components/gfh/adminTheme'
@@ -47,6 +48,7 @@ const DARK_COLORS = {
 }
 
 type TabType = 'lease' | 'documents' | 'cheques' | 'statement'
+type WorkspaceTabType = 'overview' | 'payments' | 'cheques' | 'documents' | 'contract'
 
 const LegalCaseBadge = ({ active }: { active?: boolean }) => {
   if (!active) return null
@@ -78,6 +80,7 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
   const location = useLocation()
+  const { user } = useAuthStore()
 
   const effectiveBasePath = basePath || (
     location.pathname.startsWith('/owner') ? '/owner' :
@@ -86,11 +89,13 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
     '/admin'
   )
   const isOwnerStaff = effectiveBasePath !== '/admin'
+  const isCashier = user?.role === 'cashier' || effectiveBasePath === '/cashier'
   const apiPrefix = isOwnerStaff ? '/owner' : '/admin'
   const [contract, setContract] = useState<ContractDetail | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [isSaving, setIsSaving] = useState(false)
   const [activeTab, setActiveTab] = useState<TabType>('lease')
+  const [workspaceTab, setWorkspaceTab] = useState<WorkspaceTabType>('overview')
   const [pdfLoading, setPdfLoading] = useState(false)
   const [mode, setMode] = useState<'view' | 'edit'>('view')
 
@@ -121,6 +126,10 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
 
   const [paymentModalOpen, setPaymentModalOpen] = useState(false)
   const [newPayment, setNewPayment] = useState({ amount: '', type: 'rent', mode: 'bank_transfer', date: new Date().toISOString().split('T')[0], remarks: '' })
+
+  const [chargeModalOpen, setChargeModalOpen] = useState(false)
+  const [newCharge, setNewCharge] = useState({ amount: '', description: 'Service / Maintenance Charge', date: new Date().toISOString().split('T')[0] })
+  const [chargeSubmitting, setChargeSubmitting] = useState(false)
 
   const [chequeModalOpen, setChequeModalOpen] = useState(false)
   const [newCheque, setNewCheque] = useState({ cheque_number: '', bank_name: 'Emirates NBD', amount: '', due_date: new Date().toISOString().split('T')[0] })
@@ -613,6 +622,47 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
     }
   }
 
+  const handleAddChargeSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!contract || isCashier) return
+    setChargeSubmitting(true)
+    try {
+      await api.post(`${apiPrefix}/rent-transactions`, {
+        contract_id: contract.id,
+        date: newCharge.date,
+        description: newCharge.description || 'Manual Charge / Adjustment',
+        debit: Number(newCharge.amount),
+        credit: 0,
+      })
+      setChargeModalOpen(false)
+      setNewCharge({ amount: '', description: 'Service / Maintenance Charge', date: new Date().toISOString().split('T')[0] })
+      fetchContract()
+    } catch (err: any) {
+      alert(err.response?.data?.message || 'Failed to add charge')
+    } finally {
+      setChargeSubmitting(false)
+    }
+  }
+
+  const handleWorkspaceTabChange = (tab: WorkspaceTabType) => {
+    setWorkspaceTab(tab)
+    if (tab === 'overview') {
+      setMode('view')
+    } else if (tab === 'payments') {
+      setMode('edit')
+      setActiveTab('statement')
+    } else if (tab === 'cheques') {
+      setMode('edit')
+      setActiveTab('cheques')
+    } else if (tab === 'documents') {
+      setMode('edit')
+      setActiveTab('documents')
+    } else if (tab === 'contract') {
+      setMode('edit')
+      setActiveTab('lease')
+    }
+  }
+
   const handleAddChequeSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!contract) return
@@ -709,14 +759,20 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
   const propertyName = contract.unit?.property?.name || 'Morocco-I-11'
   const unitNumber = contract.unit?.number || '105'
   const contractType = (contract.type || 'STUDIO').toUpperCase()
-  const tenantName = editForm.tenant_name || contract.tenant?.name || 'AJITH KUMAR CHANDRASEKARAN CHANDRASEKARAN'
-  const tenantContact = editForm.tenant_contact || contract.tenant?.phone || contract.tenant?.contact || '056-5441856'
-  const tenantInitials = tenantName ? tenantName.split(' ').map((w: string) => w[0]).join('').slice(0, 2).toUpperCase() : 'AC'
-  const totalRentFormatted = Number(contract.rent_amount || 2500).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })
-  const startDateStr = contract.start_date ? contract.start_date.split('T')[0] : '2024-07-25'
-  const endDateStr = contract.end_date ? contract.end_date.split('T')[0] : '2027-07-24'
+  const tenantName = editForm.tenant_name || contract.tenant?.name || 'Tenant'
+  const tenantContact = editForm.tenant_contact || contract.tenant?.phone || contract.tenant?.contact || '—'
+  const tenantInitials = tenantName ? tenantName.split(' ').map((w: string) => w[0]).join('').slice(0, 2).toUpperCase() : 'TN'
+  const totalRentFormatted = Number(contract.rent_amount || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+  const startDateStr = contract.start_date ? contract.start_date.split('T')[0] : '—'
+  const endDateStr = contract.end_date ? contract.end_date.split('T')[0] : '—'
   const totalReceived = contract.payments?.reduce((acc, p) => acc + Number(p.amount), 0) || 0
-  const balanceDue = Number(contract.rent_amount) - totalReceived
+  const balanceDue = Math.max(0, (ledgerSummary.total_debit > 0 ? ledgerSummary.total_balance : (Number(contract.rent_amount) - totalReceived)))
+  const nextPendingCheque = (contract.cheques || [])
+    .filter(c => (c.status || 'pending').toLowerCase() === 'pending')
+    .sort((a, b) => new Date(a.due_date).getTime() - new Date(b.due_date).getTime())[0]
+  const nextDueDateStr = nextPendingCheque?.due_date
+    ? formatDate(nextPendingCheque.due_date)
+    : (contract.due_date ? formatDate(contract.due_date) : formatDate(contract.start_date))
 
   const recentPaymentsList = (contract.payments && contract.payments.length > 0)
     ? contract.payments.slice(0, 8).map(p => ({
@@ -763,85 +819,315 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
         }
       `}</style>
 
-      {/* ─── VIEW MODE: IMAGE 1 (Unit & Contract Overview) ──────────────── */}
-      {mode === 'view' && (
-        <div className="fade-in" style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
-          {/* Top Card: Property & Unit Header */}
-          <div
-            style={{
-              background: '#FFFFFF',
-              borderRadius: 14,
-              border: '1px solid #E2E8F0',
-              padding: '20px 24px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              boxShadow: '0 1px 3px rgba(16, 24, 40, 0.03)',
-            }}
-          >
-            <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-              <div
-                style={{
-                  width: 50,
-                  height: 50,
-                  borderRadius: '50%',
-                  background: '#E6F7F0',
-                  color: '#0F8A67',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  flexShrink: 0,
-                }}
-              >
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <rect x="4" y="2" width="16" height="20" rx="2" />
-                  <path d="M9 22v-4h6v4" />
-                  <line x1="8" y1="6" x2="10" y2="6" />
-                  <line x1="14" y1="6" x2="16" y2="6" />
-                  <line x1="8" y1="10" x2="10" y2="10" />
-                  <line x1="14" y1="10" x2="16" y2="10" />
-                  <line x1="8" y1="14" x2="10" y2="14" />
-                  <line x1="14" y1="14" x2="16" y2="14" />
-                </svg>
-              </div>
-              <div>
-                <div style={{ fontSize: 13, color: '#64748B', fontWeight: 600 }}>{propertyName}</div>
-                <div style={{ fontSize: 24, fontWeight: 800, color: '#0E5E48', letterSpacing: '-0.01em', marginTop: 2 }}>
-                  {unitNumber} - {contractType}
-                </div>
-              </div>
+      {/* ─── PAUL BRIT SECTION 6: ACTIVE CONTRACT WORKSPACE HEADER & SUMMARY ─── */}
+      <div
+        style={{
+          background: '#FFFFFF',
+          borderRadius: 14,
+          border: '1px solid #E2E8F0',
+          padding: '22px 26px 0 26px',
+          marginBottom: 20,
+          boxShadow: '0 2px 8px rgba(15, 23, 42, 0.04)',
+        }}
+      >
+        {/* Top Row: Unit – Tenant + Status Badge + Back */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 16, marginBottom: 20 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+            <div
+              style={{
+                width: 52,
+                height: 52,
+                borderRadius: 12,
+                background: '#ECFDF5',
+                border: '1px solid #A7F3D0',
+                color: '#065F46',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontWeight: 900,
+                fontSize: 17,
+                flexShrink: 0,
+              }}
+            >
+              {unitNumber}
             </div>
-
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap', justifyContent: 'flex-end' }}>
-              <LegalCaseBadge active={contract.on_case} />
-              <button
-                type="button"
-                onClick={() => navigate(`${effectiveBasePath}/contracts`)}
-                style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: 6,
-                  padding: '8px 18px',
-                  borderRadius: 8,
-                  background: '#FFFFFF',
-                  border: '1px solid #D1D5DB',
-                  color: '#374151',
-                  fontSize: 13,
-                  fontWeight: 600,
-                  cursor: 'pointer',
-                  transition: 'all 0.15s ease',
-                }}
-                onMouseEnter={e => (e.currentTarget.style.background = '#F9FAFB')}
-                onMouseLeave={e => (e.currentTarget.style.background = '#FFFFFF')}
-              >
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                  <line x1="19" y1="12" x2="5" y2="12" />
-                  <polyline points="12 19 5 12 12 5" />
-                </svg>
-                <span>Back</span>
-              </button>
+            <div>
+              <div style={{ fontSize: 12.5, color: '#64748B', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                {propertyName} • {contractType} • Contract GFH-{String(contract.id).padStart(5, '0')}
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap', marginTop: 3 }}>
+                <h1 style={{ margin: 0, fontSize: 23, fontWeight: 800, color: '#0F172A', letterSpacing: '-0.02em' }}>
+                  {unitNumber} – {tenantName}
+                </h1>
+                <span
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: 6,
+                    padding: '4px 12px',
+                    borderRadius: 999,
+                    background: contract.status === 'active' ? '#ECFDF5' : (contract.status === 'vacated' ? '#FEF2F2' : '#FFFBEB'),
+                    border: `1px solid ${contract.status === 'active' ? '#A7F3D0' : (contract.status === 'vacated' ? '#FECACA' : '#FDE68A')}`,
+                    color: contract.status === 'active' ? '#065F46' : (contract.status === 'vacated' ? '#991B1B' : '#B45309'),
+                    fontSize: 12,
+                    fontWeight: 800,
+                  }}
+                >
+                  <span
+                    style={{
+                      width: 8,
+                      height: 8,
+                      borderRadius: '50%',
+                      background: contract.status === 'active' ? '#10B981' : (contract.status === 'vacated' ? '#EF4444' : '#F59E0B'),
+                    }}
+                  />
+                  Status: {contract.status === 'active' ? 'Active' : contract.status.toUpperCase()}
+                </span>
+                <LegalCaseBadge active={contract.on_case} />
+              </div>
             </div>
           </div>
+
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <button
+              type="button"
+              onClick={downloadPdf}
+              disabled={pdfLoading}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 6,
+                padding: '8px 16px',
+                borderRadius: 8,
+                background: '#EFF6FF',
+                border: '1px solid #BFDBFE',
+                color: '#1D4ED8',
+                fontSize: 12.5,
+                fontWeight: 700,
+                cursor: 'pointer',
+              }}
+            >
+              {pdfLoading ? 'Preparing PDF...' : 'Print Contract'}
+            </button>
+            <button
+              type="button"
+              onClick={() => navigate(`${effectiveBasePath}/contracts`)}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 6,
+                padding: '8px 16px',
+                borderRadius: 8,
+                background: '#FFFFFF',
+                border: '1px solid #CBD5E1',
+                color: '#334155',
+                fontSize: 12.5,
+                fontWeight: 700,
+                cursor: 'pointer',
+              }}
+            >
+              ← Back to Contracts
+            </button>
+          </div>
+        </div>
+
+        {/* Financial Summary 4-Card Bar: Rent | Outstanding | Deposit | Next Due */}
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(190px, 1fr))',
+            gap: 12,
+            marginBottom: 18,
+          }}
+        >
+          <div style={{ background: '#F8FAFC', border: '1px solid #E2E8F0', borderRadius: 10, padding: '14px 16px' }}>
+            <div style={{ fontSize: 11.5, fontWeight: 700, color: '#64748B', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Rent</div>
+            <div style={{ fontSize: 19, fontWeight: 800, color: '#0F172A', marginTop: 4 }}>AED {totalRentFormatted}</div>
+            <div style={{ fontSize: 11.5, color: '#64748B', marginTop: 2 }}>{contract.lease_term || '1 Year'} • {startDateStr} → {endDateStr}</div>
+          </div>
+
+          <div style={{ background: balanceDue > 0 ? '#FEF2F2' : '#F0FDF4', border: `1px solid ${balanceDue > 0 ? '#FECACA' : '#BBF7D0'}`, borderRadius: 10, padding: '14px 16px' }}>
+            <div style={{ fontSize: 11.5, fontWeight: 700, color: balanceDue > 0 ? '#991B1B' : '#065F46', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Outstanding</div>
+            <div style={{ fontSize: 19, fontWeight: 800, color: balanceDue > 0 ? '#DC2626' : '#059669', marginTop: 4 }}>
+              AED {Number(balanceDue).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+            </div>
+            <div style={{ fontSize: 11.5, color: '#64748B', marginTop: 2 }}>Received: AED {Number(totalReceived).toLocaleString()}</div>
+          </div>
+
+          <div style={{ background: '#F8FAFC', border: '1px solid #E2E8F0', borderRadius: 10, padding: '14px 16px' }}>
+            <div style={{ fontSize: 11.5, fontWeight: 700, color: '#64748B', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Deposit</div>
+            <div style={{ fontSize: 19, fontWeight: 800, color: '#0F172A', marginTop: 4 }}>
+              AED {Number(contract.security_deposit || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+            </div>
+            <div style={{ fontSize: 11.5, color: '#64748B', marginTop: 2 }}>Mode: {contract.deposit_type || 'CHEQUE'}</div>
+          </div>
+
+          <div style={{ background: '#F8FAFC', border: '1px solid #E2E8F0', borderRadius: 10, padding: '14px 16px' }}>
+            <div style={{ fontSize: 11.5, fontWeight: 700, color: '#64748B', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Next Due</div>
+            <div style={{ fontSize: 19, fontWeight: 800, color: '#0E7490', marginTop: 4 }}>{nextDueDateStr}</div>
+            <div style={{ fontSize: 11.5, color: '#64748B', marginTop: 2 }}>
+              {nextPendingCheque ? `Cheque #${nextPendingCheque.cheque_number || 'Pending'}` : `${contract.cheques?.length || 0} Cheques on file`}
+            </div>
+          </div>
+        </div>
+
+        {/* Main Actions Bar: [ + Collect Payment ] [ Manage Cheques ] [ Add Charge ] [ Edit Contract ] [ Vacate Unit ] */}
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 10,
+            flexWrap: 'wrap',
+            paddingBottom: 18,
+            borderBottom: '1px solid #E2E8F0',
+          }}
+        >
+          <button
+            type="button"
+            onClick={() => openPaymentModal('rent')}
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 6,
+              padding: '9px 18px',
+              borderRadius: 8,
+              border: 'none',
+              background: '#065F46',
+              color: '#FFFFFF',
+              fontSize: 13,
+              fontWeight: 700,
+              cursor: 'pointer',
+              boxShadow: '0 2px 6px rgba(6, 95, 70, 0.2)',
+            }}
+          >
+            + Collect Payment
+          </button>
+
+          <button
+            type="button"
+            onClick={() => handleWorkspaceTabChange('cheques')}
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 6,
+              padding: '9px 18px',
+              borderRadius: 8,
+              border: '1px solid #CBD5E1',
+              background: workspaceTab === 'cheques' ? '#0F172A' : '#FFFFFF',
+              color: workspaceTab === 'cheques' ? '#FFFFFF' : '#0F172A',
+              fontSize: 13,
+              fontWeight: 700,
+              cursor: 'pointer',
+            }}
+          >
+            Manage Cheques ({contract.cheques?.length || 0})
+          </button>
+
+          {!isCashier && (
+            <button
+              type="button"
+              onClick={() => setChargeModalOpen(true)}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 6,
+                padding: '9px 18px',
+                borderRadius: 8,
+                border: '1px solid #BAE6FD',
+                background: '#F0F9FF',
+                color: '#0369A1',
+                fontSize: 13,
+                fontWeight: 700,
+                cursor: 'pointer',
+              }}
+            >
+              Add Charge
+            </button>
+          )}
+
+          {!isCashier && (
+            <button
+              type="button"
+              onClick={() => handleWorkspaceTabChange('contract')}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 6,
+                padding: '9px 18px',
+                borderRadius: 8,
+                border: '1px solid #CBD5E1',
+                background: workspaceTab === 'contract' ? '#0E5E48' : '#FFFFFF',
+                color: workspaceTab === 'contract' ? '#FFFFFF' : '#0F172A',
+                fontSize: 13,
+                fontWeight: 700,
+                cursor: 'pointer',
+              }}
+            >
+              Edit Contract
+            </button>
+          )}
+
+          {contract.status === 'active' && (
+            <button
+              type="button"
+              onClick={() => setVacateModalOpen(true)}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 6,
+                padding: '9px 18px',
+                borderRadius: 8,
+                border: '1px solid #FECACA',
+                background: '#FEF2F2',
+                color: '#991B1B',
+                fontSize: 13,
+                fontWeight: 700,
+                cursor: 'pointer',
+                marginLeft: 'auto',
+              }}
+            >
+              Vacate Unit
+            </button>
+          )}
+        </div>
+
+        {/* Workspace 5 Tabs: Overview | Payments | Cheques | Documents | Contract */}
+        <div style={{ display: 'flex', gap: 26, overflowX: 'auto', paddingTop: 12 }}>
+          {[
+            { key: 'overview' as WorkspaceTabType, label: 'Overview' },
+            { key: 'payments' as WorkspaceTabType, label: `Payments (${contract.payments?.length || 0})` },
+            { key: 'cheques' as WorkspaceTabType, label: `Cheques (${contract.cheques?.length || 0})` },
+            { key: 'documents' as WorkspaceTabType, label: 'Documents' },
+            { key: 'contract' as WorkspaceTabType, label: 'Contract' },
+          ].map(t => {
+            const active = workspaceTab === t.key
+            return (
+              <button
+                key={t.key}
+                type="button"
+                onClick={() => handleWorkspaceTabChange(t.key)}
+                style={{
+                  padding: '6px 4px 12px 4px',
+                  background: 'transparent',
+                  border: 'none',
+                  borderBottom: active ? '3px solid #065F46' : '3px solid transparent',
+                  color: active ? '#065F46' : '#64748B',
+                  fontSize: 13.5,
+                  fontWeight: active ? 800 : 600,
+                  cursor: 'pointer',
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                {t.label}
+              </button>
+            )
+          })}
+        </div>
+      </div>
+
+      {/* ─── VIEW MODE: OVERVIEW TAB ──────────────── */}
+      {mode === 'view' && (
+        <div className="fade-in" style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
 
           {/* Middle Card: Tenant & Quick Actions */}
           <div
@@ -1110,29 +1396,48 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
                                   style={{
                                     position: 'absolute', right: 0, top: 36, background: '#FFFFFF',
                                     border: '1px solid #E2E8F0', borderRadius: 8, boxShadow: '0 8px 24px rgba(15,23,42,0.18)',
-                                    zIndex: 9999, minWidth: 125, overflow: 'hidden',
+                                    zIndex: 9999, minWidth: 145, overflow: 'hidden',
                                   }}
                                 >
                                   <button
                                     type="button"
                                     onClick={(e) => {
                                       e.stopPropagation()
-                                      handleDeletePayment(p.id)
+                                      setActionMenuOpen(null)
+                                      printPaymentReceipt(p)
                                     }}
                                     style={{
                                       width: '100%', padding: '10px 14px', background: 'none', border: 'none',
-                                      color: '#991B1B', fontSize: 13, fontWeight: 700, cursor: 'pointer',
+                                      color: '#065F46', fontSize: 13, fontWeight: 700, cursor: 'pointer',
                                       textAlign: 'left', display: 'flex', alignItems: 'center', gap: 8,
                                     }}
-                                    onMouseEnter={e => (e.currentTarget.style.background = '#FEF2F2')}
+                                    onMouseEnter={e => (e.currentTarget.style.background = '#ECFDF5')}
                                     onMouseLeave={e => (e.currentTarget.style.background = 'none')}
                                   >
-                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                      <polyline points="3 6 5 6 21 6" />
-                                      <path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" />
-                                    </svg>
-                                    Delete
+                                    Print Receipt
                                   </button>
+                                  {!isCashier && (
+                                    <button
+                                      type="button"
+                                      onClick={(e) => {
+                                        e.stopPropagation()
+                                        handleDeletePayment(p.id)
+                                      }}
+                                      style={{
+                                        width: '100%', padding: '10px 14px', background: 'none', border: 'none',
+                                        color: '#991B1B', fontSize: 13, fontWeight: 700, cursor: 'pointer',
+                                        textAlign: 'left', display: 'flex', alignItems: 'center', gap: 8,
+                                      }}
+                                      onMouseEnter={e => (e.currentTarget.style.background = '#FEF2F2')}
+                                      onMouseLeave={e => (e.currentTarget.style.background = 'none')}
+                                    >
+                                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                        <polyline points="3 6 5 6 21 6" />
+                                        <path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" />
+                                      </svg>
+                                      Delete
+                                    </button>
+                                  )}
                                 </div>
                               )}
                             </div>
@@ -1160,27 +1465,29 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
                   <h3 style={{ fontSize: 16, fontWeight: 800, color: '#0F172A', margin: 0 }}>
                     Contract Details
                   </h3>
-                  <button
-                    type="button"
-                    onClick={() => setMode('edit')}
-                    style={{
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      gap: 5,
-                      background: 'transparent',
-                      border: 'none',
-                      color: '#059669',
-                      fontSize: 13,
-                      fontWeight: 700,
-                      cursor: 'pointer',
-                    }}
-                  >
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                      <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
-                      <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
-                    </svg>
-                    <span>Edit</span>
-                  </button>
+                  {!isCashier && (
+                    <button
+                      type="button"
+                      onClick={() => handleWorkspaceTabChange('contract')}
+                      style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: 5,
+                        background: 'transparent',
+                        border: 'none',
+                        color: '#059669',
+                        fontSize: 13,
+                        fontWeight: 700,
+                        cursor: 'pointer',
+                      }}
+                    >
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                      </svg>
+                      <span>Edit</span>
+                    </button>
+                  )}
                 </div>
 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 14, fontSize: 13.5 }}>
@@ -2124,26 +2431,32 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
 
           {/* Form Action Buttons Bar */}
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12 }}>
-            <button
-              type="submit"
-              disabled={isSaving}
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: 8,
-                padding: '11px 28px',
-                borderRadius: 8,
-                background: '#0E5E48',
-                color: '#FFFFFF',
-                fontSize: 13.5,
-                fontWeight: 700,
-                border: 'none',
-                cursor: isSaving ? 'not-allowed' : 'pointer',
-                boxShadow: '0 1px 3px rgba(14, 94, 72, 0.25)',
-              }}
-            >
-              {isSaving ? 'Saving...' : 'Save Changes'}
-            </button>
+            {!isCashier ? (
+              <button
+                type="submit"
+                disabled={isSaving}
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 8,
+                  padding: '11px 28px',
+                  borderRadius: 8,
+                  background: '#0E5E48',
+                  color: '#FFFFFF',
+                  fontSize: 13.5,
+                  fontWeight: 700,
+                  border: 'none',
+                  cursor: isSaving ? 'not-allowed' : 'pointer',
+                  boxShadow: '0 1px 3px rgba(14, 94, 72, 0.25)',
+                }}
+              >
+                {isSaving ? 'Saving...' : 'Save Changes'}
+              </button>
+            ) : (
+              <span style={{ fontSize: 12.5, color: '#64748B', fontWeight: 600 }}>
+                Read-only contract terms view (Owner permission required to modify contract terms)
+              </span>
+            )}
 
             {/* Quick Actions Row */}
             <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
@@ -2171,7 +2484,7 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
                 + Add Dewa
               </button>
 
-              {contract.status === 'active' && (
+              {!isCashier && contract.status === 'active' && (
                 <button
                   type="button"
                   onClick={() => {
@@ -2374,7 +2687,7 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
                     <th style={{ padding: '12px 14px', fontSize: 12, fontWeight: 700, color: '#64748B', textTransform: 'uppercase' }}>Amount</th>
                     <th style={{ padding: '12px 14px', fontSize: 12, fontWeight: 700, color: '#64748B', textTransform: 'uppercase' }}>Due Date</th>
                     <th style={{ padding: '12px 14px', fontSize: 12, fontWeight: 700, color: '#64748B', textTransform: 'uppercase' }}>Status</th>
-                    <th style={{ padding: '12px 14px', fontSize: 12, fontWeight: 700, color: '#64748B', textTransform: 'uppercase', textAlign: 'center' }}>Action</th>
+                    {!isCashier && <th style={{ padding: '12px 14px', fontSize: 12, fontWeight: 700, color: '#64748B', textTransform: 'uppercase', textAlign: 'center' }}>Action</th>}
                   </tr>
                 </thead>
                 <tbody>
@@ -2409,61 +2722,63 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
                             {c.status || 'PENDING'}
                           </span>
                         </td>
-                        <td style={{ padding: '14px', textAlign: 'center' }}>
-                          <div style={{ position: 'relative', display: 'inline-block' }}>
-                            <button
-                              type="button"
-                              className="gfh-action-menu-btn"
-                              onClick={(e) => {
-                                e.stopPropagation()
-                                setActionMenuOpen(actionMenuOpen === (c.id + 100000) ? null : (c.id + 100000))
-                              }}
-                              title="Cheque Actions"
-                              style={{
-                                width: 32, height: 32, borderRadius: '50%',
-                                border: '1px solid #E2E8F0', background: '#FFFFFF', color: '#64748B',
-                                display: 'inline-flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer',
-                              }}
-                            >
-                              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-                                <circle cx="12" cy="5" r="2" />
-                                <circle cx="12" cy="12" r="2" />
-                                <circle cx="12" cy="19" r="2" />
-                              </svg>
-                            </button>
-                            {actionMenuOpen === (c.id + 100000) && (
-                              <div
-                                className="gfh-action-menu-dropdown"
+                        {!isCashier && (
+                          <td style={{ padding: '14px', textAlign: 'center' }}>
+                            <div style={{ position: 'relative', display: 'inline-block' }}>
+                              <button
+                                type="button"
+                                className="gfh-action-menu-btn"
+                                onClick={(e) => {
+                                  e.stopPropagation()
+                                  setActionMenuOpen(actionMenuOpen === (c.id + 100000) ? null : (c.id + 100000))
+                                }}
+                                title="Cheque Actions"
                                 style={{
-                                  position: 'absolute', right: 0, top: 36, background: '#FFFFFF',
-                                  border: '1px solid #E2E8F0', borderRadius: 8, boxShadow: '0 8px 24px rgba(15,23,42,0.18)',
-                                  zIndex: 9999, minWidth: 125, overflow: 'hidden',
+                                  width: 32, height: 32, borderRadius: '50%',
+                                  border: '1px solid #E2E8F0', background: '#FFFFFF', color: '#64748B',
+                                  display: 'inline-flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer',
                                 }}
                               >
-                                <button
-                                  type="button"
-                                  onClick={(e) => {
-                                    e.stopPropagation()
-                                    handleDeleteCheque(c.id)
-                                  }}
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                                  <circle cx="12" cy="5" r="2" />
+                                  <circle cx="12" cy="12" r="2" />
+                                  <circle cx="12" cy="19" r="2" />
+                                </svg>
+                              </button>
+                              {actionMenuOpen === (c.id + 100000) && (
+                                <div
+                                  className="gfh-action-menu-dropdown"
                                   style={{
-                                    width: '100%', padding: '10px 14px', background: 'none', border: 'none',
-                                    color: '#991B1B', fontSize: 13, fontWeight: 700, cursor: 'pointer',
-                                    textAlign: 'left', display: 'flex', alignItems: 'center', gap: 8,
+                                    position: 'absolute', right: 0, top: 36, background: '#FFFFFF',
+                                    border: '1px solid #E2E8F0', borderRadius: 8, boxShadow: '0 8px 24px rgba(15,23,42,0.18)',
+                                    zIndex: 9999, minWidth: 125, overflow: 'hidden',
                                   }}
-                                  onMouseEnter={e => (e.currentTarget.style.background = '#FEF2F2')}
-                                  onMouseLeave={e => (e.currentTarget.style.background = 'none')}
                                 >
-                                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                    <polyline points="3 6 5 6 21 6" />
-                                    <path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" />
-                                  </svg>
-                                  Delete
-                                </button>
-                              </div>
-                            )}
-                          </div>
-                        </td>
+                                  <button
+                                    type="button"
+                                    onClick={(e) => {
+                                      e.stopPropagation()
+                                      handleDeleteCheque(c.id)
+                                    }}
+                                    style={{
+                                      width: '100%', padding: '10px 14px', background: 'none', border: 'none',
+                                      color: '#991B1B', fontSize: 13, fontWeight: 700, cursor: 'pointer',
+                                      textAlign: 'left', display: 'flex', alignItems: 'center', gap: 8,
+                                    }}
+                                    onMouseEnter={e => (e.currentTarget.style.background = '#FEF2F2')}
+                                    onMouseLeave={e => (e.currentTarget.style.background = 'none')}
+                                  >
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                      <polyline points="3 6 5 6 21 6" />
+                                      <path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" />
+                                    </svg>
+                                    Delete
+                                  </button>
+                                </div>
+                              )}
+                            </div>
+                          </td>
+                        )}
                       </tr>
                     )
                   })}
@@ -2648,29 +2963,48 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
                                 style={{
                                   position: 'absolute', right: 0, top: 36, background: '#FFFFFF',
                                   border: '1px solid #E2E8F0', borderRadius: 8, boxShadow: '0 8px 24px rgba(15,23,42,0.18)',
-                                  zIndex: 9999, minWidth: 125, overflow: 'hidden',
+                                  zIndex: 9999, minWidth: 145, overflow: 'hidden',
                                 }}
                               >
                                 <button
                                   type="button"
                                   onClick={(e) => {
                                     e.stopPropagation()
-                                    handleDeletePayment(p.id)
+                                    setActionMenuOpen(null)
+                                    printPaymentReceipt(p)
                                   }}
                                   style={{
                                     width: '100%', padding: '10px 14px', background: 'none', border: 'none',
-                                    color: '#991B1B', fontSize: 13, fontWeight: 700, cursor: 'pointer',
+                                    color: '#065F46', fontSize: 13, fontWeight: 700, cursor: 'pointer',
                                     textAlign: 'left', display: 'flex', alignItems: 'center', gap: 8,
                                   }}
-                                  onMouseEnter={e => (e.currentTarget.style.background = '#FEF2F2')}
+                                  onMouseEnter={e => (e.currentTarget.style.background = '#ECFDF5')}
                                   onMouseLeave={e => (e.currentTarget.style.background = 'none')}
                                 >
-                                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                    <polyline points="3 6 5 6 21 6" />
-                                    <path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" />
-                                  </svg>
-                                  Delete
+                                  Print Receipt
                                 </button>
+                                {!isCashier && (
+                                  <button
+                                    type="button"
+                                    onClick={(e) => {
+                                      e.stopPropagation()
+                                      handleDeletePayment(p.id)
+                                    }}
+                                    style={{
+                                      width: '100%', padding: '10px 14px', background: 'none', border: 'none',
+                                      color: '#991B1B', fontSize: 13, fontWeight: 700, cursor: 'pointer',
+                                      textAlign: 'left', display: 'flex', alignItems: 'center', gap: 8,
+                                    }}
+                                    onMouseEnter={e => (e.currentTarget.style.background = '#FEF2F2')}
+                                    onMouseLeave={e => (e.currentTarget.style.background = 'none')}
+                                  >
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                      <polyline points="3 6 5 6 21 6" />
+                                      <path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" />
+                                    </svg>
+                                    Delete
+                                  </button>
+                                )}
                               </div>
                             )}
                           </div>
@@ -2725,7 +3059,7 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
       {paymentModalOpen && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(15,23,42,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
           <div style={{ background: '#fff', padding: 28, width: 460, borderRadius: 16, position: 'relative', boxShadow: '0 20px 50px rgba(15,23,42,0.25)' }}>
-            <h3 style={{ margin: '0 0 14px 0', color: '#0f172a', fontSize: 17, fontWeight: 800 }}>Add Payment / Charge</h3>
+            <h3 style={{ margin: '0 0 14px 0', color: '#0f172a', fontSize: 17, fontWeight: 800 }}>Collect Payment</h3>
             <form onSubmit={handleAddPaymentSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
               <div>
                 <label style={{ fontSize: 12, fontWeight: 700, display: 'block', marginBottom: 6, color: '#0f172a', textTransform: 'uppercase' }}>Amount (AED)</label>
@@ -2762,6 +3096,62 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
               <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 12 }}>
                 <button type="button" onClick={() => setPaymentModalOpen(false)} style={{ padding: '9px 16px', borderRadius: 8, border: '1px solid #cbd5e1', background: '#f1f5f9', color: '#0f172a', fontWeight: 700, fontSize: 13, cursor: 'pointer' }}>Cancel</button>
                 <button type="submit" style={{ padding: '9px 18px', borderRadius: 8, background: '#065f46', color: '#fff', border: 'none', fontWeight: 700, fontSize: 13, cursor: 'pointer' }}>Record Payment</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* ADD MANUAL CHARGE / ADJUSTMENT MODAL (Owner Only) */}
+      {chargeModalOpen && !isCashier && (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(15,23,42,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
+          <div style={{ background: '#fff', padding: 28, width: 460, borderRadius: 16, position: 'relative', boxShadow: '0 20px 50px rgba(15,23,42,0.25)' }}>
+            <h3 style={{ margin: '0 0 6px 0', color: '#0f172a', fontSize: 17, fontWeight: 800 }}>Add Manual Charge / Adjustment</h3>
+            <p style={{ margin: '0 0 16px 0', color: '#64748b', fontSize: 12.5 }}>
+              Posts a debit charge directly to the contract statement ledger.
+            </p>
+            <form onSubmit={handleAddChargeSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+              <div>
+                <label style={{ fontSize: 12, fontWeight: 700, display: 'block', marginBottom: 6, color: '#0f172a', textTransform: 'uppercase' }}>Charge Description *</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="e.g. Maintenance Charge / Utility Adjustment"
+                  value={newCharge.description}
+                  onChange={e => setNewCharge({ ...newCharge, description: e.target.value })}
+                  style={{ width: '100%', padding: '10px 12px', borderRadius: 8, border: '1px solid #94a3b8', background: '#ffffff', color: '#0f172a', fontWeight: 600, fontSize: 14, boxSizing: 'border-box' }}
+                />
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+                <div>
+                  <label style={{ fontSize: 12, fontWeight: 700, display: 'block', marginBottom: 6, color: '#0f172a', textTransform: 'uppercase' }}>Amount (AED) *</label>
+                  <input
+                    type="number"
+                    required
+                    min="1"
+                    step="0.01"
+                    placeholder="e.g. 500"
+                    value={newCharge.amount}
+                    onChange={e => setNewCharge({ ...newCharge, amount: e.target.value })}
+                    style={{ width: '100%', padding: '10px 12px', borderRadius: 8, border: '1px solid #94a3b8', background: '#ffffff', color: '#0f172a', fontWeight: 600, fontSize: 14, boxSizing: 'border-box' }}
+                  />
+                </div>
+                <div>
+                  <label style={{ fontSize: 12, fontWeight: 700, display: 'block', marginBottom: 6, color: '#0f172a', textTransform: 'uppercase' }}>Date *</label>
+                  <input
+                    type="date"
+                    required
+                    value={newCharge.date}
+                    onChange={e => setNewCharge({ ...newCharge, date: e.target.value })}
+                    style={{ width: '100%', padding: '10px 12px', borderRadius: 8, border: '1px solid #94a3b8', background: '#ffffff', color: '#0f172a', fontWeight: 600, fontSize: 14, boxSizing: 'border-box' }}
+                  />
+                </div>
+              </div>
+              <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 12 }}>
+                <button type="button" onClick={() => setChargeModalOpen(false)} style={{ padding: '9px 16px', borderRadius: 8, border: '1px solid #cbd5e1', background: '#f1f5f9', color: '#0f172a', fontWeight: 700, fontSize: 13, cursor: 'pointer' }}>Cancel</button>
+                <button type="submit" disabled={chargeSubmitting} style={{ padding: '9px 18px', borderRadius: 8, background: '#0369a1', color: '#fff', border: 'none', fontWeight: 700, fontSize: 13, cursor: 'pointer' }}>
+                  {chargeSubmitting ? 'Posting...' : 'Add Charge'}
+                </button>
               </div>
             </form>
           </div>

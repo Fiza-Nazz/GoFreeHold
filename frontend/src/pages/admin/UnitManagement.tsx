@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useMemo } from 'react'
+import { Link } from 'react-router-dom'
 import api from '../../api/axios'
 import BookingForm from './BookingForm'
 import { Icon, portalPageCss } from '../../components/gfh/adminTheme'
@@ -391,15 +392,62 @@ export default function UnitManagement() {
           alignItems: 'center',
           flexWrap: 'wrap',
           gap: 16,
-          marginBottom: 24,
+          marginBottom: 18,
         }}>
           <div>
             <h2 style={{ fontSize: 20, fontWeight: 700, color: '#0F172A', margin: 0 }}>Units</h2>
-            <p style={{ fontSize: 13, color: '#64748B', margin: '4px 0 0' }}>List Of Units</p>
+            <p style={{ fontSize: 13, color: '#64748B', margin: '4px 0 0' }}>
+              Quickly identify available units and start a guided contract in one click
+            </p>
           </div>
           <button type="button" className="gfh-add-prop-btn" onClick={openCreate}>
             <Icon path={icons.plus} size={16} /> Add Unit
           </button>
+        </div>
+
+        {/* Quick Status Filter Pills (Available / Occupied / Under Maintenance) */}
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: 10,
+          flexWrap: 'wrap',
+          marginBottom: 18,
+          paddingBottom: 14,
+          borderBottom: '1px solid #F1F5F9',
+        }}>
+          {[
+            { key: '', label: 'All Units', dot: '#64748B' },
+            { key: 'AVAILABLE', label: 'Available', dot: '#10B981' },
+            { key: 'OCCUPIED', label: 'Occupied', dot: '#2563EB' },
+            { key: 'BOOKED', label: 'Under Maintenance / Booked', dot: '#F59E0B' },
+            { key: 'SOLD', label: 'Sold', dot: '#7C3AED' },
+          ].map(tab => {
+            const active = statusFilter === tab.key
+            return (
+              <button
+                key={tab.key || 'ALL'}
+                type="button"
+                onClick={() => setStatusFilter(tab.key)}
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 7,
+                  padding: '7px 14px',
+                  borderRadius: 999,
+                  fontSize: 12.5,
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                  border: active ? '1px solid #0F8A67' : '1px solid #E2E8F0',
+                  background: active ? '#ECFDF5' : '#FFFFFF',
+                  color: active ? '#065F46' : '#475569',
+                  transition: 'all 0.15s ease',
+                }}
+              >
+                <span style={{ width: 7, height: 7, borderRadius: '50%', background: tab.dot }} />
+                <span>{tab.label}</span>
+              </button>
+            )
+          })}
         </div>
 
         {/* Filters and Controls */}
@@ -462,7 +510,7 @@ export default function UnitManagement() {
               <option value="">All Statuses</option>
               <option value="AVAILABLE">Available</option>
               <option value="OCCUPIED">Occupied</option>
-              <option value="BOOKED">Booked</option>
+              <option value="BOOKED">Under Maintenance / Booked</option>
               <option value="SOLD">Sold</option>
             </select>
           </div>
@@ -491,7 +539,7 @@ export default function UnitManagement() {
                   <th>Type</th>
                   <th>Owner</th>
                   <th>Status</th>
-                  <th style={{ textAlign: 'center', width: 110 }}>Action</th>
+                  <th style={{ textAlign: 'center', width: 210 }}>Action</th>
                 </tr>
               </thead>
               <tbody>
@@ -536,6 +584,27 @@ export default function UnitManagement() {
                         </td>
                         <td style={{ textAlign: 'center', whiteSpace: 'nowrap' }}>
                           <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+                            {unit.status === 'AVAILABLE' && (
+                              <Link
+                                to={`/admin/contracts?create=1&unit_id=${unit.id}&property_id=${unit.property_id}`}
+                                style={{
+                                  display: 'inline-flex',
+                                  alignItems: 'center',
+                                  gap: 5,
+                                  padding: '6px 12px',
+                                  borderRadius: 7,
+                                  background: '#0F8A67',
+                                  color: '#FFFFFF',
+                                  fontSize: 12,
+                                  fontWeight: 700,
+                                  textDecoration: 'none',
+                                  boxShadow: '0 1px 2px rgba(15, 138, 103, 0.25)',
+                                }}
+                              >
+                                <Icon path={icons.plus} size={13} />
+                                <span>Create Contract</span>
+                              </Link>
+                            )}
                             <button
                               type="button"
                               onClick={() => openEdit(unit)}

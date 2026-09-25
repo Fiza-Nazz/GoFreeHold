@@ -597,26 +597,56 @@ export default function VacantUnits() {
                   </div>
                 </div>
 
-                {/* Bottom Row: Location Pin + Property / Building Name */}
+                {/* Bottom Row: Location Pin + Property / Building Name + Create Contract Action */}
                 <div
                   style={{
                     display: 'flex',
                     alignItems: 'center',
-                    gap: 6,
+                    justifyContent: 'space-between',
+                    gap: 8,
                     paddingTop: 10,
                     borderTop: `1px solid ${theme.border}`,
-                    color: theme.locColor,
-                    fontSize: 12,
-                    fontWeight: 600,
                   }}
                 >
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
-                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
-                    <circle cx="12" cy="10" r="3" />
-                  </svg>
-                  <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                    {propName}
-                  </span>
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 6,
+                      color: theme.locColor,
+                      fontSize: 12,
+                      fontWeight: 600,
+                      minWidth: 0,
+                    }}
+                  >
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+                      <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+                      <circle cx="12" cy="10" r="3" />
+                    </svg>
+                    <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                      {propName}
+                    </span>
+                  </div>
+                  <Link
+                    to={`/owner/contracts?create=1&unit_id=${unit.id}&property_id=${unit.property?.id || unit.property_id || ''}`}
+                    onClick={e => e.stopPropagation()}
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: 4,
+                      background: '#0F8A67',
+                      color: '#FFFFFF',
+                      padding: '4px 9px',
+                      borderRadius: 6,
+                      fontSize: 11,
+                      fontWeight: 700,
+                      textDecoration: 'none',
+                      whiteSpace: 'nowrap',
+                      flexShrink: 0,
+                    }}
+                  >
+                    + Create Contract
+                  </Link>
                 </div>
               </Link>
             )

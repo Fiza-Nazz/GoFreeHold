@@ -81,7 +81,7 @@ class ContractController extends Controller
             return response()->json([
                 'status'  => 'success',
                 'message' => 'Contract created successfully.',
-                'data'    => ['contract' => $contract->load(['unit.property', 'tenant', 'owner'])],
+                'data'    => ['contract' => $contract->load(['unit.property', 'tenant', 'owner', 'cheques', 'tenancyContracts', 'terms', 'rentTransactions'])],
             ], 201);
         } catch (\InvalidArgumentException $e) {
             return response()->json(['status' => 'error', 'message' => $e->getMessage()], 422);
@@ -93,7 +93,7 @@ class ContractController extends Controller
     public function show(Request $request, Contract $contract): JsonResponse
     {
         $this->assertContractAccess($request, $contract);
-        $contract->load(['unit.property', 'tenant', 'owner', 'cheques', 'callLogs.loggedBy', 'caseDocs', 'payments']);
+        $contract->load(['unit.property', 'tenant', 'owner', 'cheques', 'callLogs.loggedBy', 'caseDocs', 'payments', 'tenancyContracts', 'terms', 'docs']);
 
         return response()->json(['status' => 'success', 'data' => ['contract' => $contract]]);
     }
@@ -101,6 +101,7 @@ class ContractController extends Controller
     public function update(UpdateContractRequest $request, Contract $contract): JsonResponse
     {
         $this->assertContractAccess($request, $contract);
+        abort_if($request->user()?->role === 'cashier', 403, 'Cashiers are not permitted to edit contract terms.');
         $validated = $request->validated();
 
         $tenantName = $validated['tenant_name'] ?? null;
