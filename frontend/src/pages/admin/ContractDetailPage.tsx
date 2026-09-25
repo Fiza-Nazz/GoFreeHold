@@ -1067,7 +1067,7 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
             </button>
           )}
 
-          {contract.status === 'active' && (
+          {!isCashier && contract.status === 'active' && (
             <button
               type="button"
               onClick={() => setVacateModalOpen(true)}
@@ -1253,51 +1253,53 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
                 <span>Other Payments</span>
               </button>
 
-              {contract.status === 'active' ? (
-                <button
-                  type="button"
-                  onClick={() => setVacateModalOpen(true)}
-                  style={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: 6,
-                    padding: '9px 18px',
-                    borderRadius: 8,
-                    border: 'none',
-                    background: '#DC2626',
-                    color: '#FFFFFF',
-                    fontSize: 13,
-                    fontWeight: 700,
-                    cursor: 'pointer',
-                    boxShadow: '0 1px 2px rgba(220, 38, 38, 0.2)',
-                  }}
-                  title="Start end contract, record settlement, and free unit"
-                >
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-                    <polyline points="16 17 21 12 16 7" />
-                    <line x1="21" y1="12" x2="9" y2="12" />
-                  </svg>
-                  <span>Vacate / End Contract</span>
-                </button>
-              ) : (
-                <span
-                  style={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: 6,
-                    padding: '8px 14px',
-                    borderRadius: 8,
-                    background: '#FEF2F2',
-                    border: '1px solid #FECACA',
-                    color: '#991B1B',
-                    fontSize: 12,
-                    fontWeight: 800,
-                    textTransform: 'uppercase',
-                  }}
-                >
-                  Status: {contract.status}
-                </span>
+              {!isCashier && (
+                contract.status === 'active' ? (
+                  <button
+                    type="button"
+                    onClick={() => setVacateModalOpen(true)}
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: 6,
+                      padding: '9px 18px',
+                      borderRadius: 8,
+                      border: 'none',
+                      background: '#DC2626',
+                      color: '#FFFFFF',
+                      fontSize: 13,
+                      fontWeight: 700,
+                      cursor: 'pointer',
+                      boxShadow: '0 1px 2px rgba(220, 38, 38, 0.2)',
+                    }}
+                    title="Start end contract, record settlement, and free unit"
+                  >
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                      <polyline points="16 17 21 12 16 7" />
+                      <line x1="21" y1="12" x2="9" y2="12" />
+                    </svg>
+                    <span>Vacate / End Contract</span>
+                  </button>
+                ) : (
+                  <span
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: 6,
+                      padding: '8px 14px',
+                      borderRadius: 8,
+                      background: '#FEF2F2',
+                      border: '1px solid #FECACA',
+                      color: '#991B1B',
+                      fontSize: 12,
+                      fontWeight: 800,
+                      textTransform: 'uppercase',
+                    }}
+                  >
+                    Status: {contract.status}
+                  </span>
+                )
               )}
             </div>
           </div>
@@ -2168,6 +2170,7 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
       {/* ─── TAB 1: LEASE (Exact Match to Reference Image) ──────────────────── */}
       {activeTab === 'lease' && (
         <form onSubmit={handleSaveContractEdit} className="fade-in">
+          <fieldset disabled={isCashier} style={{ border: 'none', padding: 0, margin: 0 }}>
           <div
             style={{
               background: '#FFFFFF',
@@ -2428,6 +2431,7 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
               </div>
             </div>
           </div>
+          </fieldset>
 
           {/* Form Action Buttons Bar */}
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12 }}>
@@ -2500,7 +2504,7 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
                 </button>
               )}
 
-              {contract.status !== 'vacated' && (
+              {!isCashier && contract.status !== 'vacated' && (
                 <button
                   type="button"
                   onClick={() => setVacateModalOpen(true)}
