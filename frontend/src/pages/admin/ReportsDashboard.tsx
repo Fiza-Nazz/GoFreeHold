@@ -175,14 +175,14 @@ export default function ReportsDashboard() {
             display: flex !important;
             align-items: center !important;
             justify-content: center !important;
-            font-family: 'Playfair Display', Georgia, serif !important;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
             font-weight: 800 !important;
             font-size: 16px !important;
             flex-shrink: 0 !important;
           }
 
           .gfh-rp-brand-text h2 {
-            font-family: 'Playfair Display', Georgia, serif !important;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
             font-size: 16px !important;
             font-weight: 800 !important;
             color: #0f172a !important;
@@ -198,7 +198,7 @@ export default function ReportsDashboard() {
           }
 
           .gfh-rp-print-only h1 {
-            font-family: 'Playfair Display', Georgia, serif !important;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
             font-size: 20px !important;
             font-weight: 800 !important;
             color: #0f172a !important;
@@ -272,7 +272,7 @@ export default function ReportsDashboard() {
       <div className="fade-in gfh-rp-noprint" style={heroStyle}>
         <CornerBrackets />
         <div>
-          <h1 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 30, fontWeight: 700, color: THEME.ink, margin: 0 }}>
+          <h1 style={{ fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", fontSize: 30, fontWeight: 700, color: THEME.ink, margin: 0 }}>
             System Reports
           </h1>
           <p style={{ fontSize: 14, color: THEME.textMuted, marginTop: 8, marginBottom: 0 }}>
@@ -732,7 +732,7 @@ export default function ReportsDashboard() {
               {/* Receivables Tab */}
               {activeTab === 'receivables' && (
                 <div>
-                  <h3 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 18, fontWeight: 700, color: THEME.ink, marginBottom: 20, marginTop: 0 }}>
+                  <h3 style={{ fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", fontSize: 18, fontWeight: 700, color: THEME.ink, marginBottom: 20, marginTop: 0 }}>
                     Total outstanding: <span style={{ color: '#ef4444' }}>AED {Number(reportData.total_outstanding ?? 0).toLocaleString()}</span>
                   </h3>
                   <table style={{ width: '100%', borderCollapse: 'collapse' }}>
@@ -760,7 +760,7 @@ export default function ReportsDashboard() {
               {/* Expiring Contracts Tab */}
               {activeTab === 'expired-contracts' && (
                 <div>
-                  <h3 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 18, fontWeight: 700, color: THEME.ink, marginBottom: 20, marginTop: 0 }}>
+                  <h3 style={{ fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", fontSize: 18, fontWeight: 700, color: THEME.ink, marginBottom: 20, marginTop: 0 }}>
                     Contracts expiring within ~100 days ({reportData.total_count} found)
                   </h3>
                   <table style={{ width: '100%', borderCollapse: 'collapse' }}>
@@ -797,13 +797,13 @@ export default function ReportsDashboard() {
                     ].map(card => (
                       <div key={card.label} className="gfh-portal-stat" style={{ position: 'relative', padding: 18, background: '#fff', border: `1px solid ${THEME.border}`, borderRadius: 8, textAlign: 'center' }}>
                         <span className="gfh-rp-noprint"><CornerBrackets /></span>
-                        <div style={{ fontFamily: "'Playfair Display', serif", fontSize: 24, fontWeight: 700, color: card.color }}>{card.value}</div>
+                        <div style={{ fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", fontSize: 24, fontWeight: 700, color: card.color }}>{card.value}</div>
                         <div style={{ fontSize: 12, color: THEME.textMuted, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.3px', marginTop: 4 }}>{card.label}</div>
                       </div>
                     ))}
                   </div>
 
-                  <h3 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 17, fontWeight: 700, color: THEME.ink }}>Low stock warning items</h3>
+                  <h3 style={{ fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", fontSize: 17, fontWeight: 700, color: THEME.ink }}>Low stock warning items</h3>
                   <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: 10 }}>
                     <thead>
                       <tr style={{ borderBottom: `2px solid ${THEME.border}` }}>
@@ -829,7 +829,7 @@ export default function ReportsDashboard() {
               {/* Historical Ledgers Tab */}
               {activeTab === 'historical-ledgers' && (
                 <div>
-                  <h3 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 18, fontWeight: 700, color: THEME.ink, marginBottom: 20, marginTop: 0 }}>
+                  <h3 style={{ fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", fontSize: 18, fontWeight: 700, color: THEME.ink, marginBottom: 20, marginTop: 0 }}>
                     Historical ledger entries
                   </h3>
                   <table style={{ width: '100%', borderCollapse: 'collapse' }}>

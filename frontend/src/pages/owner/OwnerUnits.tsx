@@ -264,43 +264,43 @@ export default function OwnerUnits() {
   }, [searchTerm, propertyFilter, statusFilter, entriesPerPage])
 
   return (
-    <div className="gfh-portal-page" style={{ fontFamily: "'Inter', system-ui, sans-serif", padding: '20px 24px' }}>
+    <div className="gfh-portal-page" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
       <style>{portalPageCss}</style>
       <style>{`
         @keyframes gfhOverlayFade { from { opacity: 0; } to { opacity: 1; } }
         @keyframes gfhModalPop { from { opacity: 0; transform: scale(0.95) translateY(10px); } to { opacity: 1; transform: scale(1) translateY(0); } }
         .gfh-prop-input {
           font-family: 'Inter', system-ui, sans-serif !important;
-          font-size: 13.5px !important;
+          font-size: 14px !important;
           border: 1px solid #E2E8F0 !important;
-          border-radius: 6px !important;
+          border-radius: 8px !important;
           outline: none !important;
           background: #FFFFFF !important;
           color: #0F172A !important;
           transition: border-color 0.15s ease, box-shadow 0.15s ease;
         }
         .gfh-prop-input:focus {
-          border-color: #0F8A67 !important;
-          box-shadow: 0 0 0 3px rgba(15, 138, 103, 0.12) !important;
+          border-color: #0D5C46 !important;
+          box-shadow: 0 0 0 3px rgba(13, 92, 70, 0.12) !important;
         }
         .gfh-add-prop-btn {
           display: inline-flex !important;
           align-items: center !important;
           gap: 6px !important;
-          background: #0F8A67 !important;
+          background: #0D5C46 !important;
           color: #FFFFFF !important;
           border: none !important;
-          border-radius: 6px !important;
+          border-radius: 8px !important;
           padding: 9px 18px !important;
           font-size: 13.5px !important;
-          font-weight: 700 !important;
+          font-weight: 600 !important;
           cursor: pointer !important;
-          box-shadow: 0 1px 3px rgba(15, 138, 103, 0.25) !important;
+          box-shadow: 0 1px 2px rgba(13, 92, 70, 0.18) !important;
           transition: background 0.15s ease, transform 0.15s ease !important;
           font-family: 'Inter', sans-serif !important;
         }
         .gfh-add-prop-btn:hover {
-          background: #0B6E52 !important;
+          background: #094635 !important;
           transform: translateY(-1px) !important;
         }
         .gfh-table {
@@ -310,29 +310,29 @@ export default function OwnerUnits() {
         }
         .gfh-table th {
           background: #F8FAFC;
-          color: #334155;
-          font-weight: 700;
-          font-size: 13px;
+          color: #64748B;
+          font-weight: 600;
+          font-size: 12px;
+          text-transform: uppercase;
+          letter-spacing: 0.04em;
           text-align: left;
           padding: 12px 16px;
-          border-bottom: 2px solid #E2E8F0;
+          border-bottom: 1px solid #E2E8F0;
           white-space: nowrap;
         }
         .gfh-table td {
-          padding: 12px 16px;
-          border-bottom: 1px solid #E2E8F0;
+          padding: 14px 16px;
+          border-bottom: 1px solid #F1F5F9;
           color: #0F172A;
-          font-size: 13.5px;
+          font-size: 14px;
           vertical-align: middle;
         }
         .gfh-table tbody tr {
+          background: #FFFFFF;
           transition: background 0.15s ease;
         }
-        .gfh-table tbody tr:nth-child(even) {
-          background: #F8FAFC;
-        }
         .gfh-table tbody tr:hover {
-          background: #F0FDF8;
+          background: #F8FAFC;
         }
         .gfh-property-name-cell {
           color: #0F8A67;

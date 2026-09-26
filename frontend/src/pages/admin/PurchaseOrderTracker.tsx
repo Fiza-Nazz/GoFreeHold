@@ -149,7 +149,7 @@ export default function PurchaseOrderTracker() {
       <div className="fade-in" style={heroStyle}>
         <CornerBrackets />
         <div>
-          <h1 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 30, fontWeight: 700, color: THEME.ink, margin: 0 }}>
+          <h1 style={{ fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", fontSize: 30, fontWeight: 700, color: THEME.ink, margin: 0 }}>
             Purchases
           </h1>
           <p style={{ fontSize: 14, color: THEME.textMuted, marginTop: 8, marginBottom: 0 }}>
@@ -174,7 +174,7 @@ export default function PurchaseOrderTracker() {
           <div style={{ width: 40, height: 40, borderRadius: 8, background: `linear-gradient(135deg, ${THEME.violetLight}, ${THEME.purple})`, color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 10 }}>
             <Icon path={icons.cart} size={18} />
           </div>
-          <div style={{ fontFamily: "'Playfair Display', serif", fontSize: 24, fontWeight: 700, color: THEME.ink }}>{orders.length}</div>
+          <div style={{ fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", fontSize: 24, fontWeight: 700, color: THEME.ink }}>{orders.length}</div>
           <div style={{ fontSize: 12, color: THEME.textMuted, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.3px', marginTop: 2 }}>Total Purchases</div>
         </div>
 
@@ -183,7 +183,7 @@ export default function PurchaseOrderTracker() {
           <div style={{ width: 40, height: 40, borderRadius: 8, background: `linear-gradient(135deg, ${THEME.violetLight}, ${THEME.purple})`, color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 10 }}>
             <Icon path={icons.wallet} size={18} />
           </div>
-          <div style={{ fontFamily: "'Playfair Display', serif", fontSize: 24, fontWeight: 700, color: THEME.ink }}>AED {totalSpend.toLocaleString()}</div>
+          <div style={{ fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", fontSize: 24, fontWeight: 700, color: THEME.ink }}>AED {totalSpend.toLocaleString()}</div>
           <div style={{ fontSize: 12, color: THEME.textMuted, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.3px', marginTop: 2 }}>Total Spend</div>
         </div>
 
@@ -192,7 +192,7 @@ export default function PurchaseOrderTracker() {
           <div style={{ width: 40, height: 40, borderRadius: 8, background: 'linear-gradient(135deg, #f59e0b, #b45309)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 10 }}>
             <Icon path={icons.clock} size={18} />
           </div>
-          <div style={{ fontFamily: "'Playfair Display', serif", fontSize: 24, fontWeight: 700, color: '#b45309' }}>{pendingCount}</div>
+          <div style={{ fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", fontSize: 24, fontWeight: 700, color: '#b45309' }}>{pendingCount}</div>
           <div style={{ fontSize: 12, color: THEME.textMuted, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.3px', marginTop: 2 }}>Pending Orders</div>
         </div>
       </div>
@@ -268,7 +268,7 @@ export default function PurchaseOrderTracker() {
         <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(27,14,51,0.55)', backdropFilter: 'blur(3px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
           <div className="fade-in" style={{ position: 'relative', width: 480, padding: 30, background: '#ffffff', borderRadius: 8, border: `1px solid ${THEME.border}`, boxShadow: '0 24px 55px -18px rgba(27,14,51,0.35)' }}>
             <CornerBrackets />
-            <h2 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 22, fontWeight: 700, marginBottom: 20, color: THEME.violetLight }}>
+            <h2 style={{ fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", fontSize: 22, fontWeight: 700, marginBottom: 20, color: THEME.violetLight }}>
               Create Purchase
             </h2>
             <form onSubmit={handleCreate} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>

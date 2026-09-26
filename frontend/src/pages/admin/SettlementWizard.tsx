@@ -446,7 +446,7 @@ export default function SettlementWizard() {
       <div className="fade-in" style={heroStyle}>
         <CornerBrackets />
         <div>
-          <h1 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 30, fontWeight: 700, color: THEME.ink, margin: 0 }}>
+          <h1 style={{ fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", fontSize: 30, fontWeight: 700, color: THEME.ink, margin: 0 }}>
             Owner Settlements
           </h1>
           <p style={{ fontSize: 14, color: THEME.textMuted, marginTop: 8, marginBottom: 0 }}>
@@ -585,7 +585,7 @@ export default function SettlementWizard() {
             <div style={{ padding: '20px 26px', borderBottom: '1px solid #e2e8f0', background: '#f8fafc', borderTopLeftRadius: 12, borderTopRightRadius: 12, display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
               <div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
-                  <h2 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 21, fontWeight: 800, margin: 0, color: THEME.ink }}>
+                  <h2 style={{ fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", fontSize: 21, fontWeight: 800, margin: 0, color: THEME.ink }}>
                     {createdSettlement ? `Settlement Management — GFH-${String(createdSettlement.contract_id || createdSettlement.id).padStart(5, '0')}` : 'New Settlement'}
                   </h2>
                   {createdSettlement && (

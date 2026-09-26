@@ -44,7 +44,7 @@ const inputStyle: CSSProperties = {
   width: '100%',
   padding: '11px 13px',
   border: `1px solid ${THEME.border}`,
-  borderRadius: 0,
+  borderRadius: 8,
   fontSize: 14,
   fontWeight: 500,
   background: '#fff',
@@ -225,7 +225,7 @@ export default function SchemaCrudPage({
       {showForm && (
         <div className="gfh-scp-form-wrap" style={{ ...panelStyle, marginBottom: 22, minHeight: 0 }}>
           <CornerBrackets />
-          <h2 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 18, fontWeight: 700, color: THEME.ink, margin: '0 0 20px' }}>
+          <h2 style={{ fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", fontSize: 18, fontWeight: 700, color: THEME.ink, margin: '0 0 20px' }}>
             {addNewLabel}
           </h2>
           <form onSubmit={handleSubmit}>

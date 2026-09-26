@@ -80,7 +80,7 @@ export default function ContractCallLogPage() {
       <div className="fade-in" style={heroStyle}>
         <CornerBrackets />
         <div>
-          <h1 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 30, fontWeight: 700, color: THEME.ink, margin: 0 }}>
+          <h1 style={{ fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", fontSize: 30, fontWeight: 700, color: THEME.ink, margin: 0 }}>
             Contract Call Logs
           </h1>
           <p style={{ fontSize: 14, color: THEME.textMuted, marginTop: 8, marginBottom: 0 }}>
@@ -172,7 +172,7 @@ export default function ContractCallLogPage() {
         <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(20,5,40,0.55)', backdropFilter: 'blur(2px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
           <div style={{ position: 'relative', width: 420, padding: 24, background: '#fff', borderRadius: 8, border: `1px solid ${THEME.border}` }}>
             <CornerBrackets />
-            <h2 style={{ fontFamily: "'Playfair Display', Georgia, serif", color: THEME.purple, fontSize: 19, fontWeight: 700, marginBottom: 16 }}>Log a Call</h2>
+            <h2 style={{ fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", color: THEME.purple, fontSize: 19, fontWeight: 700, marginBottom: 16 }}>Log a Call</h2>
             <form onSubmit={handleCreate} style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
                 <div>

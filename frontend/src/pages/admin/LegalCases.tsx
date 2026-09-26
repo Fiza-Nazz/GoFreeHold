@@ -271,7 +271,7 @@ export default function LegalCases() {
       <div className="fade-in" style={heroStyle}>
         <CornerBrackets />
         <div>
-          <h1 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 30, fontWeight: 700, color: THEME.ink, margin: 0 }}>
+          <h1 style={{ fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", fontSize: 30, fontWeight: 700, color: THEME.ink, margin: 0 }}>
             Legal cases
           </h1>
           <p style={{ fontSize: 14, color: THEME.textMuted, marginTop: 8, marginBottom: 0 }}>
@@ -369,7 +369,7 @@ export default function LegalCases() {
             <div>
               <div style={{ display: 'flex', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap', marginBottom: 16 }}>
                 <div>
-                  <h2 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 22, fontWeight: 700, margin: 0, color: THEME.purple }}>
+                  <h2 style={{ fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", fontSize: 22, fontWeight: 700, margin: 0, color: THEME.purple }}>
                     CASE-{String(detail.id).padStart(4, '0')}
                   </h2>
                   <p style={{ fontSize: 13, color: THEME.textMuted, marginTop: 6 }}>
@@ -484,7 +484,7 @@ export default function LegalCases() {
             }}
           >
             <CornerBrackets />
-            <h2 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 22, fontWeight: 700, marginBottom: 16, color: THEME.purple }}>
+            <h2 style={{ fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", fontSize: 22, fontWeight: 700, marginBottom: 16, color: THEME.purple }}>
               New legal case
             </h2>
             <form onSubmit={createCase} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>

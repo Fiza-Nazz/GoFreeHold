@@ -112,11 +112,11 @@ export default function DailyMaintenanceReport() {
             width: 32px !important; height: 32px !important; border-radius: 6px !important;
             background: #0e5e48 !important; color: #fff !important; display: flex !important;
             align-items: center !important; justify-content: center !important;
-            font-family: 'Playfair Display', Georgia, serif !important; font-weight: 800 !important; font-size: 16px !important;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important; font-weight: 800 !important; font-size: 16px !important;
           }
-          .gfh-dm-brand-text h2 { font-family: 'Playfair Display', Georgia, serif !important; font-size: 16px !important; font-weight: 800 !important; margin: 0 !important; }
+          .gfh-dm-brand-text h2 { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important; font-size: 16px !important; font-weight: 800 !important; margin: 0 !important; }
           .gfh-dm-brand-text span { font-size: 9.5px !important; font-weight: 700 !important; color: #0e5e48 !important; text-transform: uppercase !important; }
-          .gfh-dm-print-only h1 { font-family: 'Playfair Display', Georgia, serif !important; font-size: 20px !important; font-weight: 800 !important; margin: 0 0 4px 0 !important; text-align: right !important; }
+          .gfh-dm-print-only h1 { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important; font-size: 20px !important; font-weight: 800 !important; margin: 0 0 4px 0 !important; text-align: right !important; }
           .gfh-dm-print-only p { font-size: 10px !important; color: #64748b !important; margin: 0 !important; text-align: right !important; }
           table { width: 100% !important; border-collapse: collapse !important; page-break-inside: auto !important; }
           thead { display: table-header-group !important; }
@@ -132,7 +132,7 @@ export default function DailyMaintenanceReport() {
       <div className="fade-in gfh-dm-noprint" style={heroStyle}>
         <CornerBrackets />
         <div>
-          <h1 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 30, fontWeight: 700, color: THEME.ink, margin: 0 }}>
+          <h1 style={{ fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", fontSize: 30, fontWeight: 700, color: THEME.ink, margin: 0 }}>
             Daily Maintenance Report
           </h1>
           <p style={{ fontSize: 14, color: THEME.textMuted, marginTop: 8, marginBottom: 0 }}>
@@ -292,7 +292,7 @@ export default function DailyMaintenanceReport() {
           <CornerBrackets />
 
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12, marginBottom: 18 }}>
-            <h3 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 18, fontWeight: 700, color: THEME.ink, margin: 0 }}>
+            <h3 style={{ fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", fontSize: 18, fontWeight: 700, color: THEME.ink, margin: 0 }}>
               Completed Jobs on {selectedDate} ({filteredJobs.length})
             </h3>
 

@@ -178,14 +178,14 @@ export default function VacantPropertyReport() {
             display: flex !important;
             align-items: center !important;
             justify-content: center !important;
-            font-family: 'Playfair Display', Georgia, serif !important;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
             font-weight: 800 !important;
             font-size: 16px !important;
             flex-shrink: 0 !important;
           }
 
           .gfh-vp-brand-text h2 {
-            font-family: 'Playfair Display', Georgia, serif !important;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
             font-size: 16px !important;
             font-weight: 800 !important;
             color: #0f172a !important;
@@ -201,7 +201,7 @@ export default function VacantPropertyReport() {
           }
 
           .gfh-vp-print-only h1 {
-            font-family: 'Playfair Display', Georgia, serif !important;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
             font-size: 20px !important;
             font-weight: 800 !important;
             color: #0f172a !important;
@@ -305,7 +305,7 @@ export default function VacantPropertyReport() {
       <div className="fade-in gfh-vp-noprint" style={heroStyle}>
         <CornerBrackets />
         <div>
-          <h1 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 30, fontWeight: 700, color: THEME.ink, margin: 0 }}>
+          <h1 style={{ fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", fontSize: 30, fontWeight: 700, color: THEME.ink, margin: 0 }}>
             Vacant Property Report
           </h1>
           <p style={{ fontSize: 14, color: THEME.textMuted, marginTop: 8, marginBottom: 0 }}>

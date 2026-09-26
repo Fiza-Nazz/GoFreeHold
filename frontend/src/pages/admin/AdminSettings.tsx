@@ -150,7 +150,7 @@ export default function AdminSettings() {
       <div className="fade-in" style={heroStyle}>
         <CornerBrackets />
         <div>
-          <h1 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 30, fontWeight: 700, color: THEME.ink, margin: 0 }}>
+          <h1 style={{ fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", fontSize: 30, fontWeight: 700, color: THEME.ink, margin: 0 }}>
             Admin System Settings
           </h1>
           <p style={{ fontSize: 14, color: THEME.textMuted, marginTop: 8, marginBottom: 0 }}>
@@ -233,7 +233,7 @@ export default function AdminSettings() {
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 340px', gap: 24, marginBottom: 24 }}>
         <div className="fade-in" style={{ ...panelStyle, minHeight: 0 }}>
           <CornerBrackets />
-          <h3 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 19, fontWeight: 700, color: THEME.ink, marginTop: 0, marginBottom: 22 }}>
+          <h3 style={{ fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", fontSize: 19, fontWeight: 700, color: THEME.ink, marginTop: 0, marginBottom: 22 }}>
             Automated Notification Triggers
           </h3>
           {isLoading ? (
@@ -356,7 +356,7 @@ export default function AdminSettings() {
           <div style={{ width: 40, height: 40, borderRadius: 8, background: `linear-gradient(135deg, ${THEME.violetLight}, ${THEME.purple})`, color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 14 }}>
             <Icon path={icons.mail} size={18} />
           </div>
-          <h3 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 17, fontWeight: 700, color: THEME.ink, marginTop: 0, marginBottom: 16 }}>
+          <h3 style={{ fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", fontSize: 17, fontWeight: 700, color: THEME.ink, marginTop: 0, marginBottom: 16 }}>
             Mail Server &amp; Scheduler Status
           </h3>
           <div style={{ borderRadius: 8, border: `1px solid ${THEME.border}`, overflow: 'hidden' }}>
@@ -393,7 +393,7 @@ export default function AdminSettings() {
       <div className="fade-in" style={{ ...panelStyle, minHeight: 0 }}>
         <CornerBrackets />
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-          <h3 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 18, fontWeight: 700, color: THEME.ink, margin: 0 }}>
+          <h3 style={{ fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", fontSize: 18, fontWeight: 700, color: THEME.ink, margin: 0 }}>
             Recent Notification &amp; Scheduler Audit Log
           </h3>
           <button

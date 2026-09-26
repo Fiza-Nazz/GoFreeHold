@@ -52,7 +52,7 @@ export const portalPageCss = `
 export const heroStyle: CSSProperties = {
   position: 'relative',
   background: `linear-gradient(135deg, ${THEME.purpleDark} 0%, ${THEME.purple} 45%, ${THEME.purpleMid} 100%)`,
-  borderRadius: 0,
+  borderRadius: 8,
   padding: '30px 34px',
   marginBottom: 24,
   boxShadow: '0 0 34px rgba(30, 10, 60, 0.5)',
@@ -67,7 +67,7 @@ export const panelStyle: CSSProperties = {
   position: 'relative',
   background: '#fff',
   border: `1px solid ${THEME.border}`,
-  borderRadius: 0,
+  borderRadius: 8,
   padding: 24,
   minHeight: 280,
 }
@@ -93,7 +93,7 @@ export const ghostBtnStyle: CSSProperties = {
   display: 'inline-flex',
   alignItems: 'center',
   gap: 8,
-  borderRadius: 0,
+  borderRadius: 8,
   fontSize: 13.5,
   fontWeight: 700,
   padding: '10px 18px',

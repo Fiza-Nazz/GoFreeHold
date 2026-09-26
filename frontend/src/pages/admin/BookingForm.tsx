@@ -100,7 +100,7 @@ export default function BookingForm({ unit, onClose, onSuccess }: BookingFormPro
         {!receipt ? (
           <>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 12, marginBottom: 8 }}>
-              <h2 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 22, fontWeight: 700, color: THEME.ink, margin: 0 }}>
+              <h2 style={{ fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", fontSize: 22, fontWeight: 700, color: THEME.ink, margin: 0 }}>
                 Advance Booking
               </h2>
               <button
@@ -189,7 +189,7 @@ export default function BookingForm({ unit, onClose, onSuccess }: BookingFormPro
               >
                 <Icon path={icons.check} size={22} />
               </div>
-              <h2 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 22, fontWeight: 700, color: THEME.ink, margin: 0 }}>
+              <h2 style={{ fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", fontSize: 22, fontWeight: 700, color: THEME.ink, margin: 0 }}>
                 Booking Confirmed!
               </h2>
               <p style={{ color: THEME.textMuted, fontSize: 14, marginTop: 6 }}>Cash Receipt Generated</p>

@@ -131,7 +131,7 @@ export default function ComplaintDashboard() {
       <div className="fade-in" style={heroStyle}>
         <CornerBrackets />
         <div>
-          <h1 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 30, fontWeight: 700, color: THEME.ink, margin: 0 }}>
+          <h1 style={{ fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", fontSize: 30, fontWeight: 700, color: THEME.ink, margin: 0 }}>
             Complaint management dashboard
           </h1>
           <p style={{ fontSize: 14, color: THEME.textMuted, marginTop: 8, marginBottom: 0 }}>
@@ -230,7 +230,7 @@ export default function ComplaintDashboard() {
           >
             <CornerBrackets />
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 8 }}>
-              <h2 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 22, fontWeight: 700, margin: 0, color: THEME.purple }}>
+              <h2 style={{ fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", fontSize: 22, fontWeight: 700, margin: 0, color: THEME.purple }}>
                 Assign maintenance job
               </h2>
               <button type="button" onClick={() => setAssignModal(null)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: THEME.textMuted, padding: 4 }}>
@@ -282,7 +282,7 @@ export default function ComplaintDashboard() {
             }}
           >
             <CornerBrackets />
-            <h2 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 22, fontWeight: 700, marginBottom: 12, color: THEME.purple }}>
+            <h2 style={{ fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", fontSize: 22, fontWeight: 700, marginBottom: 12, color: THEME.purple }}>
               Update complaint status
             </h2>
             <form onSubmit={handleUpdateStatus} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>

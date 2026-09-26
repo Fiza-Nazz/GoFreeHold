@@ -350,30 +350,33 @@ export default function OwnerDashboard() {
     <div style={{ fontFamily: "'Inter', system-ui, sans-serif", width: '100%', boxSizing: 'border-box' }}>
       <style>{`
         .gfh-dash-card {
-          border-radius: 14px;
-          padding: 18px 20px;
+          background: #FFFFFF;
+          border: 1px solid #E2E8F0;
+          border-radius: 12px;
+          padding: 20px 22px;
           display: flex;
           flex-direction: column;
-          justifyContent: space-between;
-          color: #ffffff;
-          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-          transition: transform 0.2s ease, box-shadow 0.2s ease;
+          justify-content: space-between;
+          color: #0F172A;
+          box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
+          transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
           position: relative;
           overflow: hidden;
           cursor: pointer;
           text-decoration: none;
         }
         .gfh-dash-card:hover {
-          transform: translateY(-3px);
-          box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
-          color: #ffffff;
+          transform: translateY(-2px);
+          border-color: #CBD5E1;
+          box-shadow: 0 6px 16px rgba(15, 23, 42, 0.06);
+          color: #0F172A;
         }
         .gfh-dash-panel {
           background: #ffffff;
           border: 1px solid #E2E8F0;
-          border-radius: 14px;
+          border-radius: 12px;
           padding: 22px 24px;
-          box-shadow: 0 1px 3px rgba(16, 24, 40, 0.03);
+          box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
           box-sizing: border-box;
         }
         .gfh-action-row {
@@ -383,7 +386,7 @@ export default function OwnerDashboard() {
           padding: 12px 14px;
           background: #F8FAFC;
           border: 1px solid #F1F5F9;
-          border-radius: 12px;
+          border-radius: 10px;
           text-decoration: none;
           color: inherit;
           transition: all 0.18s ease;
@@ -425,30 +428,30 @@ export default function OwnerDashboard() {
         <Link
           to="/owner/properties"
           className="gfh-dash-card"
-          style={{ background: '#2563EB' }}
           title="View all properties"
         >
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <span style={{ fontSize: 13, fontWeight: 600, color: 'rgba(255, 255, 255, 0.85)' }}>
+            <span style={{ fontSize: 12.5, fontWeight: 600, color: '#64748B', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
               Total Properties
             </span>
             <div style={{
-              width: 32,
-              height: 32,
+              width: 36,
+              height: 36,
               borderRadius: 8,
-              background: 'rgba(255, 255, 255, 0.2)',
+              background: '#F0F9FF',
+              border: '1px solid #BAE6FD',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
             }}>
-              <Icon path={icons.building} size={16} color="#FFFFFF" />
+              <Icon path={icons.building} size={17} color="#0284C7" />
             </div>
           </div>
           <div style={{ marginTop: 14 }}>
-            <div style={{ fontSize: 28, fontWeight: 800, lineHeight: 1.1 }}>
+            <div style={{ fontSize: 26, fontWeight: 700, color: '#0F172A', lineHeight: 1.15, letterSpacing: '-0.02em' }}>
               {totalProperties}
             </div>
-            <div style={{ fontSize: 12, color: 'rgba(255, 255, 255, 0.75)', marginTop: 4 }}>
+            <div style={{ fontSize: 12.5, color: '#64748B', marginTop: 4, fontWeight: 500 }}>
               Active in portfolio
             </div>
           </div>
@@ -458,30 +461,30 @@ export default function OwnerDashboard() {
         <Link
           to="/owner/units?status=OCCUPIED"
           className="gfh-dash-card"
-          style={{ background: '#0D9488' }}
           title="View occupied units"
         >
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <span style={{ fontSize: 13, fontWeight: 600, color: 'rgba(255, 255, 255, 0.85)' }}>
+            <span style={{ fontSize: 12.5, fontWeight: 600, color: '#64748B', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
               Total Rented
             </span>
             <div style={{
-              width: 32,
-              height: 32,
+              width: 36,
+              height: 36,
               borderRadius: 8,
-              background: 'rgba(255, 255, 255, 0.2)',
+              background: '#ECFDF5',
+              border: '1px solid #A7F3D0',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
             }}>
-              <Icon path={icons.key} size={16} color="#FFFFFF" />
+              <Icon path={icons.key} size={17} color="#059669" />
             </div>
           </div>
           <div style={{ marginTop: 14 }}>
-            <div style={{ fontSize: 28, fontWeight: 800, lineHeight: 1.1 }}>
+            <div style={{ fontSize: 26, fontWeight: 700, color: '#0F172A', lineHeight: 1.15, letterSpacing: '-0.02em' }}>
               {totalRented}
             </div>
-            <div style={{ fontSize: 12, color: 'rgba(255, 255, 255, 0.75)', marginTop: 4 }}>
+            <div style={{ fontSize: 12.5, color: '#64748B', marginTop: 4, fontWeight: 500 }}>
               Occupied units
             </div>
           </div>
@@ -491,30 +494,30 @@ export default function OwnerDashboard() {
         <Link
           to="/owner/vacant-units"
           className="gfh-dash-card"
-          style={{ background: '#334155' }}
           title="View vacant properties"
         >
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <span style={{ fontSize: 13, fontWeight: 600, color: 'rgba(255, 255, 255, 0.85)' }}>
+            <span style={{ fontSize: 12.5, fontWeight: 600, color: '#64748B', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
               Vacant Properties
             </span>
             <div style={{
-              width: 32,
-              height: 32,
+              width: 36,
+              height: 36,
               borderRadius: 8,
-              background: 'rgba(255, 255, 255, 0.2)',
+              background: '#F8FAFC',
+              border: '1px solid #E2E8F0',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
             }}>
-              <Icon path={icons.door} size={16} color="#FFFFFF" />
+              <Icon path={icons.door} size={17} color="#475569" />
             </div>
           </div>
           <div style={{ marginTop: 14 }}>
-            <div style={{ fontSize: 28, fontWeight: 800, lineHeight: 1.1 }}>
+            <div style={{ fontSize: 26, fontWeight: 700, color: '#0F172A', lineHeight: 1.15, letterSpacing: '-0.02em' }}>
               {vacantUnits}
             </div>
-            <div style={{ fontSize: 12, color: 'rgba(255, 255, 255, 0.75)', marginTop: 4 }}>
+            <div style={{ fontSize: 12.5, color: '#64748B', marginTop: 4, fontWeight: 500 }}>
               Ready for lease
             </div>
           </div>
@@ -524,30 +527,30 @@ export default function OwnerDashboard() {
         <Link
           to="/owner/payments"
           className="gfh-dash-card"
-          style={{ background: '#D97706' }}
           title="View rent collection & payments"
         >
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <span style={{ fontSize: 13, fontWeight: 600, color: 'rgba(255, 255, 255, 0.85)' }}>
+            <span style={{ fontSize: 12.5, fontWeight: 600, color: '#64748B', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
               Rent Collection
             </span>
             <div style={{
-              width: 32,
-              height: 32,
+              width: 36,
+              height: 36,
               borderRadius: 8,
-              background: 'rgba(255, 255, 255, 0.2)',
+              background: '#FFFBEB',
+              border: '1px solid #FDE68A',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
             }}>
-              <Icon path={icons.cash} size={16} color="#FFFFFF" />
+              <Icon path={icons.cash} size={17} color="#D97706" />
             </div>
           </div>
           <div style={{ marginTop: 14 }}>
-            <div style={{ fontSize: 24, fontWeight: 800, lineHeight: 1.1 }}>
+            <div style={{ fontSize: 22, fontWeight: 700, color: '#0F172A', lineHeight: 1.15, letterSpacing: '-0.02em' }}>
               AED {rentCollectionTotal.toLocaleString()}
             </div>
-            <div style={{ fontSize: 12, color: 'rgba(255, 255, 255, 0.75)', marginTop: 4 }}>
+            <div style={{ fontSize: 12.5, color: '#64748B', marginTop: 4, fontWeight: 500 }}>
               Current month
             </div>
           </div>
