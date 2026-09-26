@@ -492,6 +492,18 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
     }
   }
 
+  const handleDeleteLedgerEntry = async (entryId: number) => {
+    if (!contract || isCashier) return
+    try {
+      setActionMenuOpen(null)
+      await api.delete(`${apiPrefix}/ledger/${entryId}/soft-delete`)
+      await fetchContract()
+    } catch (err: any) {
+      alert(err.response?.data?.message || 'Failed to delete ledger entry')
+      await fetchContract()
+    }
+  }
+
   // Print official payment receipt for any payment row
   const printPaymentReceipt = (p: any) => {
     const win = window.open('', '_blank')
