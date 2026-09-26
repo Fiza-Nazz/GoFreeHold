@@ -220,7 +220,7 @@ function DonutChart({ collectedPct }: { collectedPct: number }) {
           cy={size / 2}
           r={r}
           fill="none"
-          stroke="#16A34A"
+          stroke="#10B981"
           strokeWidth={stroke}
           strokeDasharray={`${collectedLen} ${circumference - collectedLen}`}
           strokeLinecap="round"
@@ -252,14 +252,14 @@ function TrendLineChart({ data }: { data: number[] }) {
     <svg width="100%" height={height} viewBox={`0 0 ${width} ${height}`} preserveAspectRatio="none">
       <defs>
         <linearGradient id="gfhTrendFill" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#16A34A" stopOpacity="0.25" />
-          <stop offset="100%" stopColor="#16A34A" stopOpacity="0" />
+          <stop offset="0%" stopColor="#10B981" stopOpacity="0.25" />
+          <stop offset="100%" stopColor="#10B981" stopOpacity="0" />
         </linearGradient>
       </defs>
       <path d={areaPath} fill="url(#gfhTrendFill)" stroke="none" />
-      <path d={linePath} fill="none" stroke="#16A34A" strokeWidth={2.5} strokeLinejoin="round" strokeLinecap="round" />
+      <path d={linePath} fill="none" stroke="#10B981" strokeWidth={2.5} strokeLinejoin="round" strokeLinecap="round" />
       {points.map((p, i) => (
-        <circle key={i} cx={p.x} cy={p.y} r={3.5} fill="#16A34A" stroke="#fff" strokeWidth={1.5} />
+        <circle key={i} cx={p.x} cy={p.y} r={3.5} fill="#10B981" stroke="#fff" strokeWidth={1.5} />
       ))}
     </svg>
   )
@@ -573,7 +573,7 @@ export default function AdminDashboard() {
     },
     {
       value: stats.monthly_revenue, label: 'Rent Portfolio (AED)', icon: icons.wallet,
-      iconBg: '#CCFBF1', iconColor: '#0F766E', cardBg: '#F0FDFA', cardBorder: '#99F6E4', ...getTrend(stats.monthly_revenue_change),
+      iconBg: '#D1FAE5', iconColor: '#10B981', cardBg: '#ECFDF5', cardBorder: '#A7F3D0', ...getTrend(stats.monthly_revenue_change),
     },
     {
       value: stats.open_complaints, label: 'Open Complaints', icon: icons.wrench,
@@ -650,7 +650,7 @@ export default function AdminDashboard() {
             fontSize: 13,
             cursor: 'pointer',
             opacity: isLoading ? 0.6 : 1,
-            boxShadow: '0 1px 3px rgba(14, 94, 72, 0.25)',
+            boxShadow: '0 1px 3px rgba(16, 185, 129, 0.25)',
             transition: 'all 0.15s ease',
             fontFamily: "'Inter', sans-serif",
           }}
@@ -850,7 +850,7 @@ export default function AdminDashboard() {
                 </div>
                 <div style={{ marginLeft: 'auto', display: 'flex', flexDirection: 'column', gap: 10 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 12.5, color: '#4B5065', fontWeight: 600 }}>
-                    <span style={{ width: 9, height: 9, borderRadius: '50%', background: '#16A34A', display: 'inline-block' }} />
+                    <span style={{ width: 9, height: 9, borderRadius: '50%', background: '#10B981', display: 'inline-block' }} />
                     Collected <span style={{ fontWeight: 800, color: '#15112B' }}>AED {stats.monthly_revenue.toLocaleString()}</span> ({collectedPct}%)
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 12.5, color: '#4B5065', fontWeight: 600 }}>

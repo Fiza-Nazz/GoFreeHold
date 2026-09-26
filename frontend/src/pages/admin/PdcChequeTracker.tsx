@@ -6,7 +6,7 @@ import { THEME, Icon, ICONS, CornerBrackets, portalPageCss, heroStyle, panelStyl
 
 // Local GoFreeHold brand accents (matches sidebar/brand green — doesn't touch shared THEME file)
 const GFH = {
-  green: '#0f766e',
+  green: '#10B981',
   greenDark: '#065f46',
   greenBg: '#ecfdf5',
   greenBorder: '#a7f3d0',

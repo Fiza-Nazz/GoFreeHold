@@ -251,7 +251,7 @@ export default function VacateSettlementModal({
         {/* Modal Header — GoFreeHold Executive Theme */}
         <div
           style={{
-            background: 'linear-gradient(135deg, #059669 0%, #0A4D3C 60%, #115E59 100%)',
+            background: 'linear-gradient(135deg, #059669 0%, #10B981 60%, #10B981 100%)',
             padding: '18px 24px',
             color: '#FFFFFF',
             display: 'flex',

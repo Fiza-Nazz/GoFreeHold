@@ -28,8 +28,8 @@ const PASTEL_THEMES = [
     border: '#CCFBF1',
     hoverBorder: '#99F6E4',
     iconBg: '#CCFBF1',
-    iconColor: '#0D9488',
-    locColor: '#0F766E',
+    iconColor: '#10B981',
+    locColor: '#10B981',
   },
   {
     bg: '#F0FDF4', // Emerald / Green

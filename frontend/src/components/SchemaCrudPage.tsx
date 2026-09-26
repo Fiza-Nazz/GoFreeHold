@@ -168,7 +168,7 @@ export default function SchemaCrudPage({
           padding: 4px 12px;
           background: #f0fdfa;
           border: 1px solid #99f6e4;
-          color: #115e59;
+          color: #10B981;
           font-size: 12px;
           font-weight: 700;
           border-radius: 8px;

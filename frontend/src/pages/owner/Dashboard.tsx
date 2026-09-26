@@ -410,7 +410,7 @@ export default function OwnerDashboard() {
           color: #10B981;
         }
         .gfh-bar-col:hover .gfh-bar-rect {
-          background: #0F766E !important;
+          background: #059669 !important;
         }
       `}</style>
 
@@ -458,7 +458,7 @@ export default function OwnerDashboard() {
         <Link
           to="/owner/units?status=OCCUPIED"
           className="gfh-dash-card"
-          style={{ background: '#0D9488' }}
+          style={{ background: '#10B981' }}
           title="View occupied units"
         >
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -603,7 +603,7 @@ export default function OwnerDashboard() {
                   cy="50"
                   r={circleRadius}
                   fill="transparent"
-                  stroke="#0D9488"
+                  stroke="#10B981"
                   strokeWidth="11"
                   strokeDasharray={circleCircumference}
                   strokeDashoffset={circleOffset}
@@ -627,7 +627,7 @@ export default function OwnerDashboard() {
               {/* Occupied Item */}
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16 }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                  <span style={{ width: 10, height: 10, borderRadius: '50%', background: '#0D9488' }} />
+                  <span style={{ width: 10, height: 10, borderRadius: '50%', background: '#10B981' }} />
                   <span style={{ fontSize: 13, color: '#475569', fontWeight: 500 }}>Occupied</span>
                 </div>
                 <span style={{ fontSize: 14, fontWeight: 700, color: '#0F172A' }}>
@@ -793,7 +793,7 @@ export default function OwnerDashboard() {
                 </div>
               </div>
             </div>
-            <div style={{ fontSize: 12, fontWeight: 700, color: '#0F766E', background: '#F0FDFA', border: '1px solid #CCFBF1', padding: '3px 8px', borderRadius: 6 }}>
+            <div style={{ fontSize: 12, fontWeight: 700, color: '#059669', background: '#ECFDF5', border: '1px solid #A7F3D0', padding: '3px 8px', borderRadius: 6 }}>
               Total: AED {monthlyTotals.reduce((a, b) => a + b, 0).toLocaleString()}
             </div>
           </div>
@@ -821,7 +821,7 @@ export default function OwnerDashboard() {
                 }}
               >
                 {monthlyTrends[hoveredBarIndex].fullName}:{' '}
-                <span style={{ color: '#2DD4BF', fontWeight: 700 }}>
+                <span style={{ color: '#34D399', fontWeight: 700 }}>
                   AED {monthlyTrends[hoveredBarIndex].value.toLocaleString()}
                 </span>
                 {monthlyTrends[hoveredBarIndex].count > 0 && (
@@ -866,7 +866,7 @@ export default function OwnerDashboard() {
                       maxWidth: 16,
                       minWidth: 8,
                       height: `${item.height}px`,
-                      background: item.value > 0 ? (idx === currentMonthIndex ? '#10B981' : '#0D9488') : '#E2E8F0',
+                      background: item.value > 0 ? (idx === currentMonthIndex ? '#059669' : '#10B981') : '#E2E8F0',
                       borderRadius: '3px 3px 0 0',
                       transition: 'background 0.2s ease, height 0.3s ease',
                     }}
