@@ -202,7 +202,7 @@ export default function Unauthorized() {
               alignItems: 'center',
               justifyContent: 'center',
               gap: 8,
-              boxShadow: '0 4px 14px rgba(14, 94, 72, 0.28)',
+              boxShadow: '0 4px 14px rgba(16, 185, 129, 0.25)',
             }}
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">

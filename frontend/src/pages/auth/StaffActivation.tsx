@@ -95,7 +95,7 @@ export default function StaffActivation() {
           align-items: center;
           justify-content: center;
           gap: 10px;
-          box-shadow: 0 4px 14px rgba(14, 94, 72, 0.25);
+          box-shadow: 0 4px 14px rgba(16, 185, 129, 0.25);
           transition: all 0.18s ease;
           text-decoration: none;
           box-sizing: border-box;
@@ -103,7 +103,7 @@ export default function StaffActivation() {
         .gfh-act-btn:hover:not(:disabled) {
           background: #059669;
           transform: translateY(-1px);
-          box-shadow: 0 8px 20px rgba(6, 56, 44, 0.3);
+          box-shadow: 0 8px 20px rgba(16, 185, 129, 0.32);
         }
         .gfh-act-btn:active:not(:disabled) {
           transform: translateY(0);
@@ -130,7 +130,7 @@ export default function StaffActivation() {
         }
         .gfh-act-input:focus {
           border-color: #10B981;
-          box-shadow: 0 0 0 3px rgba(14, 94, 72, 0.12);
+          box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
         }
         .gfh-act-input-error {
           border-color: #DC2626 !important;
@@ -155,7 +155,7 @@ export default function StaffActivation() {
           padding: '38px 34px',
           maxWidth: 440,
           width: '100%',
-          boxShadow: '0 20px 45px -10px rgba(6, 56, 44, 0.08)',
+          boxShadow: '0 20px 45px -10px rgba(15, 23, 42, 0.08)',
           boxSizing: 'border-box',
         }}
       >
@@ -169,13 +169,13 @@ export default function StaffActivation() {
               height: 36,
               borderRadius: 9,
               background: '#10B981',
-              border: '1px solid #18A77A',
+              border: '1px solid #059669',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               fontWeight: 800,
               fontSize: 14,
-              color: '#34D3A5',
+              color: '#FFFFFF',
               letterSpacing: '0.05em',
               flexShrink: 0,
             }}

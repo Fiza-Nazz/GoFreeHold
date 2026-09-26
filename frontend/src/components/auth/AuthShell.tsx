@@ -20,10 +20,10 @@ const FEATURES = [
 export const authShellCss = `
   :root {
     --auth-brand-deep: #059669;
-    --auth-brand-dark: #04281E;
+    --auth-brand-dark: #047857;
     --auth-brand-mid: #10B981;
     --auth-brand-light: #34D399;
-    --auth-brand-accent: #34D3A5;
+    --auth-brand-accent: #10B981;
     --auth-canvas: #F6F8FA;
     --auth-card-border: #E2E8F0;
     --auth-card-bg: #FFFFFF;
@@ -36,8 +36,8 @@ export const authShellCss = `
     --auth-danger-bg: #FEF2F2;
     --auth-danger-border: #FECACA;
     --auth-success: #059669;
-    --auth-success-bg: #ECFDF8;
-    --auth-success-border: #A7F3DC;
+    --auth-success-bg: #ECFDF5;
+    --auth-success-border: #A7F3D0;
   }
 
   * {
@@ -55,15 +55,16 @@ export const authShellCss = `
     color: var(--auth-ink);
   }
 
-  /* ── LEFT PANEL (SOLID LUXURY DARK FOREST GREEN MATCHING ADMIN THEME) ── */
+  /* ── LEFT PANEL (CLEAN LIGHT PANEL MATCHING LIGHT SIDEBAR & #10B981 THEME) ── */
   .auth-left {
-    background: #06382C;
-    color: #FFFFFF;
+    background: #FFFFFF;
+    color: #0F172A;
     padding: 64px 60px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     position: relative;
+    border-right: 1px solid #E2E8F0;
   }
 
   .auth-brand {
@@ -76,22 +77,23 @@ export const authShellCss = `
     width: 44px;
     height: 44px;
     border-radius: 10px;
-    background: #0E5E48;
-    border: 1px solid #18A77A;
+    background: #10B981;
+    border: 1px solid #059669;
     display: flex;
     align-items: center;
     justify-content: center;
     font-weight: 800;
     font-size: 16px;
-    color: #34D3A5;
+    color: #FFFFFF;
     letter-spacing: 0.05em;
+    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.25);
   }
 
   .auth-brand-name {
     font-size: 22px;
     font-weight: 800;
     letter-spacing: -0.01em;
-    color: #FFFFFF;
+    color: #10B981;
     display: flex;
     flex-direction: column;
     line-height: 1.15;
@@ -102,7 +104,7 @@ export const authShellCss = `
     font-weight: 600;
     letter-spacing: 0.12em;
     text-transform: uppercase;
-    color: #34D3A5;
+    color: #64748B;
     margin-top: 3px;
   }
 
@@ -113,17 +115,17 @@ export const authShellCss = `
 
   .auth-left h1 {
     font-size: 36px;
-    font-weight: 700;
+    font-weight: 800;
     line-height: 1.25;
     margin: 0 0 14px;
-    color: #FFFFFF;
-    letter-spacing: -0.01em;
+    color: #0F172A;
+    letter-spacing: -0.02em;
   }
 
   .auth-left-support {
     font-size: 15px;
     line-height: 1.6;
-    color: #E2E8F0;
+    color: #475569;
     margin: 0 0 32px;
     max-width: 440px;
     font-weight: 400;
@@ -144,20 +146,20 @@ export const authShellCss = `
     gap: 14px;
     font-size: 14.5px;
     font-weight: 600;
-    color: #F6F8FA;
+    color: #1E293B;
   }
 
   .auth-feature-icon {
     width: 36px;
     height: 36px;
     border-radius: 8px;
-    background: #04281E;
-    border: 1px solid #0E5E48;
+    background: #ECFDF5;
+    border: 1px solid #A7F3D0;
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
-    color: #34D3A5;
+    color: #10B981;
   }
 
   .auth-trust-footer {
@@ -166,9 +168,9 @@ export const authShellCss = `
     gap: 8px;
     font-size: 12.5px;
     font-weight: 500;
-    color: #94A3B8;
+    color: #64748B;
     padding-top: 20px;
-    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    border-top: 1px solid #E2E8F0;
   }
 
   /* ── RIGHT FORM PANEL ── */
@@ -188,7 +190,7 @@ export const authShellCss = `
     border-radius: 14px;
     padding: 42px 38px;
     position: relative;
-    box-shadow: 0 16px 36px -8px rgba(6, 56, 44, 0.08);
+    box-shadow: 0 16px 36px -8px rgba(15, 23, 42, 0.07);
   }
 
   .auth-form-card h2 {
@@ -237,7 +239,7 @@ export const authShellCss = `
     display: block;
     font-size: 12px;
     font-weight: 700;
-    color: var(--auth-brand-mid);
+    color: #334155;
     text-transform: uppercase;
     letter-spacing: 0.04em;
     margin-bottom: 6px;
@@ -276,12 +278,12 @@ export const authShellCss = `
   .auth-input::placeholder { color: #94A3B8; font-family: 'Inter', sans-serif; }
 
   .auth-input:focus, .auth-select:focus {
-    border-color: var(--auth-brand-mid);
-    box-shadow: 0 0 0 3px rgba(14, 94, 72, 0.15);
+    border-color: #10B981;
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
   }
 
   .auth-input:focus + .auth-input-icon {
-    color: var(--auth-brand-mid);
+    color: #10B981;
   }
 
   .auth-input.auth-input-error {
@@ -299,7 +301,7 @@ export const authShellCss = `
     appearance: none;
     cursor: pointer;
     padding-right: 38px;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%230E5E48' stroke-width='2.5'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2310B981' stroke-width='2.5'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
     background-repeat: no-repeat;
     background-position: right 14px center;
   }
@@ -335,7 +337,7 @@ export const authShellCss = `
     border-radius: 6px;
     font-family: 'Inter', sans-serif;
   }
-  .auth-toggle-pw:hover { color: var(--auth-brand-mid); }
+  .auth-toggle-pw:hover { color: #10B981; }
 
   .auth-row {
     display: flex;
@@ -360,20 +362,20 @@ export const authShellCss = `
   .auth-remember input {
     width: 16px;
     height: 16px;
-    accent-color: var(--auth-brand-mid);
+    accent-color: #10B981;
     cursor: pointer;
     border-radius: 4px;
   }
 
   .auth-link {
-    color: var(--auth-brand-mid);
+    color: #10B981;
     font-weight: 700;
     font-size: 13px;
     text-decoration: none;
     font-family: 'Inter', sans-serif;
   }
   .auth-link:hover {
-    color: var(--auth-brand-deep);
+    color: #059669;
     text-decoration: underline;
   }
 
@@ -382,7 +384,7 @@ export const authShellCss = `
     height: 48px;
     border: none;
     border-radius: 10px;
-    background: var(--auth-brand-mid);
+    background: #10B981;
     color: #FFFFFF;
     font-family: 'Inter', sans-serif !important;
     font-weight: 700;
@@ -396,13 +398,13 @@ export const authShellCss = `
     justify-content: center;
     gap: 10px;
     margin-top: 6px;
-    box-shadow: 0 4px 14px rgba(14, 94, 72, 0.25);
+    box-shadow: 0 4px 14px rgba(16, 185, 129, 0.25);
     transition: background 0.15s ease, transform 0.15s ease;
   }
   .auth-submit:hover:not(:disabled) {
-    background: var(--auth-brand-deep);
+    background: #059669;
     transform: translateY(-1px);
-    box-shadow: 0 8px 20px rgba(6, 56, 44, 0.3);
+    box-shadow: 0 8px 20px rgba(16, 185, 129, 0.32);
   }
   .auth-submit:active:not(:disabled) {
     transform: translateY(0);
@@ -455,7 +457,7 @@ export const authShellCss = `
     justify-content: center;
     border: none;
     border-radius: 10px;
-    background: var(--auth-brand-mid);
+    background: #10B981;
     color: #FFFFFF;
     font-family: 'Inter', sans-serif;
     font-weight: 700;
@@ -465,9 +467,9 @@ export const authShellCss = `
     text-decoration: none;
     padding: 12px 24px;
     transition: background 0.15s ease;
-    box-shadow: 0 4px 14px rgba(14, 94, 72, 0.25);
+    box-shadow: 0 4px 14px rgba(16, 185, 129, 0.25);
   }
-  .auth-btn-link:hover { background: var(--auth-brand-deep); }
+  .auth-btn-link:hover { background: #059669; }
 
   @media (max-width: 960px) {
     .auth-shell { grid-template-columns: 1fr; }
@@ -546,7 +548,7 @@ export default function AuthShell({ children }: AuthShellProps) {
 
       <main className="auth-right">
         <div className="auth-form-card">
-          <CornerBrackets color="#0E5E48" />
+          <CornerBrackets color="#10B981" />
           {children}
         </div>
       </main>

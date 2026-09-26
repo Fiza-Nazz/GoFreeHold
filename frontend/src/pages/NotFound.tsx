@@ -23,12 +23,12 @@ export default function NotFound() {
           border-radius: 8px;
           font-family: 'Inter', sans-serif;
           cursor: pointer;
-          box-shadow: 0 4px 14px rgba(14, 94, 72, 0.25);
+          box-shadow: 0 4px 14px rgba(16, 185, 129, 0.25);
         }
         .gfh-nf-btn:hover {
           transform: translateY(-2px);
-          box-shadow: 0 6px 20px rgba(14, 94, 72, 0.35);
-          background: #0B4636 !important;
+          box-shadow: 0 6px 20px rgba(16, 185, 129, 0.35);
+          background: #059669 !important;
         }
         .gfh-nf-btn:active {
           transform: translateY(0);
@@ -45,7 +45,7 @@ export default function NotFound() {
           maxWidth: 480,
           width: '100%',
           textAlign: 'center',
-          boxShadow: '0 20px 45px -10px rgba(6, 56, 44, 0.08)',
+          boxShadow: '0 20px 45px -10px rgba(15, 23, 42, 0.08)',
         }}
       >
         <CornerBrackets color="#10B981" />
