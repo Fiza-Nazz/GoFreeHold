@@ -110,7 +110,7 @@ export default function ReportsDashboard() {
   }, [reportData?.payments])
 
   return (
-    <div className="gfh-portal-page gfh-rp-page" style={{ fontFamily: "'Poppins', system-ui, sans-serif" }}>
+    <div className="gfh-portal-page gfh-rp-page" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
       <style>{`${portalPageCss}
         .gfh-rp-print-only { display: none; }
 
@@ -296,7 +296,7 @@ export default function ReportsDashboard() {
               cursor: 'pointer',
               boxShadow: '0 1px 3px rgba(14, 94, 72, 0.25)',
               transition: 'background 0.15s ease, transform 0.15s ease',
-              fontFamily: "'Poppins', sans-serif",
+              fontFamily: "'Inter', sans-serif",
             }}
             onMouseEnter={e => {
               e.currentTarget.style.background = '#094535'
@@ -326,7 +326,7 @@ export default function ReportsDashboard() {
               cursor: 'pointer',
               boxShadow: '0 1px 3px rgba(14, 94, 72, 0.25)',
               transition: 'background 0.15s ease, transform 0.15s ease',
-              fontFamily: "'Poppins', sans-serif",
+              fontFamily: "'Inter', sans-serif",
             }}
             onMouseEnter={e => {
               e.currentTarget.style.background = '#094535'
@@ -366,7 +366,7 @@ export default function ReportsDashboard() {
               cursor: 'pointer',
               transition: 'all 0.15s ease',
               boxShadow: activeTab === t.key ? '0 1px 3px rgba(14, 94, 72, 0.25)' : 'none',
-              fontFamily: "'Poppins', sans-serif",
+              fontFamily: "'Inter', sans-serif",
             }}
             onMouseEnter={e => {
               if (activeTab !== t.key) {

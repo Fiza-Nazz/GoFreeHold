@@ -85,7 +85,7 @@ export default function DailyMaintenanceReport() {
   }, [report?.completed_jobs, searchTerm])
 
   return (
-    <div className="gfh-portal-page gfh-dm-page" style={{ fontFamily: "'Poppins', system-ui, sans-serif" }}>
+    <div className="gfh-portal-page gfh-dm-page" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
       <style>{`${portalPageCss}
         .gfh-dm-print-only { display: none; }
 
@@ -156,7 +156,7 @@ export default function DailyMaintenanceReport() {
                 fontSize: 13,
                 fontWeight: 600,
                 outline: 'none',
-                fontFamily: "'Poppins', sans-serif",
+                fontFamily: "'Inter', sans-serif",
                 cursor: 'pointer',
               }}
             />
@@ -214,7 +214,7 @@ export default function DailyMaintenanceReport() {
               cursor: 'pointer',
               boxShadow: '0 1px 3px rgba(14, 94, 72, 0.25)',
               transition: 'background 0.15s ease',
-              fontFamily: "'Poppins', sans-serif",
+              fontFamily: "'Inter', sans-serif",
             }}
           >
             <Icon path={icons.printer} size={15} />
@@ -255,7 +255,7 @@ export default function DailyMaintenanceReport() {
                 <div style={{ width: 38, height: 38, borderRadius: 8, background: card.iconBg, color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 10 }}>
                   <Icon path={card.icon} size={18} />
                 </div>
-                <div style={{ fontFamily: "'Poppins', sans-serif", fontSize: 26, fontWeight: 800, color: card.color }}>
+                <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 26, fontWeight: 800, color: card.color }}>
                   {card.value}
                 </div>
                 <div style={{ fontSize: 11.5, color: THEME.textMuted, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.4px', marginTop: 2 }}>

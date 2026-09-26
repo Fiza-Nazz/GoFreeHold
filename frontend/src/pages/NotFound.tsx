@@ -12,18 +12,16 @@ export default function NotFound() {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        background: '#F8F7FD',
-        fontFamily: "'Poppins', system-ui, sans-serif",
+        background: '#F6F8FA',
+        fontFamily: "'Inter', system-ui, sans-serif",
         padding: 24,
       }}
     >
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap');
-
         .gfh-nf-btn {
           transition: all 0.2s ease;
           border-radius: 8px;
-          font-family: 'Poppins', sans-serif;
+          font-family: 'Inter', sans-serif;
           cursor: pointer;
           box-shadow: 0 4px 14px rgba(14, 94, 72, 0.25);
         }
@@ -54,7 +52,7 @@ export default function NotFound() {
 
         <div
           style={{
-            fontFamily: "'Poppins', sans-serif",
+            fontFamily: "'Inter', sans-serif",
             fontSize: 72,
             fontWeight: 900,
             background: 'linear-gradient(135deg, #042B22 0%, #0E5E48 100%)',
@@ -71,7 +69,7 @@ export default function NotFound() {
 
         <h1
           style={{
-            fontFamily: "'Poppins', sans-serif",
+            fontFamily: "'Inter', sans-serif",
             fontSize: 22,
             fontWeight: 800,
             color: '#0F172A',

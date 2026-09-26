@@ -319,7 +319,7 @@ function UnitDropdown({
           color: '#0F172A',
           fontWeight: 600,
           fontSize: 13.5,
-          fontFamily: "'Poppins', system-ui, sans-serif",
+          fontFamily: "'Inter', system-ui, sans-serif",
           cursor: 'pointer',
           textAlign: 'left',
           transition: 'border-color 0.15s ease',
@@ -361,7 +361,7 @@ function UnitDropdown({
             boxShadow: '0 12px 30px -6px rgba(15, 23, 42, 0.18)',
             zIndex: 999,
             borderRadius: 14,
-            fontFamily: "'Poppins', system-ui, sans-serif",
+            fontFamily: "'Inter', system-ui, sans-serif",
             overflow: 'hidden',
           }}
         >
@@ -381,7 +381,7 @@ function UnitDropdown({
                   border: '1px solid #E2E8F0',
                   outline: 'none',
                   boxSizing: 'border-box',
-                  fontFamily: "'Poppins', sans-serif",
+                  fontFamily: "'Inter', sans-serif",
                 }}
               />
             </div>
@@ -596,7 +596,7 @@ export default function AdminDashboard() {
   }, [stats.monthly_revenue])
 
   return (
-    <div className="gfh-portal-page" style={{ fontFamily: "'Poppins', system-ui, sans-serif", background: '#F7F8FC' }}>
+    <div className="gfh-portal-page" style={{ fontFamily: "'Inter', system-ui, sans-serif", background: '#F7F8FC' }}>
       <style>{`
         ${portalPageCss}
         .gfh-dash-spinner {
@@ -608,7 +608,7 @@ export default function AdminDashboard() {
         .gfh-select {
           border: 1px solid #E7E9F1; border-radius: 10px; padding: 6px 10px;
           font-size: 12.5px; font-weight: 600; color: #4B5065; background: #fff;
-          font-family: 'Poppins', system-ui, sans-serif; cursor: pointer;
+          font-family: 'Inter', system-ui, sans-serif; cursor: pointer;
         }
         @media (max-width: 900px) {
           .gfh-dash-grid { grid-template-columns: 1fr !important; }
@@ -620,7 +620,7 @@ export default function AdminDashboard() {
         <CornerBrackets />
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
-            <h1 style={{ fontFamily: "'Poppins', sans-serif", fontSize: 26, fontWeight: 800, color: '#0F172A', margin: 0, letterSpacing: '-0.01em' }}>
+            <h1 style={{ fontFamily: "'Inter', sans-serif", fontSize: 26, fontWeight: 800, color: '#0F172A', margin: 0, letterSpacing: '-0.01em' }}>
               Dashboard Overview
             </h1>
             <span style={{ fontSize: 12, fontWeight: 700, color: '#0E5E48', background: '#ECFDF8', border: '1px solid #A7F3DC', borderRadius: 8, padding: '4px 10px' }}>
@@ -650,7 +650,7 @@ export default function AdminDashboard() {
             opacity: isLoading ? 0.6 : 1,
             boxShadow: '0 1px 3px rgba(14, 94, 72, 0.25)',
             transition: 'all 0.15s ease',
-            fontFamily: "'Poppins', sans-serif",
+            fontFamily: "'Inter', sans-serif",
           }}
           onMouseEnter={e => {
             e.currentTarget.style.background = '#06382C'
@@ -741,7 +741,7 @@ export default function AdminDashboard() {
             <div style={{ background: '#fff', border: '1px solid #F0F1F6', borderRadius: 18, padding: '18px 20px', boxShadow: '0 1px 3px rgba(16,24,40,0.05)' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
                 <h3 style={{ margin: 0, fontSize: 16, fontWeight: 800, color: '#15112B' }}>Properties Overview</h3>
-                <Link to="/admin/properties" className="gfh-portal-link" style={{ fontSize: 13, color: '#6B21A8', fontWeight: 700, textDecoration: 'none' }}>View all →</Link>
+                <Link to="/admin/properties" className="gfh-portal-link" style={{ fontSize: 13, color: '#0F172A', fontWeight: 700, textDecoration: 'none' }}>View all →</Link>
               </div>
               {properties.length === 0 ? (
                 <p style={{ color: '#8A8FA3', fontWeight: 500 }}>No properties found.</p>
@@ -782,7 +782,7 @@ export default function AdminDashboard() {
             <div style={{ background: '#fff', border: '1px solid #F0F1F6', borderRadius: 18, padding: '18px 20px', boxShadow: '0 1px 3px rgba(16,24,40,0.05)' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
                 <h3 style={{ margin: 0, fontSize: 16, fontWeight: 800, color: '#15112B' }}>Recent Complaints</h3>
-                <Link to="/admin/complaints" className="gfh-portal-link" style={{ fontSize: 13, color: '#6B21A8', fontWeight: 700, textDecoration: 'none' }}>Open all →</Link>
+                <Link to="/admin/complaints" className="gfh-portal-link" style={{ fontSize: 13, color: '#0F172A', fontWeight: 700, textDecoration: 'none' }}>Open all →</Link>
               </div>
               {filteredComplaints.length === 0 ? (
                 <p style={{ color: '#8A8FA3', fontWeight: 500 }}>No complaints for this filter.</p>

@@ -87,26 +87,51 @@ export const Icon = ({ path, size = 15 }: { path: string; size?: number }) => (
 export const CornerBrackets = (_props?: { color?: string }) => null
 
 export const portalPageCss = `
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
   .gfh-portal-page {
     background: #F6F8FA !important;
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+    -webkit-font-smoothing: antialiased;
     color: #0F172A;
     line-height: 1.5;
+    font-size: 14px;
   }
   .gfh-portal-page * {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
   }
-  .gfh-portal-page h1, .gfh-portal-page h2, .gfh-portal-page h3,
-  .gfh-portal-page h4, .gfh-portal-page h5, .gfh-portal-page h6 {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important;
+  .gfh-portal-page h1 {
+    font-size: 26px !important;
     font-weight: 700 !important;
+    color: #0F172A;
     letter-spacing: -0.015em;
+    line-height: 1.25;
+  }
+  .gfh-portal-page h2 {
+    font-weight: 600 !important;
+    color: #0F172A;
+    letter-spacing: -0.015em;
+    line-height: 1.3;
+  }
+  .gfh-portal-page h3, .gfh-portal-page h4 {
+    font-weight: 600 !important;
+    color: #0F172A;
+    letter-spacing: -0.01em;
+    line-height: 1.35;
+  }
+  .gfh-portal-page th {
+    font-size: 12px !important;
+    font-weight: 600 !important;
+    color: #64748B !important;
+    letter-spacing: 0.04em;
+  }
+  .gfh-portal-page td {
+    font-size: 14px;
+    line-height: 1.5;
+    color: #0F172A;
   }
 
   /* Modern rounded corners pattern across Admin UI */
   .gfh-portal-page button { border-radius: 8px !important; }
-  .gfh-portal-page input, .gfh-portal-page select, .gfh-portal-page textarea { border-radius: 8px !important; }
+  .gfh-portal-page input, .gfh-portal-page select, .gfh-portal-page textarea { border-radius: 8px !important; font-size: 14px; }
   .gfh-portal-page .gfh-portal-stat {
     border-radius: 12px !important;
     transition: transform 0.15s ease, box-shadow 0.15s ease;
@@ -121,16 +146,16 @@ export const portalPageCss = `
     font-weight: 600;
   }
   .gfh-portal-btn:hover { transform: translateY(-1px); }
-  .gfh-portal-link { color: #0F8A67 !important; text-decoration: none; font-weight: 600; }
+  .gfh-portal-link { color: #0D5C46 !important; text-decoration: none; font-weight: 600; }
   .gfh-portal-link:hover { color: #06382C !important; }
 
   /* Standardized Rounded Pill Status Badges */
-  .status-badge-green  { background-color: #ecfdf5 !important; color: #065f46 !important; border: 1px solid #d1fae5 !important; border-radius: 999px !important; font-weight: 600; text-transform: uppercase; font-size: 11px; padding: 3px 10px; }
-  .status-badge-blue   { background-color: #f0f9ff !important; color: #075985 !important; border: 1px solid #bae6fd !important; border-radius: 999px !important; font-weight: 600; text-transform: uppercase; font-size: 11px; padding: 3px 10px; }
-  .status-badge-amber  { background-color: #fffbeb !important; color: #b45309 !important; border: 1px solid #fde68a !important; border-radius: 999px !important; font-weight: 600; text-transform: uppercase; font-size: 11px; padding: 3px 10px; }
-  .status-badge-red    { background-color: #fef2f2 !important; color: #991b1b !important; border: 1px solid #fecaca !important; border-radius: 999px !important; font-weight: 600; text-transform: uppercase; font-size: 11px; padding: 3px 10px; }
-  .status-badge-purple { background-color: #ecfdf5 !important; color: #065f46 !important; border: 1px solid #d1fae5 !important; border-radius: 999px !important; font-weight: 600; text-transform: uppercase; font-size: 11px; padding: 3px 10px; }
-  .status-badge-cyan   { background-color: #ecfeff !important; color: #0e7490 !important; border: 1px solid #a5f3fc !important; border-radius: 999px !important; font-weight: 600; text-transform: uppercase; font-size: 11px; padding: 3px 10px; }
+  .status-badge-green  { background-color: #ecfdf5 !important; color: #065f46 !important; border: 1px solid #d1fae5 !important; border-radius: 999px !important; font-weight: 600; text-transform: uppercase; font-size: 11.5px; padding: 3px 10px; }
+  .status-badge-blue   { background-color: #f0f9ff !important; color: #075985 !important; border: 1px solid #bae6fd !important; border-radius: 999px !important; font-weight: 600; text-transform: uppercase; font-size: 11.5px; padding: 3px 10px; }
+  .status-badge-amber  { background-color: #fffbeb !important; color: #b45309 !important; border: 1px solid #fde68a !important; border-radius: 999px !important; font-weight: 600; text-transform: uppercase; font-size: 11.5px; padding: 3px 10px; }
+  .status-badge-red    { background-color: #fef2f2 !important; color: #991b1b !important; border: 1px solid #fecaca !important; border-radius: 999px !important; font-weight: 600; text-transform: uppercase; font-size: 11.5px; padding: 3px 10px; }
+  .status-badge-purple { background-color: #ecfdf5 !important; color: #065f46 !important; border: 1px solid #d1fae5 !important; border-radius: 999px !important; font-weight: 600; text-transform: uppercase; font-size: 11.5px; padding: 3px 10px; }
+  .status-badge-cyan   { background-color: #ecfeff !important; color: #0e7490 !important; border: 1px solid #a5f3fc !important; border-radius: 999px !important; font-weight: 600; text-transform: uppercase; font-size: 11.5px; padding: 3px 10px; }
 `
 
 export const heroStyle: CSSProperties = {
@@ -162,7 +187,7 @@ export const thStyle: CSSProperties = {
   padding: '13px 16px',
   fontWeight: 600,
   textAlign: 'left',
-  fontSize: 11.5,
+  fontSize: 12,
   textTransform: 'uppercase',
   letterSpacing: '0.04em',
   color: THEME.textMuted,
@@ -172,7 +197,7 @@ export const thStyle: CSSProperties = {
 
 export const tdStyle: CSSProperties = {
   padding: '15px 16px',
-  fontSize: 13.5,
+  fontSize: 14,
   fontWeight: 500,
   color: THEME.ink,
 }

@@ -58,7 +58,7 @@ function StatCard({ label, value, color, icon, iconBg, delay }: { label: string;
       <div style={{ width: 40, height: 40, borderRadius: 8, background: iconBg, color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 10 }}>
         <Icon path={icon} size={18} />
       </div>
-      <div style={{ fontFamily: "'Poppins', sans-serif", fontSize: 22, fontWeight: 700, color: color || THEME.ink }}>{value}</div>
+      <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 22, fontWeight: 700, color: color || THEME.ink }}>{value}</div>
       <div style={{ fontSize: 12, fontWeight: 700, color: THEME.textMuted, letterSpacing: '0.4px', textTransform: 'uppercase', marginTop: 6 }}>{label}</div>
     </div>
   )
@@ -116,7 +116,7 @@ export default function FinancialTracking() {
   }
 
   return (
-    <div className="gfh-portal-page" style={{ fontFamily: "'Poppins', system-ui, sans-serif" }}>
+    <div className="gfh-portal-page" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
       <style>{portalPageCss}</style>
 
       <div className="fade-in" style={heroStyle}>

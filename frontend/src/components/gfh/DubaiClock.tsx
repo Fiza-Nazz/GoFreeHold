@@ -31,7 +31,7 @@ export default function DubaiClock() {
         fontSize: 12.5,
         fontWeight: 600,
         color: '#065F46',
-        fontFamily: "'Poppins', system-ui, sans-serif",
+        fontFamily: "'Inter', system-ui, sans-serif",
         boxShadow: '0 1px 2px rgba(16, 185, 129, 0.06)',
       }}
       title="Real-time Dubai Local Time (GST / UTC+4)"

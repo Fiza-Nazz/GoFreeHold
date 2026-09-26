@@ -329,7 +329,7 @@ export default function JobsPage() {
   }
 
   return (
-    <div className="gfh-portal-page" style={{ fontFamily: "'Poppins', system-ui, sans-serif" }}>
+    <div className="gfh-portal-page" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
       <style>{portalPageCss}</style>
 
       {/* Hero Header */}

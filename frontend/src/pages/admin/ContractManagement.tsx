@@ -493,25 +493,25 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
   }
 
   return (
-    <div className="gfh-portal-page" style={{ fontFamily: "'Poppins', system-ui, sans-serif", padding: '20px 24px' }}>
+    <div className="gfh-portal-page" style={{ fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" }}>
       <style>{portalPageCss}</style>
       <style>{`
         .gfh-contract-filter {
-          font-family: 'Poppins', system-ui, sans-serif;
-          font-size: 13.5px;
+          font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+          font-size: 14px;
           border: 1px solid #E2E8F0;
-          border-radius: 10px;
-          padding: 8px 14px;
+          border-radius: 8px;
+          padding: 9px 14px;
           background: #FFFFFF;
-          color: #334155;
+          color: #0F172A;
           font-weight: 500;
           cursor: pointer;
           outline: none;
           transition: border-color 0.15s ease, box-shadow 0.15s ease;
         }
         .gfh-contract-filter:focus {
-          border-color: #0F8A67;
-          box-shadow: 0 0 0 3px rgba(15, 138, 103, 0.12);
+          border-color: #0D5C46;
+          box-shadow: 0 0 0 3px rgba(13, 92, 70, 0.12);
         }
         .gfh-contract-row {
           transition: background-color 0.15s ease;
@@ -535,12 +535,12 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
           transition: all 0.15s ease;
         }
         .gfh-page-btn:hover:not(:disabled) {
-          border-color: #0F8A67;
-          color: #0F8A67;
+          border-color: #0D5C46;
+          color: #0D5C46;
         }
         .gfh-page-btn.active {
-          background: #0F8A67 !important;
-          border-color: #0F8A67 !important;
+          background: #0D5C46 !important;
+          border-color: #0D5C46 !important;
           color: #FFFFFF !important;
         }
         .gfh-page-btn:disabled {
@@ -551,23 +551,23 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
           display: inline-flex;
           align-items: center;
           gap: 5px;
-          padding: 6px 12px;
+          padding: 7px 12px;
           border-radius: 8px;
-          font-size: 12px;
-          font-weight: 700;
+          font-size: 13px;
+          font-weight: 600;
           cursor: pointer;
           transition: all 0.15s ease;
           text-decoration: none;
         }
       `}</style>
 
-      {/* Main Single Card Container matching media_1788523948275.png */}
+      {/* Main Single Card Container */}
       <div style={{
         background: '#FFFFFF',
-        borderRadius: 16,
+        borderRadius: 12,
         border: '1px solid #E2E8F0',
-        padding: '24px 28px',
-        boxShadow: '0 1px 3px rgba(0, 0, 0, 0.03)',
+        padding: '26px 28px',
+        boxShadow: '0 1px 3px rgba(15, 23, 42, 0.04)',
       }}>
         {/* Top Header Row with Title, Subtitle, and + New Contract Button */}
         <div style={{
@@ -576,46 +576,46 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
           alignItems: 'center',
           flexWrap: 'wrap',
           gap: 16,
-          marginBottom: 20,
+          marginBottom: 22,
         }}>
           <div>
-            <h2 style={{ fontSize: 22, fontWeight: 800, color: '#0F172A', margin: 0, letterSpacing: '-0.01em' }}>
+            <h2 style={{ fontSize: 24, fontWeight: 700, color: '#0F172A', margin: 0, letterSpacing: '-0.015em', lineHeight: 1.25 }}>
               Contract Management
             </h2>
-            <p style={{ fontSize: 13.5, color: '#64748B', margin: '4px 0 0', fontWeight: 500 }}>
+            <p style={{ fontSize: 14, color: '#64748B', margin: '4px 0 0', fontWeight: 400, lineHeight: 1.5 }}>
               Full contract lifecycle: create, renew, vacate, settle
             </p>
           </div>
 
-          {/* + New Contract Button matching media_1788524086753.png */}
+          {/* + Create Contract Button */}
           <button
             onClick={() => openGuidedWizard()}
             style={{
               display: 'inline-flex',
               alignItems: 'center',
               gap: 8,
-              background: '#0E5E48',
+              background: '#0D5C46',
               color: '#FFFFFF',
               border: 'none',
-              borderRadius: 10,
+              borderRadius: 8,
               padding: '10px 20px',
-              fontSize: 13.5,
-              fontWeight: 700,
+              fontSize: 14,
+              fontWeight: 600,
               cursor: 'pointer',
-              boxShadow: '0 1px 3px rgba(14, 94, 72, 0.25)',
+              boxShadow: '0 1px 2px rgba(13, 92, 70, 0.2)',
               transition: 'background 0.15s ease, transform 0.15s ease',
-              fontFamily: "'Poppins', sans-serif",
+              fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, sans-serif",
             }}
             onMouseEnter={e => {
               e.currentTarget.style.background = '#094535'
               e.currentTarget.style.transform = 'translateY(-1px)'
             }}
             onMouseLeave={e => {
-              e.currentTarget.style.background = '#0E5E48'
+              e.currentTarget.style.background = '#0D5C46'
               e.currentTarget.style.transform = 'translateY(0)'
             }}
           >
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <line x1="12" y1="5" x2="12" y2="19" />
               <line x1="5" y1="12" x2="19" y2="12" />
             </svg>
@@ -623,7 +623,7 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
           </button>
         </div>
 
-        {/* Filter Row matching screenshot */}
+        {/* Filter Row */}
         <div style={{
           display: 'flex',
           alignItems: 'center',
@@ -638,7 +638,7 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
               value={selectedPropertyId}
               onChange={e => { setSelectedPropertyId(e.target.value); setCurrentPage(1); }}
               className="gfh-contract-filter"
-              style={{ minWidth: 160 }}
+              style={{ minWidth: 165 }}
             >
               <option value="">All Properties</option>
               {properties.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
@@ -649,7 +649,7 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
               value={selectedUnitId}
               onChange={e => { setSelectedUnitId(e.target.value); setCurrentPage(1); }}
               className="gfh-contract-filter"
-              style={{ minWidth: 140 }}
+              style={{ minWidth: 145 }}
             >
               <option value="">All Units</option>
               {units.map(u => <option key={u.id} value={u.id}>{u.number}</option>)}
@@ -660,7 +660,7 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
               value={statusFilter}
               onChange={e => { setStatusFilter(e.target.value); setCurrentPage(1); }}
               className="gfh-contract-filter"
-              style={{ minWidth: 140 }}
+              style={{ minWidth: 145 }}
             >
               <option value="">All Statuses</option>
               <option value="active">Active</option>
@@ -676,7 +676,7 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
                 value={startDateFilter}
                 onChange={e => { setStartDateFilter(e.target.value); setCurrentPage(1); }}
                 className="gfh-contract-filter"
-                style={{ padding: '8px 36px 8px 12px', fontSize: 13, minWidth: 170 }}
+                style={{ padding: '8px 36px 8px 12px', fontSize: 14, minWidth: 170 }}
                 title="Select Date Range"
               />
               <svg
@@ -703,8 +703,8 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
                 style={{
                   background: 'transparent',
                   border: 'none',
-                  color: '#0F8A67',
-                  fontSize: 12.5,
+                  color: '#0D5C46',
+                  fontSize: 13,
                   fontWeight: 600,
                   cursor: 'pointer',
                   padding: '4px 8px',
@@ -715,7 +715,7 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
             )}
           </div>
 
-          {/* Right side: Filters button matching screenshot */}
+          {/* Right side: Filters button */}
           <button
             onClick={() => {
               setSelectedPropertyId('')
@@ -729,12 +729,12 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
               display: 'inline-flex',
               alignItems: 'center',
               gap: 8,
-              padding: '8px 16px',
+              padding: '9px 16px',
               borderRadius: 8,
               background: '#FFFFFF',
               border: '1px solid #E2E8F0',
               color: '#334155',
-              fontSize: 13,
+              fontSize: 13.5,
               fontWeight: 600,
               cursor: 'pointer',
             }}
@@ -750,49 +750,49 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
 
         {/* Contracts Table */}
         {isLoading ? (
-          <div style={{ textAlign: 'center', padding: '60px 20px', color: '#64748B', fontWeight: 600 }}>
+          <div style={{ textAlign: 'center', padding: '60px 20px', color: '#64748B', fontWeight: 500, fontSize: 14 }}>
             Loading contracts…
           </div>
         ) : filteredContracts.length === 0 ? (
-          <div style={{ textAlign: 'center', padding: '60px 20px', color: '#64748B', fontWeight: 600 }}>
+          <div style={{ textAlign: 'center', padding: '60px 20px', color: '#64748B', fontWeight: 500, fontSize: 14 }}>
             No contracts found matching your filters.
           </div>
         ) : (
           <div style={{ overflowX: 'auto' }}>
             <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
               <thead>
-                <tr style={{ borderBottom: '1px solid #E2E8F0' }}>
-                  <th style={{ padding: '12px 14px', fontSize: 11.5, fontWeight: 700, color: '#64748B', textTransform: 'uppercase', letterSpacing: '0.5px' }}>REF #</th>
-                  <th style={{ padding: '12px 14px', fontSize: 11.5, fontWeight: 700, color: '#64748B', textTransform: 'uppercase', letterSpacing: '0.5px' }}>UNIT ⇅</th>
-                  <th style={{ padding: '12px 14px', fontSize: 11.5, fontWeight: 700, color: '#64748B', textTransform: 'uppercase', letterSpacing: '0.5px' }}>TENANT</th>
-                  <th style={{ padding: '12px 14px', fontSize: 11.5, fontWeight: 700, color: '#64748B', textTransform: 'uppercase', letterSpacing: '0.5px' }}>OWNER</th>
-                  <th style={{ padding: '12px 14px', fontSize: 11.5, fontWeight: 700, color: '#64748B', textTransform: 'uppercase', letterSpacing: '0.5px' }}>DURATION</th>
-                  <th style={{ padding: '12px 14px', fontSize: 11.5, fontWeight: 700, color: '#64748B', textTransform: 'uppercase', letterSpacing: '0.5px' }}>RENT (AED)</th>
-                  <th style={{ padding: '12px 14px', fontSize: 11.5, fontWeight: 700, color: '#64748B', textTransform: 'uppercase', letterSpacing: '0.5px' }}>STATUS</th>
-                  <th style={{ padding: '12px 14px', fontSize: 11.5, fontWeight: 700, color: '#64748B', textTransform: 'uppercase', letterSpacing: '0.5px' }}>ACTIONS</th>
+                <tr style={{ borderBottom: '1px solid #E2E8F0', background: '#F8FAFC' }}>
+                  <th style={{ padding: '13px 16px', fontSize: 12, fontWeight: 600, color: '#64748B', textTransform: 'uppercase', letterSpacing: '0.04em' }}>REF #</th>
+                  <th style={{ padding: '13px 16px', fontSize: 12, fontWeight: 600, color: '#64748B', textTransform: 'uppercase', letterSpacing: '0.04em' }}>UNIT ⇅</th>
+                  <th style={{ padding: '13px 16px', fontSize: 12, fontWeight: 600, color: '#64748B', textTransform: 'uppercase', letterSpacing: '0.04em' }}>TENANT</th>
+                  <th style={{ padding: '13px 16px', fontSize: 12, fontWeight: 600, color: '#64748B', textTransform: 'uppercase', letterSpacing: '0.04em' }}>OWNER</th>
+                  <th style={{ padding: '13px 16px', fontSize: 12, fontWeight: 600, color: '#64748B', textTransform: 'uppercase', letterSpacing: '0.04em' }}>DURATION</th>
+                  <th style={{ padding: '13px 16px', fontSize: 12, fontWeight: 600, color: '#64748B', textTransform: 'uppercase', letterSpacing: '0.04em' }}>RENT (AED)</th>
+                  <th style={{ padding: '13px 16px', fontSize: 12, fontWeight: 600, color: '#64748B', textTransform: 'uppercase', letterSpacing: '0.04em' }}>STATUS</th>
+                  <th style={{ padding: '13px 16px', fontSize: 12, fontWeight: 600, color: '#64748B', textTransform: 'uppercase', letterSpacing: '0.04em' }}>ACTIONS</th>
                 </tr>
               </thead>
               <tbody>
                 {paginatedContracts.map(c => {
                   const isActive = c.status?.toLowerCase() === 'active'
                   return (
-                    <tr key={c.id} className="gfh-contract-row" style={{ borderBottom: '1px solid #F1F5F9' }}>
+                    <tr key={c.id} className="gfh-contract-row" style={{ borderBottom: '1px solid #E2E8F0' }}>
                       {/* REF # Link */}
-                      <td style={{ padding: '16px 14px' }}>
+                      <td style={{ padding: '16px 16px' }}>
                         <Link to={`${effectiveBasePath}/contracts/${c.id}`} style={{ textDecoration: 'none' }}>
-                          <span style={{ color: '#0F8A67', fontWeight: 700, fontSize: 13.5, textDecoration: 'underline' }}>
+                          <span style={{ color: '#0D5C46', fontWeight: 600, fontSize: 14, textDecoration: 'none' }}>
                             GFH-{String(c.id).padStart(5, '0')}
                           </span>
                         </Link>
                       </td>
 
                       {/* UNIT */}
-                      <td style={{ padding: '16px 14px' }}>
-                        <div style={{ fontWeight: 800, fontSize: 14, color: '#0F172A' }}>
+                      <td style={{ padding: '16px 16px' }}>
+                        <div style={{ fontWeight: 600, fontSize: 14.5, color: '#0F172A', lineHeight: 1.35 }}>
                           {c.unit?.number || '—'}
                         </div>
                         {c.unit?.property?.name && (
-                          <div style={{ fontSize: 12, color: '#64748B', display: 'flex', alignItems: 'center', gap: 4, marginTop: 3 }}>
+                          <div style={{ fontSize: 13, color: '#64748B', display: 'flex', alignItems: 'center', gap: 5, marginTop: 3, fontWeight: 400 }}>
                             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#64748B" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                               <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
                               <circle cx="12" cy="10" r="3" />
@@ -803,18 +803,18 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
                       </td>
 
                       {/* TENANT */}
-                      <td style={{ padding: '16px 14px', fontWeight: 700, fontSize: 13.5, color: '#0F172A' }}>
+                      <td style={{ padding: '16px 16px', fontWeight: 600, fontSize: 14.5, color: '#0F172A', lineHeight: 1.4 }}>
                         {c.tenant?.name || '—'}
                       </td>
 
                       {/* OWNER */}
-                      <td style={{ padding: '16px 14px', fontWeight: 600, fontSize: 13.5, color: '#334155' }}>
+                      <td style={{ padding: '16px 16px', fontWeight: 500, fontSize: 14, color: '#334155', lineHeight: 1.4 }}>
                         {c.owner?.name || '—'}
                       </td>
 
                       {/* DURATION */}
-                      <td style={{ padding: '16px 14px' }}>
-                        <div style={{ fontSize: 12.5, color: '#334155', display: 'flex', alignItems: 'center', gap: 6, fontWeight: 500 }}>
+                      <td style={{ padding: '16px 16px' }}>
+                        <div style={{ fontSize: 14, color: '#0F172A', display: 'flex', alignItems: 'center', gap: 6, fontWeight: 500 }}>
                           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#64748B" strokeWidth="2">
                             <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
                             <line x1="16" y1="2" x2="16" y2="6" />
@@ -823,15 +823,15 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
                           </svg>
                           <span>{formatDate(c.start_date)}</span>
                         </div>
-                        <div style={{ fontSize: 12, color: '#64748B', marginLeft: 19, marginTop: 2 }}>
+                        <div style={{ fontSize: 13, color: '#64748B', marginLeft: 19, marginTop: 2, fontWeight: 400 }}>
                           – {formatDate(c.end_date)}
                         </div>
                       </td>
 
-                      {/* RENT (AED) */}
-                      <td style={{ padding: '16px 14px' }}>
-                        <div style={{ fontSize: 11, color: '#64748B', fontWeight: 600 }}>AED</div>
-                        <div style={{ fontSize: 15, fontWeight: 700, color: '#0F172A' }}>
+                      {/* RENT (AED) — Financial values: 16–20px, bold */}
+                      <td style={{ padding: '16px 16px' }}>
+                        <div style={{ fontSize: 12, color: '#64748B', fontWeight: 500 }}>AED</div>
+                        <div style={{ fontSize: 16, fontWeight: 700, color: '#0F172A', letterSpacing: '-0.01em' }}>
                           {Number(c.rent_amount).toLocaleString()}
                         </div>
                       </td>

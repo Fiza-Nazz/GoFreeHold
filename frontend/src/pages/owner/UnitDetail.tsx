@@ -175,7 +175,7 @@ export default function UnitDetailPage() {
   const activeTenant = activeContract?.tenant
 
   return (
-    <div className="gfh-portal-page" style={{ fontFamily: "'Poppins', system-ui, sans-serif" }}>
+    <div className="gfh-portal-page" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
       <style>{`
         ${portalPageCss}
         .unit-detail-grid {

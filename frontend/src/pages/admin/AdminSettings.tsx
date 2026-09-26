@@ -134,7 +134,7 @@ export default function AdminSettings() {
   }
 
   return (
-    <div className="gfh-portal-page" style={{ fontFamily: "'Poppins', system-ui, sans-serif" }}>
+    <div className="gfh-portal-page" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
       <style>{`${portalPageCss}
         .gfh-as-email-input {
           transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
@@ -177,7 +177,7 @@ export default function AdminSettings() {
               opacity: isTriggering ? 0.7 : 1,
               boxShadow: '0 1px 3px rgba(14, 94, 72, 0.25)',
               transition: 'background 0.15s ease, transform 0.15s ease',
-              fontFamily: "'Poppins', sans-serif",
+              fontFamily: "'Inter', sans-serif",
             }}
             onMouseEnter={e => {
               if (!isTriggering) {

@@ -347,7 +347,7 @@ export default function OwnerDashboard() {
   }
 
   return (
-    <div style={{ fontFamily: "'Poppins', system-ui, sans-serif", width: '100%', boxSizing: 'border-box' }}>
+    <div style={{ fontFamily: "'Inter', system-ui, sans-serif", width: '100%', boxSizing: 'border-box' }}>
       <style>{`
         .gfh-dash-card {
           border-radius: 14px;

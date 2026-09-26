@@ -93,7 +93,7 @@ export default function BookingForm({ unit, onClose, onSuccess }: BookingFormPro
           border: `1px solid ${THEME.border}`,
           borderRadius: 8,
           padding: 28,
-          fontFamily: "'Poppins', system-ui, sans-serif",
+          fontFamily: "'Inter', system-ui, sans-serif",
         }}
       >
         <CornerBrackets />

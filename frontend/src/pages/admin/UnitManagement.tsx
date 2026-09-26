@@ -245,13 +245,13 @@ export default function UnitManagement() {
   }, [searchTerm, propertyFilter, statusFilter, entriesPerPage])
 
   return (
-    <div className="gfh-portal-page" style={{ fontFamily: "'Poppins', system-ui, sans-serif", padding: '20px 24px' }}>
+    <div className="gfh-portal-page" style={{ fontFamily: "'Inter', system-ui, sans-serif", padding: '20px 24px' }}>
       <style>{portalPageCss}</style>
       <style>{`
         @keyframes gfhOverlayFade { from { opacity: 0; } to { opacity: 1; } }
         @keyframes gfhModalPop { from { opacity: 0; transform: scale(0.95) translateY(10px); } to { opacity: 1; transform: scale(1) translateY(0); } }
         .gfh-prop-input {
-          font-family: 'Poppins', system-ui, sans-serif !important;
+          font-family: 'Inter', system-ui, sans-serif !important;
           font-size: 13.5px !important;
           border: 1px solid #E2E8F0 !important;
           border-radius: 6px !important;
@@ -278,7 +278,7 @@ export default function UnitManagement() {
           cursor: pointer !important;
           box-shadow: 0 1px 3px rgba(15, 138, 103, 0.25) !important;
           transition: background 0.15s ease, transform 0.15s ease !important;
-          font-family: 'Poppins', sans-serif !important;
+          font-family: 'Inter', sans-serif !important;
         }
         .gfh-add-prop-btn:hover {
           background: #0B6E52 !important;

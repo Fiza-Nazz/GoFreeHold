@@ -128,7 +128,7 @@ export default function TenantComplaints() {
   ]
 
   return (
-    <div className="gfh-portal-page" style={{ fontFamily: "'Poppins', system-ui, sans-serif", background: THEME.pageBg, minHeight: '100%' }}>
+    <div className="gfh-portal-page" style={{ fontFamily: "'Inter', system-ui, sans-serif", background: THEME.pageBg, minHeight: '100%' }}>
       <style>{portalPageCss}</style>
 
       {/* Hero Header */}

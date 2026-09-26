@@ -214,7 +214,7 @@ export default function AssignedJobs() {
   ]
 
   return (
-    <div className="gfh-portal-page" style={{ fontFamily: "'Poppins', system-ui, sans-serif", background: THEME.pageBg, minHeight: '100%' }}>
+    <div className="gfh-portal-page" style={{ fontFamily: "'Inter', system-ui, sans-serif", background: THEME.pageBg, minHeight: '100%' }}>
       <style>{portalPageCss}</style>
 
       {/* Hero Header */}
@@ -449,7 +449,7 @@ export default function AssignedJobs() {
                 fontSize: 13,
                 color: '#0F172A',
                 outline: 'none',
-                fontFamily: "'Poppins', system-ui, sans-serif",
+                fontFamily: "'Inter', system-ui, sans-serif",
                 boxSizing: 'border-box',
               }}
             />
@@ -699,7 +699,7 @@ export default function AssignedJobs() {
                       alignItems: 'center',
                       gap: 10,
                       padding: '10px 14px',
-                      background: '#F8F7FD',
+                      background: '#F6F8FA',
                       border: '1px solid #E2E8F0',
                       borderRadius: 10,
                     }}
@@ -724,7 +724,7 @@ export default function AssignedJobs() {
                       alignItems: 'center',
                       gap: 10,
                       padding: '10px 14px',
-                      background: '#F8F7FD',
+                      background: '#F6F8FA',
                       border: '1px solid #E2E8F0',
                       borderRadius: 10,
                     }}
@@ -749,7 +749,7 @@ export default function AssignedJobs() {
                       alignItems: 'center',
                       gap: 10,
                       padding: '10px 14px',
-                      background: '#F8F7FD',
+                      background: '#F6F8FA',
                       border: '1px solid #E2E8F0',
                       borderRadius: 10,
                     }}
@@ -793,7 +793,7 @@ export default function AssignedJobs() {
                       background: '#FFFFFF',
                       fontSize: 13,
                       color: '#0F172A',
-                      fontFamily: "'Poppins', system-ui, sans-serif",
+                      fontFamily: "'Inter', system-ui, sans-serif",
                       outline: 'none',
                       boxSizing: 'border-box',
                       resize: 'vertical',

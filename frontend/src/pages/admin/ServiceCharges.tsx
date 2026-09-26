@@ -320,7 +320,7 @@ export default function ServiceCharges() {
   }
 
   return (
-    <div className="gfh-portal-page" style={{ fontFamily: "'Poppins', system-ui, sans-serif", padding: '24px 32px', backgroundColor: '#f8fafc', minHeight: '100vh' }}>
+    <div className="gfh-portal-page" style={{ fontFamily: "'Inter', system-ui, sans-serif", padding: '24px 32px', backgroundColor: '#f8fafc', minHeight: '100vh' }}>
       <style>{portalPageCss}</style>
 
       {/* Top Header */}

@@ -179,7 +179,7 @@ export default function SchemaCrudPage({
         <CornerBrackets />
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
-            <h1 style={{ fontFamily: "'Poppins', sans-serif", fontSize: 28, fontWeight: 800, color: THEME.ink, margin: 0, letterSpacing: '-0.01em' }}>
+            <h1 style={{ fontFamily: "'Inter', sans-serif", fontSize: 28, fontWeight: 800, color: THEME.ink, margin: 0, letterSpacing: '-0.01em' }}>
               {title}
             </h1>
             {!loading && (
@@ -209,7 +209,7 @@ export default function SchemaCrudPage({
             cursor: 'pointer',
             boxShadow: showForm ? 'none' : '0 1px 3px rgba(14, 94, 72, 0.25)',
             transition: 'all 0.15s ease',
-            fontFamily: "'Poppins', sans-serif",
+            fontFamily: "'Inter', sans-serif",
           }}
           onMouseEnter={e => {
             if (!showForm) e.currentTarget.style.background = '#06382C'
@@ -312,7 +312,7 @@ export default function SchemaCrudPage({
                 boxShadow: '0 1px 3px rgba(14, 94, 72, 0.25)',
                 marginTop: 20,
                 opacity: saving ? 0.6 : 1,
-                fontFamily: "'Poppins', sans-serif",
+                fontFamily: "'Inter', sans-serif",
               }}
             >
               {saving ? 'Saving…' : 'Save'}

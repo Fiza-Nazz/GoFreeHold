@@ -17,13 +17,11 @@ export default function Unauthorized() {
         alignItems: 'center',
         justifyContent: 'center',
         background: 'radial-gradient(ellipse at top, #ECFDF8 0%, #F8FAFC 70%)',
-        fontFamily: "'Poppins', system-ui, sans-serif",
+        fontFamily: "'Inter', system-ui, sans-serif",
         padding: 24,
       }}
     >
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap');
-
         .gfh-unauth-card {
           animation: gfhSlideUp 0.35s cubic-bezier(0.16, 1, 0.3, 1);
         }

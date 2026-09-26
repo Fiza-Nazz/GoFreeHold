@@ -362,7 +362,7 @@ export default function PropertyDrillDown() {
   }
 
   return (
-    <div className="gfh-portal-page" style={{ fontFamily: "'Poppins', system-ui, sans-serif" }}>
+    <div className="gfh-portal-page" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
       <style>{portalPageCss}</style>
       <style>{propertyDrillDownCss}</style>
 
@@ -556,7 +556,7 @@ export default function PropertyDrillDown() {
                 fontSize: 13,
                 color: '#0F172A',
                 outline: 'none',
-                fontFamily: "'Poppins', system-ui, sans-serif",
+                fontFamily: "'Inter', system-ui, sans-serif",
                 boxSizing: 'border-box',
               }}
             />
@@ -598,7 +598,7 @@ export default function PropertyDrillDown() {
               fontSize: 13,
               fontWeight: 600,
               outline: 'none',
-              fontFamily: "'Poppins', system-ui, sans-serif",
+              fontFamily: "'Inter', system-ui, sans-serif",
               cursor: 'pointer',
             }}
           >
@@ -621,7 +621,7 @@ export default function PropertyDrillDown() {
               fontSize: 13,
               fontWeight: 600,
               outline: 'none',
-              fontFamily: "'Poppins', system-ui, sans-serif",
+              fontFamily: "'Inter', system-ui, sans-serif",
               cursor: 'pointer',
             }}
           >
@@ -644,7 +644,7 @@ export default function PropertyDrillDown() {
               fontSize: 13,
               fontWeight: 600,
               outline: 'none',
-              fontFamily: "'Poppins', system-ui, sans-serif",
+              fontFamily: "'Inter', system-ui, sans-serif",
               cursor: 'pointer',
             }}
           >
@@ -896,7 +896,7 @@ export default function PropertyDrillDown() {
                     color: '#0F172A',
                     outline: 'none',
                     boxSizing: 'border-box',
-                    fontFamily: "'Poppins', system-ui, sans-serif",
+                    fontFamily: "'Inter', system-ui, sans-serif",
                   }}
                 />
                 <svg

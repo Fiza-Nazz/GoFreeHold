@@ -139,7 +139,7 @@ export default function TeamsPage() {
   }, [teams, searchTerm])
 
   return (
-    <div className="gfh-portal-page" style={{ fontFamily: "'Poppins', system-ui, sans-serif" }}>
+    <div className="gfh-portal-page" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
       <style>{portalPageCss}</style>
 
       {/* Hero Header */}
@@ -169,7 +169,7 @@ export default function TeamsPage() {
             cursor: 'pointer',
             boxShadow: '0 1px 3px rgba(14, 94, 72, 0.25)',
             transition: 'background 0.15s ease, transform 0.15s ease',
-            fontFamily: "'Poppins', sans-serif",
+            fontFamily: "'Inter', sans-serif",
           }}
           onMouseEnter={e => {
             e.currentTarget.style.background = '#094535'

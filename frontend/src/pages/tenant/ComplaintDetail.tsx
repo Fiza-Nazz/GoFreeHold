@@ -76,7 +76,7 @@ export default function TenantComplaintDetail() {
   const isAssigned = status === 'assigned' || isInProgress
 
   return (
-    <div className="gfh-portal-page" style={{ fontFamily: "'Poppins', system-ui, sans-serif", background: THEME.pageBg, minHeight: '100%' }}>
+    <div className="gfh-portal-page" style={{ fontFamily: "'Inter', system-ui, sans-serif", background: THEME.pageBg, minHeight: '100%' }}>
       <style>{portalPageCss}</style>
 
       {/* Hero Header */}
@@ -266,7 +266,7 @@ export default function TenantComplaintDetail() {
             {/* Meta Grid */}
             <div style={{ marginTop: 22, display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 14 }}>
               {/* Unit & Property */}
-              <div style={{ padding: '14px 16px', borderRadius: 12, border: '1px solid #E2E8F0', background: '#F8F7FD' }}>
+              <div style={{ padding: '14px 16px', borderRadius: 12, border: '1px solid #E2E8F0', background: '#F6F8FA' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#0E5E48', marginBottom: 4 }}>
                   <Icon path={icons.building} size={16} />
                   <span style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Leased Unit</span>
@@ -280,7 +280,7 @@ export default function TenantComplaintDetail() {
               </div>
 
               {/* Timestamp */}
-              <div style={{ padding: '14px 16px', borderRadius: 12, border: '1px solid #E2E8F0', background: '#F8F7FD' }}>
+              <div style={{ padding: '14px 16px', borderRadius: 12, border: '1px solid #E2E8F0', background: '#F6F8FA' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#0284C7', marginBottom: 4 }}>
                   <Icon path={icons.clock} size={16} />
                   <span style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Date Submitted</span>
@@ -294,7 +294,7 @@ export default function TenantComplaintDetail() {
               </div>
 
               {/* Service Team */}
-              <div style={{ padding: '14px 16px', borderRadius: 12, border: '1px solid #E2E8F0', background: '#F8F7FD' }}>
+              <div style={{ padding: '14px 16px', borderRadius: 12, border: '1px solid #E2E8F0', background: '#F6F8FA' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#D97706', marginBottom: 4 }}>
                   <Icon path={icons.wrench} size={16} />
                   <span style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Assigned Handler</span>

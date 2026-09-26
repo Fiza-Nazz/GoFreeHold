@@ -85,7 +85,7 @@ export default function PaymentForm({ onSuccess }: PaymentFormProps) {
   }
 
   return (
-    <div className="gfh-portal-page" style={{ fontFamily: "'Poppins', system-ui, sans-serif" }}>
+    <div className="gfh-portal-page" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
       <style>{portalPageCss}</style>
 
       <div className="fade-in" style={heroStyle}>
@@ -119,8 +119,8 @@ export default function PaymentForm({ onSuccess }: PaymentFormProps) {
                     style={{
                       padding: '10px 8px',
                       borderRadius: 8,
-                      border: `1.5px solid ${formData.type === cat ? '#6B21A8' : THEME.border}`,
-                      background: formData.type === cat ? '#6B21A8' : '#ffffff',
+                      border: `1.5px solid ${formData.type === cat ? '#0F172A' : THEME.border}`,
+                      background: formData.type === cat ? '#0F172A' : '#ffffff',
                       color: formData.type === cat ? '#fff' : THEME.ink,
                       cursor: 'pointer',
                       fontSize: 13,

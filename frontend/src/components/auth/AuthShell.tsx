@@ -18,15 +18,13 @@ const FEATURES = [
 ]
 
 export const authShellCss = `
-  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
-
   :root {
     --auth-brand-deep: #06382C;
     --auth-brand-dark: #04281E;
     --auth-brand-mid: #0E5E48;
     --auth-brand-light: #18A77A;
     --auth-brand-accent: #34D3A5;
-    --auth-canvas: #F8F7FD;
+    --auth-canvas: #F6F8FA;
     --auth-card-border: #E2E8F0;
     --auth-card-bg: #FFFFFF;
     --auth-ink: #0F172A;
@@ -44,7 +42,7 @@ export const authShellCss = `
 
   * {
     box-sizing: border-box;
-    font-family: 'Poppins', system-ui, -apple-system, sans-serif;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
   }
 
   .auth-shell {
@@ -52,7 +50,7 @@ export const authShellCss = `
     width: 100%;
     display: grid;
     grid-template-columns: 1fr 1fr;
-    font-family: 'Poppins', system-ui, -apple-system, sans-serif;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
     background: var(--auth-canvas);
     color: var(--auth-ink);
   }
@@ -146,7 +144,7 @@ export const authShellCss = `
     gap: 14px;
     font-size: 14.5px;
     font-weight: 600;
-    color: #F8F7FD;
+    color: #F6F8FA;
   }
 
   .auth-feature-icon {
@@ -199,7 +197,7 @@ export const authShellCss = `
     color: var(--auth-ink);
     margin: 0 0 6px;
     letter-spacing: -0.02em;
-    font-family: 'Poppins', sans-serif !important;
+    font-family: 'Inter', sans-serif !important;
   }
 
   .auth-form-card .auth-sub {
@@ -208,7 +206,7 @@ export const authShellCss = `
     margin: 0 0 24px;
     line-height: 1.5;
     font-weight: 500;
-    font-family: 'Poppins', sans-serif !important;
+    font-family: 'Inter', sans-serif !important;
   }
 
   .auth-alert {
@@ -220,7 +218,7 @@ export const authShellCss = `
     font-size: 13px;
     font-weight: 600;
     margin-bottom: 18px;
-    font-family: 'Poppins', sans-serif !important;
+    font-family: 'Inter', sans-serif !important;
   }
 
   .auth-alert-success {
@@ -243,7 +241,7 @@ export const authShellCss = `
     text-transform: uppercase;
     letter-spacing: 0.04em;
     margin-bottom: 6px;
-    font-family: 'Poppins', sans-serif !important;
+    font-family: 'Inter', sans-serif !important;
   }
 
   .auth-input-wrap {
@@ -269,13 +267,13 @@ export const authShellCss = `
     border-radius: 8px;
     padding: 0 14px 0 44px;
     font-size: 14px;
-    font-family: 'Poppins', sans-serif !important;
+    font-family: 'Inter', sans-serif !important;
     color: var(--auth-ink);
     outline: none;
     transition: border-color 0.15s ease, box-shadow 0.15s ease;
   }
 
-  .auth-input::placeholder { color: #94A3B8; font-family: 'Poppins', sans-serif; }
+  .auth-input::placeholder { color: #94A3B8; font-family: 'Inter', sans-serif; }
 
   .auth-input:focus, .auth-select:focus {
     border-color: var(--auth-brand-mid);
@@ -311,7 +309,7 @@ export const authShellCss = `
     color: var(--auth-danger);
     margin-top: 5px;
     font-weight: 600;
-    font-family: 'Poppins', sans-serif !important;
+    font-family: 'Inter', sans-serif !important;
   }
 
   .auth-caps {
@@ -319,7 +317,7 @@ export const authShellCss = `
     color: #B45309;
     margin-top: 5px;
     font-weight: 600;
-    font-family: 'Poppins', sans-serif !important;
+    font-family: 'Inter', sans-serif !important;
   }
 
   .auth-toggle-pw {
@@ -335,7 +333,7 @@ export const authShellCss = `
     color: var(--auth-muted);
     padding: 6px 8px;
     border-radius: 6px;
-    font-family: 'Poppins', sans-serif;
+    font-family: 'Inter', sans-serif;
   }
   .auth-toggle-pw:hover { color: var(--auth-brand-mid); }
 
@@ -356,7 +354,7 @@ export const authShellCss = `
     color: var(--auth-muted);
     cursor: pointer;
     font-weight: 500;
-    font-family: 'Poppins', sans-serif;
+    font-family: 'Inter', sans-serif;
   }
 
   .auth-remember input {
@@ -372,7 +370,7 @@ export const authShellCss = `
     font-weight: 700;
     font-size: 13px;
     text-decoration: none;
-    font-family: 'Poppins', sans-serif;
+    font-family: 'Inter', sans-serif;
   }
   .auth-link:hover {
     color: var(--auth-brand-deep);
@@ -386,7 +384,7 @@ export const authShellCss = `
     border-radius: 10px;
     background: var(--auth-brand-mid);
     color: #FFFFFF;
-    font-family: 'Poppins', sans-serif !important;
+    font-family: 'Inter', sans-serif !important;
     font-weight: 700;
     font-size: 14px;
     letter-spacing: 0.05em;
@@ -426,7 +424,7 @@ export const authShellCss = `
     margin-top: 20px;
     font-size: 12.5px;
     color: var(--auth-muted);
-    font-family: 'Poppins', sans-serif;
+    font-family: 'Inter', sans-serif;
   }
 
   .auth-footer {
@@ -434,7 +432,7 @@ export const authShellCss = `
     margin-top: 14px;
     font-size: 13.5px;
     color: var(--auth-muted);
-    font-family: 'Poppins', sans-serif;
+    font-family: 'Inter', sans-serif;
   }
 
   .auth-grid-2 {
@@ -459,7 +457,7 @@ export const authShellCss = `
     border-radius: 10px;
     background: var(--auth-brand-mid);
     color: #FFFFFF;
-    font-family: 'Poppins', sans-serif;
+    font-family: 'Inter', sans-serif;
     font-weight: 700;
     font-size: 13.5px;
     letter-spacing: 0.05em;

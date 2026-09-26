@@ -182,7 +182,7 @@ export default function VacateSettlementModal({
           boxShadow: '0 20px 50px -12px rgba(6, 56, 44, 0.35)',
           border: '1px solid #CBD5E1',
           overflow: 'hidden',
-          fontFamily: "'Poppins', system-ui, sans-serif",
+          fontFamily: "'Inter', system-ui, sans-serif",
           maxHeight: '92vh',
           display: 'flex',
           flexDirection: 'column',

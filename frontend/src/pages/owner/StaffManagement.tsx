@@ -116,7 +116,7 @@ export default function StaffManagement() {
   const pendingCount = rows.filter((r) => r.account_status === 'pending').length
 
   return (
-    <div style={{ padding: '4px 0 32px', fontFamily: "'Poppins', system-ui, sans-serif" }}>
+    <div style={{ padding: '4px 0 32px', fontFamily: "'Inter', system-ui, sans-serif" }}>
       {/* Top Header */}
       <div style={{ marginBottom: 24 }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>

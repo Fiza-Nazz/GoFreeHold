@@ -59,67 +59,68 @@ export default function MaintenanceLayout() {
   return (
     <div className="gfh-app-layout">
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
-
         .gfh-app-layout {
           display: flex;
           min-height: 100vh;
-          background: #F8F7FD;
-          font-family: 'Poppins', system-ui, sans-serif;
+          background: #F6F8FA;
+          font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+          -webkit-font-smoothing: antialiased;
+          color: #0F172A;
         }
 
         .gfh-sidebar {
-          width: 250px;
-          min-width: 250px;
-          background: #06382C;
+          width: 256px;
+          min-width: 256px;
+          background: #072E24;
           display: flex;
           flex-direction: column;
           height: 100vh;
           position: sticky;
           top: 0;
           overflow-y: auto;
+          border-right: 1px solid rgba(255, 255, 255, 0.07);
         }
 
         .gfh-sidebar::-webkit-scrollbar { width: 5px; }
-        .gfh-sidebar::-webkit-scrollbar-thumb { background: #0E5E48; border-radius: 4px; }
+        .gfh-sidebar::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.16); border-radius: 4px; }
 
         .gfh-sidebar-logo {
           display: flex;
           align-items: center;
           gap: 12px;
-          padding: 22px 20px;
-          border-bottom: 1px solid rgba(255,255,255,0.08);
-          background: #042B22;
+          padding: 20px 20px;
+          border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+          background: #05231B;
         }
 
         .gfh-logo-icon {
-          width: 42px;
-          height: 42px;
+          width: 40px;
+          height: 40px;
           border-radius: 8px;
-          background: rgba(52, 211, 165, 0.12);
-          border: 1px solid rgba(52, 211, 165, 0.35);
+          background: rgba(16, 185, 129, 0.14);
+          border: 1px solid rgba(16, 185, 129, 0.3);
           display: flex;
           align-items: center;
           justify-content: center;
-          color: #34D3A5;
+          color: #34D399;
           flex-shrink: 0;
         }
 
         .gfh-logo-text {
           font-size: 18px;
-          font-weight: 800;
-          color: #ffffff;
-          line-height: 1.15;
-          letter-spacing: -0.01em;
+          font-weight: 700;
+          color: #FFFFFF;
+          line-height: 1.2;
+          letter-spacing: -0.015em;
         }
 
         .gfh-logo-sub {
-          font-size: 10px;
-          font-weight: 700;
-          letter-spacing: 1.2px;
-          color: #A7F3DC;
+          font-size: 11px;
+          font-weight: 600;
+          letter-spacing: 0.06em;
+          color: rgba(255, 255, 255, 0.58);
           text-transform: uppercase;
-          margin-top: 3px;
+          margin-top: 2px;
         }
 
         .gfh-sidebar-nav {
@@ -128,13 +129,12 @@ export default function MaintenanceLayout() {
         }
 
         .gfh-nav-section-label {
-          font-size: 11px;
-          font-weight: 700;
-          letter-spacing: 1.2px;
+          font-size: 12px;
+          font-weight: 600;
+          letter-spacing: 0.06em;
           text-transform: uppercase;
-          color: #6EE7C4;
-          opacity: 0.9;
-          padding: 18px 12px 8px;
+          color: rgba(255, 255, 255, 0.48);
+          padding: 20px 14px 8px;
         }
 
         .gfh-nav-item {
@@ -142,30 +142,31 @@ export default function MaintenanceLayout() {
           align-items: center;
           gap: 12px;
           padding: 10px 14px;
-          margin: 3px 0;
+          margin: 2px 0;
           border-radius: 8px;
-          color: #D1FAEE;
-          font-size: 13.5px;
+          color: rgba(255, 255, 255, 0.78);
+          font-size: 14px;
           font-weight: 500;
+          line-height: 1.45;
           text-decoration: none;
-          transition: background 0.18s ease, color 0.18s ease;
+          transition: background 0.15s ease, color 0.15s ease;
         }
 
         .gfh-nav-item:hover {
-          background: rgba(255, 255, 255, 0.08);
-          color: #ffffff;
+          background: rgba(255, 255, 255, 0.07);
+          color: #FFFFFF;
         }
 
         .gfh-nav-item.active {
-          background: #0E5E48;
-          color: #ffffff;
-          font-weight: 700;
+          background: #0D5C46;
+          color: #FFFFFF;
+          font-weight: 600;
           border-radius: 8px;
-          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+          box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1);
         }
 
         .gfh-nav-item.active .gfh-nav-icon {
-          color: #34D3A5;
+          color: #FFFFFF;
         }
 
         .gfh-nav-icon {
@@ -177,9 +178,9 @@ export default function MaintenanceLayout() {
         }
 
         .gfh-sidebar-footer {
-          padding: 14px 14px;
-          border-top: 1px solid rgba(255,255,255,0.08);
-          background: #042B22;
+          padding: 14px;
+          border-top: 1px solid rgba(255, 255, 255, 0.08);
+          background: #05231B;
         }
 
         .gfh-user-row {
@@ -194,37 +195,38 @@ export default function MaintenanceLayout() {
           width: 34px;
           height: 34px;
           border-radius: 50%;
-          background: #18A77A;
+          background: #0D5C46;
+          border: 1px solid rgba(255, 255, 255, 0.18);
           display: flex;
           align-items: center;
           justify-content: center;
           font-size: 13px;
-          font-weight: 700;
-          color: #fff;
+          font-weight: 600;
+          color: #FFFFFF;
           flex-shrink: 0;
         }
 
         .gfh-user-name {
-          font-size: 13px;
+          font-size: 13.5px;
           font-weight: 600;
-          color: #ffffff;
+          color: #FFFFFF;
           overflow: hidden;
           text-overflow: ellipsis;
           white-space: nowrap;
         }
 
         .gfh-user-role {
-          font-size: 10px;
-          color: #A7F3DC;
+          font-size: 11px;
+          color: rgba(255, 255, 255, 0.58);
           text-transform: uppercase;
-          letter-spacing: 0.5px;
-          font-weight: 600;
+          letter-spacing: 0.05em;
+          font-weight: 500;
         }
 
         .gfh-logout-btn {
           background: none;
           border: none;
-          color: #A7F3DC;
+          color: rgba(255, 255, 255, 0.65);
           cursor: pointer;
           padding: 6px;
           border-radius: 6px;
@@ -242,7 +244,7 @@ export default function MaintenanceLayout() {
           display: flex;
           flex-direction: column;
           min-width: 0;
-          background: #F8F7FD;
+          background: #F6F8FA;
         }
 
         .gfh-topbar {
@@ -250,50 +252,52 @@ export default function MaintenanceLayout() {
           align-items: center;
           justify-content: space-between;
           gap: 16px;
-          padding: 16px 28px;
-          background: #ffffff;
-          border-bottom: 1px solid #e5e7eb;
+          padding: 18px 32px;
+          background: #FFFFFF;
+          border-bottom: 1px solid #E2E8F0;
           position: sticky;
           top: 0;
           z-index: 10;
         }
 
         .gfh-page-title {
-          font-size: 20px;
-          font-weight: 800;
-          color: #111827;
+          font-size: 24px;
+          font-weight: 700;
+          color: #0F172A;
           margin: 0;
+          letter-spacing: -0.015em;
         }
 
         .gfh-mobile-menu-btn {
           background: none;
           border: none;
-          color: #111827;
+          color: #0F172A;
           cursor: pointer;
           display: none;
           padding: 4px;
         }
 
         .gfh-welcome-text {
-          font-size: 13px;
-          color: #6b7280;
+          font-size: 12px;
+          color: #64748B;
+          font-weight: 500;
         }
 
         .gfh-welcome-name {
-          font-size: 13px;
-          font-weight: 700;
-          color: #111827;
+          font-size: 14px;
+          font-weight: 600;
+          color: #0F172A;
         }
 
         .gfh-page-content {
           flex: 1;
-          padding: 24px 28px;
-          background: #F8F7FD;
-          animation: gfhFadeIn 0.35s ease;
+          padding: 28px 32px;
+          background: #F6F8FA;
+          animation: gfhFadeIn 0.3s ease;
         }
 
         @keyframes gfhFadeIn {
-          from { opacity: 0; transform: translateY(6px); }
+          from { opacity: 0; transform: translateY(4px); }
           to { opacity: 1; transform: translateY(0); }
         }
 

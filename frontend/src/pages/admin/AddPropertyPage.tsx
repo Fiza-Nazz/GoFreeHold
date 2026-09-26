@@ -76,7 +76,7 @@ export default function AddPropertyPage() {
   }
 
   return (
-    <div className="gfh-portal-page gfh-add-property-page" style={{ fontFamily: "'Poppins', system-ui, sans-serif" }}>
+    <div className="gfh-portal-page gfh-add-property-page" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
       <style>{portalPageCss}</style>
       <style>{`
         .gfh-add-property-page { padding: 0; width: 100%; }

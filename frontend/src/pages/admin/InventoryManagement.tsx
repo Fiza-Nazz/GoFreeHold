@@ -142,7 +142,7 @@ export default function InventoryManagement() {
   }, [items, searchTerm, topbarQuery, categoryFilter, lowStockOnly])
 
   return (
-    <div className="gfh-portal-page" style={{ fontFamily: "'Poppins', system-ui, sans-serif" }}>
+    <div className="gfh-portal-page" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
       <style>{portalPageCss}</style>
 
       {/* Hero Header */}
@@ -201,7 +201,7 @@ export default function InventoryManagement() {
             cursor: 'pointer',
             boxShadow: '0 1px 3px rgba(14, 94, 72, 0.25)',
             transition: 'background 0.15s ease, transform 0.15s ease',
-            fontFamily: "'Poppins', sans-serif",
+            fontFamily: "'Inter', sans-serif",
           }}
           onMouseEnter={e => { e.currentTarget.style.background = '#06382C'; }}
           onMouseLeave={e => { e.currentTarget.style.background = '#0E5E48'; }}
@@ -236,7 +236,7 @@ export default function InventoryManagement() {
                 cursor: 'pointer',
                 boxShadow: isActive ? '0 1px 3px rgba(14, 94, 72, 0.25)' : 'none',
                 transition: 'all 0.15s ease',
-                fontFamily: "'Poppins', sans-serif",
+                fontFamily: "'Inter', sans-serif",
               }}
               onMouseEnter={e => {
                 if (!isActive) {
@@ -522,7 +522,7 @@ export default function InventoryManagement() {
             }}
           >
             <CornerBrackets />
-            <h2 style={{ fontFamily: "'Poppins', sans-serif", fontSize: 20, fontWeight: 700, marginBottom: 20, color: '#0F172A' }}>
+            <h2 style={{ fontFamily: "'Inter', sans-serif", fontSize: 20, fontWeight: 700, marginBottom: 20, color: '#0F172A' }}>
               Add inventory item
             </h2>
             <form onSubmit={handleCreate} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>

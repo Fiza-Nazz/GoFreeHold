@@ -43,7 +43,7 @@ const DARK_COLORS = {
   navyDark: '#075985',      // Deep navy blue for PDF / Secondary
   cyanDark: '#0e7490',      // Deep cyan for Legal case
   crimsonDark: '#991b1b',   // Deep dark red for Vacate / Dues
-  purpleDark: '#6B21A8',    // Deep dark purple header/accents
+  purpleDark: '#0F172A',    // Deep dark purple header/accents
   slateDark: '#1e293b',     // Deep slate card headers
 }
 

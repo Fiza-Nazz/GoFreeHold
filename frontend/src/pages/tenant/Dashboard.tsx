@@ -141,7 +141,7 @@ export default function TenantDashboard() {
     fontWeight: 500,
     padding: '10px 12px',
     width: '100%',
-    fontFamily: "'Poppins', system-ui, sans-serif",
+    fontFamily: "'Inter', system-ui, sans-serif",
     outline: 'none',
     boxSizing: 'border-box',
   }
@@ -196,7 +196,7 @@ export default function TenantDashboard() {
   ]
 
   return (
-    <div className="gfh-portal-page" style={{ fontFamily: "'Poppins', system-ui, sans-serif", background: THEME.pageBg, minHeight: '100%' }}>
+    <div className="gfh-portal-page" style={{ fontFamily: "'Inter', system-ui, sans-serif", background: THEME.pageBg, minHeight: '100%' }}>
       <style>{portalPageCss}</style>
 
       {/* Hero Header */}

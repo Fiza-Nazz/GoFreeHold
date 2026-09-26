@@ -71,15 +71,13 @@ export default function StaffActivation() {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        background: '#F8F7FD',
-        fontFamily: "'Poppins', system-ui, sans-serif",
+        background: '#F6F8FA',
+        fontFamily: "'Inter', system-ui, sans-serif",
         padding: '24px 16px',
         boxSizing: 'border-box',
       }}
     >
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap');
-
         .gfh-act-btn {
           width: 100%;
           height: 46px;
@@ -87,7 +85,7 @@ export default function StaffActivation() {
           border-radius: 9px;
           background: #0E5E48;
           color: #FFFFFF;
-          font-family: 'Poppins', sans-serif;
+          font-family: 'Inter', sans-serif;
           font-weight: 700;
           font-size: 13.5px;
           letter-spacing: 0.04em;
@@ -124,7 +122,7 @@ export default function StaffActivation() {
           border-radius: 8px;
           font-size: 13.5px;
           color: #0F172A;
-          font-family: 'Poppins', sans-serif;
+          font-family: 'Inter', sans-serif;
           box-sizing: border-box;
           outline: none;
           transition: border-color 0.15s ease, box-shadow 0.15s ease;

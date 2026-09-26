@@ -175,7 +175,7 @@ export default function VacantUnits() {
     <div
       className="gfh-portal-page"
       style={{
-        fontFamily: "'Poppins', system-ui, sans-serif",
+        fontFamily: "'Inter', system-ui, sans-serif",
         padding: '24px 28px',
         minHeight: '100vh',
         background: '#F8FAFC',
@@ -200,7 +200,7 @@ export default function VacantUnits() {
           box-shadow: 0 10px 24px -6px rgba(15, 23, 42, 0.08);
         }
         .gfh-vacant-input {
-          font-family: 'Poppins', system-ui, sans-serif;
+          font-family: 'Inter', system-ui, sans-serif;
           font-size: 13.5px;
           border: 1px solid #E2E8F0;
           border-radius: 10px;
@@ -649,7 +649,7 @@ export default function VacantUnits() {
                       cursor: 'pointer',
                       whiteSpace: 'nowrap',
                       flexShrink: 0,
-                      fontFamily: "'Poppins', sans-serif",
+                      fontFamily: "'Inter', sans-serif",
                     }}
                   >
                     + Create Contract
