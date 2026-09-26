@@ -156,10 +156,10 @@ export default function MaintenanceDashboard() {
                 key={card.label}
                 className="gfh-portal-stat"
                 style={{
-                  background: '#FFFFFF',
+                  background: card.iconBg,
                   borderRadius: 14,
                   padding: '20px 22px',
-                  border: '1px solid #E2E8F0',
+                  border: `1px solid ${card.badgeBorder}`,
                   boxShadow: '0 1px 3px rgba(16,24,40,0.04)',
                   display: 'flex',
                   flexDirection: 'column',
@@ -173,7 +173,8 @@ export default function MaintenanceDashboard() {
                     width: 42,
                     height: 42,
                     borderRadius: 10,
-                    background: card.iconBg,
+                    background: '#FFFFFF',
+                    border: `1px solid ${card.badgeBorder}`,
                     color: card.iconColor,
                     display: 'flex',
                     alignItems: 'center',

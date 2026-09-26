@@ -791,14 +791,14 @@ export default function ReportsDashboard() {
                 <div>
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 18, marginBottom: 20 }}>
                     {[
-                      { value: reportData.total_warehouse_items, label: 'Warehouse items', color: THEME.ink },
-                      { value: reportData.total_unit_items, label: 'Unit-assigned items', color: THEME.ink },
-                      { value: reportData.low_stock_count, label: 'Low stock alerts', color: '#ef4444' },
+                      { value: reportData.total_warehouse_items, label: 'Warehouse items', color: '#0369A1', bg: '#F0F9FF', border: '#BAE6FD' },
+                      { value: reportData.total_unit_items, label: 'Unit-assigned items', color: '#15803D', bg: '#F0FDF4', border: '#BBF7D0' },
+                      { value: reportData.low_stock_count, label: 'Low stock alerts', color: '#DC2626', bg: '#FEF2F2', border: '#FECACA' },
                     ].map(card => (
-                      <div key={card.label} className="gfh-portal-stat" style={{ position: 'relative', padding: 18, background: '#fff', border: `1px solid ${THEME.border}`, borderRadius: 8, textAlign: 'center' }}>
+                      <div key={card.label} className="gfh-portal-stat" style={{ position: 'relative', padding: 18, background: card.bg, border: `1px solid ${card.border}`, borderRadius: 10, textAlign: 'center' }}>
                         <span className="gfh-rp-noprint"><CornerBrackets /></span>
                         <div style={{ fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", fontSize: 24, fontWeight: 700, color: card.color }}>{card.value}</div>
-                        <div style={{ fontSize: 12, color: THEME.textMuted, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.3px', marginTop: 4 }}>{card.label}</div>
+                        <div style={{ fontSize: 12, color: card.color, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.3px', marginTop: 4 }}>{card.label}</div>
                       </div>
                     ))}
                   </div>

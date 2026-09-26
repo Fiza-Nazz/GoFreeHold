@@ -99,10 +99,10 @@ export default function TenantPayments() {
           <div
             className="gfh-portal-stat"
             style={{
-              background: '#FFFFFF',
+              background: '#F0FDF4',
               borderRadius: 16,
               padding: '20px 22px',
-              border: '1px solid #E2E8F0',
+              border: '1px solid #BBF7D0',
               boxShadow: '0 1px 3px rgba(16,24,40,0.04)',
               display: 'flex',
               flexDirection: 'column',
@@ -115,7 +115,8 @@ export default function TenantPayments() {
                 width: 44,
                 height: 44,
                 borderRadius: 12,
-                background: '#F0FDF4',
+                background: '#FFFFFF',
+                border: '1px solid #BBF7D0',
                 color: '#0F8A67',
                 display: 'flex',
                 alignItems: 'center',
@@ -129,7 +130,7 @@ export default function TenantPayments() {
                 fontWeight: 700,
                 letterSpacing: '0.4px',
                 textTransform: 'uppercase',
-                background: '#F0FDF4',
+                background: '#FFFFFF',
                 color: '#065F46',
                 border: '1px solid #BBF7D0',
                 padding: '3px 9px',
@@ -139,10 +140,10 @@ export default function TenantPayments() {
               </span>
             </div>
             <div>
-              <div style={{ fontSize: 24, fontWeight: 800, color: '#0F172A', lineHeight: 1.15, letterSpacing: '-0.02em' }}>
+              <div style={{ fontSize: 24, fontWeight: 800, color: '#065F46', lineHeight: 1.15, letterSpacing: '-0.02em' }}>
                 AED {totalAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
               </div>
-              <div style={{ fontSize: 13, fontWeight: 600, color: '#64748B', marginTop: 4 }}>
+              <div style={{ fontSize: 13, fontWeight: 600, color: '#15803D', marginTop: 4 }}>
                 Total amount settled
               </div>
             </div>
@@ -152,10 +153,10 @@ export default function TenantPayments() {
           <div
             className="gfh-portal-stat"
             style={{
-              background: '#FFFFFF',
+              background: '#F0F9FF',
               borderRadius: 16,
               padding: '20px 22px',
-              border: '1px solid #E2E8F0',
+              border: '1px solid #BAE6FD',
               boxShadow: '0 1px 3px rgba(16,24,40,0.04)',
               display: 'flex',
               flexDirection: 'column',
@@ -169,8 +170,9 @@ export default function TenantPayments() {
                 width: 44,
                 height: 44,
                 borderRadius: 12,
-                background: '#ECFDF8',
-                color: '#0E5E48',
+                background: '#FFFFFF',
+                border: '1px solid #BAE6FD',
+                color: '#0284C7',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -183,9 +185,9 @@ export default function TenantPayments() {
                 fontWeight: 700,
                 letterSpacing: '0.4px',
                 textTransform: 'uppercase',
-                background: '#ECFDF8',
-                color: '#065F46',
-                border: '1px solid #A7F3DC',
+                background: '#FFFFFF',
+                color: '#0369A1',
+                border: '1px solid #BAE6FD',
                 padding: '3px 9px',
                 borderRadius: 999,
               }}>

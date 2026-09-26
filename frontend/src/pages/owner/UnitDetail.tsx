@@ -369,10 +369,10 @@ export default function UnitDetailPage() {
             <div
               className="gfh-portal-stat"
               style={{
-                background: '#FFFFFF',
+                background: '#ECFDF8',
                 borderRadius: 14,
                 padding: '20px 22px',
-                border: '1px solid #E2E8F0',
+                border: '1px solid #A7F3DC',
                 boxShadow: '0 1px 3px rgba(16,24,40,0.04)',
                 display: 'flex',
                 flexDirection: 'column',
@@ -381,18 +381,18 @@ export default function UnitDetailPage() {
               }}
             >
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
-                <div style={{ width: 42, height: 42, borderRadius: 10, background: '#ECFDF8', color: '#0E5E48', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <div style={{ width: 42, height: 42, borderRadius: 10, background: '#FFFFFF', border: '1px solid #A7F3DC', color: '#0E5E48', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <Icon path={ICONS.wallet} size={20} />
                 </div>
-                <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.4px', textTransform: 'uppercase', background: '#ECFDF8', color: '#065F46', border: '1px solid #A7F3DC', padding: '3px 9px', borderRadius: 999 }}>
+                <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.4px', textTransform: 'uppercase', background: '#FFFFFF', color: '#065F46', border: '1px solid #A7F3DC', padding: '3px 9px', borderRadius: 999 }}>
                   AED / YR
                 </span>
               </div>
               <div>
-                <div style={{ fontSize: 24, fontWeight: 800, color: '#0F172A', lineHeight: 1.15, letterSpacing: '-0.02em' }}>
+                <div style={{ fontSize: 24, fontWeight: 800, color: '#065F46', lineHeight: 1.15, letterSpacing: '-0.02em' }}>
                   AED {Number(activeContract?.rent_amount || unit.price || 0).toLocaleString()}
                 </div>
-                <div style={{ fontSize: 12.5, fontWeight: 600, color: '#64748B', marginTop: 4 }}>
+                <div style={{ fontSize: 12.5, fontWeight: 600, color: '#047857', marginTop: 4 }}>
                   {activeContract ? 'Active Lease Value' : 'Standard Asking Rent'}
                 </div>
               </div>
@@ -402,10 +402,10 @@ export default function UnitDetailPage() {
             <div
               className="gfh-portal-stat"
               style={{
-                background: '#FFFFFF',
+                background: unit.status === 'OCCUPIED' ? '#FEF2F2' : '#F0FDF4',
                 borderRadius: 14,
                 padding: '20px 22px',
-                border: '1px solid #E2E8F0',
+                border: unit.status === 'OCCUPIED' ? '1px solid #FECACA' : '1px solid #BBF7D0',
                 boxShadow: '0 1px 3px rgba(16,24,40,0.04)',
                 display: 'flex',
                 flexDirection: 'column',
@@ -419,7 +419,8 @@ export default function UnitDetailPage() {
                   width: 42,
                   height: 42,
                   borderRadius: 10,
-                  background: unit.status === 'OCCUPIED' ? '#FEF2F2' : '#F0FDF4',
+                  background: '#FFFFFF',
+                  border: unit.status === 'OCCUPIED' ? '1px solid #FECACA' : '1px solid #BBF7D0',
                   color: unit.status === 'OCCUPIED' ? '#DC2626' : '#0F8A67',
                   display: 'flex',
                   alignItems: 'center',
@@ -432,7 +433,7 @@ export default function UnitDetailPage() {
                   fontWeight: 700,
                   letterSpacing: '0.4px',
                   textTransform: 'uppercase',
-                  background: statusBadge.bg,
+                  background: '#FFFFFF',
                   color: statusBadge.color,
                   border: `1px solid ${statusBadge.border}`,
                   padding: '3px 9px',
@@ -445,7 +446,7 @@ export default function UnitDetailPage() {
                 <div style={{ fontSize: 24, fontWeight: 800, color: '#0F172A', lineHeight: 1.15, letterSpacing: '-0.02em' }}>
                   {safeUpper(unit.status)}
                 </div>
-                <div style={{ fontSize: 12.5, fontWeight: 600, color: '#64748B', marginTop: 4 }}>
+                <div style={{ fontSize: 12.5, fontWeight: 600, color: '#475569', marginTop: 4 }}>
                   {activeTenant?.name ? `Tenant: ${activeTenant.name}` : 'Ready for occupancy'}
                 </div>
               </div>
@@ -455,10 +456,10 @@ export default function UnitDetailPage() {
             <div
               className="gfh-portal-stat"
               style={{
-                background: '#FFFFFF',
+                background: '#F0F9FF',
                 borderRadius: 14,
                 padding: '20px 22px',
-                border: '1px solid #E2E8F0',
+                border: '1px solid #BAE6FD',
                 boxShadow: '0 1px 3px rgba(16,24,40,0.04)',
                 display: 'flex',
                 flexDirection: 'column',
@@ -468,18 +469,18 @@ export default function UnitDetailPage() {
               }}
             >
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
-                <div style={{ width: 42, height: 42, borderRadius: 10, background: '#F0F9FF', color: '#0284C7', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <div style={{ width: 42, height: 42, borderRadius: 10, background: '#FFFFFF', border: '1px solid #BAE6FD', color: '#0284C7', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <Icon path={LOCAL_ICONS.layers} size={20} />
                 </div>
-                <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.4px', textTransform: 'uppercase', background: '#F0F9FF', color: '#075985', border: '1px solid #BAE6FD', padding: '3px 9px', borderRadius: 999 }}>
+                <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.4px', textTransform: 'uppercase', background: '#FFFFFF', color: '#075985', border: '1px solid #BAE6FD', padding: '3px 9px', borderRadius: 999 }}>
                   AREA
                 </span>
               </div>
               <div>
-                <div style={{ fontSize: 24, fontWeight: 800, color: '#0F172A', lineHeight: 1.15, letterSpacing: '-0.02em' }}>
-                  {unit.size ? Number(unit.size).toLocaleString() : '—'} <span style={{ fontSize: 14, fontWeight: 600, color: '#64748B' }}>SQFT</span>
+                <div style={{ fontSize: 24, fontWeight: 800, color: '#0369A1', lineHeight: 1.15, letterSpacing: '-0.02em' }}>
+                  {unit.size ? Number(unit.size).toLocaleString() : '—'} <span style={{ fontSize: 14, fontWeight: 600, color: '#0284C7' }}>SQFT</span>
                 </div>
-                <div style={{ fontSize: 12.5, fontWeight: 600, color: '#64748B', marginTop: 4 }}>
+                <div style={{ fontSize: 12.5, fontWeight: 600, color: '#0369A1', marginTop: 4 }}>
                   Floor {unit.floor ?? '—'} • {unit.type || 'Standard layout'}
                 </div>
               </div>
@@ -489,10 +490,10 @@ export default function UnitDetailPage() {
             <div
               className="gfh-portal-stat"
               style={{
-                background: '#FFFFFF',
+                background: '#FFFBEB',
                 borderRadius: 14,
                 padding: '20px 22px',
-                border: '1px solid #E2E8F0',
+                border: '1px solid #FDE68A',
                 boxShadow: '0 1px 3px rgba(16,24,40,0.04)',
                 display: 'flex',
                 flexDirection: 'column',
@@ -502,18 +503,18 @@ export default function UnitDetailPage() {
               }}
             >
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
-                <div style={{ width: 42, height: 42, borderRadius: 10, background: '#FFFBEB', color: '#D97706', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <div style={{ width: 42, height: 42, borderRadius: 10, background: '#FFFFFF', border: '1px solid #FDE68A', color: '#D97706', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <Icon path={ICONS.check} size={20} />
                 </div>
-                <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.4px', textTransform: 'uppercase', background: '#FFFBEB', color: '#B45309', border: '1px solid #FDE68A', padding: '3px 9px', borderRadius: 999 }}>
+                <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.4px', textTransform: 'uppercase', background: '#FFFFFF', color: '#B45309', border: '1px solid #FDE68A', padding: '3px 9px', borderRadius: 999 }}>
                   FITOUT
                 </span>
               </div>
               <div>
-                <div style={{ fontSize: 24, fontWeight: 800, color: '#0F172A', lineHeight: 1.15, letterSpacing: '-0.02em' }}>
+                <div style={{ fontSize: 24, fontWeight: 800, color: '#B45309', lineHeight: 1.15, letterSpacing: '-0.02em' }}>
                   {unit.furnished ? 'Furnished' : 'Unfurnished'}
                 </div>
-                <div style={{ fontSize: 12.5, fontWeight: 600, color: '#64748B', marginTop: 4 }}>
+                <div style={{ fontSize: 12.5, fontWeight: 600, color: '#D97706', marginTop: 4 }}>
                   {unit.dhewa_no ? `DEWA: ${unit.dhewa_no}` : (unit.category ? `Category: ${unit.category}` : 'Standard residential')}
                 </div>
               </div>
@@ -523,10 +524,10 @@ export default function UnitDetailPage() {
             <div
               className="gfh-portal-stat"
               style={{
-                background: '#FFFFFF',
+                background: '#FAF5FF',
                 borderRadius: 14,
                 padding: '20px 22px',
-                border: '1px solid #E2E8F0',
+                border: '1px solid #E9D5FF',
                 boxShadow: '0 1px 3px rgba(16,24,40,0.04)',
                 display: 'flex',
                 flexDirection: 'column',
@@ -536,16 +537,16 @@ export default function UnitDetailPage() {
               }}
             >
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
-                <div style={{ width: 42, height: 42, borderRadius: 10, background: '#F0F9FF', color: '#0284C7', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <div style={{ width: 42, height: 42, borderRadius: 10, background: '#FFFFFF', border: '1px solid #E9D5FF', color: '#7E22CE', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <Icon path={LOCAL_ICONS.bolt} size={20} />
                 </div>
-                <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.4px', textTransform: 'uppercase', background: '#F0F9FF', color: '#0284C7', border: '1px solid #BAE6FD', padding: '3px 9px', borderRadius: 999 }}>
+                <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.4px', textTransform: 'uppercase', background: '#FFFFFF', color: '#7E22CE', border: '1px solid #E9D5FF', padding: '3px 9px', borderRadius: 999 }}>
                   SERVICE CHARGE
                 </span>
               </div>
               <div>
-                <div style={{ fontSize: 24, fontWeight: 800, color: '#0F172A', lineHeight: 1.15, letterSpacing: '-0.02em' }}>
-                  AED {Number(unit.monthly_service_charge || 0).toLocaleString()} <span style={{ fontSize: 13, fontWeight: 600, color: '#64748B' }}>/ MO</span>
+                <div style={{ fontSize: 24, fontWeight: 800, color: '#7E22CE', lineHeight: 1.15, letterSpacing: '-0.02em' }}>
+                  AED {Number(unit.monthly_service_charge || 0).toLocaleString()} <span style={{ fontSize: 13, fontWeight: 600, color: '#9333EA' }}>/ MO</span>
                 </div>
                 <div style={{ fontSize: 12, fontWeight: 600, color: '#0284C7', marginTop: 4 }}>
                   Quarterly: AED {(Number(unit.monthly_service_charge || 0) * 3).toLocaleString()} • Yearly: AED {(Number(unit.monthly_service_charge || 0) * 12).toLocaleString()}

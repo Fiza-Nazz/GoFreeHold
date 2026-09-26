@@ -85,7 +85,7 @@ function TrendChip({ direction, percent }: { direction: TrendDirection; percent:
 }
 
 function StatCard({
-  value, label, active, prefix = '', icon, iconBg, iconColor, trendDirection, trendPercent,
+  value, label, active, prefix = '', icon, iconBg, iconColor, cardBg = '#F8FAFC', cardBorder = '#E2E8F0', trendDirection, trendPercent,
 }: {
   value: number
   label: string
@@ -94,6 +94,8 @@ function StatCard({
   icon: string
   iconBg: string
   iconColor: string
+  cardBg?: string
+  cardBorder?: string
   trendDirection: TrendDirection
   trendPercent: number
 }) {
@@ -103,10 +105,10 @@ function StatCard({
 
   return (
     <div style={{
-      background: '#fff',
-      borderRadius: 18,
+      background: cardBg,
+      borderRadius: 16,
       padding: '18px 18px 16px',
-      border: '1px solid #F0F1F6',
+      border: `1px solid ${cardBorder}`,
       boxShadow: '0 1px 3px rgba(16,24,40,0.05)',
       display: 'flex',
       flexDirection: 'column',
@@ -115,21 +117,21 @@ function StatCard({
     }}>
       <div style={{
         width: 44, height: 44, borderRadius: '50%',
-        background: iconBg, color: iconColor,
+        background: '#FFFFFF', border: `1px solid ${cardBorder}`, color: iconColor,
         display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
       }}>
         <Icon path={icon} size={20} />
       </div>
       <div style={{ minWidth: 0 }}>
         <div style={{
-          fontSize, fontWeight: 800, color: '#15112B',
+          fontSize, fontWeight: 800, color: iconColor,
           letterSpacing: '-0.5px', lineHeight: 1.2,
           fontVariantNumeric: 'tabular-nums', wordBreak: 'break-word',
         }}>
           {formatted}
         </div>
         <div style={{
-          fontSize: 13, color: '#8A8FA3', fontWeight: 600, marginTop: 3,
+          fontSize: 13, color: '#334155', fontWeight: 600, marginTop: 3,
           whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
         }}>
           {label}
@@ -137,7 +139,7 @@ function StatCard({
       </div>
       <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
         <TrendChip direction={trendDirection} percent={trendPercent} />
-        <span style={{ fontSize: 11.5, color: '#A0A5B8', fontWeight: 500 }}>vs last month</span>
+        <span style={{ fontSize: 11.5, color: '#64748B', fontWeight: 500 }}>vs last month</span>
       </div>
     </div>
   )
@@ -555,27 +557,27 @@ export default function AdminDashboard() {
   const cards = [
     {
       value: stats.total_properties, label: 'Total Properties', icon: icons.building,
-      iconBg: '#DCFCE7', iconColor: '#16A34A', ...getTrend(stats.total_properties_change),
+      iconBg: '#DCFCE7', iconColor: '#15803D', cardBg: '#F0FDF4', cardBorder: '#BBF7D0', ...getTrend(stats.total_properties_change),
     },
     {
       value: stats.occupied_units, label: 'Rented / Occupied', icon: icons.door,
-      iconBg: '#DBEAFE', iconColor: '#2563EB', ...getTrend(stats.occupied_units_change),
+      iconBg: '#DBEAFE', iconColor: '#1D4ED8', cardBg: '#EFF6FF', cardBorder: '#BFDBFE', ...getTrend(stats.occupied_units_change),
     },
     {
       value: stats.total_contracts, label: 'Active Bookings', icon: icons.contracts,
-      iconBg: '#EDE9FE', iconColor: '#7C3AED', ...getTrend(stats.total_contracts_change),
+      iconBg: '#EDE9FE', iconColor: '#6D28D9', cardBg: '#FAF5FF', cardBorder: '#E9D5FF', ...getTrend(stats.total_contracts_change),
     },
     {
       value: stats.vacant_units, label: 'Vacant Units', icon: icons.alert,
-      iconBg: '#FFEDD5', iconColor: '#F97316', ...getTrend(stats.vacant_units_change),
+      iconBg: '#FFEDD5', iconColor: '#C2410C', cardBg: '#FFF7ED', cardBorder: '#FED7AA', ...getTrend(stats.vacant_units_change),
     },
     {
       value: stats.monthly_revenue, label: 'Rent Portfolio (AED)', icon: icons.wallet,
-      iconBg: '#CCFBF1', iconColor: '#0D9488', ...getTrend(stats.monthly_revenue_change),
+      iconBg: '#CCFBF1', iconColor: '#0F766E', cardBg: '#F0FDFA', cardBorder: '#99F6E4', ...getTrend(stats.monthly_revenue_change),
     },
     {
       value: stats.open_complaints, label: 'Open Complaints', icon: icons.wrench,
-      iconBg: '#FFE4E6', iconColor: '#F43F5E', ...getTrend(stats.open_complaints_change),
+      iconBg: '#FFE4E6', iconColor: '#BE123C', cardBg: '#FFF1F2', cardBorder: '#FECDD3', ...getTrend(stats.open_complaints_change),
     },
   ]
 

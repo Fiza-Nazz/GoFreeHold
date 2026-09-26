@@ -21,47 +21,47 @@ interface Unit {
   propertyName?: string
 }
 
-// Clean Enterprise White Card Surfaces with subtle semantic icon badges (Paul Brit Design System)
+// 5 Soft Functional Pastel Themes for Vacant Unit Cards
 const PASTEL_THEMES = [
   {
-    bg: '#FFFFFF',
-    border: '#E2E8F0',
-    hoverBorder: '#CBD5E1',
-    iconBg: '#ECFDF5',
-    iconColor: '#0D5C46',
-    locColor: '#0D5C46',
-  },
-  {
-    bg: '#FFFFFF',
-    border: '#E2E8F0',
-    hoverBorder: '#CBD5E1',
-    iconBg: '#F0F9FF',
-    iconColor: '#0284C7',
-    locColor: '#475569',
-  },
-  {
-    bg: '#FFFFFF',
-    border: '#E2E8F0',
-    hoverBorder: '#CBD5E1',
-    iconBg: '#F0FDFA',
+    bg: '#F0FDFA', // Mint / Teal
+    border: '#CCFBF1',
+    hoverBorder: '#99F6E4',
+    iconBg: '#CCFBF1',
     iconColor: '#0D9488',
     locColor: '#0F766E',
   },
   {
-    bg: '#FFFFFF',
-    border: '#E2E8F0',
-    hoverBorder: '#CBD5E1',
-    iconBg: '#FFFBEB',
-    iconColor: '#D97706',
-    locColor: '#475569',
+    bg: '#F0FDF4', // Emerald / Green
+    border: '#DCFCE7',
+    hoverBorder: '#BBF7D0',
+    iconBg: '#DCFCE7',
+    iconColor: '#16A34A',
+    locColor: '#15803D',
   },
   {
-    bg: '#FFFFFF',
-    border: '#E2E8F0',
-    hoverBorder: '#CBD5E1',
-    iconBg: '#F8FAFC',
-    iconColor: '#475569',
-    locColor: '#475569',
+    bg: '#FAF5FF', // Lavender / Purple
+    border: '#F3E8FF',
+    hoverBorder: '#E9D5FF',
+    iconBg: '#F3E8FF',
+    iconColor: '#9333EA',
+    locColor: '#7E22CE',
+  },
+  {
+    bg: '#FFFBEB', // Warm Peach / Amber
+    border: '#FEF3C7',
+    hoverBorder: '#FDE68A',
+    iconBg: '#FEF3C7',
+    iconColor: '#D97706',
+    locColor: '#B45309',
+  },
+  {
+    bg: '#F0F9FF', // Sky Blue / Cyan
+    border: '#E0F2FE',
+    hoverBorder: '#BAE6FD',
+    iconBg: '#E0F2FE',
+    iconColor: '#0284C7',
+    locColor: '#0369A1',
   },
 ]
 

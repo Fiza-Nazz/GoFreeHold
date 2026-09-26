@@ -47,10 +47,10 @@ function StatCard({ label, value, sub, icon, iconBg, iconColor, badgeBg, badgeCo
       className="gfh-portal-stat"
       style={{
         flex: '1 1 220px',
-        background: '#FFFFFF',
+        background: iconBg,
         borderRadius: 14,
         padding: '20px 22px',
-        border: '1px solid #E2E8F0',
+        border: `1px solid ${badgeBorder}`,
         boxShadow: '0 1px 3px rgba(16,24,40,0.04)',
         display: 'flex',
         flexDirection: 'column',
@@ -63,7 +63,8 @@ function StatCard({ label, value, sub, icon, iconBg, iconColor, badgeBg, badgeCo
           width: 42,
           height: 42,
           borderRadius: 10,
-          background: iconBg,
+          background: '#FFFFFF',
+          border: `1px solid ${badgeBorder}`,
           color: iconColor,
           display: 'flex',
           alignItems: 'center',
@@ -77,7 +78,7 @@ function StatCard({ label, value, sub, icon, iconBg, iconColor, badgeBg, badgeCo
           fontWeight: 700,
           letterSpacing: '0.4px',
           textTransform: 'uppercase',
-          background: badgeBg,
+          background: '#FFFFFF',
           color: badgeColor,
           border: `1px solid ${badgeBorder}`,
           padding: '3px 9px',
@@ -87,10 +88,10 @@ function StatCard({ label, value, sub, icon, iconBg, iconColor, badgeBg, badgeCo
         </span>
       </div>
       <div>
-        <div style={{ fontSize: 22, fontWeight: 800, color: '#0F172A', lineHeight: 1.15, letterSpacing: '-0.02em' }}>
+        <div style={{ fontSize: 22, fontWeight: 800, color: badgeColor, lineHeight: 1.15, letterSpacing: '-0.02em' }}>
           {value}
         </div>
-        <div style={{ fontSize: 13, fontWeight: 600, color: '#64748B', marginTop: 4 }}>
+        <div style={{ fontSize: 13, fontWeight: 600, color: '#475569', marginTop: 4 }}>
           {label}
         </div>
       </div>

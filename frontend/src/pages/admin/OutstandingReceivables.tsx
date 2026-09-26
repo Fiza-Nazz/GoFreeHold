@@ -32,15 +32,15 @@ const selectStyle: React.CSSProperties = {
   padding: '10px 14px',
 }
 
-function StatCard({ label, value, color, icon, iconBg, delay }: { label: string; value: string; color: string; icon: string; iconBg: string; delay?: string }) {
+function StatCard({ label, value, color, icon, iconBg, cardBg = '#F8FAFC', cardBorder = '#E2E8F0', delay }: { label: string; value: string; color: string; icon: string; iconBg: string; cardBg?: string; cardBorder?: string; delay?: string }) {
   return (
-    <div className="gfh-portal-stat" style={{ position: 'relative', background: '#fff', border: `1px solid ${THEME.border}`, borderRadius: 8, padding: 22, animationDelay: delay }}>
+    <div className="gfh-portal-stat" style={{ position: 'relative', background: cardBg, border: `1px solid ${cardBorder}`, borderRadius: 12, padding: 22, animationDelay: delay }}>
       <CornerBrackets />
       <div style={{ width: 40, height: 40, borderRadius: 8, background: iconBg, color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 12 }}>
         <Icon path={icon} size={18} />
       </div>
       <div style={{ fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", fontSize: 24, fontWeight: 700, color }}>{value}</div>
-      <div style={{ fontSize: 12, fontWeight: 700, color: THEME.textMuted, letterSpacing: '0.4px', textTransform: 'uppercase', marginTop: 6 }}>{label}</div>
+      <div style={{ fontSize: 12, fontWeight: 700, color, letterSpacing: '0.4px', textTransform: 'uppercase', marginTop: 6 }}>{label}</div>
     </div>
   )
 }
@@ -119,6 +119,8 @@ export default function OutstandingReceivables() {
             color="#1d4ed8"
             icon="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"
             iconBg="linear-gradient(135deg, #60a5fa, #1d4ed8)"
+            cardBg="#EFF6FF"
+            cardBorder="#BFDBFE"
           />
           <StatCard
             label="Previous Tenants Due"
@@ -126,6 +128,8 @@ export default function OutstandingReceivables() {
             color="#c2410c"
             icon="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"
             iconBg="linear-gradient(135deg, #fb923c, #c2410c)"
+            cardBg="#FFF7ED"
+            cardBorder="#FED7AA"
             delay="0.1s"
           />
           <StatCard
@@ -134,6 +138,8 @@ export default function OutstandingReceivables() {
             color="#dc2626"
             icon="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"
             iconBg="linear-gradient(135deg, #f87171, #b91c1c)"
+            cardBg="#FEF2F2"
+            cardBorder="#FECACA"
             delay="0.2s"
           />
         </div>

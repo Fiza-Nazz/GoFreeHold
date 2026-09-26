@@ -169,31 +169,31 @@ export default function PurchaseOrderTracker() {
 
       {/* Summary stats — derived from real orders data */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 18, marginBottom: 22 }}>
-        <div className="gfh-portal-stat" style={{ position: 'relative', background: '#fff', border: `1px solid ${THEME.border}`, borderRadius: 8, padding: 20 }}>
+        <div className="gfh-portal-stat" style={{ position: 'relative', background: '#F0F9FF', border: '1px solid #BAE6FD', borderRadius: 12, padding: 20 }}>
           <CornerBrackets />
-          <div style={{ width: 40, height: 40, borderRadius: 8, background: `linear-gradient(135deg, ${THEME.violetLight}, ${THEME.purple})`, color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 10 }}>
+          <div style={{ width: 40, height: 40, borderRadius: 8, background: '#0284C7', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 10 }}>
             <Icon path={icons.cart} size={18} />
           </div>
-          <div style={{ fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", fontSize: 24, fontWeight: 700, color: THEME.ink }}>{orders.length}</div>
-          <div style={{ fontSize: 12, color: THEME.textMuted, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.3px', marginTop: 2 }}>Total Purchases</div>
+          <div style={{ fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", fontSize: 24, fontWeight: 700, color: '#0369A1' }}>{orders.length}</div>
+          <div style={{ fontSize: 12, color: '#0369A1', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.3px', marginTop: 2 }}>Total Purchases</div>
         </div>
 
-        <div className="gfh-portal-stat" style={{ position: 'relative', background: '#fff', border: `1px solid ${THEME.border}`, borderRadius: 8, padding: 20, animationDelay: '0.06s' }}>
+        <div className="gfh-portal-stat" style={{ position: 'relative', background: '#F0FDF4', border: '1px solid #BBF7D0', borderRadius: 12, padding: 20, animationDelay: '0.06s' }}>
           <CornerBrackets />
-          <div style={{ width: 40, height: 40, borderRadius: 8, background: `linear-gradient(135deg, ${THEME.violetLight}, ${THEME.purple})`, color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 10 }}>
+          <div style={{ width: 40, height: 40, borderRadius: 8, background: '#16A34A', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 10 }}>
             <Icon path={icons.wallet} size={18} />
           </div>
-          <div style={{ fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", fontSize: 24, fontWeight: 700, color: THEME.ink }}>AED {totalSpend.toLocaleString()}</div>
-          <div style={{ fontSize: 12, color: THEME.textMuted, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.3px', marginTop: 2 }}>Total Spend</div>
+          <div style={{ fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", fontSize: 24, fontWeight: 700, color: '#15803D' }}>AED {totalSpend.toLocaleString()}</div>
+          <div style={{ fontSize: 12, color: '#15803D', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.3px', marginTop: 2 }}>Total Spend</div>
         </div>
 
-        <div className="gfh-portal-stat" style={{ position: 'relative', background: '#fff', border: `1px solid ${THEME.border}`, borderRadius: 8, padding: 20, animationDelay: '0.12s' }}>
+        <div className="gfh-portal-stat" style={{ position: 'relative', background: '#FFFBEB', border: '1px solid #FDE68A', borderRadius: 12, padding: 20, animationDelay: '0.12s' }}>
           <CornerBrackets />
           <div style={{ width: 40, height: 40, borderRadius: 8, background: 'linear-gradient(135deg, #f59e0b, #b45309)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 10 }}>
             <Icon path={icons.clock} size={18} />
           </div>
           <div style={{ fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", fontSize: 24, fontWeight: 700, color: '#b45309' }}>{pendingCount}</div>
-          <div style={{ fontSize: 12, color: THEME.textMuted, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.3px', marginTop: 2 }}>Pending Orders</div>
+          <div style={{ fontSize: 12, color: '#B45309', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.3px', marginTop: 2 }}>Pending Orders</div>
         </div>
       </div>
 

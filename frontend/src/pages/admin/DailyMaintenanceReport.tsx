@@ -64,10 +64,10 @@ export default function DailyMaintenanceReport() {
   const resolvedPct = totalJobs > 0 && report ? Math.round((report.stats.resolved_today / totalJobs) * 100) : 0
 
   const statCards = report ? [
-    { value: report.stats.open, label: 'Open complaints', color: '#dc2626', icon: icons.open, iconBg: '#dc2626' },
-    { value: report.stats.assigned, label: 'Assigned jobs', color: '#c2410c', icon: icons.assigned, iconBg: '#c2410c' },
-    { value: report.stats.in_progress, label: 'In progress', color: '#0284c7', icon: icons.progress, iconBg: '#0284c7' },
-    { value: report.stats.resolved_today, label: `Resolved today`, color: '#059669', icon: icons.resolved, iconBg: '#059669' },
+    { value: report.stats.open, label: 'Open complaints', color: '#dc2626', icon: icons.open, iconBg: '#dc2626', cardBg: '#FEF2F2', cardBorder: '#FECACA' },
+    { value: report.stats.assigned, label: 'Assigned jobs', color: '#c2410c', icon: icons.assigned, iconBg: '#c2410c', cardBg: '#FFF7ED', cardBorder: '#FED7AA' },
+    { value: report.stats.in_progress, label: 'In progress', color: '#0284c7', icon: icons.progress, iconBg: '#0284c7', cardBg: '#F0F9FF', cardBorder: '#BAE6FD' },
+    { value: report.stats.resolved_today, label: `Resolved today`, color: '#059669', icon: icons.resolved, iconBg: '#059669', cardBg: '#F0FDF4', cardBorder: '#BBF7D0' },
   ] : []
 
   const filteredJobs = useMemo(() => {
@@ -250,7 +250,7 @@ export default function DailyMaintenanceReport() {
         ) : report && (
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 16, marginBottom: 22 }}>
             {statCards.map((card, i) => (
-              <div key={card.label} className="gfh-portal-stat fade-in" style={{ position: 'relative', background: '#fff', border: `1px solid ${THEME.border}`, borderRadius: 10, padding: 20, animationDelay: `${i * 0.05}s` }}>
+              <div key={card.label} className="gfh-portal-stat fade-in" style={{ position: 'relative', background: card.cardBg, border: `1px solid ${card.cardBorder}`, borderRadius: 12, padding: 20, animationDelay: `${i * 0.05}s` }}>
                 <CornerBrackets />
                 <div style={{ width: 38, height: 38, borderRadius: 8, background: card.iconBg, color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 10 }}>
                   <Icon path={card.icon} size={18} />
@@ -258,7 +258,7 @@ export default function DailyMaintenanceReport() {
                 <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 26, fontWeight: 800, color: card.color }}>
                   {card.value}
                 </div>
-                <div style={{ fontSize: 11.5, color: THEME.textMuted, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.4px', marginTop: 2 }}>
+                <div style={{ fontSize: 11.5, color: card.color, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.4px', marginTop: 2 }}>
                   {card.label}
                 </div>
               </div>

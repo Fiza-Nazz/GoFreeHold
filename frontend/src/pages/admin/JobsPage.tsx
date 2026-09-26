@@ -402,12 +402,13 @@ export default function JobsPage() {
       {/* KPI Stat Cards */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 16, marginBottom: 24 }}>
         {/* Total Jobs */}
-        <div className="gfh-portal-stat" style={{ ...panelStyle, padding: '18px 20px', display: 'flex', alignItems: 'center', gap: 16 }}>
+        <div className="gfh-portal-stat" style={{ ...panelStyle, background: '#F8FAFC', border: '1px solid #CBD5E1', padding: '18px 20px', display: 'flex', alignItems: 'center', gap: 16 }}>
           <div style={{
             width: 48,
             height: 48,
             borderRadius: 12,
-            background: '#F1F5F9',
+            background: '#FFFFFF',
+            border: '1px solid #CBD5E1',
             color: '#334155',
             display: 'flex',
             alignItems: 'center',
@@ -416,22 +417,23 @@ export default function JobsPage() {
             <Icon path={icons.toolbox} size={22} />
           </div>
           <div>
-            <div style={{ fontSize: 11, fontWeight: 700, color: THEME.textMuted, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+            <div style={{ fontSize: 11, fontWeight: 700, color: '#475569', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
               Total Work Orders
             </div>
-            <div style={{ fontSize: 24, fontWeight: 800, color: THEME.ink, marginTop: 4 }}>
+            <div style={{ fontSize: 24, fontWeight: 800, color: '#0F172A', marginTop: 4 }}>
               {stats.total}
             </div>
           </div>
         </div>
 
         {/* In Progress */}
-        <div className="gfh-portal-stat" style={{ ...panelStyle, padding: '18px 20px', display: 'flex', alignItems: 'center', gap: 16 }}>
+        <div className="gfh-portal-stat" style={{ ...panelStyle, background: '#F0F9FF', border: '1px solid #BAE6FD', padding: '18px 20px', display: 'flex', alignItems: 'center', gap: 16 }}>
           <div style={{
             width: 48,
             height: 48,
             borderRadius: 12,
-            background: '#F0F9FF',
+            background: '#FFFFFF',
+            border: '1px solid #BAE6FD',
             color: '#0284C7',
             display: 'flex',
             alignItems: 'center',
@@ -450,12 +452,13 @@ export default function JobsPage() {
         </div>
 
         {/* Assigned */}
-        <div className="gfh-portal-stat" style={{ ...panelStyle, padding: '18px 20px', display: 'flex', alignItems: 'center', gap: 16 }}>
+        <div className="gfh-portal-stat" style={{ ...panelStyle, background: '#FFFBEB', border: '1px solid #FDE68A', padding: '18px 20px', display: 'flex', alignItems: 'center', gap: 16 }}>
           <div style={{
             width: 48,
             height: 48,
             borderRadius: 12,
-            background: '#FFFBEB',
+            background: '#FFFFFF',
+            border: '1px solid #FDE68A',
             color: '#D97706',
             display: 'flex',
             alignItems: 'center',
@@ -474,12 +477,13 @@ export default function JobsPage() {
         </div>
 
         {/* Completed */}
-        <div className="gfh-portal-stat" style={{ ...panelStyle, padding: '18px 20px', display: 'flex', alignItems: 'center', gap: 16 }}>
+        <div className="gfh-portal-stat" style={{ ...panelStyle, background: '#ECFDF5', border: '1px solid #A7F3D0', padding: '18px 20px', display: 'flex', alignItems: 'center', gap: 16 }}>
           <div style={{
             width: 48,
             height: 48,
             borderRadius: 12,
-            background: '#ECFDF5',
+            background: '#FFFFFF',
+            border: '1px solid #A7F3D0',
             color: '#059669',
             display: 'flex',
             alignItems: 'center',

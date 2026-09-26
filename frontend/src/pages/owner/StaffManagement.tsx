@@ -135,44 +135,44 @@ export default function StaffManagement() {
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 16, marginBottom: 24 }}>
         <div
           style={{
-            background: '#FFFFFF',
+            background: '#F0F9FF',
             borderRadius: 12,
             padding: '18px 20px',
-            border: '1px solid #E2E8F0',
+            border: '1px solid #BAE6FD',
             boxShadow: '0 1px 3px rgba(16,24,40,0.04)',
           }}
         >
-          <div style={{ fontSize: 12, fontWeight: 600, color: '#64748B', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+          <div style={{ fontSize: 12, fontWeight: 700, color: '#0369A1', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
             Total Staff
           </div>
-          <div style={{ fontSize: 26, fontWeight: 800, color: '#0F172A', marginTop: 4 }}>{rows.length}</div>
+          <div style={{ fontSize: 26, fontWeight: 800, color: '#0369A1', marginTop: 4 }}>{rows.length}</div>
         </div>
 
         <div
           style={{
-            background: '#FFFFFF',
+            background: '#F0FDF4',
             borderRadius: 12,
             padding: '18px 20px',
-            border: '1px solid #E2E8F0',
+            border: '1px solid #BBF7D0',
             boxShadow: '0 1px 3px rgba(16,24,40,0.04)',
           }}
         >
-          <div style={{ fontSize: 12, fontWeight: 600, color: '#065F46', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+          <div style={{ fontSize: 12, fontWeight: 700, color: '#15803D', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
             Active Accounts
           </div>
-          <div style={{ fontSize: 26, fontWeight: 800, color: '#065F46', marginTop: 4 }}>{activeCount}</div>
+          <div style={{ fontSize: 26, fontWeight: 800, color: '#15803D', marginTop: 4 }}>{activeCount}</div>
         </div>
 
         <div
           style={{
-            background: '#FFFFFF',
+            background: '#FFFBEB',
             borderRadius: 12,
             padding: '18px 20px',
-            border: '1px solid #E2E8F0',
+            border: '1px solid #FDE68A',
             boxShadow: '0 1px 3px rgba(16,24,40,0.04)',
           }}
         >
-          <div style={{ fontSize: 12, fontWeight: 600, color: '#B45309', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+          <div style={{ fontSize: 12, fontWeight: 700, color: '#B45309', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
             Pending Invitations
           </div>
           <div style={{ fontSize: 26, fontWeight: 800, color: '#B45309', marginTop: 4 }}>{pendingCount}</div>

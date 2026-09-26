@@ -64,15 +64,15 @@ const labelStyle: React.CSSProperties = {
   marginBottom: 6,
 }
 
-function StatCard({ label, value, color, icon, iconBg }: { label: string; value: string; color: string; icon: string; iconBg: string }) {
+function StatCard({ label, value, color, icon, iconBg, cardBg = '#F8FAFC', cardBorder = '#E2E8F0' }: { label: string; value: string; color: string; icon: string; iconBg: string; cardBg?: string; cardBorder?: string }) {
   return (
-    <div className="gfh-portal-stat" style={{ position: 'relative', flex: '1 1 200px', padding: 20, background: '#fff', border: `1px solid ${THEME.border}`, borderRadius: 8 }}>
+    <div className="gfh-portal-stat" style={{ position: 'relative', flex: '1 1 200px', padding: 20, background: cardBg, border: `1px solid ${cardBorder}`, borderRadius: 12 }}>
       <CornerBrackets />
       <div style={{ width: 40, height: 40, borderRadius: 8, background: iconBg, color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 10 }}>
         <Icon path={icon} size={18} />
       </div>
       <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 22, fontWeight: 700, color: color || THEME.ink }}>{value}</div>
-      <div style={{ fontSize: 12, color: THEME.textMuted, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.3px', marginTop: 2 }}>{label}</div>
+      <div style={{ fontSize: 12, color: color || THEME.textMuted, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.3px', marginTop: 2 }}>{label}</div>
     </div>
   )
 }
@@ -286,6 +286,8 @@ export default function RentLedger() {
             color="#991b1b"
             icon={icons.debit}
             iconBg="#991b1b"
+            cardBg="#FEF2F2"
+            cardBorder="#FECACA"
           />
           <StatCard
             label="Total Credit (Paid)"
@@ -293,13 +295,17 @@ export default function RentLedger() {
             color="#065f46"
             icon={icons.check}
             iconBg="#065f46"
+            cardBg="#F0FDF4"
+            cardBorder="#BBF7D0"
           />
           <StatCard
             label="Outstanding Balance"
             value={`AED ${Number(summary.total_balance).toLocaleString()}`}
-            color={Number(summary.total_balance) > 0 ? '#991b1b' : '#065f46'}
+            color="#b45309"
             icon={icons.debit}
             iconBg="#b45309"
+            cardBg="#FFFBEB"
+            cardBorder="#FDE68A"
           />
         </div>
       )}

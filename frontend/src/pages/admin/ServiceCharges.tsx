@@ -518,62 +518,62 @@ export default function ServiceCharges() {
       {/* 4 Summary KPI Cards */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 16, marginBottom: 24 }}>
         {/* Card 1: Approx Yearly */}
-        <div style={{ background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: 6, padding: '16px 18px', display: 'flex', alignItems: 'center', gap: 14, boxShadow: '0 1px 3px rgba(0,0,0,0.03)' }}>
-          <div style={{ width: 44, height: 44, borderRadius: 6, background: '#06b6d4', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff' }}>
+        <div style={{ background: '#ECFEFF', border: '1px solid #A5F3FC', borderRadius: 10, padding: '16px 18px', display: 'flex', alignItems: 'center', gap: 14, boxShadow: '0 1px 3px rgba(0,0,0,0.03)' }}>
+          <div style={{ width: 44, height: 44, borderRadius: 8, background: '#06b6d4', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff' }}>
             <Icon path={icons.calendar} size={20} />
           </div>
           <div>
-            <div style={{ fontSize: 12, color: '#64748b', fontWeight: 600 }}>Approx yearly</div>
-            <div style={{ fontSize: 18, fontWeight: 800, color: '#0f172a', marginTop: 2 }}>
-              <span style={{ fontSize: 12.5, fontWeight: 700, color: '#0f172a', marginRight: 3 }}>AED</span>
+            <div style={{ fontSize: 12, color: '#0E7490', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.3px' }}>Approx yearly</div>
+            <div style={{ fontSize: 18, fontWeight: 800, color: '#0E7490', marginTop: 2 }}>
+              <span style={{ fontSize: 12.5, fontWeight: 700, color: '#0E7490', marginRight: 3 }}>AED</span>
               {approxYearlyTotal.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
             </div>
-            <div style={{ fontSize: 11, color: '#64748b', marginTop: 2 }}>Annualized projection</div>
+            <div style={{ fontSize: 11, color: '#0891B2', marginTop: 2 }}>Annualized projection</div>
           </div>
         </div>
 
         {/* Card 2: Approx Quarter */}
-        <div style={{ background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: 6, padding: '16px 18px', display: 'flex', alignItems: 'center', gap: 14, boxShadow: '0 1px 3px rgba(0,0,0,0.03)' }}>
-          <div style={{ width: 44, height: 44, borderRadius: 6, background: '#475569', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff' }}>
+        <div style={{ background: '#F0F9FF', border: '1px solid #BAE6FD', borderRadius: 10, padding: '16px 18px', display: 'flex', alignItems: 'center', gap: 14, boxShadow: '0 1px 3px rgba(0,0,0,0.03)' }}>
+          <div style={{ width: 44, height: 44, borderRadius: 8, background: '#0284C7', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff' }}>
             <Icon path={icons.calendar} size={20} />
           </div>
           <div>
-            <div style={{ fontSize: 12, color: '#64748b', fontWeight: 600 }}>Approx quarter</div>
-            <div style={{ fontSize: 18, fontWeight: 800, color: '#0f172a', marginTop: 2 }}>
-              <span style={{ fontSize: 12.5, fontWeight: 700, color: '#0f172a', marginRight: 3 }}>AED</span>
+            <div style={{ fontSize: 12, color: '#0369A1', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.3px' }}>Approx quarter</div>
+            <div style={{ fontSize: 18, fontWeight: 800, color: '#0369A1', marginTop: 2 }}>
+              <span style={{ fontSize: 12.5, fontWeight: 700, color: '#0369A1', marginRight: 3 }}>AED</span>
               {approxQuarterTotal.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
             </div>
-            <div style={{ fontSize: 11, color: '#64748b', marginTop: 2 }}>Quarterly cycle baseline</div>
+            <div style={{ fontSize: 11, color: '#0284C7', marginTop: 2 }}>Quarterly cycle baseline</div>
           </div>
         </div>
 
         {/* Card 3: Paid */}
-        <div style={{ background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: 6, padding: '16px 18px', display: 'flex', alignItems: 'center', gap: 14, boxShadow: '0 1px 3px rgba(0,0,0,0.03)' }}>
-          <div style={{ width: 44, height: 44, borderRadius: 6, background: '#16a34a', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff' }}>
+        <div style={{ background: '#F0FDF4', border: '1px solid #BBF7D0', borderRadius: 10, padding: '16px 18px', display: 'flex', alignItems: 'center', gap: 14, boxShadow: '0 1px 3px rgba(0,0,0,0.03)' }}>
+          <div style={{ width: 44, height: 44, borderRadius: 8, background: '#16a34a', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff' }}>
             <Icon path={icons.check} size={20} />
           </div>
           <div>
-            <div style={{ fontSize: 12, color: '#64748b', fontWeight: 600 }}>Paid</div>
-            <div style={{ fontSize: 18, fontWeight: 800, color: '#0f172a', marginTop: 2 }}>
-              <span style={{ fontSize: 12.5, fontWeight: 700, color: '#0f172a', marginRight: 3 }}>AED</span>
+            <div style={{ fontSize: 12, color: '#15803D', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.3px' }}>Paid</div>
+            <div style={{ fontSize: 18, fontWeight: 800, color: '#15803D', marginTop: 2 }}>
+              <span style={{ fontSize: 12.5, fontWeight: 700, color: '#15803D', marginRight: 3 }}>AED</span>
               {totalPaid.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
             </div>
-            <div style={{ fontSize: 11, color: '#065f46', fontWeight: 600, marginTop: 2 }}>{donutData.paidPct}% collected</div>
+            <div style={{ fontSize: 11, color: '#16A34A', fontWeight: 600, marginTop: 2 }}>{donutData.paidPct}% collected</div>
           </div>
         </div>
 
         {/* Card 4: Outstanding */}
-        <div style={{ background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: 6, padding: '16px 18px', display: 'flex', alignItems: 'center', gap: 14, boxShadow: '0 1px 3px rgba(0,0,0,0.03)' }}>
-          <div style={{ width: 44, height: 44, borderRadius: 6, background: '#dc2626', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff', fontWeight: 900, fontSize: 20 }}>
+        <div style={{ background: '#FEF2F2', border: '1px solid #FECACA', borderRadius: 10, padding: '16px 18px', display: 'flex', alignItems: 'center', gap: 14, boxShadow: '0 1px 3px rgba(0,0,0,0.03)' }}>
+          <div style={{ width: 44, height: 44, borderRadius: 8, background: '#dc2626', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff', fontWeight: 900, fontSize: 20 }}>
             !
           </div>
           <div>
-            <div style={{ fontSize: 12, color: '#64748b', fontWeight: 600 }}>Outstanding</div>
-            <div style={{ fontSize: 18, fontWeight: 800, color: '#0f172a', marginTop: 2 }}>
-              <span style={{ fontSize: 12.5, fontWeight: 700, color: '#0f172a', marginRight: 3 }}>AED</span>
+            <div style={{ fontSize: 12, color: '#B91C1C', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.3px' }}>Outstanding</div>
+            <div style={{ fontSize: 18, fontWeight: 800, color: '#B91C1C', marginTop: 2 }}>
+              <span style={{ fontSize: 12.5, fontWeight: 700, color: '#B91C1C', marginRight: 3 }}>AED</span>
               {totalOutstanding.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
             </div>
-            <div style={{ fontSize: 11, color: '#b91c1c', fontWeight: 600, marginTop: 2 }}>{donutData.outPct}% pending</div>
+            <div style={{ fontSize: 11, color: '#DC2626', fontWeight: 600, marginTop: 2 }}>{donutData.outPct}% pending</div>
           </div>
         </div>
       </div>

@@ -188,10 +188,10 @@ export default function FinancePage(){
                 <div
                   key={card.label}
                   style={{
-                    background: '#FFFFFF',
+                    background: card.iconBg,
                     borderRadius: 14,
                     padding: '20px 22px',
-                    border: '1px solid #E2E8F0',
+                    border: `1px solid ${card.badgeBorder}`,
                     boxShadow: '0 1px 4px rgba(16, 24, 40, 0.04)',
                     display: 'flex',
                     flexDirection: 'column',
@@ -204,7 +204,8 @@ export default function FinancePage(){
                       width: 42,
                       height: 42,
                       borderRadius: 10,
-                      background: card.iconBg,
+                      background: '#FFFFFF',
+                      border: `1px solid ${card.badgeBorder}`,
                       color: card.iconColor,
                       display: 'flex',
                       alignItems: 'center',
@@ -220,7 +221,7 @@ export default function FinancePage(){
                       fontWeight: 700,
                       letterSpacing: '0.4px',
                       textTransform: 'uppercase',
-                      background: card.badgeBg,
+                      background: '#FFFFFF',
                       color: card.badgeColor,
                       border: `1px solid ${card.badgeBorder}`,
                       padding: '3px 9px',

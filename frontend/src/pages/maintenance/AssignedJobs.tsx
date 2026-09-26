@@ -302,10 +302,10 @@ export default function AssignedJobs() {
               }}
               className="gfh-portal-stat"
               style={{
-                background: '#FFFFFF',
+                background: card.iconBg,
                 borderRadius: 16,
                 padding: '20px 22px',
-                border: isSelected ? '2px solid #0E5E48' : '1px solid #E2E8F0',
+                border: isSelected ? '2px solid #0E5E48' : `1px solid ${card.badgeBorder}`,
                 boxShadow: isSelected ? '0 6px 16px rgba(14, 94, 72, 0.12)' : '0 1px 3px rgba(16,24,40,0.04)',
                 display: 'flex',
                 flexDirection: 'column',
@@ -323,7 +323,8 @@ export default function AssignedJobs() {
                   width: 44,
                   height: 44,
                   borderRadius: 12,
-                  background: card.iconBg,
+                  background: '#FFFFFF',
+                  border: `1px solid ${card.badgeBorder}`,
                   color: card.iconColor,
                   display: 'flex',
                   alignItems: 'center',

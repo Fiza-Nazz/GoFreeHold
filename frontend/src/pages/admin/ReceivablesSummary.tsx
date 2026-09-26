@@ -1,4 +1,4 @@
-﻿import { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import api from '../../api/axios'
 import { THEME, Icon, CornerBrackets, portalPageCss, heroStyle, panelStyle, thStyle, tdStyle } from '../../components/gfh/adminTheme'
 
@@ -45,10 +45,10 @@ export default function ReceivablesSummary() {
         </div>
       </div>
 
-      <div className="fade-in gfh-portal-stat" style={{ position: 'relative', background: '#fff', border: `1px solid ${THEME.border}`, borderRadius: 8, padding: '26px 30px', marginBottom: 24, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <div className="fade-in gfh-portal-stat" style={{ position: 'relative', background: '#FEF2F2', border: '1px solid #FECACA', borderRadius: 12, padding: '26px 30px', marginBottom: 24, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <CornerBrackets />
         <div>
-          <p style={{ fontSize: 12.5, fontWeight: 800, color: THEME.textMuted, margin: '0 0 8px', letterSpacing: '0.6px', textTransform: 'uppercase' }}>
+          <p style={{ fontSize: 12.5, fontWeight: 800, color: '#991B1B', margin: '0 0 8px', letterSpacing: '0.6px', textTransform: 'uppercase' }}>
             Total Outstanding Receivables
           </p>
           <div style={{ fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", fontSize: 36, fontWeight: 700, color: '#dc2626' }}>
