@@ -55,16 +55,16 @@ export const authShellCss = `
     color: var(--auth-ink);
   }
 
-  /* ── LEFT PANEL (FRESH LIGHT GREEN / SOFT EMERALD HERO PANEL) ── */
+  /* ── LEFT PANEL (SOLID #10B981 MATCHING SIGN IN BUTTON) ── */
   .auth-left {
-    background: linear-gradient(145deg, #D1FAE5 0%, #ECFDF5 50%, #A7F3D0 100%);
-    color: #064E3B;
+    background: #10B981;
+    color: #FFFFFF;
     padding: 64px 60px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     position: relative;
-    border-right: 1px solid #A7F3D0;
+    border-right: 1px solid #059669;
   }
 
   .auth-brand {
@@ -77,8 +77,8 @@ export const authShellCss = `
     width: 44px;
     height: 44px;
     border-radius: 10px;
-    background: #10B981;
-    border: 1px solid #059669;
+    background: rgba(255, 255, 255, 0.18);
+    border: 1px solid rgba(255, 255, 255, 0.38);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -86,14 +86,13 @@ export const authShellCss = `
     font-size: 16px;
     color: #FFFFFF;
     letter-spacing: 0.05em;
-    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
   }
 
   .auth-brand-name {
     font-size: 22px;
     font-weight: 800;
     letter-spacing: -0.01em;
-    color: #065F46;
+    color: #FFFFFF;
     display: flex;
     flex-direction: column;
     line-height: 1.15;
@@ -104,7 +103,7 @@ export const authShellCss = `
     font-weight: 700;
     letter-spacing: 0.12em;
     text-transform: uppercase;
-    color: #059669;
+    color: rgba(255, 255, 255, 0.88);
     margin-top: 3px;
   }
 
@@ -118,14 +117,14 @@ export const authShellCss = `
     font-weight: 800;
     line-height: 1.25;
     margin: 0 0 14px;
-    color: #064E3B;
+    color: #FFFFFF;
     letter-spacing: -0.02em;
   }
 
   .auth-left-support {
     font-size: 15px;
     line-height: 1.6;
-    color: #065F46;
+    color: rgba(255, 255, 255, 0.92);
     margin: 0 0 32px;
     max-width: 440px;
     font-weight: 500;
@@ -146,21 +145,20 @@ export const authShellCss = `
     gap: 14px;
     font-size: 14.5px;
     font-weight: 700;
-    color: #064E3B;
+    color: #FFFFFF;
   }
 
   .auth-feature-icon {
     width: 38px;
     height: 38px;
     border-radius: 9px;
-    background: #FFFFFF;
-    border: 1px solid #6EE7B7;
+    background: rgba(255, 255, 255, 0.18);
+    border: 1px solid rgba(255, 255, 255, 0.35);
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
-    color: #10B981;
-    box-shadow: 0 2px 6px rgba(16, 185, 129, 0.14);
+    color: #FFFFFF;
   }
 
   .auth-trust-footer {
@@ -169,9 +167,9 @@ export const authShellCss = `
     gap: 8px;
     font-size: 12.5px;
     font-weight: 600;
-    color: #065F46;
+    color: rgba(255, 255, 255, 0.88);
     padding-top: 20px;
-    border-top: 1px solid rgba(16, 185, 129, 0.28);
+    border-top: 1px solid rgba(255, 255, 255, 0.24);
   }
 
   /* ── RIGHT FORM PANEL ── */
