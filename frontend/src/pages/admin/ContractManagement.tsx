@@ -828,10 +828,10 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
                         </div>
                       </td>
 
-                      {/* RENT (AED) — PURPLE COLOR AS USER REQUESTED */}
+                      {/* RENT (AED) */}
                       <td style={{ padding: '16px 14px' }}>
                         <div style={{ fontSize: 11, color: '#64748B', fontWeight: 600 }}>AED</div>
-                        <div style={{ fontSize: 15, fontWeight: 800, color: '#6B21A8' }}>
+                        <div style={{ fontSize: 15, fontWeight: 700, color: '#0F172A' }}>
                           {Number(c.rent_amount).toLocaleString()}
                         </div>
                       </td>
@@ -849,7 +849,7 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
                             color: isActive ? '#065F46' : '#D97706',
                             border: isActive ? '1px solid #D1FAE5' : '1px solid #FEF3C7',
                             fontSize: 12,
-                            fontWeight: 700,
+                            fontWeight: 600,
                           }}>
                             <span style={{ width: 6, height: 6, borderRadius: '50%', background: isActive ? '#10B981' : '#F59E0B' }} />
                             {isActive ? 'Active' : (c.status === 'vacated' ? 'Vacated' : c.status || 'Active')}
@@ -867,145 +867,118 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
                         </div>
                       </td>
 
-                      {/* ACTIONS (Matching reference image) */}
+                      {/* ACTIONS (Clean spacious horizontal row) */}
                       <td style={{ padding: '14px 14px' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6, width: 176 }}>
-                            {/* Details button */}
-                            <Link
-                              to={`${effectiveBasePath}/contracts/${c.id}`}
-                              style={{
-                                display: 'inline-flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                gap: 5,
-                                padding: '6px 10px',
-                                borderRadius: 8,
-                                border: '1px solid #CBD5E1',
-                                background: '#FFFFFF',
-                                color: '#1E293B',
-                                fontSize: 12,
-                                fontWeight: 600,
-                                textDecoration: 'none',
-                                boxShadow: '0 1px 2px rgba(0,0,0,0.03)',
-                              }}
-                            >
-                              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                <circle cx="12" cy="12" r="3" />
-                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-                              </svg>
-                              <span>Details</span>
-                            </Link>
-
-                            {/* PDF button */}
-                            <button
-                              onClick={() => downloadPdf(c.id)}
-                              disabled={pdfLoading === c.id}
-                              style={{
-                                display: 'inline-flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                gap: 5,
-                                padding: '6px 10px',
-                                borderRadius: 8,
-                                border: '1px solid #CBD5E1',
-                                background: '#FFFFFF',
-                                color: '#1E293B',
-                                fontSize: 12,
-                                fontWeight: 600,
-                                cursor: 'pointer',
-                                boxShadow: '0 1px 2px rgba(0,0,0,0.03)',
-                              }}
-                            >
-                              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                                <polyline points="7 10 12 15 17 10" />
-                                <line x1="12" y1="15" x2="12" y2="3" />
-                              </svg>
-                              <span>{pdfLoading === c.id ? '...' : 'PDF'}</span>
-                            </button>
-
-                            {/* Renew button */}
-                            {!isCashier && c.status?.toLowerCase() === 'active' ? (
-                              <button
-                                onClick={() => {
-                                  setRenewModal(c)
-                                  setRenewData({ new_end_date: '', new_rent_amount: String(c.rent_amount) })
-                                }}
-                                style={{
-                                  display: 'inline-flex',
-                                  alignItems: 'center',
-                                  justifyContent: 'center',
-                                  gap: 5,
-                                  padding: '6px 10px',
-                                  borderRadius: 8,
-                                  border: 'none',
-                                  background: '#065F46',
-                                  color: '#FFFFFF',
-                                  fontSize: 12,
-                                  fontWeight: 700,
-                                  cursor: 'pointer',
-                                }}
-                              >
-                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                                  <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l6.07-1.19" />
-                                </svg>
-                                <span>Renew</span>
-                              </button>
-                            ) : <div />}
-
-                            {/* Vacate button */}
-                            {!isCashier && c.status?.toLowerCase() === 'active' ? (
-                              <button
-                                onClick={() => setVacateContract(c)}
-                                style={{
-                                  display: 'inline-flex',
-                                  alignItems: 'center',
-                                  justifyContent: 'center',
-                                  gap: 5,
-                                  padding: '6px 10px',
-                                  borderRadius: 8,
-                                  border: '1px solid #FECACA',
-                                  background: '#FFFFFF',
-                                  color: '#DC2626',
-                                  fontSize: 12,
-                                  fontWeight: 700,
-                                  cursor: 'pointer',
-                                }}
-                              >
-                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                                  <line x1="18" y1="6" x2="6" y2="18" />
-                                  <line x1="6" y1="6" x2="18" y2="18" />
-                                </svg>
-                                <span>Vacate</span>
-                              </button>
-                            ) : <div />}
-                          </div>
-
-                          {/* 3-dot vertical menu button */}
-                          <button
-                            onClick={() => navigate(`${effectiveBasePath}/contracts/${c.id}`)}
-                            title="More Options"
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+                          {/* Details button */}
+                          <Link
+                            to={`${effectiveBasePath}/contracts/${c.id}`}
                             style={{
-                              width: 30,
-                              height: 30,
-                              borderRadius: '50%',
-                              border: 'none',
-                              background: 'transparent',
-                              color: '#94A3B8',
                               display: 'inline-flex',
                               alignItems: 'center',
                               justifyContent: 'center',
-                              cursor: 'pointer',
-                              flexShrink: 0,
+                              gap: 5,
+                              padding: '7px 12px',
+                              borderRadius: 8,
+                              border: '1px solid #CBD5E1',
+                              background: '#FFFFFF',
+                              color: '#0F172A',
+                              fontSize: 12.5,
+                              fontWeight: 600,
+                              textDecoration: 'none',
+                              boxShadow: '0 1px 2px rgba(15,23,42,0.03)',
                             }}
                           >
-                            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
-                              <circle cx="12" cy="5" r="2" />
-                              <circle cx="12" cy="12" r="2" />
-                              <circle cx="12" cy="19" r="2" />
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                              <circle cx="12" cy="12" r="3" />
+                              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
                             </svg>
+                            <span>Details</span>
+                          </Link>
+
+                          {/* PDF button */}
+                          <button
+                            onClick={() => downloadPdf(c.id)}
+                            disabled={pdfLoading === c.id}
+                            style={{
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              gap: 5,
+                              padding: '7px 12px',
+                              borderRadius: 8,
+                              border: '1px solid #CBD5E1',
+                              background: '#FFFFFF',
+                              color: '#0F172A',
+                              fontSize: 12.5,
+                              fontWeight: 600,
+                              cursor: 'pointer',
+                              boxShadow: '0 1px 2px rgba(15,23,42,0.03)',
+                            }}
+                          >
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                              <polyline points="7 10 12 15 17 10" />
+                              <line x1="12" y1="15" x2="12" y2="3" />
+                            </svg>
+                            <span>{pdfLoading === c.id ? '...' : 'PDF'}</span>
                           </button>
+
+                          {/* Renew button */}
+                          {!isCashier && c.status?.toLowerCase() === 'active' && (
+                            <button
+                              onClick={() => {
+                                setRenewModal(c)
+                                setRenewData({ new_end_date: '', new_rent_amount: String(c.rent_amount) })
+                              }}
+                              style={{
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                gap: 5,
+                                padding: '7px 12px',
+                                borderRadius: 8,
+                                border: 'none',
+                                background: '#0D5C46',
+                                color: '#FFFFFF',
+                                fontSize: 12.5,
+                                fontWeight: 600,
+                                cursor: 'pointer',
+                              }}
+                            >
+                              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                                <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l6.07-1.19" />
+                              </svg>
+                              <span>Renew</span>
+                            </button>
+                          )}
+
+                          {/* Vacate button */}
+                          {!isCashier && c.status?.toLowerCase() === 'active' && (
+                            <button
+                              onClick={() => setVacateContract(c)}
+                              style={{
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                gap: 5,
+                                padding: '7px 12px',
+                                borderRadius: 8,
+                                border: '1px solid #FECACA',
+                                background: '#FEF2F2',
+                                color: '#DC2626',
+                                fontSize: 12.5,
+                                fontWeight: 600,
+                                cursor: 'pointer',
+                              }}
+                            >
+                              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                                <line x1="18" y1="6" x2="6" y2="18" />
+                                <line x1="6" y1="6" x2="18" y2="18" />
+                              </svg>
+                              <span>Vacate</span>
+                            </button>
+                          )}
                         </div>
                       </td>
                     </tr>

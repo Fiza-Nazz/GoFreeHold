@@ -194,13 +194,13 @@ export default function OwnerLayout() {
   return (
     <div className="gfh-app-layout">
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
         .gfh-app-layout {
           display: flex;
           min-height: 100vh;
-          background: #F8F7FD;
-          font-family: 'Poppins', system-ui, sans-serif;
+          background: #F6F8FA;
+          font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         }
 
         .gfh-sidebar {
@@ -430,22 +430,22 @@ export default function OwnerLayout() {
           display: flex;
           flex-direction: column;
           min-width: 0;
-          background: #F8F7FD;
+          background: #F6F8FA;
         }
 
         .gfh-topbar {
           display: flex;
           align-items: center;
           justify-content: space-between;
-          padding: 20px 32px;
+          padding: 18px 32px;
           background: #ffffff;
           border-bottom: 1px solid #E2E8F0;
         }
 
         .gfh-page-title {
-          font-size: 20px;
-          font-weight: 800;
-          color: #111827;
+          font-size: 22px;
+          font-weight: 700;
+          color: #0F172A;
           margin: 0;
         }
 
@@ -460,8 +460,8 @@ export default function OwnerLayout() {
 
         .gfh-page-content {
           flex: 1;
-          padding: 24px 28px;
-          background: #F8F7FD;
+          padding: 28px 32px;
+          background: #F6F8FA;
           animation: gfhFadeIn 0.35s ease;
         }
 

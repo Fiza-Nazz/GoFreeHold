@@ -20,7 +20,7 @@ export const THEME = {
   border: '#E2E8F0',
   textMuted: '#64748B',
   ink: '#0F172A',
-  pageBg: '#F8F7FD',        // Clean subtle off-white canvas
+  pageBg: '#F6F8FA',        // Clean enterprise SaaS light gray-blue canvas
 }
 
 export const ADMIN_COLORS = {
@@ -87,26 +87,34 @@ export const Icon = ({ path, size = 15 }: { path: string; size?: number }) => (
 export const CornerBrackets = (_props?: { color?: string }) => null
 
 export const portalPageCss = `
-  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
-  .gfh-portal-page { background: #F8F7FD !important; font-family: 'Poppins', system-ui, sans-serif !important; }
-  .gfh-portal-page * { font-family: 'Poppins', system-ui, sans-serif !important; }
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+  .gfh-portal-page {
+    background: #F6F8FA !important;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+    color: #0F172A;
+    line-height: 1.5;
+  }
+  .gfh-portal-page * {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+  }
   .gfh-portal-page h1, .gfh-portal-page h2, .gfh-portal-page h3,
   .gfh-portal-page h4, .gfh-portal-page h5, .gfh-portal-page h6 {
-    font-family: 'Poppins', sans-serif !important;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important;
     font-weight: 700 !important;
+    letter-spacing: -0.015em;
   }
 
   /* Modern rounded corners pattern across Admin UI */
   .gfh-portal-page button { border-radius: 8px !important; }
   .gfh-portal-page input, .gfh-portal-page select, .gfh-portal-page textarea { border-radius: 8px !important; }
   .gfh-portal-page .gfh-portal-stat {
-    border-radius: 16px !important;
+    border-radius: 12px !important;
     transition: transform 0.15s ease, box-shadow 0.15s ease;
-    box-shadow: 0 1px 3px rgba(16,24,40,0.05);
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
   }
-  .gfh-portal-stat:hover { transform: translateY(-2px); box-shadow: 0 6px 18px -4px rgba(15, 23, 42, 0.12); }
+  .gfh-portal-stat:hover { transform: translateY(-1px); box-shadow: 0 6px 16px -4px rgba(15, 23, 42, 0.08); }
   .gfh-portal-row { transition: background 0.15s ease; }
-  .gfh-portal-row:hover { background: #F0FDF4; }
+  .gfh-portal-row:hover { background: #F8FAFC; }
   .gfh-portal-btn {
     transition: background 0.15s ease, transform 0.15s ease;
     border-radius: 8px !important;
@@ -117,53 +125,53 @@ export const portalPageCss = `
   .gfh-portal-link:hover { color: #06382C !important; }
 
   /* Standardized Rounded Pill Status Badges */
-  .status-badge-green  { background-color: #f0fdf4 !important; color: #065f46 !important; border: 1px solid #bbf7d0 !important; border-radius: 999px !important; font-weight: 700; text-transform: uppercase; font-size: 10.5px; padding: 3px 10px; }
-  .status-badge-blue   { background-color: #f0f9ff !important; color: #075985 !important; border: 1px solid #bae6fd !important; border-radius: 999px !important; font-weight: 700; text-transform: uppercase; font-size: 10.5px; padding: 3px 10px; }
-  .status-badge-amber  { background-color: #fffbeb !important; color: #b45309 !important; border: 1px solid #fde68a !important; border-radius: 999px !important; font-weight: 700; text-transform: uppercase; font-size: 10.5px; padding: 3px 10px; }
-  .status-badge-red    { background-color: #fef2f2 !important; color: #991b1b !important; border: 1px solid #fecaca !important; border-radius: 999px !important; font-weight: 700; text-transform: uppercase; font-size: 10.5px; padding: 3px 10px; }
-  .status-badge-purple { background-color: #ecfdf8 !important; color: #065f46 !important; border: 1px solid #a7f3dc !important; border-radius: 999px !important; font-weight: 700; text-transform: uppercase; font-size: 10.5px; padding: 3px 10px; }
-  .status-badge-cyan   { background-color: #ecfeff !important; color: #0e7490 !important; border: 1px solid #a5f3fc !important; border-radius: 999px !important; font-weight: 700; text-transform: uppercase; font-size: 10.5px; padding: 3px 10px; }
+  .status-badge-green  { background-color: #ecfdf5 !important; color: #065f46 !important; border: 1px solid #d1fae5 !important; border-radius: 999px !important; font-weight: 600; text-transform: uppercase; font-size: 11px; padding: 3px 10px; }
+  .status-badge-blue   { background-color: #f0f9ff !important; color: #075985 !important; border: 1px solid #bae6fd !important; border-radius: 999px !important; font-weight: 600; text-transform: uppercase; font-size: 11px; padding: 3px 10px; }
+  .status-badge-amber  { background-color: #fffbeb !important; color: #b45309 !important; border: 1px solid #fde68a !important; border-radius: 999px !important; font-weight: 600; text-transform: uppercase; font-size: 11px; padding: 3px 10px; }
+  .status-badge-red    { background-color: #fef2f2 !important; color: #991b1b !important; border: 1px solid #fecaca !important; border-radius: 999px !important; font-weight: 600; text-transform: uppercase; font-size: 11px; padding: 3px 10px; }
+  .status-badge-purple { background-color: #ecfdf5 !important; color: #065f46 !important; border: 1px solid #d1fae5 !important; border-radius: 999px !important; font-weight: 600; text-transform: uppercase; font-size: 11px; padding: 3px 10px; }
+  .status-badge-cyan   { background-color: #ecfeff !important; color: #0e7490 !important; border: 1px solid #a5f3fc !important; border-radius: 999px !important; font-weight: 600; text-transform: uppercase; font-size: 11px; padding: 3px 10px; }
 `
 
 export const heroStyle: CSSProperties = {
   position: 'relative',
   background: '#FFFFFF',
-  borderRadius: 14,
-  padding: '20px 24px',
-  marginBottom: 20,
+  borderRadius: 12,
+  padding: '22px 26px',
+  marginBottom: 22,
   border: `1px solid ${THEME.border}`,
-  boxShadow: '0 1px 3px rgba(16,24,40,0.04)',
+  boxShadow: '0 1px 3px rgba(15, 23, 42, 0.04)',
   display: 'flex',
   justifyContent: 'space-between',
   alignItems: 'center',
   flexWrap: 'wrap',
-  gap: 14,
+  gap: 16,
 }
 
 export const panelStyle: CSSProperties = {
   position: 'relative',
   background: '#FFFFFF',
   border: `1px solid ${THEME.border}`,
-  borderRadius: 16,
-  padding: 22,
+  borderRadius: 12,
+  padding: 24,
   minHeight: 240,
-  boxShadow: '0 1px 3px rgba(16,24,40,0.04)',
+  boxShadow: '0 1px 3px rgba(15, 23, 42, 0.04)',
 }
 
 export const thStyle: CSSProperties = {
-  padding: '12px 14px',
-  fontWeight: 700,
+  padding: '13px 16px',
+  fontWeight: 600,
   textAlign: 'left',
-  fontSize: 11,
+  fontSize: 11.5,
   textTransform: 'uppercase',
-  letterSpacing: '0.5px',
+  letterSpacing: '0.04em',
   color: THEME.textMuted,
-  borderBottom: `2px solid ${THEME.border}`,
-  background: '#F8F7FD',
+  borderBottom: `1px solid ${THEME.border}`,
+  background: '#F8FAFC',
 }
 
 export const tdStyle: CSSProperties = {
-  padding: '14px',
+  padding: '15px 16px',
   fontSize: 13.5,
   fontWeight: 500,
   color: THEME.ink,
@@ -177,10 +185,10 @@ export const ghostBtnStyle: CSSProperties = {
   fontSize: 13,
   fontWeight: 600,
   padding: '9px 18px',
-  background: '#0F8A67',
+  background: '#0D5C46',
   border: 'none',
   color: '#ffffff',
   cursor: 'pointer',
   textDecoration: 'none',
-  boxShadow: '0 1px 3px rgba(15, 138, 103, 0.2)',
+  boxShadow: '0 1px 2px rgba(13, 92, 70, 0.18)',
 }
