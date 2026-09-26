@@ -55,16 +55,16 @@ export const authShellCss = `
     color: var(--auth-ink);
   }
 
-  /* ── LEFT PANEL (CLEAN LIGHT PANEL MATCHING LIGHT SIDEBAR & #10B981 THEME) ── */
+  /* ── LEFT PANEL (FRESH LIGHT GREEN / SOFT EMERALD HERO PANEL) ── */
   .auth-left {
-    background: #FFFFFF;
-    color: #0F172A;
+    background: linear-gradient(145deg, #D1FAE5 0%, #ECFDF5 50%, #A7F3D0 100%);
+    color: #064E3B;
     padding: 64px 60px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     position: relative;
-    border-right: 1px solid #E2E8F0;
+    border-right: 1px solid #A7F3D0;
   }
 
   .auth-brand {
@@ -86,14 +86,14 @@ export const authShellCss = `
     font-size: 16px;
     color: #FFFFFF;
     letter-spacing: 0.05em;
-    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.25);
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
   }
 
   .auth-brand-name {
     font-size: 22px;
     font-weight: 800;
     letter-spacing: -0.01em;
-    color: #10B981;
+    color: #065F46;
     display: flex;
     flex-direction: column;
     line-height: 1.15;
@@ -101,10 +101,10 @@ export const authShellCss = `
 
   .auth-brand-sub {
     font-size: 11px;
-    font-weight: 600;
+    font-weight: 700;
     letter-spacing: 0.12em;
     text-transform: uppercase;
-    color: #64748B;
+    color: #059669;
     margin-top: 3px;
   }
 
@@ -118,17 +118,17 @@ export const authShellCss = `
     font-weight: 800;
     line-height: 1.25;
     margin: 0 0 14px;
-    color: #0F172A;
+    color: #064E3B;
     letter-spacing: -0.02em;
   }
 
   .auth-left-support {
     font-size: 15px;
     line-height: 1.6;
-    color: #475569;
+    color: #065F46;
     margin: 0 0 32px;
     max-width: 440px;
-    font-weight: 400;
+    font-weight: 500;
   }
 
   .auth-features {
@@ -145,21 +145,22 @@ export const authShellCss = `
     align-items: center;
     gap: 14px;
     font-size: 14.5px;
-    font-weight: 600;
-    color: #1E293B;
+    font-weight: 700;
+    color: #064E3B;
   }
 
   .auth-feature-icon {
-    width: 36px;
-    height: 36px;
-    border-radius: 8px;
-    background: #ECFDF5;
-    border: 1px solid #A7F3D0;
+    width: 38px;
+    height: 38px;
+    border-radius: 9px;
+    background: #FFFFFF;
+    border: 1px solid #6EE7B7;
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
     color: #10B981;
+    box-shadow: 0 2px 6px rgba(16, 185, 129, 0.14);
   }
 
   .auth-trust-footer {
@@ -167,10 +168,10 @@ export const authShellCss = `
     align-items: center;
     gap: 8px;
     font-size: 12.5px;
-    font-weight: 500;
-    color: #64748B;
+    font-weight: 600;
+    color: #065F46;
     padding-top: 20px;
-    border-top: 1px solid #E2E8F0;
+    border-top: 1px solid rgba(16, 185, 129, 0.28);
   }
 
   /* ── RIGHT FORM PANEL ── */
