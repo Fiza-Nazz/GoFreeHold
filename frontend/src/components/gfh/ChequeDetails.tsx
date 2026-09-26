@@ -33,7 +33,7 @@ export default function ChequeDetails({ cheque, contractId }: { cheque: ChequeDe
     } finally { setLoading(false) }
   }
   return <details style={{ minWidth: 180, maxWidth: 340, fontSize: 12, fontWeight: 400, color: '#334155' }}>
-    <summary style={{ color: '#0F8A67', cursor: 'pointer', fontWeight: 600 }}>View details</summary>
+    <summary style={{ color: '#10B981', cursor: 'pointer', fontWeight: 600 }}>View details</summary>
     <dl style={{ margin: '10px 0', overflowWrap: 'anywhere' }}>
       {Object.entries({ 'Account Holder': cheque.account_holder_name, Payee: cheque.payee_name, Nature: cheque.nature, Type: cheque.type, Remarks: cheque.notes }).map(([label, value]) => <div key={label} style={{ marginBottom: 6 }}><dt style={{ fontWeight: 600 }}>{label}</dt><dd style={{ margin: 0, whiteSpace: 'pre-wrap' }}>{value || 'Not recorded'}</dd></div>)}
     </dl>

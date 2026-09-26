@@ -71,45 +71,46 @@ export default function MaintenanceLayout() {
         .gfh-sidebar {
           width: 256px;
           min-width: 256px;
-          background: #072E24;
+          background: #FFFFFF;
           display: flex;
           flex-direction: column;
           height: 100vh;
           position: sticky;
           top: 0;
           overflow-y: auto;
-          border-right: 1px solid rgba(255, 255, 255, 0.07);
+          border-right: 1px solid #E2E8F0;
         }
 
         .gfh-sidebar::-webkit-scrollbar { width: 5px; }
-        .gfh-sidebar::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.16); border-radius: 4px; }
+        .gfh-sidebar::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 4px; }
 
         .gfh-sidebar-logo {
           display: flex;
           align-items: center;
           gap: 12px;
           padding: 20px 20px;
-          border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-          background: #05231B;
+          border-bottom: 1px solid #E2E8F0;
+          background: #FFFFFF;
         }
 
         .gfh-logo-icon {
           width: 40px;
           height: 40px;
           border-radius: 8px;
-          background: rgba(16, 185, 129, 0.14);
-          border: 1px solid rgba(16, 185, 129, 0.3);
+          background: #10B981;
+          border: 1px solid #059669;
           display: flex;
           align-items: center;
           justify-content: center;
-          color: #34D399;
+          color: #FFFFFF;
           flex-shrink: 0;
+          box-shadow: 0 2px 6px rgba(16, 185, 129, 0.25);
         }
 
         .gfh-logo-text {
           font-size: 18px;
-          font-weight: 700;
-          color: #FFFFFF;
+          font-weight: 800;
+          color: #10B981;
           line-height: 1.2;
           letter-spacing: -0.015em;
         }
@@ -118,7 +119,7 @@ export default function MaintenanceLayout() {
           font-size: 11px;
           font-weight: 600;
           letter-spacing: 0.06em;
-          color: rgba(255, 255, 255, 0.58);
+          color: #64748B;
           text-transform: uppercase;
           margin-top: 2px;
         }
@@ -129,11 +130,11 @@ export default function MaintenanceLayout() {
         }
 
         .gfh-nav-section-label {
-          font-size: 12px;
-          font-weight: 600;
+          font-size: 11.5px;
+          font-weight: 700;
           letter-spacing: 0.06em;
           text-transform: uppercase;
-          color: rgba(255, 255, 255, 0.48);
+          color: #94A3B8;
           padding: 20px 14px 8px;
         }
 
@@ -144,7 +145,7 @@ export default function MaintenanceLayout() {
           padding: 10px 14px;
           margin: 2px 0;
           border-radius: 8px;
-          color: rgba(255, 255, 255, 0.78);
+          color: #334155;
           font-size: 14px;
           font-weight: 500;
           line-height: 1.45;
@@ -153,16 +154,16 @@ export default function MaintenanceLayout() {
         }
 
         .gfh-nav-item:hover {
-          background: rgba(255, 255, 255, 0.07);
-          color: #FFFFFF;
+          background: #ECFDF5;
+          color: #059669;
         }
 
         .gfh-nav-item.active {
-          background: #0D5C46;
+          background: #10B981;
           color: #FFFFFF;
           font-weight: 600;
           border-radius: 8px;
-          box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+          box-shadow: 0 2px 6px rgba(16, 185, 129, 0.25);
         }
 
         .gfh-nav-item.active .gfh-nav-icon {
@@ -174,13 +175,17 @@ export default function MaintenanceLayout() {
           align-items: center;
           justify-content: center;
           flex-shrink: 0;
-          color: inherit;
+          color: #64748B;
+        }
+
+        .gfh-nav-item:hover .gfh-nav-icon {
+          color: #059669;
         }
 
         .gfh-sidebar-footer {
           padding: 14px;
-          border-top: 1px solid rgba(255, 255, 255, 0.08);
-          background: #05231B;
+          border-top: 1px solid #E2E8F0;
+          background: #F8FAFC;
         }
 
         .gfh-user-row {
@@ -195,8 +200,8 @@ export default function MaintenanceLayout() {
           width: 34px;
           height: 34px;
           border-radius: 50%;
-          background: #0D5C46;
-          border: 1px solid rgba(255, 255, 255, 0.18);
+          background: #10B981;
+          border: 1px solid #059669;
           display: flex;
           align-items: center;
           justify-content: center;
@@ -209,7 +214,7 @@ export default function MaintenanceLayout() {
         .gfh-user-name {
           font-size: 13.5px;
           font-weight: 600;
-          color: #FFFFFF;
+          color: #0F172A;
           overflow: hidden;
           text-overflow: ellipsis;
           white-space: nowrap;
@@ -217,16 +222,16 @@ export default function MaintenanceLayout() {
 
         .gfh-user-role {
           font-size: 11px;
-          color: rgba(255, 255, 255, 0.58);
+          color: #64748B;
           text-transform: uppercase;
           letter-spacing: 0.05em;
-          font-weight: 500;
+          font-weight: 600;
         }
 
         .gfh-logout-btn {
           background: none;
           border: none;
-          color: rgba(255, 255, 255, 0.65);
+          color: #64748B;
           cursor: pointer;
           padding: 6px;
           border-radius: 6px;
@@ -235,8 +240,8 @@ export default function MaintenanceLayout() {
         }
 
         .gfh-logout-btn:hover {
-          background: rgba(239, 68, 68, 0.2);
-          color: #FCA5A5;
+          background: #FEF2F2;
+          color: #DC2626;
         }
 
         .gfh-main-content {
@@ -378,14 +383,14 @@ export default function MaintenanceLayout() {
                 width: 32,
                 height: 32,
                 borderRadius: '50%',
-                background: '#0F8A67',
+                background: '#10B981',
                 color: '#FFFFFF',
                 border: 'none',
                 display: 'inline-flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 cursor: 'pointer',
-                boxShadow: '0 1px 3px rgba(15, 138, 103, 0.25)',
+                boxShadow: '0 1px 3px rgba(16, 185, 129, 0.25)',
                 flexShrink: 0,
               }}
               title="Toggle Sidebar"
@@ -402,7 +407,7 @@ export default function MaintenanceLayout() {
           <div style={{ display: 'flex', alignItems: 'center', gap: 9 }}>
               <div style={{
                 width: 36, height: 36, borderRadius: '50%',
-                background: '#0F8A67', color: '#FFFFFF',
+                background: '#10B981', color: '#FFFFFF',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 fontWeight: 700, fontSize: 13,
               }}>

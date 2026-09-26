@@ -110,7 +110,7 @@ export default function MaintenanceComplaints() {
       label: 'Total complaints',
       icon: icons.ticket,
       iconBg: '#ECFDF8',
-      iconColor: '#0E5E48',
+      iconColor: '#10B981',
       badgeBg: '#ECFDF8',
       badgeColor: '#065F46',
       badgeBorder: '#A7F3DC',
@@ -143,7 +143,7 @@ export default function MaintenanceComplaints() {
       label: 'Resolved',
       icon: icons.check,
       iconBg: '#ECFDF8',
-      iconColor: '#0F8A67',
+      iconColor: '#10B981',
       badgeBg: '#F0FDF4',
       badgeColor: '#065F46',
       badgeBorder: '#BBF7D0',
@@ -167,7 +167,7 @@ export default function MaintenanceComplaints() {
           disabled={isLoading}
           style={{
             ...ghostBtnStyle,
-            background: '#0E5E48',
+            background: '#10B981',
             borderRadius: 8,
             opacity: isLoading ? 0.7 : 1,
             cursor: isLoading ? 'not-allowed' : 'pointer',
@@ -197,7 +197,7 @@ export default function MaintenanceComplaints() {
                 background: card.iconBg,
                 borderRadius: 14,
                 padding: '20px 22px',
-                border: isSelected ? '2px solid #0E5E48' : `1px solid ${card.badgeBorder}`,
+                border: isSelected ? '2px solid #10B981' : `1px solid ${card.badgeBorder}`,
                 boxShadow: isSelected ? '0 4px 12px rgba(14, 94, 72, 0.12)' : '0 1px 3px rgba(16,24,40,0.04)',
                 display: 'flex',
                 flexDirection: 'column',
@@ -290,8 +290,8 @@ export default function MaintenanceComplaints() {
                   borderRadius: 8,
                   fontSize: 13,
                   fontWeight: 700,
-                  border: isActive ? '1px solid #0E5E48' : '1px solid #E2E8F0',
-                  background: isActive ? '#0E5E48' : '#FFFFFF',
+                  border: isActive ? '1px solid #10B981' : '1px solid #E2E8F0',
+                  background: isActive ? '#10B981' : '#FFFFFF',
                   color: isActive ? '#FFFFFF' : '#475569',
                   cursor: 'pointer',
                   transition: 'all 0.15s ease',
@@ -408,7 +408,7 @@ export default function MaintenanceComplaints() {
                   marginTop: 12,
                   padding: '7px 16px',
                   borderRadius: 8,
-                  background: '#0E5E48',
+                  background: '#10B981',
                   color: '#fff',
                   border: 'none',
                   fontSize: 12.5,
@@ -481,7 +481,7 @@ export default function MaintenanceComplaints() {
                             <button
                               className="gfh-portal-btn"
                               onClick={() => handleStatusUpdate(c.id, 'resolved')}
-                              style={{ display: 'inline-flex', alignItems: 'center', gap: 5, padding: '6px 12px', fontSize: 12, fontWeight: 700, borderRadius: 8, background: '#0E5E48', color: '#fff', border: 'none', cursor: 'pointer', boxShadow: '0 1px 2px rgba(14, 94, 72, 0.2)' }}
+                              style={{ display: 'inline-flex', alignItems: 'center', gap: 5, padding: '6px 12px', fontSize: 12, fontWeight: 700, borderRadius: 8, background: '#10B981', color: '#fff', border: 'none', cursor: 'pointer', boxShadow: '0 1px 2px rgba(14, 94, 72, 0.2)' }}
                             >
                               <Icon path={icons.check} size={12} />
                               Resolve

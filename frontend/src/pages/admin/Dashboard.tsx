@@ -396,7 +396,7 @@ function UnitDropdown({
                 padding: '10px 14px',
                 fontSize: 13,
                 fontWeight: value === '' ? 700 : 500,
-                color: value === '' ? '#0F8A67' : '#334155',
+                color: value === '' ? '#10B981' : '#334155',
                 background: value === '' ? '#ECFDF8' : '#ffffff',
                 cursor: 'pointer',
                 borderBottom: '1px solid #F1F5F9',
@@ -423,7 +423,7 @@ function UnitDropdown({
                     padding: '9px 14px',
                     fontSize: 13,
                     fontWeight: isSelected ? 700 : 500,
-                    color: isSelected ? '#0F8A67' : '#1E293B',
+                    color: isSelected ? '#10B981' : '#1E293B',
                     background: isSelected ? '#ECFDF8' : '#ffffff',
                     cursor: 'pointer',
                     borderBottom: '1px solid #F8FAFC',
@@ -625,7 +625,7 @@ export default function AdminDashboard() {
             <h1 style={{ fontFamily: "'Inter', sans-serif", fontSize: 26, fontWeight: 800, color: '#0F172A', margin: 0, letterSpacing: '-0.01em' }}>
               Dashboard Overview
             </h1>
-            <span style={{ fontSize: 12, fontWeight: 700, color: '#0E5E48', background: '#ECFDF8', border: '1px solid #A7F3DC', borderRadius: 8, padding: '4px 10px' }}>
+            <span style={{ fontSize: 12, fontWeight: 700, color: '#10B981', background: '#ECFDF8', border: '1px solid #A7F3DC', borderRadius: 8, padding: '4px 10px' }}>
               Live Metrics
             </span>
           </div>
@@ -641,7 +641,7 @@ export default function AdminDashboard() {
             display: 'inline-flex',
             alignItems: 'center',
             gap: 8,
-            background: '#0E5E48',
+            background: '#10B981',
             color: '#FFFFFF',
             border: 'none',
             borderRadius: 10,
@@ -655,10 +655,10 @@ export default function AdminDashboard() {
             fontFamily: "'Inter', sans-serif",
           }}
           onMouseEnter={e => {
-            e.currentTarget.style.background = '#06382C'
+            e.currentTarget.style.background = '#059669'
           }}
           onMouseLeave={e => {
-            e.currentTarget.style.background = '#0E5E48'
+            e.currentTarget.style.background = '#10B981'
           }}
         >
           <Icon path={icons.refresh} size={15} />

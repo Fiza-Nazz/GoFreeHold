@@ -159,7 +159,7 @@ export default function TeamsPage() {
             display: 'inline-flex',
             alignItems: 'center',
             gap: 8,
-            background: '#0E5E48',
+            background: '#10B981',
             color: '#FFFFFF',
             border: 'none',
             borderRadius: 10,
@@ -176,7 +176,7 @@ export default function TeamsPage() {
             e.currentTarget.style.transform = 'translateY(-1px)'
           }}
           onMouseLeave={e => {
-            e.currentTarget.style.background = '#0E5E48'
+            e.currentTarget.style.background = '#10B981'
             e.currentTarget.style.transform = 'translateY(0)'
           }}
         >
@@ -191,7 +191,7 @@ export default function TeamsPage() {
           <div style={{ fontSize: 11.5, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px', color: '#64748B' }}>
             Total Teams
           </div>
-          <div style={{ fontSize: 24, fontWeight: 800, color: '#0E5E48', marginTop: 4 }}>
+          <div style={{ fontSize: 24, fontWeight: 800, color: '#10B981', marginTop: 4 }}>
             {stats.total}
           </div>
           <div style={{ fontSize: 11.5, color: '#94A3B8', marginTop: 2 }}>Registered service squads</div>
@@ -315,7 +315,7 @@ export default function TeamsPage() {
                         <a
                           href={`tel:${t.phone}`}
                           style={{
-                            color: '#0E5E48',
+                            color: '#10B981',
                             fontWeight: 600,
                             textDecoration: 'none',
                             display: 'inline-flex',
@@ -479,7 +479,7 @@ export default function TeamsPage() {
                     fontWeight: 700,
                     fontSize: 13,
                     padding: '9px 20px',
-                    background: '#0E5E48',
+                    background: '#10B981',
                     color: '#ffffff',
                     border: 'none',
                     cursor: isSaving ? 'not-allowed' : 'pointer',

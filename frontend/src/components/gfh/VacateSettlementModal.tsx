@@ -203,14 +203,14 @@ export default function VacateSettlementModal({
             transition: all 0.15s ease;
           }
           .gfh-vacate-input:focus {
-            border-color: #0E5E48 !important;
+            border-color: #10B981 !important;
             box-shadow: 0 0 0 3px rgba(14, 94, 72, 0.15) !important;
           }
           .gfh-btn-confirm-vacate {
             padding: 11px 22px;
             border-radius: 8px;
             border: 1px solid #064E3B;
-            background: linear-gradient(135deg, #0E5E48 0%, #064E3B 100%);
+            background: linear-gradient(135deg, #10B981 0%, #064E3B 100%);
             color: #FFFFFF;
             font-weight: 700;
             font-size: 13.5px;
@@ -222,7 +222,7 @@ export default function VacateSettlementModal({
             transition: all 0.18s ease;
           }
           .gfh-btn-confirm-vacate:hover:not(:disabled) {
-            background: linear-gradient(135deg, #094434 0%, #042B22 100%);
+            background: linear-gradient(135deg, #094434 0%, #059669 100%);
             box-shadow: 0 5px 16px rgba(14, 94, 72, 0.38);
             transform: translateY(-1px);
           }
@@ -251,7 +251,7 @@ export default function VacateSettlementModal({
         {/* Modal Header — GoFreeHold Executive Theme */}
         <div
           style={{
-            background: 'linear-gradient(135deg, #06382C 0%, #0A4D3C 60%, #115E59 100%)',
+            background: 'linear-gradient(135deg, #059669 0%, #0A4D3C 60%, #115E59 100%)',
             padding: '18px 24px',
             color: '#FFFFFF',
             display: 'flex',
@@ -379,7 +379,7 @@ export default function VacateSettlementModal({
                 style={{
                   fontSize: 12,
                   fontWeight: 800,
-                  color: '#042B22',
+                  color: '#059669',
                   textTransform: 'uppercase',
                   letterSpacing: '0.6px',
                 }}

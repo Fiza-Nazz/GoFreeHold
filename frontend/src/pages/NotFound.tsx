@@ -48,14 +48,14 @@ export default function NotFound() {
           boxShadow: '0 20px 45px -10px rgba(6, 56, 44, 0.08)',
         }}
       >
-        <CornerBrackets color="#0E5E48" />
+        <CornerBrackets color="#10B981" />
 
         <div
           style={{
             fontFamily: "'Inter', sans-serif",
             fontSize: 72,
             fontWeight: 900,
-            background: 'linear-gradient(135deg, #042B22 0%, #0E5E48 100%)',
+            background: 'linear-gradient(135deg, #059669 0%, #10B981 100%)',
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
             backgroundClip: 'text',
@@ -94,7 +94,7 @@ export default function NotFound() {
             fontSize: 13,
             fontWeight: 700,
             padding: '12px 26px',
-            background: '#0E5E48',
+            background: '#10B981',
             color: '#FFFFFF',
             textDecoration: 'none',
             letterSpacing: '0.03em',

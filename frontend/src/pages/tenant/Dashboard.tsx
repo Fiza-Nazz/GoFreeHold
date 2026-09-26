@@ -163,7 +163,7 @@ export default function TenantDashboard() {
       sub: 'Lease Agreement',
       icon: icons.contract,
       iconBg: '#ECFDF8',
-      iconColor: '#0E5E48',
+      iconColor: '#10B981',
       badgeBg: '#ECFDF8',
       badgeColor: '#065F46',
       badgeBorder: '#A7F3DC',
@@ -175,7 +175,7 @@ export default function TenantDashboard() {
       sub: 'Official Billing',
       icon: icons.bolt,
       iconBg: '#F0FDF4',
-      iconColor: '#0F8A67',
+      iconColor: '#10B981',
       badgeBg: '#F0FDF4',
       badgeColor: '#065F46',
       badgeBorder: '#BBF7D0',
@@ -202,7 +202,7 @@ export default function TenantDashboard() {
       {/* Hero Header */}
       <div className="fade-in" style={heroStyle}>
         <div>
-          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 12, fontWeight: 700, letterSpacing: '0.6px', textTransform: 'uppercase', color: '#0F8A67', marginBottom: 2 }}>
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 12, fontWeight: 700, letterSpacing: '0.6px', textTransform: 'uppercase', color: '#10B981', marginBottom: 2 }}>
             <span style={{ width: 7, height: 7, borderRadius: '50%', background: '#10B981', display: 'inline-block' }} />
             Resident Portal
           </div>
@@ -222,7 +222,7 @@ export default function TenantDashboard() {
             alignItems: 'center',
             gap: 8,
             padding: '10px 18px',
-            background: '#0E5E48',
+            background: '#10B981',
             color: '#FFFFFF',
             border: 'none',
             borderRadius: 10,
@@ -244,7 +244,7 @@ export default function TenantDashboard() {
         <div
           className="fade-in"
           style={{
-            background: 'linear-gradient(135deg, #06382C 0%, #0E5E48 100%)',
+            background: 'linear-gradient(135deg, #059669 0%, #10B981 100%)',
             borderRadius: 16,
             padding: '22px 26px',
             color: '#FFFFFF',
@@ -299,7 +299,7 @@ export default function TenantDashboard() {
                 padding: '8px 14px',
                 borderRadius: 8,
                 background: '#FFFFFF',
-                color: '#06382C',
+                color: '#059669',
                 fontSize: 12.5,
                 fontWeight: 700,
                 textDecoration: 'none',
@@ -413,7 +413,7 @@ export default function TenantDashboard() {
             desc: 'Download payment receipts & track PDC cheques cleared',
             icon: icons.receipt,
             iconBg: '#F0FDF4',
-            iconColor: '#0F8A67',
+            iconColor: '#10B981',
             linkText: 'View Receipts',
           },
           {
@@ -452,7 +452,7 @@ export default function TenantDashboard() {
                 <div style={{ fontSize: 12, color: '#64748B', marginTop: 2, lineHeight: 1.4 }}>{action.desc}</div>
               </div>
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12.5, fontWeight: 700, color: '#0E5E48', marginTop: 4 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12.5, fontWeight: 700, color: '#10B981', marginTop: 4 }}>
               <span>{action.linkText}</span>
               <Icon path={icons.arrowRight} size={14} />
             </div>
@@ -476,7 +476,7 @@ export default function TenantDashboard() {
             style={{
               fontSize: 12.5,
               fontWeight: 700,
-              color: '#0E5E48',
+              color: '#10B981',
               textDecoration: 'none',
               display: 'inline-flex',
               alignItems: 'center',
@@ -491,7 +491,7 @@ export default function TenantDashboard() {
           <div style={{ textAlign: 'center', padding: 40 }}><span className="spinner" /></div>
         ) : complaints.length === 0 ? (
           <div style={{ textAlign: 'center', padding: '40px 20px' }}>
-            <div style={{ width: 48, height: 48, borderRadius: '50%', background: '#F0FDF4', color: '#0F8A67', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 12px' }}>
+            <div style={{ width: 48, height: 48, borderRadius: '50%', background: '#F0FDF4', color: '#10B981', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 12px' }}>
               <Icon path={icons.wrench} size={22} />
             </div>
             <p style={{ fontSize: 14, fontWeight: 700, color: THEME.ink, margin: 0 }}>No maintenance complaints submitted yet.</p>
@@ -502,7 +502,7 @@ export default function TenantDashboard() {
                 marginTop: 14,
                 padding: '8px 16px',
                 borderRadius: 8,
-                background: '#0E5E48',
+                background: '#10B981',
                 color: '#fff',
                 border: 'none',
                 fontSize: 12.5,
@@ -626,7 +626,7 @@ export default function TenantDashboard() {
                           height: 34,
                           borderRadius: 8,
                           background: '#ECFDF8',
-                          color: '#0E5E48',
+                          color: '#10B981',
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
@@ -717,7 +717,7 @@ export default function TenantDashboard() {
                 <button type="button" onClick={() => setIsFormOpen(false)} style={{ display: 'inline-flex', alignItems: 'center', gap: 6, borderRadius: 8, fontWeight: 700, fontSize: 13, padding: '9px 16px', background: '#F1F5F9', color: '#475569', border: `1px solid ${THEME.border}`, cursor: 'pointer' }}>
                   Cancel
                 </button>
-                <button type="submit" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, borderRadius: 8, fontWeight: 700, fontSize: 13, padding: '9px 18px', background: '#0E5E48', color: '#fff', border: 'none', cursor: 'pointer', boxShadow: '0 2px 6px rgba(14, 94, 72, 0.25)' }}>
+                <button type="submit" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, borderRadius: 8, fontWeight: 700, fontSize: 13, padding: '9px 18px', background: '#10B981', color: '#fff', border: 'none', cursor: 'pointer', boxShadow: '0 2px 6px rgba(14, 94, 72, 0.25)' }}>
                   <Icon path={icons.check} size={14} />
                   Submit Complaint
                 </button>

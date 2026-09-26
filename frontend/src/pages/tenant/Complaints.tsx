@@ -95,7 +95,7 @@ export default function TenantComplaints() {
       label: 'Total complaints',
       icon: icons.ticket,
       iconBg: '#ECFDF8',
-      iconColor: '#0E5E48',
+      iconColor: '#10B981',
       badgeBg: '#ECFDF8',
       badgeColor: '#065F46',
       badgeBorder: '#A7F3DC',
@@ -119,7 +119,7 @@ export default function TenantComplaints() {
       label: 'Resolved',
       icon: icons.check,
       iconBg: '#ECFDF8',
-      iconColor: '#0F8A67',
+      iconColor: '#10B981',
       badgeBg: '#F0FDF4',
       badgeColor: '#065F46',
       badgeBorder: '#BBF7D0',
@@ -134,7 +134,7 @@ export default function TenantComplaints() {
       {/* Hero Header */}
       <div className="fade-in" style={heroStyle}>
         <div>
-          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 12, fontWeight: 700, letterSpacing: '0.6px', textTransform: 'uppercase', color: '#0F8A67', marginBottom: 2 }}>
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 12, fontWeight: 700, letterSpacing: '0.6px', textTransform: 'uppercase', color: '#10B981', marginBottom: 2 }}>
             <span style={{ width: 7, height: 7, borderRadius: '50%', background: '#10B981', display: 'inline-block' }} />
             Resident Support
           </div>
@@ -154,7 +154,7 @@ export default function TenantComplaints() {
             alignItems: 'center',
             gap: 8,
             padding: '10px 18px',
-            background: '#0E5E48',
+            background: '#10B981',
             color: '#FFFFFF',
             borderRadius: 10,
             fontSize: 13,
@@ -181,7 +181,7 @@ export default function TenantComplaints() {
                 background: card.iconBg,
                 borderRadius: 16,
                 padding: '20px 22px',
-                border: isSelected ? '2px solid #0E5E48' : `1px solid ${card.badgeBorder}`,
+                border: isSelected ? '2px solid #10B981' : `1px solid ${card.badgeBorder}`,
                 boxShadow: isSelected ? '0 6px 16px rgba(14, 94, 72, 0.12)' : '0 1px 3px rgba(16,24,40,0.04)',
                 display: 'flex',
                 flexDirection: 'column',
@@ -226,7 +226,7 @@ export default function TenantComplaints() {
                 <div style={{ fontSize: 28, fontWeight: 800, color: '#0F172A', lineHeight: 1.15, letterSpacing: '-0.02em' }}>
                   {isLoading ? '—' : card.value}
                 </div>
-                <div style={{ fontSize: 13.5, fontWeight: 600, color: isSelected ? '#0E5E48' : '#64748B', marginTop: 4 }}>
+                <div style={{ fontSize: 13.5, fontWeight: 600, color: isSelected ? '#10B981' : '#64748B', marginTop: 4 }}>
                   {card.label}
                 </div>
               </div>
@@ -274,8 +274,8 @@ export default function TenantComplaints() {
                   borderRadius: 8,
                   fontSize: 13,
                   fontWeight: 700,
-                  border: isActive ? '1px solid #0E5E48' : '1px solid #E2E8F0',
-                  background: isActive ? '#0E5E48' : '#FFFFFF',
+                  border: isActive ? '1px solid #10B981' : '1px solid #E2E8F0',
+                  background: isActive ? '#10B981' : '#FFFFFF',
                   color: isActive ? '#FFFFFF' : '#475569',
                   cursor: 'pointer',
                   transition: 'all 0.15s ease',
@@ -360,7 +360,7 @@ export default function TenantComplaints() {
                   marginTop: 14,
                   padding: '8px 16px',
                   borderRadius: 8,
-                  background: '#0E5E48',
+                  background: '#10B981',
                   color: '#fff',
                   border: 'none',
                   fontSize: 12.5,

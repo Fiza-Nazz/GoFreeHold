@@ -58,7 +58,7 @@ const labelStyle: React.CSSProperties = {
   display: 'block',
   fontSize: 12,
   fontWeight: 700,
-  color: '#0E5E48',
+  color: '#10B981',
   textTransform: 'uppercase',
   letterSpacing: '0.3px',
   marginBottom: 6,
@@ -147,7 +147,7 @@ export default function RentLedger() {
         }
         .gfh-portal-page .gfh-filter-input:focus {
           outline: none !important;
-          border-color: #0E5E48 !important;
+          border-color: #10B981 !important;
           box-shadow: 0 0 0 3px rgba(14, 94, 72, 0.15) !important;
         }
       `}</style>
@@ -397,7 +397,7 @@ export default function RentLedger() {
             <p style={{ fontSize: 13, color: THEME.textMuted, marginBottom: 16, lineHeight: 1.5 }}>
               This entry will be marked as deleted and an audit log will be created. It can never be permanently erased.
               <br />
-              <strong style={{ color: '#0E5E48' }}>
+              <strong style={{ color: '#10B981' }}>
                 Date: {formatDate(deleteModal.date)} | Debit: AED {Number(deleteModal.debit).toLocaleString()} | Credit: AED {Number(deleteModal.credit).toLocaleString()}
               </strong>
             </p>

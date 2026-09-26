@@ -56,7 +56,7 @@ export default function MaintenanceProfile() {
               height: 58,
               flexShrink: 0,
               borderRadius: 14,
-              background: '#0E5E48',
+              background: '#10B981',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
@@ -110,7 +110,7 @@ export default function MaintenanceProfile() {
               }}
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                <div style={{ width: 38, height: 38, borderRadius: 8, background: '#ECFDF8', color: '#0E5E48', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <div style={{ width: 38, height: 38, borderRadius: 8, background: '#ECFDF8', color: '#10B981', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <Icon path={row.icon} size={18} />
                 </div>
                 <div style={{ fontSize: 12, color: THEME.textMuted, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.3px' }}>

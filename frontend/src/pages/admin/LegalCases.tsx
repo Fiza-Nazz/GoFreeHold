@@ -401,7 +401,7 @@ export default function LegalCases() {
                     const statusColors: Record<string, { active: string; inactive: { bg: string; color: string; border: string } }> = {
                       open:        { active: '#991b1b', inactive: { bg: '#fef2f2', color: '#991b1b', border: '#fecaca' } },
                       in_progress: { active: '#b45309', inactive: { bg: '#fffbeb', color: '#b45309', border: '#fde68a' } },
-                      closed:      { active: '#065f46', inactive: { bg: '#f0fdf4', color: '#065f46', border: '#bbf7d0' } },
+                      closed:      { active: '#10B981', inactive: { bg: '#f0fdf4', color: '#065f46', border: '#bbf7d0' } },
                     }
                     const c = statusColors[s] || { active: '#374151', inactive: { bg: '#f3f4f6', color: '#374151', border: '#d1d5db' } }
                     return (
@@ -430,7 +430,7 @@ export default function LegalCases() {
                   value={detail.notes || ''}
                   onChange={(e) => setDetail({ ...detail, notes: e.target.value })}
                 />
-                <button type="button" className="gfh-portal-btn" style={{ ...ghostBtnStyle, marginTop: 8, background: '#065f46', display: 'inline-flex', alignItems: 'center', gap: 6 }} onClick={saveNotes}>
+                <button type="button" className="gfh-portal-btn" style={{ ...ghostBtnStyle, marginTop: 8, background: '#10B981', display: 'inline-flex', alignItems: 'center', gap: 6 }} onClick={saveNotes}>
                   <Icon path={ICONS.check} size={14} />
                   Save Notes
                 </button>

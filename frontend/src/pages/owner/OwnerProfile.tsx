@@ -35,7 +35,7 @@ export default function OwnerProfile() {
           <div style={{ fontSize: 22, fontWeight: 800, color: THEME.ink, margin: 0 }}>My Profile</div>
           <div style={{ fontSize: 12, color: '#9ca3af', marginTop: 6 }}>Your owner account details</div>
         </div>
-        <Link to="/owner/dashboard" className="gfh-portal-btn" style={{ ...ghostBtnStyle, background: '#0E5E48', borderRadius: 8 }}>
+        <Link to="/owner/dashboard" className="gfh-portal-btn" style={{ ...ghostBtnStyle, background: '#10B981', borderRadius: 8 }}>
           ← Back to dashboard
         </Link>
       </div>
@@ -59,7 +59,7 @@ export default function OwnerProfile() {
               height: 58,
               flexShrink: 0,
               borderRadius: 14,
-              background: '#0E5E48',
+              background: '#10B981',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
@@ -113,7 +113,7 @@ export default function OwnerProfile() {
               }}
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                <div style={{ width: 38, height: 38, borderRadius: 8, background: '#ECFDF8', color: '#0E5E48', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <div style={{ width: 38, height: 38, borderRadius: 8, background: '#ECFDF8', color: '#10B981', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <Icon path={row.icon} size={18} />
                 </div>
                 <div style={{ fontSize: 12, color: THEME.textMuted, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.3px' }}>

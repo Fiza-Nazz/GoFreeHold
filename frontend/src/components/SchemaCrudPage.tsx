@@ -199,7 +199,7 @@ export default function SchemaCrudPage({
             display: 'inline-flex',
             alignItems: 'center',
             gap: 8,
-            background: showForm ? '#f1f5f9' : '#0E5E48',
+            background: showForm ? '#f1f5f9' : '#10B981',
             border: showForm ? '1px solid #cbd5e1' : 'none',
             color: showForm ? '#0F172A' : '#ffffff',
             borderRadius: 10,
@@ -212,10 +212,10 @@ export default function SchemaCrudPage({
             fontFamily: "'Inter', sans-serif",
           }}
           onMouseEnter={e => {
-            if (!showForm) e.currentTarget.style.background = '#06382C'
+            if (!showForm) e.currentTarget.style.background = '#059669'
           }}
           onMouseLeave={e => {
-            if (!showForm) e.currentTarget.style.background = '#0E5E48'
+            if (!showForm) e.currentTarget.style.background = '#10B981'
           }}
         >
           {showForm ? 'Cancel' : addNewLabel}
@@ -301,7 +301,7 @@ export default function SchemaCrudPage({
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: 8,
-                background: '#0E5E48',
+                background: '#10B981',
                 color: '#ffffff',
                 border: 'none',
                 borderRadius: 8,

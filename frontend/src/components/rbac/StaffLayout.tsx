@@ -29,21 +29,22 @@ export default function StaffLayout() {
             width: 38,
             height: 38,
             borderRadius: 8,
-            background: 'rgba(52, 211, 165, 0.15)',
-            border: '1px solid rgba(52, 211, 165, 0.35)',
+            background: '#10B981',
+            border: '1px solid #059669',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            color: '#34D3A5',
+            color: '#FFFFFF',
             flexShrink: 0,
+            boxShadow: '0 2px 6px rgba(16, 185, 129, 0.25)',
           }}>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M3 21h18M5 21V5a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v16M13 21V9a1 1 0 0 1 1-1h5a1 1 0 0 1 1 1v12" />
             </svg>
           </div>
           <div>
-            <strong style={{ fontSize: 18, fontWeight: 800, color: '#ffffff', letterSpacing: '-0.01em', display: 'block', lineHeight: 1.1 }}>GoFreeHold</strong>
-            <span style={{ fontSize: 10, fontWeight: 700, color: '#A7F3DC', textTransform: 'uppercase', letterSpacing: '1px' }}>
+            <strong style={{ fontSize: 18, fontWeight: 800, color: '#10B981', letterSpacing: '-0.01em', display: 'block', lineHeight: 1.1 }}>GoFreeHold</strong>
+            <span style={{ fontSize: 10, fontWeight: 700, color: '#64748B', textTransform: 'uppercase', letterSpacing: '1px' }}>
               {user?.role} portal
             </span>
           </div>
@@ -73,14 +74,14 @@ export default function StaffLayout() {
               width: 36,
               height: 36,
               borderRadius: '50%',
-              background: '#0E5E48',
+              background: '#10B981',
               color: '#FFFFFF',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               fontWeight: 700,
               fontSize: 13,
-              boxShadow: '0 2px 6px rgba(14, 94, 72, 0.25)',
+              boxShadow: '0 2px 6px rgba(16, 185, 129, 0.25)',
             }}>
               {initials}
             </div>
@@ -91,9 +92,9 @@ export default function StaffLayout() {
                 <span style={{
                   fontSize: 10,
                   fontWeight: 700,
-                  background: '#ECFDF8',
+                  background: '#ECFDF5',
                   color: '#065F46',
-                  border: '1px solid #A7F3DC',
+                  border: '1px solid #A7F3D0',
                   padding: '2px 7px',
                   borderRadius: 999,
                   textTransform: 'uppercase',

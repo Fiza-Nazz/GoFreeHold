@@ -380,7 +380,7 @@ export default function PropertyDrillDown() {
             onClick={() => { setAddPropertyError(null); setShowAddPropertyModal(true) }}
             className="gfh-portal-btn"
             style={{
-              background: '#0E5E48',
+              background: '#10B981',
               color: '#FFFFFF',
               borderRadius: 8,
               fontWeight: 700,
@@ -396,7 +396,7 @@ export default function PropertyDrillDown() {
           >
             <Icon path={ICONS.plus} size={15} /> + Add Property
           </button>
-          <Link to="/owner/dashboard" className="gfh-portal-btn" style={{ ...ghostBtnStyle, background: '#0E5E48', borderRadius: 8 }}>
+          <Link to="/owner/dashboard" className="gfh-portal-btn" style={{ ...ghostBtnStyle, background: '#10B981', borderRadius: 8 }}>
             ← Back to dashboard
           </Link>
         </div>
@@ -412,7 +412,7 @@ export default function PropertyDrillDown() {
             desc: searchQuery || typeFilter !== 'ALL' ? `of ${properties.length} total` : 'All registered buildings',
             icon: icons.building,
             iconBg: '#ECFDF8',
-            iconColor: '#0E5E48',
+            iconColor: '#10B981',
             badgeBg: '#ECFDF8',
             badgeColor: '#065F46',
             badgeBorder: '#A7F3DC',
@@ -436,7 +436,7 @@ export default function PropertyDrillDown() {
             desc: 'Under active lease',
             icon: icons.check,
             iconBg: '#F0FDF4',
-            iconColor: '#0F8A67',
+            iconColor: '#10B981',
             badgeBg: '#F0FDF4',
             badgeColor: '#065F46',
             badgeBorder: '#BBF7D0',
@@ -448,7 +448,7 @@ export default function PropertyDrillDown() {
             desc: 'Available for rent',
             icon: icons.alert,
             iconBg: stats.vacantUnits > 0 ? '#FEF2F2' : '#F0FDF4',
-            iconColor: stats.vacantUnits > 0 ? '#DC2626' : '#0F8A67',
+            iconColor: stats.vacantUnits > 0 ? '#DC2626' : '#10B981',
             badgeBg: stats.vacantUnits > 0 ? '#FEF2F2' : '#F0FDF4',
             badgeColor: stats.vacantUnits > 0 ? '#991B1B' : '#065F46',
             badgeBorder: stats.vacantUnits > 0 ? '#FECACA' : '#BBF7D0',
@@ -699,7 +699,7 @@ export default function PropertyDrillDown() {
             <div style={{ textAlign: 'center', padding: 40 }}><span className="spinner" /></div>
           ) : properties.length === 0 ? (
             <div style={{ textAlign: 'center', padding: '40px 20px', background: '#F8FAFC', borderRadius: 12, border: '1px dashed #CBD5E1' }}>
-              <div style={{ width: 44, height: 44, borderRadius: 10, background: '#ECFDF8', color: '#0E5E48', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', marginBottom: 10 }}>
+              <div style={{ width: 44, height: 44, borderRadius: 10, background: '#ECFDF8', color: '#10B981', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', marginBottom: 10 }}>
                 <Icon path={icons.building} size={22} />
               </div>
               <p style={{ fontSize: 15, fontWeight: 700, color: '#0F172A', margin: '0 0 6px 0' }}>No properties registered yet</p>
@@ -713,7 +713,7 @@ export default function PropertyDrillDown() {
                   padding: '9px 18px',
                   borderRadius: 8,
                   border: 'none',
-                  background: '#0E5E48',
+                  background: '#10B981',
                   color: '#FFFFFF',
                   fontSize: 13,
                   fontWeight: 700,
@@ -742,7 +742,7 @@ export default function PropertyDrillDown() {
                   padding: '8px 16px',
                   borderRadius: 8,
                   border: 'none',
-                  background: '#0E5E48',
+                  background: '#10B981',
                   color: '#FFFFFF',
                   fontSize: 12.5,
                   fontWeight: 600,
@@ -765,7 +765,7 @@ export default function PropertyDrillDown() {
                       cursor: 'pointer',
                       padding: '16px 18px',
                       background: isSelected ? '#ECFDF8' : '#FFFFFF',
-                      border: isSelected ? '1.5px solid #0F8A67' : '1px solid #E2E8F0',
+                      border: isSelected ? '1.5px solid #10B981' : '1px solid #E2E8F0',
                       borderRadius: 12,
                       boxShadow: isSelected ? '0 2px 8px rgba(15, 138, 103, 0.12)' : '0 1px 2px rgba(16,24,40,0.03)',
                       transition: 'all 0.15s ease',
@@ -773,7 +773,7 @@ export default function PropertyDrillDown() {
                   >
                     <div className="gfh-owner-property-info">
                       <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
-                        <h3 className="gfh-owner-property-name" style={{ margin: 0, color: isSelected ? '#0E5E48' : THEME.ink, fontSize: 15, fontWeight: 800 }}>
+                        <h3 className="gfh-owner-property-name" style={{ margin: 0, color: isSelected ? '#10B981' : THEME.ink, fontSize: 15, fontWeight: 800 }}>
                           {prop.name}
                         </h3>
                         {prop.type && (
@@ -841,7 +841,7 @@ export default function PropertyDrillDown() {
                     setShowAddUnitModal(true)
                   }}
                   style={{
-                    background: '#0E5E48',
+                    background: '#10B981',
                     color: '#FFFFFF',
                     border: 'none',
                     borderRadius: 6,
@@ -925,8 +925,8 @@ export default function PropertyDrillDown() {
                       style={{
                         padding: '4px 9px',
                         borderRadius: 999,
-                        border: active ? '1px solid #0E5E48' : '1px solid #E2E8F0',
-                        background: active ? '#0E5E48' : '#FFFFFF',
+                        border: active ? '1px solid #10B981' : '1px solid #E2E8F0',
+                        background: active ? '#10B981' : '#FFFFFF',
                         color: active ? '#FFFFFF' : '#475569',
                         fontSize: 11,
                         fontWeight: active ? 700 : 500,
@@ -957,7 +957,7 @@ export default function PropertyDrillDown() {
                   style={{
                     background: 'none',
                     border: 'none',
-                    color: '#0E5E48',
+                    color: '#10B981',
                     fontSize: 12,
                     fontWeight: 700,
                     cursor: 'pointer',
@@ -986,7 +986,7 @@ export default function PropertyDrillDown() {
                         onClick={() => navigate(`/owner/units/${unit.id}`)}
                       >
                         <td style={{ ...tdStyle, fontWeight: 700 }}>
-                          <Link to={`/owner/units/${unit.id}`} className="gfh-portal-link" style={{ color: '#0E5E48' }} onClick={(e) => e.stopPropagation()}>
+                          <Link to={`/owner/units/${unit.id}`} className="gfh-portal-link" style={{ color: '#10B981' }} onClick={(e) => e.stopPropagation()}>
                             {unit.number}
                           </Link>
                         </td>
@@ -1046,7 +1046,7 @@ export default function PropertyDrillDown() {
               height: 52,
               borderRadius: 14,
               background: '#ECFDF8',
-              color: '#0E5E48',
+              color: '#10B981',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
@@ -1082,14 +1082,14 @@ export default function PropertyDrillDown() {
               boxShadow: '0 20px 45px -10px rgba(6, 56, 44, 0.25)',
             }}
           >
-            <CornerBrackets color="#0E5E48" />
+            <CornerBrackets color="#10B981" />
 
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 14 }}>
               <div>
                 <h2 style={{ fontSize: 20, fontWeight: 800, margin: 0, color: '#0F172A' }}>
                   Add New Property
                 </h2>
-                <div style={{ fontSize: 12.5, color: '#0E5E48', fontWeight: 600, marginTop: 3 }}>
+                <div style={{ fontSize: 12.5, color: '#10B981', fontWeight: 600, marginTop: 3 }}>
                   Register a building or real estate asset to your portfolio
                 </div>
               </div>
@@ -1196,7 +1196,7 @@ export default function PropertyDrillDown() {
                     fontWeight: 700,
                     fontSize: 13,
                     padding: '9px 20px',
-                    backgroundColor: '#0E5E48',
+                    backgroundColor: '#10B981',
                     color: '#FFFFFF',
                     border: 'none',
                     cursor: addPropertyBusy ? 'not-allowed' : 'pointer',
@@ -1229,14 +1229,14 @@ export default function PropertyDrillDown() {
               boxShadow: '0 20px 45px -10px rgba(6, 56, 44, 0.25)',
             }}
           >
-            <CornerBrackets color="#0E5E48" />
+            <CornerBrackets color="#10B981" />
 
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 14 }}>
               <div>
                 <h2 style={{ fontSize: 20, fontWeight: 800, margin: 0, color: '#0F172A' }}>
                   Add New Unit
                 </h2>
-                <div style={{ fontSize: 12.5, color: '#0E5E48', fontWeight: 600, marginTop: 3 }}>
+                <div style={{ fontSize: 12.5, color: '#10B981', fontWeight: 600, marginTop: 3 }}>
                   {selectedProperty ? `Adding to ${selectedProperty.name}` : 'Assign a new unit to your property'}
                 </div>
               </div>
@@ -1401,7 +1401,7 @@ export default function PropertyDrillDown() {
                   id="unitFurnished"
                   checked={unitForm.furnished}
                   onChange={e => setUnitForm({ ...unitForm, furnished: e.target.checked })}
-                  style={{ width: 16, height: 16, accentColor: '#0E5E48', cursor: 'pointer' }}
+                  style={{ width: 16, height: 16, accentColor: '#10B981', cursor: 'pointer' }}
                 />
                 <label htmlFor="unitFurnished" style={{ fontSize: 13, fontWeight: 600, color: '#334155', cursor: 'pointer' }}>
                   Fully Furnished unit
@@ -1424,7 +1424,7 @@ export default function PropertyDrillDown() {
                     fontWeight: 700,
                     fontSize: 13,
                     padding: '9px 20px',
-                    backgroundColor: '#0E5E48',
+                    backgroundColor: '#10B981',
                     color: '#FFFFFF',
                     border: 'none',
                     cursor: addUnitBusy ? 'not-allowed' : 'pointer',

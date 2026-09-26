@@ -60,7 +60,7 @@ const inputStyle: React.CSSProperties = {
 const labelStyle: React.CSSProperties = {
   fontSize: 12.5,
   fontWeight: 700,
-  color: '#0E5E48',
+  color: '#10B981',
   letterSpacing: '0.4px',
   textTransform: 'uppercase',
   display: 'block',
@@ -149,10 +149,10 @@ export default function OwnerComplaints() {
 
       {/* Hero Header */}
       <div className="fade-in" style={heroStyle}>
-        <CornerBrackets color="#0E5E48" />
+        <CornerBrackets color="#10B981" />
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 14 }}>
           <div>
-            <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 11.5, fontWeight: 700, letterSpacing: '0.6px', textTransform: 'uppercase', color: '#0F8A67', marginBottom: 4 }}>
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 11.5, fontWeight: 700, letterSpacing: '0.6px', textTransform: 'uppercase', color: '#10B981', marginBottom: 4 }}>
               <span style={{ width: 7, height: 7, borderRadius: '50%', background: '#10B981', display: 'inline-block' }} />
               Property Maintenance
             </div>
@@ -195,7 +195,7 @@ export default function OwnerComplaints() {
             background: '#FFFFFF',
             borderRadius: 12,
             padding: '18px 20px',
-            border: `1.5px solid ${statusFilter === 'all' ? '#0E5E48' : '#E2E8F0'}`,
+            border: `1.5px solid ${statusFilter === 'all' ? '#10B981' : '#E2E8F0'}`,
             boxShadow: '0 1px 3px rgba(16,24,40,0.04)',
             cursor: 'pointer',
             transition: 'all 0.15s ease',
@@ -267,7 +267,7 @@ export default function OwnerComplaints() {
             background: '#FFFFFF',
             borderRadius: 12,
             padding: '18px 20px',
-            border: `1.5px solid ${statusFilter === 'resolved' ? '#065F46' : '#E2E8F0'}`,
+            border: `1.5px solid ${statusFilter === 'resolved' ? '#10B981' : '#E2E8F0'}`,
             boxShadow: '0 1px 3px rgba(16,24,40,0.04)',
             cursor: 'pointer',
             transition: 'all 0.15s ease',
@@ -282,7 +282,7 @@ export default function OwnerComplaints() {
 
       {/* Main Listing Panel */}
       <div className="fade-in" style={{ ...panelStyle, minHeight: 380, padding: 24, borderRadius: 14 }}>
-        <CornerBrackets color="#0E5E48" />
+        <CornerBrackets color="#10B981" />
 
         {isLoading ? (
           <div style={{ textAlign: 'center', padding: '60px 0', color: THEME.textMuted }}>
@@ -297,7 +297,7 @@ export default function OwnerComplaints() {
                 height: 54,
                 borderRadius: '50%',
                 background: '#ECFDF8',
-                color: '#0E5E48',
+                color: '#10B981',
                 display: 'inline-flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -469,14 +469,14 @@ export default function OwnerComplaints() {
               boxShadow: '0 20px 45px -10px rgba(6, 56, 44, 0.2)',
             }}
           >
-            <CornerBrackets color="#0E5E48" />
+            <CornerBrackets color="#10B981" />
 
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 8 }}>
               <div>
                 <h2 style={{ fontSize: 20, fontWeight: 800, margin: 0, color: '#0F172A' }}>
                   Assign Maintenance Job
                 </h2>
-                <div style={{ fontSize: 12, color: '#0E5E48', fontWeight: 600, marginTop: 2 }}>
+                <div style={{ fontSize: 12, color: '#10B981', fontWeight: 600, marginTop: 2 }}>
                   Dispatch your dedicated maintenance crew
                 </div>
               </div>
@@ -502,7 +502,7 @@ export default function OwnerComplaints() {
                 {technicians.length === 0 ? (
                   <div style={{ padding: '12px 14px', background: '#FFFBEB', border: '1px solid #FDE68A', borderRadius: 8, fontSize: 12.5, color: '#B45309' }}>
                     No maintenance technicians found under your account.{' '}
-                    <Link to="/owner/staff" style={{ color: '#0E5E48', fontWeight: 700 }}>
+                    <Link to="/owner/staff" style={{ color: '#10B981', fontWeight: 700 }}>
                       Invite Maintenance Staff
                     </Link>
                   </div>
@@ -548,7 +548,7 @@ export default function OwnerComplaints() {
                     fontWeight: 700,
                     fontSize: 13,
                     padding: '9px 18px',
-                    backgroundColor: '#0E5E48',
+                    backgroundColor: '#10B981',
                     color: '#FFFFFF',
                     border: 'none',
                     cursor: assignBusy || !selectedTech ? 'not-allowed' : 'pointer',
@@ -579,7 +579,7 @@ export default function OwnerComplaints() {
               boxShadow: '0 20px 45px -10px rgba(6, 56, 44, 0.2)',
             }}
           >
-            <CornerBrackets color="#0E5E48" />
+            <CornerBrackets color="#10B981" />
 
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 14 }}>
               <div>
@@ -652,7 +652,7 @@ export default function OwnerComplaints() {
                     fontWeight: 700,
                     fontSize: 13,
                     padding: '9px 18px',
-                    backgroundColor: '#0E5E48',
+                    backgroundColor: '#10B981',
                     color: '#FFFFFF',
                     border: 'none',
                     cursor: statusBusy ? 'not-allowed' : 'pointer',

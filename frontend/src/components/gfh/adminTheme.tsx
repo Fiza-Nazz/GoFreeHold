@@ -6,17 +6,17 @@ import type { CSSProperties } from 'react'
 /** Shared modern rounded radius used across Admin / Owner / Tenant. */
 export const RADIUS = 14
 
-// Forest Green / Emerald palette matching reference
+// Emerald Green (#10B981) palette matching GoFreeHold main site
 export const THEME = {
-  navy: '#0F8A67',          // Forest Emerald primary brand
-  navyDeep: '#06382C',      // Dark Forest Green
-  navyMid: '#0E5E48',       // Forest Mid
-  navyLight: '#18A77A',     // Brand Emerald
-  purpleDark: '#06382C',    // Replaced with Dark Forest
-  purple: '#0E5E48',        // Replaced with Forest Mid
-  purpleMid: '#18A77A',     // Brand Emerald
+  navy: '#10B981',          // Primary Emerald Green (#10B981)
+  navyDeep: '#059669',      // Hover / Deep Emerald
+  navyMid: '#10B981',       // Primary Button Emerald (#10B981)
+  navyLight: '#34D399',     // Light Emerald
+  purpleDark: '#059669',    // Deep Emerald
+  purple: '#10B981',        // Primary Emerald (#10B981)
+  purpleMid: '#10B981',     // Brand Emerald
   violet: '#10B981',        // Emerald Accent
-  violetLight: '#34D3A5',   // Light Emerald Accent
+  violetLight: '#10B981',   // Emerald Accent
   border: '#E2E8F0',
   textMuted: '#64748B',
   ink: '#0F172A',
@@ -24,17 +24,17 @@ export const THEME = {
 }
 
 export const ADMIN_COLORS = {
-  navy: '#06382C',          // Primary Dark Forest Green
-  navyDeep: '#04281E',      // Darkest Forest Green
-  navyLight: '#0E5E48',     // Mid Forest
-  purple: '#0E5E48',
-  purpleDark: '#06382C',
-  purpleLight: '#ECFDF8',
-  purpleBorder: '#A7F3DC',
-  green: '#0F8A67',         // Positive / Active / Paid / Occupied
-  greenDeep: '#06382C',
-  greenLight: '#ECFDF8',
-  greenBorder: '#A7F3DC',
+  navy: '#10B981',          // Primary Emerald Green (#10B981)
+  navyDeep: '#059669',      // Hover Emerald Green
+  navyLight: '#10B981',     // Primary Emerald Green
+  purple: '#10B981',
+  purpleDark: '#059669',
+  purpleLight: '#ECFDF5',
+  purpleBorder: '#A7F3D0',
+  green: '#10B981',         // Positive / Active / Paid / Primary Button (#10B981)
+  greenDeep: '#059669',
+  greenLight: '#ECFDF5',
+  greenBorder: '#A7F3D0',
   blue: '#0284C7',          // PDF / Download / Export / View
   blueLight: '#F0F9FF',
   blueBorder: '#BAE6FD',
@@ -146,15 +146,15 @@ export const portalPageCss = `
     font-weight: 600;
   }
   .gfh-portal-btn:hover { transform: translateY(-1px); }
-  .gfh-portal-link { color: #0D5C46 !important; text-decoration: none; font-weight: 600; }
-  .gfh-portal-link:hover { color: #06382C !important; }
+  .gfh-portal-link { color: #10B981 !important; text-decoration: none; font-weight: 600; }
+  .gfh-portal-link:hover { color: #059669 !important; }
 
   /* Standardized Rounded Pill Status Badges */
-  .status-badge-green  { background-color: #ecfdf5 !important; color: #065f46 !important; border: 1px solid #d1fae5 !important; border-radius: 999px !important; font-weight: 600; text-transform: uppercase; font-size: 11.5px; padding: 3px 10px; }
+  .status-badge-green  { background-color: #ecfdf5 !important; color: #059669 !important; border: 1px solid #a7f3d0 !important; border-radius: 999px !important; font-weight: 600; text-transform: uppercase; font-size: 11.5px; padding: 3px 10px; }
   .status-badge-blue   { background-color: #f0f9ff !important; color: #075985 !important; border: 1px solid #bae6fd !important; border-radius: 999px !important; font-weight: 600; text-transform: uppercase; font-size: 11.5px; padding: 3px 10px; }
   .status-badge-amber  { background-color: #fffbeb !important; color: #b45309 !important; border: 1px solid #fde68a !important; border-radius: 999px !important; font-weight: 600; text-transform: uppercase; font-size: 11.5px; padding: 3px 10px; }
   .status-badge-red    { background-color: #fef2f2 !important; color: #991b1b !important; border: 1px solid #fecaca !important; border-radius: 999px !important; font-weight: 600; text-transform: uppercase; font-size: 11.5px; padding: 3px 10px; }
-  .status-badge-purple { background-color: #ecfdf5 !important; color: #065f46 !important; border: 1px solid #d1fae5 !important; border-radius: 999px !important; font-weight: 600; text-transform: uppercase; font-size: 11.5px; padding: 3px 10px; }
+  .status-badge-purple { background-color: #ecfdf5 !important; color: #059669 !important; border: 1px solid #a7f3d0 !important; border-radius: 999px !important; font-weight: 600; text-transform: uppercase; font-size: 11.5px; padding: 3px 10px; }
   .status-badge-cyan   { background-color: #ecfeff !important; color: #0e7490 !important; border: 1px solid #a5f3fc !important; border-radius: 999px !important; font-weight: 600; text-transform: uppercase; font-size: 11.5px; padding: 3px 10px; }
 `
 
@@ -210,10 +210,10 @@ export const ghostBtnStyle: CSSProperties = {
   fontSize: 13,
   fontWeight: 600,
   padding: '9px 18px',
-  background: '#0D5C46',
+  background: '#10B981',
   border: 'none',
   color: '#ffffff',
   cursor: 'pointer',
   textDecoration: 'none',
-  boxShadow: '0 1px 2px rgba(13, 92, 70, 0.18)',
+  boxShadow: '0 1px 3px rgba(16, 185, 129, 0.25)',
 }

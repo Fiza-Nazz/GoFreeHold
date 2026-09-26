@@ -200,7 +200,7 @@ export default function ContractCallLogPage() {
                 <button
                   type="submit"
                   className="gfh-portal-btn"
-                  style={{ ...ghostBtnStyle, padding: '8px 15px', fontSize: 12.5, background: '#065f46' }}
+                  style={{ ...ghostBtnStyle, padding: '8px 15px', fontSize: 12.5, background: '#10B981' }}
                 >
                   Save Log
                 </button>

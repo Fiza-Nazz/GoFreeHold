@@ -166,7 +166,7 @@ export default function AdminSettings() {
               display: 'inline-flex',
               alignItems: 'center',
               gap: 8,
-              background: '#0E5E48',
+              background: '#10B981',
               color: '#FFFFFF',
               padding: '10px 20px',
               fontSize: 13.5,
@@ -187,7 +187,7 @@ export default function AdminSettings() {
             }}
             onMouseLeave={e => {
               if (!isTriggering) {
-                e.currentTarget.style.background = '#0E5E48'
+                e.currentTarget.style.background = '#10B981'
                 e.currentTarget.style.transform = 'translateY(0)'
               }
             }}

@@ -207,9 +207,9 @@ export default function UnitDetailPage() {
         <div>
           {/* Breadcrumb */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: '#64748B', fontWeight: 500, marginBottom: 6 }}>
-            <Link to="/owner/dashboard" style={{ color: '#0F8A67', textDecoration: 'none', fontWeight: 600 }}>Portfolio</Link>
+            <Link to="/owner/dashboard" style={{ color: '#10B981', textDecoration: 'none', fontWeight: 600 }}>Portfolio</Link>
             <span>/</span>
-            <Link to="/owner/units" style={{ color: '#0F8A67', textDecoration: 'none', fontWeight: 600 }}>Units</Link>
+            <Link to="/owner/units" style={{ color: '#10B981', textDecoration: 'none', fontWeight: 600 }}>Units</Link>
             <span>/</span>
             <span style={{ color: '#0F172A', fontWeight: 700 }}>Unit {unit?.number || unitId}</span>
           </div>
@@ -280,7 +280,7 @@ export default function UnitDetailPage() {
               className="gfh-portal-btn"
               style={{
                 ...ghostBtnStyle,
-                background: '#0F8A67',
+                background: '#10B981',
                 color: '#FFFFFF',
                 boxShadow: '0 2px 8px rgba(15, 138, 103, 0.25)',
               }}
@@ -296,7 +296,7 @@ export default function UnitDetailPage() {
               className="gfh-portal-btn"
               style={{
                 ...ghostBtnStyle,
-                background: '#0E5E48',
+                background: '#10B981',
                 color: '#FFFFFF',
                 boxShadow: '0 2px 8px rgba(14, 94, 72, 0.25)',
               }}
@@ -341,7 +341,7 @@ export default function UnitDetailPage() {
 
       {isLoading ? (
         <div style={{ ...panelStyle, textAlign: 'center', padding: '60px 20px' }}>
-          <div style={{ display: 'inline-block', width: 36, height: 36, border: '3px solid #E2E8F0', borderTopColor: '#0F8A67', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
+          <div style={{ display: 'inline-block', width: 36, height: 36, border: '3px solid #E2E8F0', borderTopColor: '#10B981', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
           <p style={{ marginTop: 14, color: '#64748B', fontSize: 14, fontWeight: 500 }}>Loading unit portfolio profile...</p>
         </div>
       ) : error ? (
@@ -350,14 +350,14 @@ export default function UnitDetailPage() {
             <Icon path={ICONS.alert} size={22} />
           </div>
           <div style={{ fontSize: 16, fontWeight: 700, color: '#991B1B' }}>{error}</div>
-          <Link to="/owner/units" style={{ display: 'inline-block', marginTop: 14, color: '#0F8A67', fontWeight: 600, fontSize: 13 }}>
+          <Link to="/owner/units" style={{ display: 'inline-block', marginTop: 14, color: '#10B981', fontWeight: 600, fontSize: 13 }}>
             ← Return to Units list
           </Link>
         </div>
       ) : !unit ? (
         <div style={{ ...panelStyle, textAlign: 'center', padding: '50px 20px' }}>
           <p style={{ fontSize: 15, color: '#64748B', fontWeight: 500 }}>Unit record could not be found.</p>
-          <Link to="/owner/units" style={{ display: 'inline-block', marginTop: 10, color: '#0F8A67', fontWeight: 600, fontSize: 13 }}>
+          <Link to="/owner/units" style={{ display: 'inline-block', marginTop: 10, color: '#10B981', fontWeight: 600, fontSize: 13 }}>
             ← Back to Units
           </Link>
         </div>
@@ -381,7 +381,7 @@ export default function UnitDetailPage() {
               }}
             >
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
-                <div style={{ width: 42, height: 42, borderRadius: 10, background: '#FFFFFF', border: '1px solid #A7F3DC', color: '#0E5E48', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <div style={{ width: 42, height: 42, borderRadius: 10, background: '#FFFFFF', border: '1px solid #A7F3DC', color: '#10B981', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <Icon path={ICONS.wallet} size={20} />
                 </div>
                 <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.4px', textTransform: 'uppercase', background: '#FFFFFF', color: '#065F46', border: '1px solid #A7F3DC', padding: '3px 9px', borderRadius: 999 }}>
@@ -421,7 +421,7 @@ export default function UnitDetailPage() {
                   borderRadius: 10,
                   background: '#FFFFFF',
                   border: unit.status === 'OCCUPIED' ? '1px solid #FECACA' : '1px solid #BBF7D0',
-                  color: unit.status === 'OCCUPIED' ? '#DC2626' : '#0F8A67',
+                  color: unit.status === 'OCCUPIED' ? '#DC2626' : '#10B981',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -563,7 +563,7 @@ export default function UnitDetailPage() {
               <div className="fade-in" style={panelStyle}>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 18, borderBottom: '1px solid #E2E8F0', paddingBottom: 14 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                    <div style={{ width: 34, height: 34, borderRadius: 8, background: '#ECFDF8', color: '#0E5E48', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <div style={{ width: 34, height: 34, borderRadius: 8, background: '#ECFDF8', color: '#10B981', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                       <Icon path={LOCAL_ICONS.user} size={18} />
                     </div>
                     <div>
@@ -608,7 +608,7 @@ export default function UnitDetailPage() {
                           width: 48,
                           height: 48,
                           borderRadius: '50%',
-                          background: '#0E5E48',
+                          background: '#10B981',
                           color: '#FFFFFF',
                           display: 'flex',
                           alignItems: 'center',
@@ -643,7 +643,7 @@ export default function UnitDetailPage() {
                           gap: 6,
                           fontSize: 12.5,
                           fontWeight: 700,
-                          color: '#0F8A67',
+                          color: '#10B981',
                           background: '#FFFFFF',
                           border: '1px solid #CBD5E1',
                           padding: '7px 14px',
@@ -716,7 +716,7 @@ export default function UnitDetailPage() {
                         </div>
                         <div>
                           <div style={{ fontSize: 11, color: '#64748B', fontWeight: 600 }}>Outstanding Balance</div>
-                          <div style={{ fontSize: 14, fontWeight: 700, color: Number(activeContract.due) > 0 ? '#DC2626' : '#0F8A67', marginTop: 3 }}>
+                          <div style={{ fontSize: 14, fontWeight: 700, color: Number(activeContract.due) > 0 ? '#DC2626' : '#10B981', marginTop: 3 }}>
                             AED {Number(activeContract.due || 0).toLocaleString()}
                           </div>
                         </div>
@@ -740,7 +740,7 @@ export default function UnitDetailPage() {
                         gap: 7,
                         padding: '9px 18px',
                         borderRadius: 8,
-                        background: '#0F8A67',
+                        background: '#10B981',
                         color: '#FFFFFF',
                         fontSize: 13,
                         fontWeight: 700,
@@ -923,7 +923,7 @@ export default function UnitDetailPage() {
               {/* Section 4: Property & Building Profile Card */}
               <div className="fade-in" style={panelStyle}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16, borderBottom: '1px solid #E2E8F0', paddingBottom: 14 }}>
-                  <div style={{ width: 34, height: 34, borderRadius: 8, background: '#ECFDF8', color: '#0E5E48', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <div style={{ width: 34, height: 34, borderRadius: 8, background: '#ECFDF8', color: '#10B981', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                     <Icon path={ICONS.building} size={18} />
                   </div>
                   <div>
@@ -961,7 +961,7 @@ export default function UnitDetailPage() {
                     borderRadius: 8,
                     background: '#FFFFFF',
                     border: '1px solid #CBD5E1',
-                    color: '#0E5E48',
+                    color: '#10B981',
                     fontWeight: 700,
                     fontSize: 13,
                     textDecoration: 'none',
@@ -986,7 +986,7 @@ export default function UnitDetailPage() {
                       <div style={{ fontSize: 12, color: '#64748B', marginTop: 2 }}>Complaints & service work orders</div>
                     </div>
                   </div>
-                  <Link to="/owner/complaints" style={{ fontSize: 12, fontWeight: 700, color: '#0F8A67', textDecoration: 'none' }}>
+                  <Link to="/owner/complaints" style={{ fontSize: 12, fontWeight: 700, color: '#10B981', textDecoration: 'none' }}>
                     View All →
                   </Link>
                 </div>
@@ -1052,7 +1052,7 @@ export default function UnitDetailPage() {
                             </div>
                             <div>
                               {comp.job?.assignedTo?.name ? (
-                                <span style={{ color: '#0F8A67', fontWeight: 600 }}>Assigned: {comp.job.assignedTo.name}</span>
+                                <span style={{ color: '#10B981', fontWeight: 600 }}>Assigned: {comp.job.assignedTo.name}</span>
                               ) : (
                                 <span>Unassigned</span>
                               )}
@@ -1064,7 +1064,7 @@ export default function UnitDetailPage() {
                   </div>
                 ) : (
                   <div style={{ textAlign: 'center', padding: '24px 16px', background: '#F8FAFC', borderRadius: 12, border: '1px solid #E2E8F0' }}>
-                    <div style={{ width: 36, height: 36, borderRadius: '50%', background: '#ECFDF8', color: '#0F8A67', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 10px' }}>
+                    <div style={{ width: 36, height: 36, borderRadius: '50%', background: '#ECFDF8', color: '#10B981', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 10px' }}>
                       <Icon path={LOCAL_ICONS.checkCircle} size={18} />
                     </div>
                     <div style={{ fontSize: 13.5, fontWeight: 700, color: '#0F172A' }}>No Open Complaints</div>

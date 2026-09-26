@@ -373,7 +373,7 @@ export default function JobsPage() {
               display: 'inline-flex',
               alignItems: 'center',
               gap: 8,
-              background: '#0E5E48',
+              background: '#10B981',
               color: '#FFFFFF',
               border: 'none',
               borderRadius: 10,
@@ -389,7 +389,7 @@ export default function JobsPage() {
               e.currentTarget.style.transform = 'translateY(-1px)'
             }}
             onMouseLeave={e => {
-              e.currentTarget.style.background = '#0E5E48'
+              e.currentTarget.style.background = '#10B981'
               e.currentTarget.style.transform = 'translateY(0)'
             }}
           >
@@ -656,7 +656,7 @@ export default function JobsPage() {
                           fontFamily: 'monospace',
                           fontSize: 13,
                           fontWeight: 700,
-                          color: '#0E5E48',
+                          color: '#10B981',
                           background: '#ECFDF5',
                           border: '1px solid #A7F3D0',
                           padding: '3px 8px',
@@ -988,7 +988,7 @@ export default function JobsPage() {
                     fontWeight: 700,
                     fontSize: 13,
                     padding: '9px 20px',
-                    background: '#0E5E48',
+                    background: '#10B981',
                     color: '#ffffff',
                     border: 'none',
                     cursor: isSaving ? 'not-allowed' : 'pointer',
@@ -1161,7 +1161,7 @@ export default function JobsPage() {
                     fontWeight: 700,
                     fontSize: 13,
                     padding: '9px 20px',
-                    background: '#0E5E48',
+                    background: '#10B981',
                     color: '#ffffff',
                     border: 'none',
                     cursor: isSaving ? 'not-allowed' : 'pointer',

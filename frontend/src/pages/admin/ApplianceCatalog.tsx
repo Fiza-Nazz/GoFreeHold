@@ -236,14 +236,14 @@ export default function ApplianceCatalog() {
           transition: border-color 0.15s ease, box-shadow 0.15s ease;
         }
         .gfh-prop-input:focus {
-          border-color: #0F8A67 !important;
+          border-color: #10B981 !important;
           box-shadow: 0 0 0 3px rgba(15, 138, 103, 0.12) !important;
         }
         .gfh-add-prop-btn {
           display: inline-flex !important;
           align-items: center !important;
           gap: 6px !important;
-          background: #0F8A67 !important;
+          background: #10B981 !important;
           color: #FFFFFF !important;
           border: none !important;
           border-radius: 6px !important;
@@ -291,7 +291,7 @@ export default function ApplianceCatalog() {
           background: #F0FDF8;
         }
         .gfh-property-name-cell {
-          color: #0F8A67;
+          color: #10B981;
           font-weight: 700;
         }
         .gfh-action-btn {
@@ -339,9 +339,9 @@ export default function ApplianceCatalog() {
           border-color: #CBD5E1;
         }
         .gfh-page-btn.active {
-          background: #0F8A67;
+          background: #10B981;
           color: #FFFFFF;
-          border-color: #0F8A67;
+          border-color: #10B981;
         }
         .gfh-page-btn:disabled {
           opacity: 0.5;

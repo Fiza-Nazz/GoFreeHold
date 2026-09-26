@@ -160,7 +160,7 @@ export default function VacantPropertyReport() {
             gap: 16px !important;
             padding-bottom: 14px !important;
             margin-bottom: 18px !important;
-            border-bottom: 2px solid #0e5e48 !important;
+            border-bottom: 2px solid #10B981 !important;
           }
 
           .gfh-vp-brand-row {
@@ -173,7 +173,7 @@ export default function VacantPropertyReport() {
             width: 32px !important;
             height: 32px !important;
             border-radius: 6px !important;
-            background: #0e5e48 !important;
+            background: #10B981 !important;
             color: #fff !important;
             display: flex !important;
             align-items: center !important;
@@ -195,7 +195,7 @@ export default function VacantPropertyReport() {
           .gfh-vp-brand-text span {
             font-size: 9.5px !important;
             font-weight: 700 !important;
-            color: #0e5e48 !important;
+            color: #10B981 !important;
             text-transform: uppercase !important;
             letter-spacing: 1px !important;
           }
@@ -243,7 +243,7 @@ export default function VacantPropertyReport() {
             font-family: 'Inter', sans-serif !important;
             font-size: 13.5px !important;
             font-weight: 800 !important;
-            color: #0e5e48 !important;
+            color: #10B981 !important;
           }
 
           .gfh-vp-print-footer {
@@ -319,7 +319,7 @@ export default function VacantPropertyReport() {
               display: 'inline-flex',
               alignItems: 'center',
               gap: 8,
-              background: '#0E5E48',
+              background: '#10B981',
               color: '#FFFFFF',
               border: 'none',
               borderRadius: 10,
@@ -336,7 +336,7 @@ export default function VacantPropertyReport() {
               e.currentTarget.style.transform = 'translateY(-1px)'
             }}
             onMouseLeave={e => {
-              e.currentTarget.style.background = '#0E5E48'
+              e.currentTarget.style.background = '#10B981'
               e.currentTarget.style.transform = 'translateY(0)'
             }}
           >
@@ -349,7 +349,7 @@ export default function VacantPropertyReport() {
               display: 'inline-flex',
               alignItems: 'center',
               gap: 8,
-              background: '#0E5E48',
+              background: '#10B981',
               color: '#FFFFFF',
               border: 'none',
               borderRadius: 10,
@@ -366,7 +366,7 @@ export default function VacantPropertyReport() {
               e.currentTarget.style.transform = 'translateY(-1px)'
             }}
             onMouseLeave={e => {
-              e.currentTarget.style.background = '#0E5E48'
+              e.currentTarget.style.background = '#10B981'
               e.currentTarget.style.transform = 'translateY(0)'
             }}
           >
@@ -423,7 +423,7 @@ export default function VacantPropertyReport() {
               <div style={{ fontSize: 11.5, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px', color: '#64748B' }}>
                 Total Vacant Units
               </div>
-              <div style={{ fontSize: 24, fontWeight: 800, color: '#0E5E48', marginTop: 4 }}>
+              <div style={{ fontSize: 24, fontWeight: 800, color: '#10B981', marginTop: 4 }}>
                 {summaryStats.totalUnits}
               </div>
               <div style={{ fontSize: 11.5, color: '#94A3B8', marginTop: 2 }}>Ready for immediate lease</div>
@@ -572,7 +572,7 @@ export default function VacantPropertyReport() {
                     return (
                       <tr key={unit.id} className="gfh-portal-row" style={{ borderBottom: `1px solid ${THEME.border}` }}>
                         <td style={{ ...tdStyle, fontWeight: 700 }}>
-                          <span style={{ color: '#0E5E48', fontSize: 13.5 }}>Unit {unit.number}</span>
+                          <span style={{ color: '#10B981', fontSize: 13.5 }}>Unit {unit.number}</span>
                           <span style={{ fontWeight: 500, fontSize: 12, color: THEME.textMuted, display: 'block' }}>
                             Floor {unit.floor}
                           </span>
@@ -617,7 +617,7 @@ export default function VacantPropertyReport() {
                             )}
                           </div>
                         </td>
-                        <td style={{ ...tdStyle, fontWeight: 700, color: '#0E5E48', fontSize: 13.5 }}>
+                        <td style={{ ...tdStyle, fontWeight: 700, color: '#10B981', fontSize: 13.5 }}>
                           AED {Number(unit.price).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
                           <span style={{ fontSize: 11, fontWeight: 500, color: '#64748B', display: 'block' }}>/ year</span>
                         </td>

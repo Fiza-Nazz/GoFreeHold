@@ -1,4 +1,4 @@
-﻿import { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import api from '../../api/axios'
 import { formatDate } from '../../utils/formatDate'
 import { THEME, Icon, ICONS, CornerBrackets, portalPageCss, heroStyle, panelStyle, ghostBtnStyle } from '../../components/gfh/adminTheme'
@@ -229,7 +229,7 @@ export default function PaymentForm({ onSuccess }: PaymentFormProps) {
               </div>
             )}
 
-            <button type="submit" className="gfh-portal-btn" style={{ ...ghostBtnStyle, justifyContent: 'center', width: '100%', background: '#065f46', display: 'flex', alignItems: 'center', gap: 8 }} disabled={status === 'loading'}>
+            <button type="submit" className="gfh-portal-btn" style={{ ...ghostBtnStyle, justifyContent: 'center', width: '100%', background: '#10B981', display: 'flex', alignItems: 'center', gap: 8 }} disabled={status === 'loading'}>
               {status === 'loading' ? <span className="spinner" /> : (
                 <>
                   <Icon path={ICONS.check} size={15} />

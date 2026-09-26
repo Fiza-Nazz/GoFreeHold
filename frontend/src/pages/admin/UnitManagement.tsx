@@ -261,14 +261,14 @@ export default function UnitManagement() {
           transition: border-color 0.15s ease, box-shadow 0.15s ease;
         }
         .gfh-prop-input:focus {
-          border-color: #0D5C46 !important;
+          border-color: #10B981 !important;
           box-shadow: 0 0 0 3px rgba(13, 92, 70, 0.12) !important;
         }
         .gfh-add-prop-btn {
           display: inline-flex !important;
           align-items: center !important;
           gap: 6px !important;
-          background: #0D5C46 !important;
+          background: #10B981 !important;
           color: #FFFFFF !important;
           border: none !important;
           border-radius: 8px !important;
@@ -316,7 +316,7 @@ export default function UnitManagement() {
           background: #F8FAFC;
         }
         .gfh-property-name-cell {
-          color: #0D5C46;
+          color: #10B981;
           font-weight: 700;
           cursor: pointer;
         }
@@ -368,9 +368,9 @@ export default function UnitManagement() {
           border-color: #CBD5E1;
         }
         .gfh-page-btn.active {
-          background: #0F8A67;
+          background: #10B981;
           color: #FFFFFF;
-          border-color: #0F8A67;
+          border-color: #10B981;
         }
         .gfh-page-btn:disabled {
           opacity: 0.5;
@@ -557,9 +557,9 @@ export default function UnitManagement() {
                                 transition: 'all 0.15s ease',
                               }}
                               onMouseEnter={e => {
-                                e.currentTarget.style.background = '#0F8A67'
+                                e.currentTarget.style.background = '#10B981'
                                 e.currentTarget.style.color = '#FFFFFF'
-                                e.currentTarget.style.borderColor = '#0F8A67'
+                                e.currentTarget.style.borderColor = '#10B981'
                               }}
                               onMouseLeave={e => {
                                 e.currentTarget.style.background = '#ECFDF5'

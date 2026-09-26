@@ -12,9 +12,9 @@
 
 :root {
   /* === Brand Colors === */
-  --color-primary:       #0D5C46; /* Deep Emerald Green */
-  --color-primary-light: #10B981; /* Emerald-500 */
-  --color-primary-dark:  #06382C; /* Deep Forest */
+  --color-primary:       #10B981; /* Emerald Green */
+  --color-primary-light: #34D399; /* Emerald-400 */
+  --color-primary-dark:  #059669; /* Emerald-600 */
   --color-secondary:     #0ea5e9; /* Sky-500 */
 
   /* === Status Colors === */
@@ -38,12 +38,12 @@
 
   /* === Sidebar === */
   --sidebar-width:      260px;
-  --sidebar-bg:         #06382C;
+  --sidebar-bg:         #FFFFFF;
 
   /* === Gradients === */
-  --gradient-primary:   linear-gradient(135deg, #0D5C46, #10B981);
+  --gradient-primary:   linear-gradient(135deg, #059669, #10B981);
   --gradient-surface:   linear-gradient(135deg, #1a1a2e, #16213e);
-  --gradient-glow:      linear-gradient(135deg, rgba(13,92,70,0.15), rgba(16,185,129,0.05));
+  --gradient-glow:      linear-gradient(135deg, rgba(16,185,129,0.15), rgba(16,185,129,0.05));
 
   /* === Shadows === */
   --shadow-sm:   0 1px 3px rgba(15,23,42,0.05);
@@ -517,7 +517,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .badge-success, .btn-success, .status-paid, .status-resolved, .status-active, .status-occupied {
-  background-color: #065f46 !important;
+  background-color: #10B981 !important;
   color: #ffffff !important;
   border-radius: 8px;
 }

@@ -322,8 +322,8 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
           <title>${title} - GFH-${String(contract?.id || '').padStart(5, '0')}</title>
           <style>
             body { font-family: 'Segoe UI', system-ui, sans-serif; padding: 40px; color: #0f172a; max-width: 780px; margin: 0 auto; }
-            .header { border-bottom: 2px solid #0E5E48; padding-bottom: 16px; margin-bottom: 24px; display: flex; justify-content: space-between; align-items: flex-start; }
-            .logo { font-size: 26px; font-weight: 800; color: #0E5E48; }
+            .header { border-bottom: 2px solid #10B981; padding-bottom: 16px; margin-bottom: 24px; display: flex; justify-content: space-between; align-items: flex-start; }
+            .logo { font-size: 26px; font-weight: 800; color: #10B981; }
             .sub-logo { font-size: 11px; font-weight: 700; color: #065F46; letter-spacing: 1px; text-transform: uppercase; margin-top: 2px; }
             .receipt-title { font-size: 18px; font-weight: 800; color: #0F172A; text-transform: uppercase; text-align: right; }
             .ref-no { font-size: 13px; color: #64748B; margin-top: 4px; text-align: right; }
@@ -523,8 +523,8 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
           <title>PAYMENT RECEIPT - GFH-${String(contract?.id || '').padStart(5, '0')}</title>
           <style>
             body { font-family: 'Segoe UI', system-ui, sans-serif; padding: 40px; color: #0f172a; max-width: 780px; margin: 0 auto; }
-            .header { border-bottom: 2px solid #0E5E48; padding-bottom: 16px; margin-bottom: 24px; display: flex; justify-content: space-between; align-items: flex-start; }
-            .logo { font-size: 26px; font-weight: 800; color: #0E5E48; }
+            .header { border-bottom: 2px solid #10B981; padding-bottom: 16px; margin-bottom: 24px; display: flex; justify-content: space-between; align-items: flex-start; }
+            .logo { font-size: 26px; font-weight: 800; color: #10B981; }
             .sub-logo { font-size: 11px; font-weight: 700; color: #065F46; letter-spacing: 1px; text-transform: uppercase; margin-top: 2px; }
             .receipt-title { font-size: 18px; font-weight: 800; color: #0F172A; text-transform: uppercase; text-align: right; }
             .ref-no { font-size: 13px; color: #64748B; margin-top: 4px; text-align: right; }
@@ -838,7 +838,7 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
       <style>{`
         ${portalPageCss}
         .gfh-input-ctrl:focus {
-          border-color: #0E7C5B !important;
+          border-color: #10B981 !important;
           box-shadow: 0 0 0 3px rgba(14, 124, 91, 0.12);
         }
         @media (max-width: 960px) {
@@ -871,7 +871,7 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
                 width: 56,
                 height: 56,
                 borderRadius: 12,
-                background: '#0E7C5B',
+                background: '#10B981',
                 color: '#FFFFFF',
                 display: 'flex',
                 alignItems: 'center',
@@ -968,8 +968,8 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
                 gap: 8,
                 padding: '10px 20px',
                 borderRadius: 8,
-                background: '#0E7C5B',
-                border: '1px solid #0E7C5B',
+                background: '#10B981',
+                border: '1px solid #10B981',
                 color: '#FFFFFF',
                 fontSize: 13,
                 fontWeight: 700,
@@ -1094,7 +1094,7 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
               onClick={() => handleWorkspaceTabChange(t.key)}
               style={{
                 padding: '9px 18px',
-                background: active ? '#0E7C5B' : 'transparent',
+                background: active ? '#10B981' : 'transparent',
                 border: 'none',
                 borderRadius: 8,
                 color: active ? '#FFFFFF' : '#0F172A',
@@ -1138,7 +1138,7 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
                         height: 34,
                         borderRadius: 8,
                         background: '#ECFDF5',
-                        color: '#0E7C5B',
+                        color: '#10B981',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
@@ -1590,8 +1590,8 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
                   height: 42,
                   padding: '0 16px',
                   borderRadius: 8,
-                  background: '#0E7C5B',
-                  border: '1px solid #0E7C5B',
+                  background: '#10B981',
+                  border: '1px solid #10B981',
                   color: '#FFFFFF',
                   fontSize: 13,
                   fontWeight: 700,
@@ -1840,8 +1840,8 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
                   style={{
                     padding: '9px 16px',
                     borderRadius: 8,
-                    border: '1px solid #0E7C5B',
-                    background: '#0E7C5B',
+                    border: '1px solid #10B981',
+                    background: '#10B981',
                     color: '#FFFFFF',
                     fontSize: 13,
                     fontWeight: 700,
@@ -1949,7 +1949,7 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12, marginBottom: 20 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0E5E48" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#10B981" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                   <circle cx="12" cy="12" r="10" />
                   <polyline points="12 6 12 12 16 14" />
                 </svg>
@@ -1968,7 +1968,7 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
                     padding: '9px 18px',
                     borderRadius: 8,
                     border: 'none',
-                    background: '#0F8A67',
+                    background: '#10B981',
                     color: '#FFFFFF',
                     fontSize: 13,
                     fontWeight: 700,
@@ -2016,7 +2016,7 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
                     gap: 6,
                     padding: '9px 18px',
                     borderRadius: 8,
-                    background: '#0E5E48',
+                    background: '#10B981',
                     color: '#FFFFFF',
                     fontSize: 13,
                     fontWeight: 700,
@@ -2035,7 +2035,7 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
                 <button
                   type="button"
                   onClick={() => openPaymentModal('rent')}
-                  style={{ marginTop: 10, padding: '8px 18px', background: '#0E5E48', color: '#fff', border: 'none', borderRadius: 8, fontWeight: 700, cursor: 'pointer' }}
+                  style={{ marginTop: 10, padding: '8px 18px', background: '#10B981', color: '#fff', border: 'none', borderRadius: 8, fontWeight: 700, cursor: 'pointer' }}
                 >
                   + Record First Payment
                 </button>
@@ -2183,7 +2183,7 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
                 gap: 6,
                 padding: '9px 18px',
                 borderRadius: 8,
-                background: '#0E5E48',
+                background: '#10B981',
                 color: '#FFFFFF',
                 fontSize: 13,
                 fontWeight: 700,
@@ -2204,7 +2204,7 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
                   setNewCheque({ cheque_number: '', bank_name: 'Emirates NBD', amount: String(contract.rent_amount || ''), due_date: new Date().toISOString().split('T')[0] })
                   setChequeModalOpen(true)
                 }}
-                style={{ marginTop: 10, padding: '8px 18px', background: '#0E5E48', color: '#fff', border: 'none', borderRadius: 8, fontWeight: 700, cursor: 'pointer' }}
+                style={{ marginTop: 10, padding: '8px 18px', background: '#10B981', color: '#fff', border: 'none', borderRadius: 8, fontWeight: 700, cursor: 'pointer' }}
               >
                 + Add First Cheque
               </button>
@@ -2349,7 +2349,7 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
                 gap: 6,
                 padding: '9px 18px',
                 borderRadius: 8,
-                background: '#0E5E48',
+                background: '#10B981',
                 color: '#FFFFFF',
                 fontSize: 13,
                 fontWeight: 700,
@@ -2429,11 +2429,11 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
               {/* 1. TENANT SECTION */}
               <div style={{ marginBottom: 28 }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>
-                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#0E5E48" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#10B981" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
                     <circle cx="12" cy="7" r="4" />
                   </svg>
-                  <span style={{ fontSize: 13, fontWeight: 800, color: '#0E5E48', letterSpacing: '0.6px', textTransform: 'uppercase' }}>
+                  <span style={{ fontSize: 13, fontWeight: 800, color: '#10B981', letterSpacing: '0.6px', textTransform: 'uppercase' }}>
                     TENANT
                   </span>
                 </div>
@@ -2488,13 +2488,13 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
               {/* 2. LEASE & RENT SECTION */}
               <div style={{ marginBottom: 28 }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>
-                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#0E5E48" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#10B981" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
                     <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
                     <line x1="16" y1="2" x2="16" y2="6" />
                     <line x1="8" y1="2" x2="8" y2="6" />
                     <line x1="3" y1="10" x2="21" y2="10" />
                   </svg>
-                  <span style={{ fontSize: 13, fontWeight: 800, color: '#0E5E48', letterSpacing: '0.6px', textTransform: 'uppercase' }}>
+                  <span style={{ fontSize: 13, fontWeight: 800, color: '#10B981', letterSpacing: '0.6px', textTransform: 'uppercase' }}>
                     LEASE &amp; RENT
                   </span>
                 </div>
@@ -2565,10 +2565,10 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
               {/* 3. DEPOSITS SECTION */}
               <div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>
-                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#0E5E48" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#10B981" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
                   </svg>
-                  <span style={{ fontSize: 13, fontWeight: 800, color: '#0E5E48', letterSpacing: '0.6px', textTransform: 'uppercase' }}>
+                  <span style={{ fontSize: 13, fontWeight: 800, color: '#10B981', letterSpacing: '0.6px', textTransform: 'uppercase' }}>
                     DEPOSITS
                   </span>
                 </div>
@@ -2670,7 +2670,7 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
                   gap: 8,
                   padding: '11px 28px',
                   borderRadius: 8,
-                  background: '#0E5E48',
+                  background: '#10B981',
                   color: '#FFFFFF',
                   fontSize: 13.5,
                   fontWeight: 700,
@@ -2708,7 +2708,7 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
               </div>
               <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 12 }}>
                 <button type="button" onClick={() => setRenewModalOpen(false)} style={{ padding: '9px 16px', borderRadius: 8, border: '1px solid #cbd5e1', background: '#f1f5f9', color: '#0f172a', fontWeight: 700, fontSize: 13, cursor: 'pointer' }}>Cancel</button>
-                <button type="submit" style={{ padding: '9px 18px', borderRadius: 8, background: '#065f46', color: '#fff', border: 'none', fontWeight: 700, fontSize: 13, cursor: 'pointer' }}>Confirm Renew</button>
+                <button type="submit" style={{ padding: '9px 18px', borderRadius: 8, background: '#10B981', color: '#fff', border: 'none', fontWeight: 700, fontSize: 13, cursor: 'pointer' }}>Confirm Renew</button>
               </div>
             </form>
           </div>
@@ -2764,7 +2764,7 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
               </div>
               <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 12 }}>
                 <button type="button" onClick={() => setPaymentModalOpen(false)} style={{ padding: '9px 16px', borderRadius: 8, border: '1px solid #cbd5e1', background: '#f1f5f9', color: '#0f172a', fontWeight: 700, fontSize: 13, cursor: 'pointer' }}>Cancel</button>
-                <button type="submit" style={{ padding: '9px 18px', borderRadius: 8, background: '#065f46', color: '#fff', border: 'none', fontWeight: 700, fontSize: 13, cursor: 'pointer' }}>Record Payment</button>
+                <button type="submit" style={{ padding: '9px 18px', borderRadius: 8, background: '#10B981', color: '#fff', border: 'none', fontWeight: 700, fontSize: 13, cursor: 'pointer' }}>Record Payment</button>
               </div>
             </form>
           </div>
@@ -2856,7 +2856,7 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
           <div style={{ background: '#FFFFFF', padding: 28, width: 460, borderRadius: 16, position: 'relative', boxShadow: '0 20px 50px rgba(15,23,42,0.25)' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                <div style={{ width: 38, height: 38, borderRadius: 10, background: '#ECFDF8', color: '#0E5E48', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <div style={{ width: 38, height: 38, borderRadius: 10, background: '#ECFDF8', color: '#10B981', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <rect x="1" y="4" width="22" height="16" rx="2" ry="2" />
                     <line x1="1" y1="10" x2="23" y2="10" />
@@ -2943,7 +2943,7 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
                 </button>
                 <button
                   type="submit"
-                  style={{ padding: '9px 20px', borderRadius: 8, background: '#0E5E48', color: '#FFFFFF', border: 'none', fontWeight: 700, fontSize: 13, cursor: 'pointer', boxShadow: '0 1px 3px rgba(14, 94, 72, 0.25)' }}
+                  style={{ padding: '9px 20px', borderRadius: 8, background: '#10B981', color: '#FFFFFF', border: 'none', fontWeight: 700, fontSize: 13, cursor: 'pointer', boxShadow: '0 1px 3px rgba(14, 94, 72, 0.25)' }}
                 >
                   Add Cheque
                 </button>

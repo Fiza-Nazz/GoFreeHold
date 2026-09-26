@@ -78,7 +78,7 @@ export default function MaintenanceDashboard() {
       label: 'Assigned complaint tickets',
       icon: icons.ticket,
       iconBg: '#ECFDF8',
-      iconColor: '#0E5E48',
+      iconColor: '#10B981',
       badgeBg: '#ECFDF8',
       badgeColor: '#065F46',
       badgeBorder: '#A7F3DC',
@@ -111,7 +111,7 @@ export default function MaintenanceDashboard() {
       label: 'Resolved today',
       icon: icons.check,
       iconBg: '#ECFDF8',
-      iconColor: '#0F8A67',
+      iconColor: '#10B981',
       badgeBg: '#F0FDF4',
       badgeColor: '#065F46',
       badgeBorder: '#BBF7D0',
@@ -135,7 +135,7 @@ export default function MaintenanceDashboard() {
           disabled={isLoading}
           style={{
             ...ghostBtnStyle,
-            background: '#0E5E48',
+            background: '#10B981',
             borderRadius: 8,
             opacity: isLoading ? 0.7 : 1,
             cursor: isLoading ? 'not-allowed' : 'pointer',
@@ -272,7 +272,7 @@ export default function MaintenanceDashboard() {
                                 <button
                                   className="gfh-portal-btn"
                                   onClick={() => handleStatusUpdate(c.id, 'resolved')}
-                                  style={{ display: 'inline-flex', alignItems: 'center', gap: 5, padding: '6px 12px', fontSize: 12, fontWeight: 700, borderRadius: 8, background: '#0E5E48', color: '#fff', border: 'none', cursor: 'pointer', boxShadow: '0 1px 2px rgba(14, 94, 72, 0.2)' }}
+                                  style={{ display: 'inline-flex', alignItems: 'center', gap: 5, padding: '6px 12px', fontSize: 12, fontWeight: 700, borderRadius: 8, background: '#10B981', color: '#fff', border: 'none', cursor: 'pointer', boxShadow: '0 1px 2px rgba(14, 94, 72, 0.2)' }}
                                 >
                                   <Icon path={icons.check} size={12} />
                                   Mark resolved

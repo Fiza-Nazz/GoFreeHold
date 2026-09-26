@@ -170,7 +170,7 @@ export default function AssignedJobs() {
       sub: 'Total assigned',
       icon: icons.layers,
       iconBg: '#ECFDF8',
-      iconColor: '#06382C',
+      iconColor: '#059669',
       badgeBg: '#ECFDF8',
       badgeColor: '#065F46',
       badgeBorder: '#A7F3DC',
@@ -206,7 +206,7 @@ export default function AssignedJobs() {
       sub: 'Resolved & closed',
       icon: icons.checkCircle,
       iconBg: '#ECFDF8',
-      iconColor: '#0F8A67',
+      iconColor: '#10B981',
       badgeBg: '#F0FDF4',
       badgeColor: '#065F46',
       badgeBorder: '#BBF7D0',
@@ -220,7 +220,7 @@ export default function AssignedJobs() {
       {/* Hero Header */}
       <div className="fade-in" style={heroStyle}>
         <div>
-          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 12, fontWeight: 700, letterSpacing: '0.6px', textTransform: 'uppercase', color: '#0F8A67', marginBottom: 2 }}>
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 12, fontWeight: 700, letterSpacing: '0.6px', textTransform: 'uppercase', color: '#10B981', marginBottom: 2 }}>
             <span style={{ width: 7, height: 7, borderRadius: '50%', background: '#10B981', display: 'inline-block' }} />
             Field Operations Hub
           </div>
@@ -241,7 +241,7 @@ export default function AssignedJobs() {
             alignItems: 'center',
             gap: 8,
             padding: '10px 18px',
-            background: '#0E5E48',
+            background: '#10B981',
             color: '#FFFFFF',
             border: 'none',
             borderRadius: 10,
@@ -305,7 +305,7 @@ export default function AssignedJobs() {
                 background: card.iconBg,
                 borderRadius: 16,
                 padding: '20px 22px',
-                border: isSelected ? '2px solid #0E5E48' : `1px solid ${card.badgeBorder}`,
+                border: isSelected ? '2px solid #10B981' : `1px solid ${card.badgeBorder}`,
                 boxShadow: isSelected ? '0 6px 16px rgba(14, 94, 72, 0.12)' : '0 1px 3px rgba(16,24,40,0.04)',
                 display: 'flex',
                 flexDirection: 'column',
@@ -351,7 +351,7 @@ export default function AssignedJobs() {
                 <div style={{ fontSize: 28, fontWeight: 800, color: '#0F172A', lineHeight: 1.15, letterSpacing: '-0.02em' }}>
                   {card.value}
                 </div>
-                <div style={{ fontSize: 13.5, fontWeight: 600, color: isSelected ? '#0E5E48' : '#64748B', marginTop: 4 }}>
+                <div style={{ fontSize: 13.5, fontWeight: 600, color: isSelected ? '#10B981' : '#64748B', marginTop: 4 }}>
                   {card.label}
                 </div>
               </div>
@@ -402,8 +402,8 @@ export default function AssignedJobs() {
                   borderRadius: 8,
                   fontSize: 13,
                   fontWeight: 700,
-                  border: isActive ? '1px solid #0E5E48' : '1px solid #E2E8F0',
-                  background: isActive ? '#0E5E48' : '#FFFFFF',
+                  border: isActive ? '1px solid #10B981' : '1px solid #E2E8F0',
+                  background: isActive ? '#10B981' : '#FFFFFF',
                   color: isActive ? '#FFFFFF' : '#475569',
                   cursor: 'pointer',
                   transition: 'all 0.15s ease',
@@ -509,7 +509,7 @@ export default function AssignedJobs() {
       {/* Main Work Orders Content */}
       {loading ? (
         <div style={{ ...panelStyle, textAlign: 'center', padding: '60px 20px', minHeight: 300 }}>
-          <div style={{ display: 'inline-block', width: 36, height: 36, border: '3px solid #E2E8F0', borderTopColor: '#0E5E48', borderRadius: '50%', animation: 'gfhSpin 0.75s linear infinite' }} />
+          <div style={{ display: 'inline-block', width: 36, height: 36, border: '3px solid #E2E8F0', borderTopColor: '#10B981', borderRadius: '50%', animation: 'gfhSpin 0.75s linear infinite' }} />
           <div style={{ fontSize: 14, fontWeight: 600, color: THEME.textMuted, marginTop: 14 }}>
             Loading assigned jobs…
           </div>
@@ -517,7 +517,7 @@ export default function AssignedJobs() {
         </div>
       ) : filteredJobs.length === 0 ? (
         <div style={{ ...panelStyle, textAlign: 'center', padding: '64px 20px', minHeight: 300 }}>
-          <div style={{ width: 56, height: 56, borderRadius: '50%', background: '#F0FDF4', color: '#0F8A67', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
+          <div style={{ width: 56, height: 56, borderRadius: '50%', background: '#F0FDF4', color: '#10B981', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
             <Icon path={icons.wrench} size={28} />
           </div>
           <div style={{ fontSize: 18, fontWeight: 800, color: THEME.ink }}>
@@ -536,7 +536,7 @@ export default function AssignedJobs() {
                 setPage(1)
               }}
               style={{
-                background: '#0E5E48',
+                background: '#10B981',
                 color: '#FFFFFF',
                 border: 'none',
                 borderRadius: 8,
@@ -577,7 +577,7 @@ export default function AssignedJobs() {
                     {/* Job ID Pill */}
                     <span
                       style={{
-                        background: '#06382C',
+                        background: '#059669',
                         color: '#FFFFFF',
                         fontWeight: 800,
                         fontSize: 12.5,
@@ -705,7 +705,7 @@ export default function AssignedJobs() {
                       borderRadius: 10,
                     }}
                   >
-                    <div style={{ width: 34, height: 34, borderRadius: 8, background: '#ECFDF8', color: '#0E5E48', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                    <div style={{ width: 34, height: 34, borderRadius: 8, background: '#ECFDF8', color: '#10B981', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                       <Icon path={icons.building} size={18} />
                     </div>
                     <div style={{ minWidth: 0 }}>
@@ -906,7 +906,7 @@ export default function AssignedJobs() {
                           gap: 8,
                           padding: '9px 18px',
                           borderRadius: 8,
-                          background: '#065F46',
+                          background: '#10B981',
                           color: '#FFFFFF',
                           border: 'none',
                           fontSize: 13,
@@ -985,7 +985,7 @@ export default function AssignedJobs() {
               </button>
 
               <div style={{ fontSize: 13, fontWeight: 700, color: '#334155' }}>
-                Page <span style={{ color: '#0E5E48' }}>{page}</span> of {data.jobs.last_page}
+                Page <span style={{ color: '#10B981' }}>{page}</span> of {data.jobs.last_page}
                 {data.jobs.total ? (
                   <span style={{ fontSize: 12, color: '#64748B', fontWeight: 500, marginLeft: 8 }}>
                     ({data.jobs.total} total items)

@@ -157,7 +157,7 @@ export default function ReportsDashboard() {
             gap: 16px !important;
             padding-bottom: 14px !important;
             margin-bottom: 18px !important;
-            border-bottom: 2px solid #0e5e48 !important;
+            border-bottom: 2px solid #10B981 !important;
           }
 
           .gfh-rp-brand-row {
@@ -170,7 +170,7 @@ export default function ReportsDashboard() {
             width: 32px !important;
             height: 32px !important;
             border-radius: 6px !important;
-            background: #0e5e48 !important;
+            background: #10B981 !important;
             color: #fff !important;
             display: flex !important;
             align-items: center !important;
@@ -192,7 +192,7 @@ export default function ReportsDashboard() {
           .gfh-rp-brand-text span {
             font-size: 9.5px !important;
             font-weight: 700 !important;
-            color: #0e5e48 !important;
+            color: #10B981 !important;
             text-transform: uppercase !important;
             letter-spacing: 1px !important;
           }
@@ -286,7 +286,7 @@ export default function ReportsDashboard() {
               display: 'inline-flex',
               alignItems: 'center',
               gap: 8,
-              background: '#0E5E48',
+              background: '#10B981',
               color: '#FFFFFF',
               border: 'none',
               borderRadius: 10,
@@ -303,7 +303,7 @@ export default function ReportsDashboard() {
               e.currentTarget.style.transform = 'translateY(-1px)'
             }}
             onMouseLeave={e => {
-              e.currentTarget.style.background = '#0E5E48'
+              e.currentTarget.style.background = '#10B981'
               e.currentTarget.style.transform = 'translateY(0)'
             }}
           >
@@ -316,7 +316,7 @@ export default function ReportsDashboard() {
               display: 'inline-flex',
               alignItems: 'center',
               gap: 8,
-              background: '#0E5E48',
+              background: '#10B981',
               color: '#FFFFFF',
               border: 'none',
               borderRadius: 10,
@@ -333,7 +333,7 @@ export default function ReportsDashboard() {
               e.currentTarget.style.transform = 'translateY(-1px)'
             }}
             onMouseLeave={e => {
-              e.currentTarget.style.background = '#0E5E48'
+              e.currentTarget.style.background = '#10B981'
               e.currentTarget.style.transform = 'translateY(0)'
             }}
           >
@@ -361,7 +361,7 @@ export default function ReportsDashboard() {
               padding: '9px 18px',
               borderRadius: 10,
               border: activeTab === t.key ? 'none' : '1px solid #CBD5E1',
-              background: activeTab === t.key ? '#0E5E48' : '#FFFFFF',
+              background: activeTab === t.key ? '#10B981' : '#FFFFFF',
               color: activeTab === t.key ? '#FFFFFF' : '#334155',
               cursor: 'pointer',
               transition: 'all 0.15s ease',
@@ -370,8 +370,8 @@ export default function ReportsDashboard() {
             }}
             onMouseEnter={e => {
               if (activeTab !== t.key) {
-                e.currentTarget.style.borderColor = '#0E5E48'
-                e.currentTarget.style.color = '#0E5E48'
+                e.currentTarget.style.borderColor = '#10B981'
+                e.currentTarget.style.color = '#10B981'
               }
             }}
             onMouseLeave={e => {
@@ -422,7 +422,7 @@ export default function ReportsDashboard() {
                       <div style={{ fontSize: 11.5, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px', color: '#64748B' }}>
                         Total Revenue ({reportData.year})
                       </div>
-                      <div style={{ fontSize: 24, fontWeight: 800, color: '#0E5E48', marginTop: 4 }}>
+                      <div style={{ fontSize: 24, fontWeight: 800, color: '#10B981', marginTop: 4 }}>
                         AED {Number(reportData.total_revenue || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                       </div>
                       <div style={{ fontSize: 11.5, color: '#94A3B8', marginTop: 2 }}>All verified inflows</div>
@@ -473,7 +473,7 @@ export default function ReportsDashboard() {
                           border: 'none',
                           cursor: 'pointer',
                           background: revenueView === 'detailed' ? '#FFFFFF' : 'transparent',
-                          color: revenueView === 'detailed' ? '#0E5E48' : '#64748B',
+                          color: revenueView === 'detailed' ? '#10B981' : '#64748B',
                           boxShadow: revenueView === 'detailed' ? '0 1px 2px rgba(0,0,0,0.06)' : 'none',
                         }}
                       >
@@ -489,7 +489,7 @@ export default function ReportsDashboard() {
                           border: 'none',
                           cursor: 'pointer',
                           background: revenueView === 'monthly' ? '#FFFFFF' : 'transparent',
-                          color: revenueView === 'monthly' ? '#0E5E48' : '#64748B',
+                          color: revenueView === 'monthly' ? '#10B981' : '#64748B',
                           boxShadow: revenueView === 'monthly' ? '0 1px 2px rgba(0,0,0,0.06)' : 'none',
                         }}
                       >
@@ -515,8 +515,8 @@ export default function ReportsDashboard() {
                               fontSize: 12,
                               fontWeight: 700,
                               borderRadius: 20,
-                              border: categoryFilter === pill.key ? '1px solid #0E5E48' : '1px solid #CBD5E1',
-                              background: categoryFilter === pill.key ? '#0E5E48' : '#FFFFFF',
+                              border: categoryFilter === pill.key ? '1px solid #10B981' : '1px solid #CBD5E1',
+                              background: categoryFilter === pill.key ? '#10B981' : '#FFFFFF',
                               color: categoryFilter === pill.key ? '#FFFFFF' : '#475569',
                               cursor: 'pointer',
                               transition: 'all 0.15s ease',
@@ -652,7 +652,7 @@ export default function ReportsDashboard() {
                                   <td style={tdStyle}>
                                     {p.contract?.unit ? (
                                       <div>
-                                        <span style={{ fontWeight: 600, color: '#0E5E48' }}>Unit {p.contract.unit.number}</span>
+                                        <span style={{ fontWeight: 600, color: '#10B981' }}>Unit {p.contract.unit.number}</span>
                                         {p.contract.unit.property?.name && (
                                           <span style={{ fontSize: 11.5, color: '#64748B', display: 'block' }}>
                                             {p.contract.unit.property.name}
@@ -716,7 +716,7 @@ export default function ReportsDashboard() {
                                     {String(b.type ?? b.category ?? '—').toUpperCase()}
                                   </span>
                                 </td>
-                                <td style={{ ...tdStyle, fontWeight: 700, color: '#0E5E48', textAlign: 'right' }}>
+                                <td style={{ ...tdStyle, fontWeight: 700, color: '#10B981', textAlign: 'right' }}>
                                   AED {Number(b.total).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                                 </td>
                               </tr>

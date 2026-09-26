@@ -105,17 +105,17 @@ export default function DailyMaintenanceReport() {
             gap: 16px !important;
             padding-bottom: 14px !important;
             margin-bottom: 18px !important;
-            border-bottom: 2px solid #0e5e48 !important;
+            border-bottom: 2px solid #10B981 !important;
           }
           .gfh-dm-brand-row { display: flex !important; align-items: center !important; gap: 10px !important; }
           .gfh-dm-brand-mark {
             width: 32px !important; height: 32px !important; border-radius: 6px !important;
-            background: #0e5e48 !important; color: #fff !important; display: flex !important;
+            background: #10B981 !important; color: #fff !important; display: flex !important;
             align-items: center !important; justify-content: center !important;
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important; font-weight: 800 !important; font-size: 16px !important;
           }
           .gfh-dm-brand-text h2 { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important; font-size: 16px !important; font-weight: 800 !important; margin: 0 !important; }
-          .gfh-dm-brand-text span { font-size: 9.5px !important; font-weight: 700 !important; color: #0e5e48 !important; text-transform: uppercase !important; }
+          .gfh-dm-brand-text span { font-size: 9.5px !important; font-weight: 700 !important; color: #10B981 !important; text-transform: uppercase !important; }
           .gfh-dm-print-only h1 { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important; font-size: 20px !important; font-weight: 800 !important; margin: 0 0 4px 0 !important; text-align: right !important; }
           .gfh-dm-print-only p { font-size: 10px !important; color: #64748b !important; margin: 0 !important; text-align: right !important; }
           table { width: 100% !important; border-collapse: collapse !important; page-break-inside: auto !important; }
@@ -204,7 +204,7 @@ export default function DailyMaintenanceReport() {
               display: 'inline-flex',
               alignItems: 'center',
               gap: 8,
-              background: '#0E5E48',
+              background: '#10B981',
               color: '#FFFFFF',
               border: 'none',
               borderRadius: 8,
@@ -271,7 +271,7 @@ export default function DailyMaintenanceReport() {
           <div className="fade-in" style={{ ...panelStyle, minHeight: 0, padding: '18px 22px', marginBottom: 22, borderRadius: 10 }}>
             <CornerBrackets />
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
-              <span style={{ fontSize: 12.5, fontWeight: 700, color: '#0E5E48', textTransform: 'uppercase', letterSpacing: '0.4px' }}>
+              <span style={{ fontSize: 12.5, fontWeight: 700, color: '#10B981', textTransform: 'uppercase', letterSpacing: '0.4px' }}>
                 Daily Resolution Velocity
               </span>
               <span style={{ fontSize: 13.5, fontWeight: 800, color: '#059669' }}>
@@ -279,7 +279,7 @@ export default function DailyMaintenanceReport() {
               </span>
             </div>
             <div style={{ width: '100%', height: 9, background: '#E2E8F0', borderRadius: 6, overflow: 'hidden' }}>
-              <div style={{ width: `${resolvedPct}%`, height: '100%', background: 'linear-gradient(90deg, #0E5E48, #10B981)', transition: 'width 0.5s ease' }} />
+              <div style={{ width: `${resolvedPct}%`, height: '100%', background: 'linear-gradient(90deg, #10B981, #10B981)', transition: 'width 0.5s ease' }} />
             </div>
             <div style={{ fontSize: 12, color: THEME.textMuted, fontWeight: 500, marginTop: 8 }}>
               <strong>{report.stats.resolved_today}</strong> of <strong>{totalJobs}</strong> total tracked complaints resolved on {selectedDate}
@@ -360,7 +360,7 @@ export default function DailyMaintenanceReport() {
                 <tbody>
                   {filteredJobs.map(job => (
                     <tr key={job.id} className="gfh-portal-row" style={{ borderBottom: `1px solid ${THEME.border}` }}>
-                      <td style={{ ...tdStyle, fontWeight: 700, color: '#0E5E48', whiteSpace: 'nowrap' }}>
+                      <td style={{ ...tdStyle, fontWeight: 700, color: '#10B981', whiteSpace: 'nowrap' }}>
                         #JOB-{String(job.id).padStart(4, '0')}
                       </td>
                       <td style={{ ...tdStyle, fontWeight: 600, color: THEME.ink }}>
@@ -369,7 +369,7 @@ export default function DailyMaintenanceReport() {
                       <td style={tdStyle}>
                         {job.complaint?.unit ? (
                           <div>
-                            <span style={{ fontWeight: 600, color: '#0E5E48' }}>Unit {job.complaint.unit.number}</span>
+                            <span style={{ fontWeight: 600, color: '#10B981' }}>Unit {job.complaint.unit.number}</span>
                             {job.complaint.unit.property?.name && (
                               <span style={{ fontSize: 11.5, color: '#64748B', display: 'block' }}>
                                 {job.complaint.unit.property.name}

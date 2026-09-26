@@ -127,7 +127,7 @@ export default function OwnerFinancePage({ kind }: { kind: FinanceKind }) {
           <div style={{ fontSize: 22, fontWeight: 800, color: THEME.ink, margin: 0 }}>{meta.title}</div>
           <div style={{ fontSize: 12, color: '#9ca3af', marginTop: 6 }}>{meta.subtitle}</div>
         </div>
-        <Link to="/owner/dashboard" className="gfh-portal-btn" style={{ ...ghostBtnStyle, background: '#0E5E48', borderRadius: 8 }}>
+        <Link to="/owner/dashboard" className="gfh-portal-btn" style={{ ...ghostBtnStyle, background: '#10B981', borderRadius: 8 }}>
           ← Back to dashboard
         </Link>
       </div>
@@ -153,7 +153,7 @@ export default function OwnerFinancePage({ kind }: { kind: FinanceKind }) {
                 sub="Credit"
                 icon={icons.credit}
                 iconBg="#F0FDF4"
-                iconColor="#0F8A67"
+                iconColor="#10B981"
                 badgeBg="#F0FDF4"
                 badgeColor="#065F46"
                 badgeBorder="#BBF7D0"
@@ -191,7 +191,7 @@ export default function OwnerFinancePage({ kind }: { kind: FinanceKind }) {
               sub="Paid"
               icon={icons.credit}
               iconBg="#F0FDF4"
-              iconColor="#0F8A67"
+              iconColor="#10B981"
               badgeBg="#F0FDF4"
               badgeColor="#065F46"
               badgeBorder="#BBF7D0"

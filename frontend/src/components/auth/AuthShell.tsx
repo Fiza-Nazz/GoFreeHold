@@ -19,10 +19,10 @@ const FEATURES = [
 
 export const authShellCss = `
   :root {
-    --auth-brand-deep: #06382C;
+    --auth-brand-deep: #059669;
     --auth-brand-dark: #04281E;
-    --auth-brand-mid: #0E5E48;
-    --auth-brand-light: #18A77A;
+    --auth-brand-mid: #10B981;
+    --auth-brand-light: #34D399;
     --auth-brand-accent: #34D3A5;
     --auth-canvas: #F6F8FA;
     --auth-card-border: #E2E8F0;
@@ -35,7 +35,7 @@ export const authShellCss = `
     --auth-danger: #DC2626;
     --auth-danger-bg: #FEF2F2;
     --auth-danger-border: #FECACA;
-    --auth-success: #0E5E48;
+    --auth-success: #059669;
     --auth-success-bg: #ECFDF8;
     --auth-success-border: #A7F3DC;
   }

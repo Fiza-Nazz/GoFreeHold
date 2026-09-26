@@ -96,7 +96,7 @@ export default function AddPropertyPage() {
         .gfh-property-form-row > div { min-width: 0; }
         .gfh-add-property-panel input:focus-visible,
         .gfh-add-property-panel select:focus-visible,
-        .gfh-add-property-panel textarea:focus-visible { outline: 2px solid #0F8A67; outline-offset: 2px; }
+        .gfh-add-property-panel textarea:focus-visible { outline: 2px solid #10B981; outline-offset: 2px; }
         .gfh-property-type-field { border-color: #80CBB4 !important; background: #F4FCF8 !important; }
         @media (max-width: 600px) {
           .gfh-add-property-panel { padding: 20px 16px; margin-top: 16px; }
@@ -151,7 +151,7 @@ export default function AddPropertyPage() {
             </div>
             <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10, flexWrap: 'wrap' }}>
               <button type="button" onClick={() => navigate(`${basePath}/properties`)} style={{ padding: '10px 18px', border: '1px solid #CBD5E1', background: '#FFFFFF', color: '#475569', cursor: 'pointer', fontWeight: 700 }}>Cancel</button>
-              <button type="submit" disabled={isSaving} style={{ display: 'inline-flex', alignItems: 'center', gap: 7, padding: '10px 20px', border: 'none', background: '#0F8A67', color: '#FFFFFF', cursor: isSaving ? 'wait' : 'pointer', fontWeight: 700, opacity: isSaving ? 0.7 : 1 }}>
+              <button type="submit" disabled={isSaving} style={{ display: 'inline-flex', alignItems: 'center', gap: 7, padding: '10px 20px', border: 'none', background: '#10B981', color: '#FFFFFF', cursor: isSaving ? 'wait' : 'pointer', fontWeight: 700, opacity: isSaving ? 0.7 : 1 }}>
                 <Icon path={ICONS.plus} size={16} />
                 {isSaving ? 'Saving…' : 'Save Property'}
               </button>

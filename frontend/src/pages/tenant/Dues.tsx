@@ -73,7 +73,7 @@ export default function TenantDues() {
       {/* Hero Header */}
       <div className="fade-in" style={heroStyle}>
         <div>
-          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 12, fontWeight: 700, letterSpacing: '0.6px', textTransform: 'uppercase', color: '#0F8A67', marginBottom: 2 }}>
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 12, fontWeight: 700, letterSpacing: '0.6px', textTransform: 'uppercase', color: '#10B981', marginBottom: 2 }}>
             <span style={{ width: 7, height: 7, borderRadius: '50%', background: '#10B981', display: 'inline-block' }} />
             Financial Statement
           </div>
@@ -106,7 +106,7 @@ export default function TenantDues() {
               value: `AED ${summary.total_credit.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
               icon: icons.credit,
               iconBg: '#F0FDF4',
-              iconColor: '#0F8A67',
+              iconColor: '#10B981',
               badgeBg: '#F0FDF4',
               badgeColor: '#065F46',
               badgeBorder: '#BBF7D0',
@@ -117,7 +117,7 @@ export default function TenantDues() {
               value: `AED ${summary.total_balance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
               icon: icons.balance,
               iconBg: summary.total_balance > 0 ? '#FFFBEB' : '#ECFDF8',
-              iconColor: summary.total_balance > 0 ? '#D97706' : '#0E5E48',
+              iconColor: summary.total_balance > 0 ? '#D97706' : '#10B981',
               badgeBg: summary.total_balance > 0 ? '#FFFBEB' : '#ECFDF8',
               badgeColor: summary.total_balance > 0 ? '#B45309' : '#065F46',
               badgeBorder: summary.total_balance > 0 ? '#FDE68A' : '#A7F3DC',

@@ -304,7 +304,7 @@ export default function OwnerDashboard() {
       link: `/owner/units/${u.id}`,
       icon: icons.home,
       iconBg: u.status === 'AVAILABLE' ? '#ECFDF8' : '#FEF3C7',
-      iconColor: u.status === 'AVAILABLE' ? '#0F8A67' : '#D97706',
+      iconColor: u.status === 'AVAILABLE' ? '#10B981' : '#D97706',
     })
   })
 
@@ -335,7 +335,7 @@ export default function OwnerDashboard() {
           width: 38,
           height: 38,
           border: '3px solid #E2E8F0',
-          borderTopColor: '#0F8A67',
+          borderTopColor: '#10B981',
           borderRadius: '50%',
           animation: 'gfhSpin 0.75s linear infinite',
           margin: '0 auto 16px',
@@ -407,7 +407,7 @@ export default function OwnerDashboard() {
           border-bottom: none;
         }
         .gfh-activity-row:hover .gfh-act-title {
-          color: #0F8A67;
+          color: #10B981;
         }
         .gfh-bar-col:hover .gfh-bar-rect {
           background: #0F766E !important;
@@ -689,7 +689,7 @@ export default function OwnerDashboard() {
                   height: 32,
                   borderRadius: 8,
                   background: '#ECFDF8',
-                  color: '#0F8A67',
+                  color: '#10B981',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -866,7 +866,7 @@ export default function OwnerDashboard() {
                       maxWidth: 16,
                       minWidth: 8,
                       height: `${item.height}px`,
-                      background: item.value > 0 ? (idx === currentMonthIndex ? '#0F8A67' : '#0D9488') : '#E2E8F0',
+                      background: item.value > 0 ? (idx === currentMonthIndex ? '#10B981' : '#0D9488') : '#E2E8F0',
                       borderRadius: '3px 3px 0 0',
                       transition: 'background 0.2s ease, height 0.3s ease',
                     }}
@@ -885,7 +885,7 @@ export default function OwnerDashboard() {
                     textAlign: 'center',
                     fontSize: 11,
                     fontWeight: idx === currentMonthIndex ? 700 : 600,
-                    color: idx === currentMonthIndex ? '#0F8A67' : '#94A3B8',
+                    color: idx === currentMonthIndex ? '#10B981' : '#94A3B8',
                   }}
                 >
                   {item.month}
@@ -911,7 +911,7 @@ export default function OwnerDashboard() {
               style={{
                 fontSize: 12.5,
                 fontWeight: 600,
-                color: '#0F8A67',
+                color: '#10B981',
                 textDecoration: 'none',
                 display: 'flex',
                 alignItems: 'center',

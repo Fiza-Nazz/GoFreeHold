@@ -83,7 +83,7 @@ export default function StaffActivation() {
           height: 46px;
           border: none;
           border-radius: 9px;
-          background: #0E5E48;
+          background: #10B981;
           color: #FFFFFF;
           font-family: 'Inter', sans-serif;
           font-weight: 700;
@@ -101,7 +101,7 @@ export default function StaffActivation() {
           box-sizing: border-box;
         }
         .gfh-act-btn:hover:not(:disabled) {
-          background: #06382C;
+          background: #059669;
           transform: translateY(-1px);
           box-shadow: 0 8px 20px rgba(6, 56, 44, 0.3);
         }
@@ -129,7 +129,7 @@ export default function StaffActivation() {
           background: #FFFFFF;
         }
         .gfh-act-input:focus {
-          border-color: #0E5E48;
+          border-color: #10B981;
           box-shadow: 0 0 0 3px rgba(14, 94, 72, 0.12);
         }
         .gfh-act-input-error {
@@ -159,7 +159,7 @@ export default function StaffActivation() {
           boxSizing: 'border-box',
         }}
       >
-        <CornerBrackets color="#0E5E48" />
+        <CornerBrackets color="#10B981" />
 
         {/* Brand Header */}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10, marginBottom: 20 }}>
@@ -168,7 +168,7 @@ export default function StaffActivation() {
               width: 36,
               height: 36,
               borderRadius: 9,
-              background: '#0E5E48',
+              background: '#10B981',
               border: '1px solid #18A77A',
               display: 'flex',
               alignItems: 'center',
@@ -186,7 +186,7 @@ export default function StaffActivation() {
             <div style={{ fontSize: 16, fontWeight: 800, color: '#0F172A', lineHeight: 1.15 }}>
               GoFreeHold
             </div>
-            <div style={{ fontSize: 10, fontWeight: 700, color: '#0E5E48', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+            <div style={{ fontSize: 10, fontWeight: 700, color: '#10B981', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
               Staff Portal Activation
             </div>
           </div>
@@ -202,7 +202,7 @@ export default function StaffActivation() {
                 borderRadius: '50%',
                 background: '#ECFDF8',
                 border: '2px solid #34D3A5',
-                color: '#0E5E48',
+                color: '#10B981',
                 display: 'inline-flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -343,7 +343,7 @@ export default function StaffActivation() {
             <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 14 }} noValidate>
               {/* Password */}
               <div>
-                <label style={{ display: 'block', fontSize: 11.5, fontWeight: 700, color: '#0E5E48', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: 5 }}>
+                <label style={{ display: 'block', fontSize: 11.5, fontWeight: 700, color: '#10B981', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: 5 }}>
                   New Password
                 </label>
                 <div style={{ position: 'relative' }}>
@@ -391,7 +391,7 @@ export default function StaffActivation() {
 
               {/* Confirm Password */}
               <div>
-                <label style={{ display: 'block', fontSize: 11.5, fontWeight: 700, color: '#0E5E48', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: 5 }}>
+                <label style={{ display: 'block', fontSize: 11.5, fontWeight: 700, color: '#10B981', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: 5 }}>
                   Confirm Password
                 </label>
                 <div style={{ position: 'relative' }}>
@@ -463,7 +463,7 @@ export default function StaffActivation() {
 
             <div style={{ textAlign: 'center', marginTop: 18, fontSize: 12.5, color: '#64748B' }}>
               Already activated?{' '}
-              <Link to="/login" style={{ color: '#0E5E48', fontWeight: 700, textDecoration: 'none' }}>
+              <Link to="/login" style={{ color: '#10B981', fontWeight: 700, textDecoration: 'none' }}>
                 Sign In
               </Link>
             </div>

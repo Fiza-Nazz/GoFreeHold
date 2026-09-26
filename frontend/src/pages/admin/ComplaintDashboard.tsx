@@ -259,7 +259,7 @@ export default function ComplaintDashboard() {
                 >
                   Cancel
                 </button>
-                <button type="submit" className="gfh-portal-btn" style={{ ...ghostBtnStyle, background: '#065f46' }}>
+                <button type="submit" className="gfh-portal-btn" style={{ ...ghostBtnStyle, background: '#10B981' }}>
                   Confirm Assignment
                 </button>
               </div>
@@ -309,7 +309,7 @@ export default function ComplaintDashboard() {
                 >
                   Cancel
                 </button>
-                <button type="submit" className="gfh-portal-btn" style={{ ...ghostBtnStyle, background: '#065f46' }}>
+                <button type="submit" className="gfh-portal-btn" style={{ ...ghostBtnStyle, background: '#10B981' }}>
                   Save Status
                 </button>
               </div>

@@ -459,7 +459,7 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
     if (s === 'active') {
       return {
         bg: '#ECFDF8',
-        color: '#0F8A67',
+        color: '#10B981',
         border: '#A7F3DC',
         dot: '#10B981',
         label: 'Active'
@@ -510,7 +510,7 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
           transition: border-color 0.15s ease, box-shadow 0.15s ease;
         }
         .gfh-contract-filter:focus {
-          border-color: #0D5C46;
+          border-color: #10B981;
           box-shadow: 0 0 0 3px rgba(13, 92, 70, 0.12);
         }
         .gfh-contract-row {
@@ -535,12 +535,12 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
           transition: all 0.15s ease;
         }
         .gfh-page-btn:hover:not(:disabled) {
-          border-color: #0D5C46;
-          color: #0D5C46;
+          border-color: #10B981;
+          color: #10B981;
         }
         .gfh-page-btn.active {
-          background: #0D5C46 !important;
-          border-color: #0D5C46 !important;
+          background: #10B981 !important;
+          border-color: #10B981 !important;
           color: #FFFFFF !important;
         }
         .gfh-page-btn:disabled {
@@ -594,7 +594,7 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
               display: 'inline-flex',
               alignItems: 'center',
               gap: 8,
-              background: '#0D5C46',
+              background: '#10B981',
               color: '#FFFFFF',
               border: 'none',
               borderRadius: 8,
@@ -611,7 +611,7 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
               e.currentTarget.style.transform = 'translateY(-1px)'
             }}
             onMouseLeave={e => {
-              e.currentTarget.style.background = '#0D5C46'
+              e.currentTarget.style.background = '#10B981'
               e.currentTarget.style.transform = 'translateY(0)'
             }}
           >
@@ -703,7 +703,7 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
                 style={{
                   background: 'transparent',
                   border: 'none',
-                  color: '#0D5C46',
+                  color: '#10B981',
                   fontSize: 13,
                   fontWeight: 600,
                   cursor: 'pointer',
@@ -780,7 +780,7 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
                       {/* REF # Link */}
                       <td style={{ padding: '16px 16px' }}>
                         <Link to={`${effectiveBasePath}/contracts/${c.id}`} style={{ textDecoration: 'none' }}>
-                          <span style={{ color: '#0D5C46', fontWeight: 600, fontSize: 14, textDecoration: 'none' }}>
+                          <span style={{ color: '#10B981', fontWeight: 600, fontSize: 14, textDecoration: 'none' }}>
                             GFH-{String(c.id).padStart(5, '0')}
                           </span>
                         </Link>
@@ -939,7 +939,7 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
                                 padding: '7px 12px',
                                 borderRadius: 8,
                                 border: 'none',
-                                background: '#0D5C46',
+                                background: '#10B981',
                                 color: '#FFFFFF',
                                 fontSize: 12.5,
                                 fontWeight: 600,
@@ -1024,8 +1024,8 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
                 onClick={() => setCurrentPage(p)}
                 className={`gfh-page-btn ${currentPage === p ? 'active' : ''}`}
                 style={{
-                  background: currentPage === p ? '#065F46' : '#FFFFFF',
-                  borderColor: currentPage === p ? '#065F46' : '#E2E8F0',
+                  background: currentPage === p ? '#10B981' : '#FFFFFF',
+                  borderColor: currentPage === p ? '#10B981' : '#E2E8F0',
                   color: currentPage === p ? '#FFFFFF' : '#334155',
                 }}
               >
@@ -1137,7 +1137,7 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
                         gap: 8,
                         padding: '7px 10px',
                         borderRadius: 8,
-                        background: isCurrent ? '#0E5E48' : isDone ? '#ECFDF5' : 'transparent',
+                        background: isCurrent ? '#10B981' : isDone ? '#ECFDF5' : 'transparent',
                         color: isCurrent ? '#FFFFFF' : isDone ? '#065F46' : '#64748B',
                         fontWeight: 700,
                         fontSize: 12,
@@ -1149,7 +1149,7 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
                         height: 20,
                         borderRadius: '50%',
                         background: isCurrent ? '#FFFFFF' : isDone ? '#10B981' : '#E2E8F0',
-                        color: isCurrent ? '#0E5E48' : isDone ? '#FFFFFF' : '#475569',
+                        color: isCurrent ? '#10B981' : isDone ? '#FFFFFF' : '#475569',
                         display: 'inline-flex',
                         alignItems: 'center',
                         justifyContent: 'center',
@@ -1207,7 +1207,7 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
                     style={{
                       padding: '11px 14px',
                       borderRadius: 10,
-                      border: tenantMode === 'existing' ? '2px solid #0E5E48' : '1px solid #CBD5E1',
+                      border: tenantMode === 'existing' ? '2px solid #10B981' : '1px solid #CBD5E1',
                       background: tenantMode === 'existing' ? '#ECFDF5' : '#FFFFFF',
                       color: tenantMode === 'existing' ? '#065F46' : '#334155',
                       fontWeight: 700,
@@ -1226,7 +1226,7 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
                     style={{
                       padding: '11px 14px',
                       borderRadius: 10,
-                      border: tenantMode === 'new' ? '2px solid #0E5E48' : '1px solid #CBD5E1',
+                      border: tenantMode === 'new' ? '2px solid #10B981' : '1px solid #CBD5E1',
                       background: tenantMode === 'new' ? '#ECFDF5' : '#FFFFFF',
                       color: tenantMode === 'new' ? '#065F46' : '#334155',
                       fontWeight: 700,
@@ -1280,11 +1280,11 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
                       <div style={{
                         background: '#F8FAFC',
                         border: '1px solid #CBD5E1',
-                        borderLeft: '4px solid #0F8A67',
+                        borderLeft: '4px solid #10B981',
                         borderRadius: 10,
                         padding: '14px 16px',
                       }}>
-                        <div style={{ fontSize: 11.5, fontWeight: 800, color: '#0F8A67', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: 8 }}>
+                        <div style={{ fontSize: 11.5, fontWeight: 800, color: '#10B981', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: 8 }}>
                           ✓ Selected Tenant Confirmation
                         </div>
                         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, fontSize: 13, color: '#1E293B' }}>
@@ -1458,7 +1458,7 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
                       padding: '9px 22px',
                       borderRadius: 8,
                       border: 'none',
-                      background: '#0E5E48',
+                      background: '#10B981',
                       color: '#FFFFFF',
                       fontWeight: 700,
                       cursor: 'pointer',
@@ -1475,7 +1475,7 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
               <div style={{ display: 'flex', flexDirection: 'column', gap: 15 }}>
                 {/* Unit Section: Building & Unit number */}
                 <div style={{ background: '#F8FAFC', border: '1px solid #E2E8F0', borderRadius: 10, padding: '14px 16px' }}>
-                  <div style={{ fontSize: 12, fontWeight: 800, color: '#0F8A67', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: 10 }}>
+                  <div style={{ fontSize: 12, fontWeight: 800, color: '#10B981', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: 10 }}>
                     Unit
                   </div>
                   <div style={{ display: 'grid', gridTemplateColumns: isOwnerStaff ? '1fr 1fr' : '1fr 1fr 1fr', gap: 12 }}>
@@ -1552,7 +1552,7 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
 
                 {/* Contract Period Section */}
                 <div style={{ background: '#F8FAFC', border: '1px solid #E2E8F0', borderRadius: 10, padding: '14px 16px' }}>
-                  <div style={{ fontSize: 12, fontWeight: 800, color: '#0F8A67', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: 10 }}>
+                  <div style={{ fontSize: 12, fontWeight: 800, color: '#10B981', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: 10 }}>
                     Contract Period
                   </div>
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
@@ -1596,7 +1596,7 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
 
                 {/* Financial Details Section */}
                 <div style={{ background: '#F8FAFC', border: '1px solid #E2E8F0', borderRadius: 10, padding: '14px 16px' }}>
-                  <div style={{ fontSize: 12, fontWeight: 800, color: '#0F8A67', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: 10 }}>
+                  <div style={{ fontSize: 12, fontWeight: 800, color: '#10B981', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: 10 }}>
                     Financial Details
                   </div>
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 12 }}>
@@ -1848,7 +1848,7 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
                       padding: '9px 22px',
                       borderRadius: 8,
                       border: 'none',
-                      background: '#0E5E48',
+                      background: '#10B981',
                       color: '#FFFFFF',
                       fontWeight: 700,
                       cursor: 'pointer',
@@ -1866,11 +1866,11 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
                 <div style={{
                   background: '#F8FAFC',
                   border: '1px solid #CBD5E1',
-                  borderLeft: '4px solid #0E5E48',
+                  borderLeft: '4px solid #10B981',
                   borderRadius: 12,
                   padding: '20px 22px',
                 }}>
-                  <div style={{ fontSize: 13, fontWeight: 800, color: '#0E5E48', textTransform: 'uppercase', letterSpacing: '0.6px', marginBottom: 14 }}>
+                  <div style={{ fontSize: 13, fontWeight: 800, color: '#10B981', textTransform: 'uppercase', letterSpacing: '0.6px', marginBottom: 14 }}>
                     Contract Summary
                   </div>
 
@@ -1896,7 +1896,7 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
                     </div>
                     <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid #E2E8F0', paddingBottom: 8 }}>
                       <span style={{ color: '#64748B', fontWeight: 600 }}>Annual Rent:</span>
-                      <span style={{ fontWeight: 800, color: '#0E5E48' }}>
+                      <span style={{ fontWeight: 800, color: '#10B981' }}>
                         AED {Number(formData.rent_amount || 0).toLocaleString()}
                       </span>
                     </div>
@@ -1962,7 +1962,7 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
                       padding: '10px 26px',
                       borderRadius: 8,
                       border: 'none',
-                      background: '#0E5E48',
+                      background: '#10B981',
                       color: '#FFFFFF',
                       fontWeight: 800,
                       fontSize: 14,
@@ -2034,9 +2034,9 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
                     style={{
                       padding: '10px 20px',
                       borderRadius: 8,
-                      border: '1px solid #0E5E48',
+                      border: '1px solid #10B981',
                       background: '#FFFFFF',
-                      color: '#0E5E48',
+                      color: '#10B981',
                       fontWeight: 700,
                       fontSize: 13.5,
                       cursor: 'pointer',
@@ -2055,7 +2055,7 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
                       padding: '10px 22px',
                       borderRadius: 8,
                       border: 'none',
-                      background: '#0E5E48',
+                      background: '#10B981',
                       color: '#FFFFFF',
                       fontWeight: 700,
                       fontSize: 13.5,
@@ -2110,7 +2110,7 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
             <h2 style={{ fontSize: 18, fontWeight: 800, color: '#0F172A', margin: 0 }}>
               Renew Contract
             </h2>
-            <p style={{ fontSize: 13, color: '#0F8A67', fontWeight: 700, margin: '4px 0 16px' }}>
+            <p style={{ fontSize: 13, color: '#10B981', fontWeight: 700, margin: '4px 0 16px' }}>
               GFH-{String(renewModal.id).padStart(5, '0')}
             </p>
 
@@ -2164,7 +2164,7 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
                     padding: '8px 18px',
                     borderRadius: 8,
                     border: 'none',
-                    background: '#0E5E48',
+                    background: '#10B981',
                     color: '#FFFFFF',
                     fontWeight: 700,
                     cursor: 'pointer',

@@ -555,7 +555,7 @@ export default function SettlementWizard() {
                               fontWeight: 700,
                               borderRadius: 6,
                               border: 'none',
-                              background: '#065f46',
+                              background: '#10B981',
                               color: '#ffffff',
                               cursor: 'pointer',
                               whiteSpace: 'nowrap',
@@ -1011,7 +1011,7 @@ export default function SettlementWizard() {
                   type="button"
                   disabled={busy}
                   onClick={() => markCompleted(createdSettlement.id)}
-                  style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '9px 20px', fontWeight: 700, fontSize: 13, borderRadius: 6, border: 'none', background: '#065f46', color: '#fff', cursor: 'pointer', boxShadow: '0 1px 3px rgba(6, 95, 70, 0.3)' }}
+                  style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '9px 20px', fontWeight: 700, fontSize: 13, borderRadius: 6, border: 'none', background: '#10B981', color: '#fff', cursor: 'pointer', boxShadow: '0 1px 3px rgba(6, 95, 70, 0.3)' }}
                 >
                   <Icon path={ICONS.check} size={14} />
                   Mark as Completed (Free Unit)

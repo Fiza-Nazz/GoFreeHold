@@ -41,7 +41,7 @@ export default function FinancePage(){
       value: money(data.collections),
       badgeText: 'COLLECTIONS',
       badgeBg: '#ECFDF8', badgeColor: '#065F46', badgeBorder: '#A7F3DC',
-      iconBg: '#ECFDF8', iconColor: '#0E5E48', valueColor: '#065F46',
+      iconBg: '#ECFDF8', iconColor: '#10B981', valueColor: '#065F46',
       icon: 'M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z'
     },
     {
@@ -115,7 +115,7 @@ export default function FinancePage(){
           className="rbac-link"
           to={base + '/payments/new'}
           style={{
-            background: '#0E5E48',
+            background: '#10B981',
             color: '#FFFFFF',
             borderRadius: 8,
             padding: '10px 18px',
@@ -143,7 +143,7 @@ export default function FinancePage(){
     {kind === 'profile' ? (
       <section className="rbac-panel" style={{ borderRadius: 16, padding: 30, maxWidth: 600 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 18, marginBottom: 20 }}>
-          <div style={{ width: 56, height: 56, borderRadius: '50%', background: '#0E5E48', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20, fontWeight: 800 }}>
+          <div style={{ width: 56, height: 56, borderRadius: '50%', background: '#10B981', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20, fontWeight: 800 }}>
             {user?.name ? user.name.slice(0, 2).toUpperCase() : 'ST'}
           </div>
           <div>
@@ -154,7 +154,7 @@ export default function FinancePage(){
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 14, marginTop: 16 }}>
           <div style={{ background: '#F8FAFC', padding: 14, borderRadius: 10, border: '1px solid #E2E8F0' }}>
             <div style={{ fontSize: 11, fontWeight: 700, color: '#64748B', textTransform: 'uppercase' }}>Assigned Role</div>
-            <div style={{ fontSize: 15, fontWeight: 700, color: '#0E5E48', marginTop: 4, textTransform: 'uppercase' }}>{user?.role}</div>
+            <div style={{ fontSize: 15, fontWeight: 700, color: '#10B981', marginTop: 4, textTransform: 'uppercase' }}>{user?.role}</div>
           </div>
           <div style={{ background: '#F8FAFC', padding: 14, borderRadius: 10, border: '1px solid #E2E8F0' }}>
             <div style={{ fontSize: 11, fontWeight: 700, color: '#64748B', textTransform: 'uppercase' }}>Account Status</div>
@@ -302,7 +302,7 @@ export default function FinancePage(){
                   Payment ID: <strong style={{ color: '#0F172A' }}>#{data.saved.id}</strong> · Amount: <strong style={{ color: '#065F46' }}>{money(data.saved.amount)}</strong>
                 </p>
                 <div className="rbac-actions">
-                  <button disabled={busy} onClick={() => void receipt(data.saved.id)} style={{ background: '#0E5E48', color: '#fff', borderRadius: 8, padding: '10px 18px', fontWeight: 600 }}>
+                  <button disabled={busy} onClick={() => void receipt(data.saved.id)} style={{ background: '#10B981', color: '#fff', borderRadius: 8, padding: '10px 18px', fontWeight: 600 }}>
                     Download Receipt
                   </button>
                   <Link className="rbac-link" to={base + '/payments'} style={{ background: '#075985', color: '#fff', borderRadius: 8, padding: '10px 18px', fontWeight: 600, textDecoration: 'none' }}>
@@ -330,7 +330,7 @@ export default function FinancePage(){
                 <label>Due date (optional)<input type="date" value={form.due_date} onChange={e => setForm({ ...form, due_date: e.target.value })} /></label>
                 <label>Reference (optional)<input maxLength={100} placeholder="Cheque or bank ref no." value={form.reference_number} onChange={e => setForm({ ...form, reference_number: e.target.value })} /></label>
                 <label className="wide">Remarks (optional)<textarea rows={2} maxLength={2000} placeholder="Notes about payment..." value={form.remarks} onChange={e => setForm({ ...form, remarks: e.target.value })} /></label>
-                <button disabled={busy || !contracts.length} style={{ background: '#0E5E48', color: '#fff', borderRadius: 8, padding: '12px 24px', fontWeight: 700, fontSize: 14 }}>
+                <button disabled={busy || !contracts.length} style={{ background: '#10B981', color: '#fff', borderRadius: 8, padding: '12px 24px', fontWeight: 700, fontSize: 14 }}>
                   {busy ? 'Saving Payment…' : 'Save Payment'}
                 </button>
                 {!contracts.length && <p style={{ color: '#991B1B' }}>No authorized contracts are available under this owner.</p>}

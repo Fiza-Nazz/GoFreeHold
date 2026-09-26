@@ -320,9 +320,9 @@ export default function BuildingManagement() {
           }
         `}</style>
         <div className="gfh-property-detail-panel">
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 16, flexWrap: 'wrap', paddingBottom: 18, borderBottom: '2px solid #0F8A67' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 16, flexWrap: 'wrap', paddingBottom: 18, borderBottom: '2px solid #10B981' }}>
             <div style={{ minWidth: 0, overflowWrap: 'anywhere' }}>
-              <span style={{ display: 'block', color: '#0F8A67', fontSize: 11, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.7px' }}>
+              <span style={{ display: 'block', color: '#10B981', fontSize: 11, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.7px' }}>
                 Selected Property
               </span>
               <h2 style={{ margin: '3px 0 4px', color: '#0F172A', fontSize: 22, fontWeight: 800 }}>{selectedProperty.name}</h2>
@@ -331,7 +331,7 @@ export default function BuildingManagement() {
             <button
               type="button"
               onClick={() => { setSelectedProperty(null); setPropertyUnits([]); setStatusMsg('') }}
-              style={{ display: 'inline-flex', alignItems: 'center', gap: 7, padding: '8px 14px', color: '#0F8A67', background: '#ECFDF5', border: '1px solid #A7F3D0', fontWeight: 800, cursor: 'pointer' }}
+              style={{ display: 'inline-flex', alignItems: 'center', gap: 7, padding: '8px 14px', color: '#10B981', background: '#ECFDF5', border: '1px solid #A7F3D0', fontWeight: 800, cursor: 'pointer' }}
             >
               ← Back to Properties
             </button>
@@ -367,14 +367,14 @@ export default function BuildingManagement() {
           transition: border-color 0.15s ease, box-shadow 0.15s ease;
         }
         .gfh-prop-input:focus {
-          border-color: #0D5C46 !important;
+          border-color: #10B981 !important;
           box-shadow: 0 0 0 3px rgba(13, 92, 70, 0.12) !important;
         }
         .gfh-add-prop-btn {
           display: inline-flex !important;
           align-items: center !important;
           gap: 6px !important;
-          background: #0D5C46 !important;
+          background: #10B981 !important;
           color: #FFFFFF !important;
           border: none !important;
           border-radius: 8px !important;
@@ -420,7 +420,7 @@ export default function BuildingManagement() {
           background: #F8FAFC;
         }
         .gfh-property-name-cell {
-          color: #0D5C46;
+          color: #10B981;
           font-weight: 700;
           cursor: pointer;
           text-decoration: none;
@@ -474,9 +474,9 @@ export default function BuildingManagement() {
           border-color: #CBD5E1;
         }
         .gfh-page-btn.active {
-          background: #0F8A67;
+          background: #10B981;
           color: #FFFFFF;
-          border-color: #0F8A67;
+          border-color: #10B981;
         }
         .gfh-page-btn:disabled {
           opacity: 0.5;
@@ -747,7 +747,7 @@ export default function BuildingManagement() {
                     alignItems: 'center',
                     gap: 6,
                     padding: '9px 20px',
-                    background: '#0F8A67',
+                    background: '#10B981',
                     border: 'none',
                     color: '#ffffff',
                     borderRadius: 10,
@@ -758,7 +758,7 @@ export default function BuildingManagement() {
                     transition: 'background 0.15s ease',
                   }}
                   onMouseEnter={e => (e.currentTarget.style.background = '#0B6E52')}
-                  onMouseLeave={e => (e.currentTarget.style.background = '#0F8A67')}
+                  onMouseLeave={e => (e.currentTarget.style.background = '#10B981')}
                 >
                   <Icon path={icons.check} size={15} />
                   <span>{editingProperty ? 'Update Property' : 'Save Property'}</span>

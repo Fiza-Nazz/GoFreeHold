@@ -156,7 +156,7 @@ export default function InventoryManagement() {
             <span style={{
               fontSize: 12,
               fontWeight: 700,
-              color: '#0E5E48',
+              color: '#10B981',
               background: '#F0FDF4',
               border: '1px solid #BBF7D0',
               borderRadius: 20,
@@ -191,7 +191,7 @@ export default function InventoryManagement() {
             display: 'inline-flex',
             alignItems: 'center',
             gap: 8,
-            background: '#0E5E48',
+            background: '#10B981',
             color: '#FFFFFF',
             border: 'none',
             borderRadius: 10,
@@ -203,8 +203,8 @@ export default function InventoryManagement() {
             transition: 'background 0.15s ease, transform 0.15s ease',
             fontFamily: "'Inter', sans-serif",
           }}
-          onMouseEnter={e => { e.currentTarget.style.background = '#06382C'; }}
-          onMouseLeave={e => { e.currentTarget.style.background = '#0E5E48'; }}
+          onMouseEnter={e => { e.currentTarget.style.background = '#059669'; }}
+          onMouseLeave={e => { e.currentTarget.style.background = '#10B981'; }}
         >
           <Icon path={icons.plus} size={15} />
           <span>Add Inventory Item</span>
@@ -231,7 +231,7 @@ export default function InventoryManagement() {
                 fontWeight: 700,
                 borderRadius: 10,
                 border: isActive ? 'none' : '1px solid #CBD5E1',
-                background: isActive ? '#0E5E48' : '#FFFFFF',
+                background: isActive ? '#10B981' : '#FFFFFF',
                 color: isActive ? '#FFFFFF' : '#334155',
                 cursor: 'pointer',
                 boxShadow: isActive ? '0 1px 3px rgba(14, 94, 72, 0.25)' : 'none',
@@ -240,8 +240,8 @@ export default function InventoryManagement() {
               }}
               onMouseEnter={e => {
                 if (!isActive) {
-                  e.currentTarget.style.borderColor = '#0E5E48'
-                  e.currentTarget.style.color = '#0E5E48'
+                  e.currentTarget.style.borderColor = '#10B981'
+                  e.currentTarget.style.color = '#10B981'
                 }
               }}
               onMouseLeave={e => {
@@ -263,7 +263,7 @@ export default function InventoryManagement() {
           <div style={{ fontSize: 11.5, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px', color: '#64748B' }}>
             Total Stock Quantity
           </div>
-          <div style={{ fontSize: 24, fontWeight: 800, color: '#0E5E48', marginTop: 4 }}>
+          <div style={{ fontSize: 24, fontWeight: 800, color: '#10B981', marginTop: 4 }}>
             {summaryMetrics.totalQuantity} Units
           </div>
           <div style={{ fontSize: 11.5, color: '#94A3B8', marginTop: 2 }}>In {tab} storage</div>
@@ -455,14 +455,14 @@ export default function InventoryManagement() {
                       <td style={{ ...tdStyle, fontWeight: 600, color: '#334155' }}>
                         AED {Number(item.unit_price).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                       </td>
-                      <td style={{ ...tdStyle, fontWeight: 700, color: '#0E5E48' }}>
+                      <td style={{ ...tdStyle, fontWeight: 700, color: '#10B981' }}>
                         AED {lineTotal.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                       </td>
                       <td style={tdStyle}>
                         {tab === 'unit' ? (
                           item.unit ? (
                             <div>
-                              <span style={{ fontWeight: 600, color: '#0E5E48' }}>Unit {item.unit.number}</span>
+                              <span style={{ fontWeight: 600, color: '#10B981' }}>Unit {item.unit.number}</span>
                               {item.unit.property?.name && (
                                 <span style={{ fontSize: 11.5, color: '#64748B', display: 'block' }}>
                                   {item.unit.property.name}
@@ -584,7 +584,7 @@ export default function InventoryManagement() {
                     fontWeight: 700,
                     fontSize: 13,
                     padding: '9px 18px',
-                    background: '#0E5E48',
+                    background: '#10B981',
                     color: '#ffffff',
                     border: 'none',
                     cursor: 'pointer',

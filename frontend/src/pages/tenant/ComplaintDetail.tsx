@@ -82,7 +82,7 @@ export default function TenantComplaintDetail() {
       {/* Hero Header */}
       <div className="fade-in" style={heroStyle}>
         <div>
-          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 12, fontWeight: 700, letterSpacing: '0.6px', textTransform: 'uppercase', color: '#0F8A67', marginBottom: 2 }}>
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 12, fontWeight: 700, letterSpacing: '0.6px', textTransform: 'uppercase', color: '#10B981', marginBottom: 2 }}>
             <span style={{ width: 7, height: 7, borderRadius: '50%', background: '#10B981', display: 'inline-block' }} />
             Ticket Overview
           </div>
@@ -103,7 +103,7 @@ export default function TenantComplaintDetail() {
             gap: 6,
             padding: '9px 16px',
             background: '#FFFFFF',
-            color: '#06382C',
+            color: '#059669',
             border: '1px solid #E2E8F0',
             borderRadius: 8,
             fontSize: 13,
@@ -119,7 +119,7 @@ export default function TenantComplaintDetail() {
 
       {isLoading ? (
         <div style={{ ...panelStyle, textAlign: 'center', padding: 50, borderRadius: 16 }}>
-          <div style={{ display: 'inline-block', width: 34, height: 34, border: '3px solid #E2E8F0', borderTopColor: '#0E5E48', borderRadius: '50%', animation: 'gfhSpin 0.75s linear infinite' }} />
+          <div style={{ display: 'inline-block', width: 34, height: 34, border: '3px solid #E2E8F0', borderTopColor: '#10B981', borderRadius: '50%', animation: 'gfhSpin 0.75s linear infinite' }} />
           <div style={{ fontSize: 13, fontWeight: 600, color: THEME.textMuted, marginTop: 12 }}>Loading ticket details…</div>
           <style>{`@keyframes gfhSpin { to { transform: rotate(360deg); } }`}</style>
         </div>
@@ -127,7 +127,7 @@ export default function TenantComplaintDetail() {
         <div style={{ ...panelStyle, textAlign: 'center', padding: '40px 20px', borderRadius: 16, color: ADMIN_COLORS.red, fontWeight: 600 }}>
           <Icon path={icons.alert} size={32} />
           <div style={{ marginTop: 10, fontSize: 16 }}>{error}</div>
-          <Link to="/tenant/complaints" style={{ display: 'inline-block', marginTop: 16, padding: '8px 16px', borderRadius: 8, background: '#0E5E48', color: '#fff', textDecoration: 'none', fontSize: 13, fontWeight: 700 }}>
+          <Link to="/tenant/complaints" style={{ display: 'inline-block', marginTop: 16, padding: '8px 16px', borderRadius: 8, background: '#10B981', color: '#fff', textDecoration: 'none', fontSize: 13, fontWeight: 700 }}>
             Return to Complaints
           </Link>
         </div>
@@ -161,7 +161,7 @@ export default function TenantComplaintDetail() {
                       width: 36,
                       height: 36,
                       borderRadius: '50%',
-                      background: step.done ? '#0E5E48' : step.active ? '#0284C7' : '#F1F5F9',
+                      background: step.done ? '#10B981' : step.active ? '#0284C7' : '#F1F5F9',
                       color: step.done || step.active ? '#FFFFFF' : '#94A3B8',
                       display: 'flex',
                       alignItems: 'center',
@@ -267,7 +267,7 @@ export default function TenantComplaintDetail() {
             <div style={{ marginTop: 22, display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 14 }}>
               {/* Unit & Property */}
               <div style={{ padding: '14px 16px', borderRadius: 12, border: '1px solid #E2E8F0', background: '#F6F8FA' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#0E5E48', marginBottom: 4 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#10B981', marginBottom: 4 }}>
                   <Icon path={icons.building} size={16} />
                   <span style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Leased Unit</span>
                 </div>

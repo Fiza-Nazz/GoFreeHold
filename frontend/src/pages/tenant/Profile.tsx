@@ -58,7 +58,7 @@ export default function TenantProfile() {
               height: 58,
               flexShrink: 0,
               borderRadius: 14,
-              background: '#0E5E48',
+              background: '#10B981',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
@@ -112,7 +112,7 @@ export default function TenantProfile() {
               }}
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                <div style={{ width: 38, height: 38, borderRadius: 8, background: '#ECFDF8', color: '#0E5E48', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <div style={{ width: 38, height: 38, borderRadius: 8, background: '#ECFDF8', color: '#10B981', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <Icon path={row.icon} size={18} />
                 </div>
                 <div>
@@ -142,7 +142,7 @@ export default function TenantProfile() {
             fontSize: 14,
             fontWeight: 700,
             padding: '12px 18px',
-            background: '#0E5E48',
+            background: '#10B981',
             border: 'none',
             color: '#fff',
             cursor: 'pointer',
@@ -155,11 +155,11 @@ export default function TenantProfile() {
         </button>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '14px 16px', border: '1px solid #A7F3DC', borderRadius: 12, background: '#ECFDF8' }}>
-          <div style={{ width: 38, height: 38, borderRadius: 8, background: '#0E5E48', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+          <div style={{ width: 38, height: 38, borderRadius: 8, background: '#10B981', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
             <Icon path={icons.shield} size={18} />
           </div>
-          <div style={{ fontSize: 12.5, color: '#06382C', lineHeight: 1.45 }}>
-            <strong style={{ color: '#06382C' }}>Your data is protected.</strong> Profile fields are currently read-only and managed by your administrator.
+          <div style={{ fontSize: 12.5, color: '#059669', lineHeight: 1.45 }}>
+            <strong style={{ color: '#059669' }}>Your data is protected.</strong> Profile fields are currently read-only and managed by your administrator.
           </div>
         </div>
       </div>

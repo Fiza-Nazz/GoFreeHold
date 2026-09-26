@@ -234,7 +234,7 @@ export default function StaffManagement() {
               height: 28,
               borderRadius: 6,
               background: '#ECFDF8',
-              color: '#0E5E48',
+              color: '#10B981',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
@@ -251,7 +251,7 @@ export default function StaffManagement() {
 
         <form onSubmit={save} style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 16, alignItems: 'end' }}>
           <div>
-            <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: '#0E5E48', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: 6 }}>
+            <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: '#10B981', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: 6 }}>
               Full Name
             </label>
             <input
@@ -275,7 +275,7 @@ export default function StaffManagement() {
           </div>
 
           <div>
-            <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: '#0E5E48', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: 6 }}>
+            <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: '#10B981', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: 6 }}>
               Email Address
             </label>
             <input
@@ -302,7 +302,7 @@ export default function StaffManagement() {
           </div>
 
           <div>
-            <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: '#0E5E48', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: 6 }}>
+            <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: '#10B981', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: 6 }}>
               Role Designation
             </label>
             <select
@@ -329,7 +329,7 @@ export default function StaffManagement() {
           </div>
 
           <div>
-            <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: '#0E5E48', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: 6 }}>
+            <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: '#10B981', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: 6 }}>
               {edit ? 'New Password (Optional)' : 'Password'}
             </label>
             <input
@@ -360,7 +360,7 @@ export default function StaffManagement() {
               type="submit"
               disabled={busy}
               style={{
-                background: '#0E5E48',
+                background: '#10B981',
                 color: '#FFFFFF',
                 border: 'none',
                 borderRadius: 8,
@@ -499,7 +499,7 @@ export default function StaffManagement() {
                               width: 36,
                               height: 36,
                               borderRadius: '50%',
-                              background: '#0E5E48',
+                              background: '#10B981',
                               color: '#FFFFFF',
                               display: 'flex',
                               alignItems: 'center',
@@ -658,7 +658,7 @@ export default function StaffManagement() {
                               disabled={busy}
                               onClick={() => void action(row, 'invite')}
                               style={{
-                                background: '#0E5E48',
+                                background: '#10B981',
                                 color: '#FFFFFF',
                                 border: 'none',
                                 padding: '6px 12px',

@@ -258,7 +258,7 @@ export default function PdcChequeTracker({ contractId }: PdcChequeTrackerProps) 
                             <button
                               type="button"
                               className="gfh-portal-btn"
-                              style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '5px 10px', fontSize: 11, fontWeight: 700, borderRadius: 8, border: 'none', background: '#065f46', color: '#fff', cursor: 'pointer' }}
+                              style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '5px 10px', fontSize: 11, fontWeight: 700, borderRadius: 8, border: 'none', background: '#10B981', color: '#fff', cursor: 'pointer' }}
                               onClick={() => updateStatus(cheque, 'cleared')}
                             >
                               <Icon path={ICONS.check} size={12} />

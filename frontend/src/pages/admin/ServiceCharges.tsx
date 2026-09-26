@@ -388,7 +388,7 @@ export default function ServiceCharges() {
                 fontWeight: 600,
                 borderRadius: 4,
                 border: 'none',
-                background: '#065f46',
+                background: '#10B981',
                 color: '#ffffff',
                 cursor: 'pointer',
                 boxShadow: '0 1px 2px rgba(6, 95, 70, 0.25)',
@@ -1025,7 +1025,7 @@ export default function ServiceCharges() {
                           <button
                             type="button"
                             onClick={() => markPaid(c.id)}
-                            style={{ padding: '4px 8px', fontSize: 11, fontWeight: 600, borderRadius: 3, border: 'none', background: '#065f46', color: '#ffffff', cursor: 'pointer' }}
+                            style={{ padding: '4px 8px', fontSize: 11, fontWeight: 600, borderRadius: 3, border: 'none', background: '#10B981', color: '#ffffff', cursor: 'pointer' }}
                           >
                             Mark Paid
                           </button>
@@ -1260,7 +1260,7 @@ export default function ServiceCharges() {
                 <button
                   type="submit"
                   disabled={busy}
-                  style={{ padding: '8px 20px', fontSize: 13, fontWeight: 700, borderRadius: 4, border: 'none', background: '#065f46', color: '#ffffff', cursor: 'pointer' }}
+                  style={{ padding: '8px 20px', fontSize: 13, fontWeight: 700, borderRadius: 4, border: 'none', background: '#10B981', color: '#ffffff', cursor: 'pointer' }}
                 >
                   Save Charge
                 </button>
