@@ -31,6 +31,11 @@ class Tenant extends Model
         return $this->belongsTo(User::class);
     }
 
+    public function owner(): BelongsTo
+    {
+        return $this->belongsTo(Owner::class);
+    }
+
     public function contracts(): HasMany
     {
         return $this->hasMany(Contract::class);

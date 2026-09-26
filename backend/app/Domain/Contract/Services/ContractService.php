@@ -148,11 +148,21 @@ class ContractService
      */
     public function resolveTenantId(array $data): int
     {
+        $ownerId = $data['owner_id'] ?? null;
+
         if (!empty($data['tenant_id'])) {
-            return (int) $data['tenant_id'];
+            $existing = Tenant::findOrFail((int) $data['tenant_id']);
+            if ($ownerId) {
+                if ($existing->owner_id && (int) $existing->owner_id !== (int) $ownerId) {
+                    throw new InvalidArgumentException('Selected tenant belongs to another owner.');
+                }
+                if (!$existing->owner_id) {
+                    $existing->update(['owner_id' => $ownerId]);
+                }
+            }
+            return (int) $existing->id;
         }
 
-        $ownerId     = $data['owner_id'] ?? null;
         $tenantEmail = $data['tenant_email'] ?? null;
         $tenantName  = $data['tenant_name'] ?? 'Tenant User';
         $phone       = $data['tenant_phone'] ?? null;
@@ -196,8 +206,18 @@ class ContractService
             ]);
         }
 
-        // Check if tenant profile exists for this user
-        $tenant = Tenant::where('user_id', $user->id)->first();
+        // Check if tenant profile exists for this user AND this owner (never hijack another owner's tenant)
+        $tenantQuery = Tenant::where('user_id', $user->id);
+        if ($ownerId) {
+            $tenantQuery->where(function ($q) use ($ownerId) {
+                $q->where('owner_id', $ownerId)
+                  ->orWhere(function ($unassigned) {
+                      $unassigned->whereNull('owner_id')
+                                 ->whereDoesntHave('contracts');
+                  });
+            });
+        }
+        $tenant = $tenantQuery->first();
 
         if (!$tenant) {
             $tenant = Tenant::create([

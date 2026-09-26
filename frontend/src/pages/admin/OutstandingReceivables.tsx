@@ -91,14 +91,16 @@ export default function OutstandingReceivables() {
           </p>
         </div>
         <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-          <select
-            value={filters.owner_id}
-            onChange={e => setFilters({ ...filters, owner_id: e.target.value })}
-            style={selectStyle}
-          >
-            <option value="" style={{ color: '#111' }}>All Property Owners</option>
-            {owners.map(o => <option key={o.id} value={o.id} style={{ color: '#111' }}>{o.name}</option>)}
-          </select>
+          {basePath === '/admin' && (
+            <select
+              value={filters.owner_id}
+              onChange={e => setFilters({ ...filters, owner_id: e.target.value })}
+              style={selectStyle}
+            >
+              <option value="" style={{ color: '#111' }}>All Property Owners</option>
+              {owners.map(o => <option key={o.id} value={o.id} style={{ color: '#111' }}>{o.name}</option>)}
+            </select>
+          )}
           <select
             value={filters.tenant_type}
             onChange={e => setFilters({ ...filters, tenant_type: e.target.value })}

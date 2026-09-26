@@ -59,13 +59,26 @@ class ContractController extends Controller
     {
         $validated = $request->validated();
 
+        $unit = Unit::with('property')->findOrFail($validated['unit_id']);
+        $unitOwnerId = (int) ($unit->owner_id ?: $unit->property?->owner_id);
+
         $user = $request->user();
         if ($user && in_array($user->role, ['owner', 'cashier', 'accountant'], true)) {
             $ownerId = app(OwnerContextResolver::class)->ownerId($user);
             $validated['owner_id'] = $ownerId;
-            $unit = Unit::with('property')->findOrFail($validated['unit_id']);
-            $unitOwnerId = (int) ($unit->owner_id ?: $unit->property?->owner_id);
             abort_unless($unitOwnerId === (int) $ownerId, 403, 'Unit does not belong to your account.');
+        } elseif (empty($validated['owner_id']) && $unitOwnerId) {
+            $validated['owner_id'] = $unitOwnerId;
+        }
+
+        if (!empty($validated['tenant_id']) && !empty($validated['owner_id'])) {
+            $selectedTenant = \App\Domain\Auth\Models\Tenant::findOrFail((int) $validated['tenant_id']);
+            if ($selectedTenant->owner_id && (int) $selectedTenant->owner_id !== (int) $validated['owner_id']) {
+                return response()->json([
+                    'status'  => 'error',
+                    'message' => 'Selected tenant belongs to another owner and cannot be assigned to this contract.',
+                ], 422);
+            }
         }
 
         $files = ['passport_image', 'visa_page', 'tenant_id_image', 'tenant_id_back_image'];

@@ -32,11 +32,13 @@ interface Unit {
   number: string
   status?: string
   price?: number
+  owner_id?: number | null
   property_id?: number
-  property?: { id: number; name: string }
+  property?: { id: number; name: string; owner_id?: number | null }
 }
 interface Tenant {
   id: number
+  owner_id?: number | null
   name: string
   email: string
   phone?: string
@@ -73,7 +75,7 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
   const [units, setUnits] = useState<Unit[]>([])
   const [tenants, setTenants] = useState<Tenant[]>([])
   const [owners, setOwners] = useState<Owner[]>([])
-  const [properties, setProperties] = useState<{ id: number; name: string }[]>([])
+  const [properties, setProperties] = useState<{ id: number; name: string; owner_id?: number | null }[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [pdfLoading, setPdfLoading] = useState<number | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -139,22 +141,57 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
     return map
   }, [modalUnits])
 
+  const selectedUnitObj = useMemo(() => {
+    if (!formData.unit_id) return null
+    return units.find(u => String(u.id) === String(formData.unit_id)) || null
+  }, [units, formData.unit_id])
+
+  const activeWizardOwnerId = useMemo(() => {
+    if (isOwnerStaff) {
+      if (owners[0]?.id) return Number(owners[0].id)
+      const fromContract = contracts.find(c => c.owner_id)?.owner_id
+      if (fromContract) return Number(fromContract)
+      const fromUnit = units.find(u => u.owner_id || u.property?.owner_id)
+      return fromUnit ? Number(fromUnit.owner_id || fromUnit.property?.owner_id) : null
+    }
+    const unitOwner = selectedUnitObj?.owner_id || selectedUnitObj?.property?.owner_id
+    if (unitOwner) return Number(unitOwner)
+    if (formData.owner_id) return Number(formData.owner_id)
+    return null
+  }, [isOwnerStaff, owners, contracts, units, selectedUnitObj, formData.owner_id])
+
+  const ownerScopedTenants = useMemo(() => {
+    if (!activeWizardOwnerId) return tenants
+    const contractTenantIdsForOwner = new Set<number>()
+    contracts.forEach(c => {
+      if (Number(c.owner_id) === Number(activeWizardOwnerId) && c.tenant_id) {
+        contractTenantIdsForOwner.add(Number(c.tenant_id))
+      }
+    })
+    return tenants.filter(t => {
+      if (t.owner_id != null) {
+        return Number(t.owner_id) === Number(activeWizardOwnerId)
+      }
+      return contractTenantIdsForOwner.has(Number(t.id))
+    })
+  }, [tenants, activeWizardOwnerId, contracts])
+
   const filteredExistingTenants = useMemo(() => {
     const q = tenantSearch.trim().toLowerCase()
-    if (!q) return tenants
-    return tenants.filter(t =>
+    if (!q) return ownerScopedTenants
+    return ownerScopedTenants.filter(t =>
       (t.name && t.name.toLowerCase().includes(q)) ||
       (t.phone && t.phone.toLowerCase().includes(q)) ||
       (t.contact && t.contact.toLowerCase().includes(q)) ||
       (t.emirates_id && t.emirates_id.toLowerCase().includes(q)) ||
       (t.email && t.email.toLowerCase().includes(q))
     )
-  }, [tenants, tenantSearch])
+  }, [ownerScopedTenants, tenantSearch])
 
   const selectedTenantObj = useMemo(() => {
     if (!formData.tenant_id) return null
-    return tenants.find(t => String(t.id) === String(formData.tenant_id)) || null
-  }, [tenants, formData.tenant_id])
+    return ownerScopedTenants.find(t => String(t.id) === String(formData.tenant_id)) || null
+  }, [ownerScopedTenants, formData.tenant_id])
 
   const duplicateTenantMatch = useMemo(() => {
     if (tenantMode !== 'new') return null
@@ -162,22 +199,18 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
     const eid = formData.tenant_emirates_id.trim().toLowerCase()
     const email = formData.tenant_email.trim().toLowerCase()
     if (!phone && !eid && !email) return null
-    return tenants.find(t =>
+    return ownerScopedTenants.find(t =>
       (phone && ((t.phone || '').toLowerCase() === phone || (t.contact || '').toLowerCase() === phone)) ||
       (eid && (t.emirates_id || '').toLowerCase() === eid) ||
       (email && (t.email || '').toLowerCase() === email)
     ) || null
-  }, [tenantMode, formData.tenant_phone, formData.tenant_emirates_id, formData.tenant_email, tenants])
-
-  const selectedUnitObj = useMemo(() => {
-    if (!formData.unit_id) return null
-    return units.find(u => String(u.id) === String(formData.unit_id)) || null
-  }, [units, formData.unit_id])
+  }, [tenantMode, formData.tenant_phone, formData.tenant_emirates_id, formData.tenant_email, ownerScopedTenants])
 
   const openGuidedWizard = (preUnitId = '', prePropertyId = '') => {
     const matchedUnit = preUnitId ? units.find(u => String(u.id) === String(preUnitId)) : null
     const defaultRent = matchedUnit?.price ? String(matchedUnit.price) : ''
     const resolvedPropId = prePropertyId || (matchedUnit?.property?.id ? String(matchedUnit.property.id) : (matchedUnit?.property_id ? String(matchedUnit.property_id) : ''))
+    const resolvedOwnerId = matchedUnit?.owner_id || matchedUnit?.property?.owner_id || owners[0]?.id || ''
     setModalPropertyId(resolvedPropId)
     setWizardStep(1)
     setTenantMode('existing')
@@ -187,7 +220,7 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
     setFormData({
       unit_id: preUnitId,
       tenant_id: '',
-      owner_id: owners[0]?.id ? String(owners[0].id) : '',
+      owner_id: resolvedOwnerId ? String(resolvedOwnerId) : '',
       tenant_name: '',
       tenant_phone: '',
       tenant_emirates_id: '',
@@ -241,7 +274,7 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
       const [cRes, uRes, oRes, tRes, pRes] = await Promise.all([
         api.get(`${apiPrefix}/contracts`),
         api.get(`${apiPrefix}/units`),
-        isOwnerStaff ? Promise.resolve({ data: { data: { owners: [] } } }) : api.get('/admin/properties/owners'),
+        api.get(`${apiPrefix}/properties/owners`).catch(() => ({ data: { data: { owners: [] } } })),
         api.get(`${apiPrefix}/tenants`),
         api.get(`${apiPrefix}/properties`),
       ])
@@ -271,6 +304,9 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
           data.append(key, value as any)
         }
       })
+      if (!data.has('owner_id') && activeWizardOwnerId) {
+        data.append('owner_id', String(activeWizardOwnerId))
+      }
       if (!data.has('contract_value') && formData.rent_amount) {
         data.append('contract_value', formData.rent_amount)
       }

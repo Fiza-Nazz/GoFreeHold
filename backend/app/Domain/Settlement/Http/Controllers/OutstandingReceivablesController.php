@@ -33,7 +33,7 @@ class OutstandingReceivablesController extends Controller
                     'status'        => $contract->status,
                     'tenant_type'   => $tenantType,
                     'tenant_name'   => $contract->tenant?->name,
-                    'owner_id'      => $contract->owner_id,
+                    'owner_id'      => $contract->owner_id ?: $contract->unit?->property?->owner_id,
                     'owner_name'    => $contract->owner?->name,
                     'unit_number'   => $contract->unit?->number,
                     'building_name' => $contract->unit?->property?->name,

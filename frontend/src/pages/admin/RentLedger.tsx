@@ -85,13 +85,37 @@ export default function RentLedger() {
   const [deleteModal, setDeleteModal] = useState<LedgerEntry | null>(null)
   const [deleteReason, setDeleteReason] = useState('')
   const [properties, setProperties] = useState<{ id: number; name: string }[]>([])
-  const [tenants, setTenants] = useState<{ id: number; name: string }[]>([])
-  const [contracts, setContracts] = useState<{ id: number; unit?: { number: string } }[]>([])
+  const [tenants, setTenants] = useState<{ id: number; name: string; owner_id?: number | null }[]>([])
+  const [contracts, setContracts] = useState<{ id: number; owner_id?: number | null; tenant_id?: number | null; unit?: { number: string } }[]>([])
 
   useEffect(() => {
-    api.get('/admin/properties').then(res => setProperties(res.data?.data?.properties || [])).catch(() => {})
-    api.get('/admin/tenants').then(res => setTenants(res.data?.data?.tenants || [])).catch(() => {})
-    api.get('/admin/contracts').then(res => setContracts(res.data?.data?.contracts || [])).catch(() => {})
+    const isOwnerPortal = typeof window !== 'undefined' && !window.location.pathname.startsWith('/admin')
+    Promise.all([
+      api.get('/admin/properties').catch(() => ({ data: { data: { properties: [] } } })),
+      api.get('/admin/tenants').catch(() => ({ data: { data: { tenants: [] } } })),
+      api.get('/admin/contracts').catch(() => ({ data: { data: { contracts: [] } } })),
+      isOwnerPortal ? api.get('/owner/properties/owners').catch(() => ({ data: { data: { owners: [] } } })) : Promise.resolve({ data: { data: { owners: [] } } }),
+    ]).then(([pRes, tRes, cRes, oRes]) => {
+      const loadedProps = pRes.data?.data?.properties || []
+      const loadedTenants: { id: number; name: string; owner_id?: number | null }[] = tRes.data?.data?.tenants || []
+      const loadedContracts: { id: number; owner_id?: number | null; tenant_id?: number | null; unit?: { number: string } }[] = cRes.data?.data?.contracts || []
+      const loadedOwners: { id: number }[] = oRes.data?.data?.owners || []
+      setProperties(loadedProps)
+      setContracts(loadedContracts)
+      if (isOwnerPortal) {
+        const currentOwnerId = loadedOwners[0]?.id ?? loadedContracts.find(c => c.owner_id)?.owner_id ?? null
+        const contractTenantIds = new Set(loadedContracts.map(c => Number(c.tenant_id)).filter(Boolean))
+        setTenants(
+          loadedTenants.filter(t =>
+            t.owner_id != null
+              ? (currentOwnerId != null ? Number(t.owner_id) === Number(currentOwnerId) : true)
+              : contractTenantIds.has(Number(t.id))
+          )
+        )
+      } else {
+        setTenants(loadedTenants)
+      }
+    })
   }, [])
 
   useEffect(() => { fetchLedger() }, [filters])
