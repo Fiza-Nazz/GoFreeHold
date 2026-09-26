@@ -172,7 +172,6 @@ class ContractController extends Controller
     public function vacate(Request $request, Contract $contract, ContractVacateService $vacateService): JsonResponse
     {
         $this->assertContractAccess($request, $contract);
-        abort_if($request->user()?->role === 'cashier', 403, 'Cashiers are not permitted to approve contract termination.');
         $request->validate(['notes' => 'nullable|string']);
 
         try {
@@ -187,7 +186,6 @@ class ContractController extends Controller
     public function settle(Request $request, Contract $contract, ContractVacateService $vacateService): JsonResponse
     {
         $this->assertContractAccess($request, $contract);
-        abort_if($request->user()?->role === 'cashier', 403, 'Cashiers are not permitted to approve contract termination.');
         // Keep settle semantics (status settled) but reuse unit-release via shared service path:
         // vacate sets vacated; settle historically set settled — preserve settle status then free unit.
         DB::beginTransaction();
