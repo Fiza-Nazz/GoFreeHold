@@ -867,77 +867,37 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
           boxShadow: '0 1px 4px rgba(15, 23, 42, 0.04)',
         }}
       >
-        {/* Top Row: Unit Badge + Title + Active Pill (Left) | Back + View Contract Buttons (Right) */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 12 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-            <div
+        {/* Top Control Bar: Status Badge + Contract Ref (Left) | Back + View PDF Buttons (Right) */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 10, marginBottom: 12 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+            <span
               style={{
-                width: 42,
-                height: 42,
-                borderRadius: 10,
-                background: '#10B981',
-                color: '#FFFFFF',
-                display: 'flex',
+                display: 'inline-flex',
                 alignItems: 'center',
-                justifyContent: 'center',
-                fontWeight: 800,
-                fontSize: 15,
-                flexShrink: 0,
+                gap: 6,
+                padding: '4px 10px',
+                borderRadius: 999,
+                background: contract.status === 'active' ? '#ECFDF5' : (contract.status === 'vacated' ? '#FEF2F2' : '#FFFBEB'),
+                border: `1px solid ${contract.status === 'active' ? '#A7F3D0' : (contract.status === 'vacated' ? '#FECACA' : '#FDE68A')}`,
+                color: contract.status === 'active' ? '#065F46' : (contract.status === 'vacated' ? '#991B1B' : '#92400E'),
+                fontSize: 11.5,
+                fontWeight: 700,
               }}
             >
-              {unitNumber}
-            </div>
-            <div>
-              <div
+              <span
                 style={{
-                  fontSize: 11,
-                  color: '#64748B',
-                  fontWeight: 600,
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.04em',
+                  width: 6,
+                  height: 6,
+                  borderRadius: '50%',
+                  background: contract.status === 'active' ? '#10B981' : (contract.status === 'vacated' ? '#EF4444' : '#F59E0B'),
                 }}
-              >
-                {propertyName} • {contractType} • #GFH-{String(contract.id).padStart(5, '0')}
-              </div>
-              <h1
-                style={{
-                  margin: '2px 0 4px 0',
-                  fontSize: 18,
-                  fontWeight: 800,
-                  color: '#0F172A',
-                  letterSpacing: '-0.015em',
-                }}
-              >
-                Unit {unitNumber} – {tenantName}
-              </h1>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
-                <span
-                  style={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: 6,
-                    padding: '4px 12px',
-                    borderRadius: 999,
-                    background: contract.status === 'active' ? '#ECFDF5' : (contract.status === 'vacated' ? '#FEF2F2' : '#FFFBEB'),
-                    border: `1px solid ${contract.status === 'active' ? '#A7F3D0' : (contract.status === 'vacated' ? '#FECACA' : '#FDE68A')}`,
-                    color: contract.status === 'active' ? '#065F46' : (contract.status === 'vacated' ? '#991B1B' : '#92400E'),
-                    fontSize: 12,
-                    fontWeight: 700,
-                  }}
-                >
-                  <span
-                    style={{
-                      width: 7,
-                      height: 7,
-                      borderRadius: '50%',
-                      background: contract.status === 'active' ? '#10B981' : (contract.status === 'vacated' ? '#EF4444' : '#F59E0B'),
-                    }}
-                  />
-                  {contract.status === 'active' ? 'Active Lease' : (contract.status === 'vacated' ? 'Vacated' : contract.status)}
-                </span>
-                <LegalCaseBadge active={contract.on_case} />
-              </div>
-            </div>
+              />
+              {contract.status === 'active' ? 'Active Lease' : (contract.status === 'vacated' ? 'Vacated' : contract.status)}
+            </span>
+            <LegalCaseBadge active={contract.on_case} />
+            <span style={{ fontSize: 11.5, color: '#64748B', fontWeight: 600 }}>
+              CONTRACT #GFH-{String(contract.id).padStart(5, '0')}
+            </span>
           </div>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
@@ -948,12 +908,12 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: 5,
-                padding: '7px 12px',
+                padding: '6px 12px',
                 borderRadius: 7,
                 border: '1px solid #CBD5E1',
                 background: '#F8FAFC',
                 color: '#64748B',
-                fontSize: 12.5,
+                fontSize: 12,
                 fontWeight: 600,
                 cursor: 'pointer',
               }}
@@ -969,12 +929,12 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: 6,
-                padding: '7px 14px',
+                padding: '6px 14px',
                 borderRadius: 7,
                 background: '#10B981',
                 border: 'none',
                 color: '#FFFFFF',
-                fontSize: 12.5,
+                fontSize: 12,
                 fontWeight: 700,
                 cursor: 'pointer',
               }}
@@ -985,6 +945,49 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
               </svg>
               <span>{pdfLoading ? 'Preparing...' : 'Contract PDF'}</span>
             </button>
+          </div>
+        </div>
+
+        {/* Separated Unit Info & Tenant Info Panels (Client Requirement: make unit info and tenant separate) */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 10 }}>
+          {/* Panel 1: Unit Info */}
+          <div
+            style={{
+              background: '#F8FAFC',
+              borderRadius: 8,
+              border: '1px solid #E2E8F0',
+              padding: '12px 16px',
+            }}
+          >
+            <div style={{ fontSize: 13, color: '#475569', fontWeight: 600 }}>
+              {propertyName}
+            </div>
+            <div style={{ fontSize: 18, fontWeight: 800, color: '#DC2626', marginTop: 2 }}>
+              {unitNumber} – {contractType}
+            </div>
+          </div>
+
+          {/* Panel 2: Tenant Info */}
+          <div
+            style={{
+              background: '#F8FAFC',
+              borderRadius: 8,
+              border: '1px solid #E2E8F0',
+              padding: '12px 16px',
+            }}
+          >
+            <div style={{ fontSize: 15, fontWeight: 800, color: '#0F172A', textTransform: 'uppercase' }}>
+              {tenantName}
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 12.5, color: '#475569', marginTop: 4, fontWeight: 600, flexWrap: 'wrap' }}>
+              <span>📱 {tenantContact}</span>
+              {(contract.tenant?.email || editForm.tenant_email) && (
+                <>
+                  <span style={{ color: '#CBD5E1' }}>|</span>
+                  <span>👤 {contract.tenant?.email || editForm.tenant_email}</span>
+                </>
+              )}
+            </div>
           </div>
         </div>
 
