@@ -979,12 +979,23 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
             <div style={{ fontSize: 15, fontWeight: 800, color: '#0F172A', textTransform: 'uppercase' }}>
               {tenantName}
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 12.5, color: '#475569', marginTop: 4, fontWeight: 600, flexWrap: 'wrap' }}>
-              <span>📱 {tenantContact}</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12, fontSize: 12.5, color: '#475569', marginTop: 4, fontWeight: 600, flexWrap: 'wrap' }}>
+              <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}>
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#64748B" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+                  <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z" />
+                </svg>
+                {tenantContact}
+              </span>
               {(contract.tenant?.email || editForm.tenant_email) && (
                 <>
                   <span style={{ color: '#CBD5E1' }}>|</span>
-                  <span>👤 {contract.tenant?.email || editForm.tenant_email}</span>
+                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}>
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#64748B" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+                      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                      <circle cx="12" cy="7" r="4" />
+                    </svg>
+                    {contract.tenant?.email || editForm.tenant_email}
+                  </span>
                 </>
               )}
             </div>
