@@ -136,6 +136,7 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
 
   // 3-dots action menu state
   const [actionMenuOpen, setActionMenuOpen] = useState<number | null>(null)
+  const [actionsDropdownOpen, setActionsDropdownOpen] = useState(false)
 
   // Lease Form State (Matches fields in reference image)
   const [editForm, setEditForm] = useState({
@@ -174,14 +175,17 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
       if (!target.closest('.gfh-action-menu-dropdown') && !target.closest('.gfh-action-menu-btn')) {
         setActionMenuOpen(null)
       }
+      if (!target.closest('.gfh-actions-dropdown') && !target.closest('.gfh-actions-trigger')) {
+        setActionsDropdownOpen(false)
+      }
     }
-    if (actionMenuOpen !== null) {
+    if (actionMenuOpen !== null || actionsDropdownOpen) {
       document.addEventListener('mousedown', handleDocClick)
     }
     return () => {
       document.removeEventListener('mousedown', handleDocClick)
     }
-  }, [actionMenuOpen])
+  }, [actionMenuOpen, actionsDropdownOpen])
 
   const fetchContract = async () => {
     setIsLoading(true)
@@ -1153,9 +1157,6 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
                       <h3 style={{ fontSize: 16, fontWeight: 800, color: '#0F172A', margin: 0 }}>
                         Recent Payments
                       </h3>
-                      <p style={{ fontSize: 12.5, color: '#475569', margin: '2px 0 0 0', fontWeight: 500 }}>
-                        Latest rent and utility payments recorded on this contract
-                      </p>
                     </div>
                   </div>
 
@@ -1345,45 +1346,6 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
                   </div>
                 )}
               </div>
-
-              {/* Payment Summary Footer Strip inside Left Card so there is no empty gap */}
-              <div
-                style={{
-                  marginTop: 18,
-                  padding: '14px 18px',
-                  background: '#F8FAFC',
-                  border: '1px solid #E2E8F0',
-                  borderRadius: 10,
-                  display: 'grid',
-                  gridTemplateColumns: 'repeat(3, 1fr)',
-                  gap: 12,
-                }}
-              >
-                <div>
-                  <div style={{ fontSize: 11, fontWeight: 700, color: '#475569', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-                    Contract Value
-                  </div>
-                  <div style={{ fontSize: 15, fontWeight: 800, color: '#0F172A', marginTop: 3 }}>
-                    AED {totalRentFormatted}
-                  </div>
-                </div>
-                <div>
-                  <div style={{ fontSize: 11, fontWeight: 700, color: '#065F46', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-                    Total Received
-                  </div>
-                  <div style={{ fontSize: 15, fontWeight: 800, color: '#059669', marginTop: 3 }}>
-                    AED {Number(totalReceived).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                  </div>
-                </div>
-                <div>
-                  <div style={{ fontSize: 11, fontWeight: 700, color: balanceDue > 0 ? '#991B1B' : '#1E293B', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-                    Remaining Due
-                  </div>
-                  <div style={{ fontSize: 15, fontWeight: 800, color: balanceDue > 0 ? '#DC2626' : '#0F172A', marginTop: 3 }}>
-                    AED {Number(balanceDue).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                  </div>
-                </div>
-              </div>
             </div>
 
             {/* Right Card: Contract Details */}
@@ -1424,9 +1386,6 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
                     <h3 style={{ fontSize: 16, fontWeight: 800, color: '#0F172A', margin: 0 }}>
                       Contract Details
                     </h3>
-                    <p style={{ fontSize: 12.5, color: '#475569', margin: '2px 0 0 0', fontWeight: 500 }}>
-                      Key lease terms &amp; schedule
-                    </p>
                   </div>
                 </div>
 
@@ -1477,323 +1436,222 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
           </div>
 
           {/* ─── SECTION 2: CONTRACT OPERATIONS & QUICK ACTIONS ─── */}
-          <div
-            style={{
-              background: '#FFFFFF',
-              borderRadius: 14,
-              border: '1px solid #E2E8F0',
-              padding: '24px 28px',
-              boxShadow: '0 2px 8px rgba(15, 23, 42, 0.03)',
-            }}
-          >
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 16, marginBottom: 18 }}>
-              <div>
-                <h3 style={{ fontSize: 16, fontWeight: 800, color: '#0F172A', margin: 0 }}>
-                  Contract Operations &amp; Quick Actions
-                </h3>
-                <p style={{ fontSize: 13, color: '#475569', margin: '4px 0 0 0', fontWeight: 500 }}>
-                  Tenant &amp; deposit particulars, payment collection, receipt printing, and lease lifecycle controls.
-                </p>
-              </div>
+          <div style={{
+            background: '#FFFFFF',
+            borderRadius: 14,
+            border: '1px solid #E2E8F0',
+            padding: '20px 26px',
+            boxShadow: '0 2px 8px rgba(15, 23, 42, 0.03)',
+          }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 18 }}>
+              <h3 style={{ fontSize: 16, fontWeight: 800, color: '#0F172A', margin: 0 }}>
+                Contract Operations
+              </h3>
               <button
                 type="button"
                 onClick={() => navigate(`${effectiveBasePath}/units`)}
                 style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: 6,
-                  padding: '9px 16px',
-                  borderRadius: 8,
-                  border: '1px solid #CBD5E1',
-                  background: '#F8FAFC',
-                  color: '#0F172A',
-                  fontSize: 13,
-                  fontWeight: 700,
-                  cursor: 'pointer',
+                  padding: '7px 14px', borderRadius: 8, border: '1px solid #CBD5E1',
+                  background: '#F8FAFC', color: '#64748B', fontSize: 12.5, fontWeight: 600, cursor: 'pointer',
                 }}
               >
                 ← Back to Units
               </button>
             </div>
 
-            {/* 5 Structured Bordered Info Cards (Uniform Label & Value Hierarchy) */}
-            <div
-              style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(185px, 1fr))',
-                gap: 14,
-                marginBottom: 20,
-              }}
-            >
-              <div style={{ background: '#F8FAFC', border: '1px solid #E2E8F0', borderRadius: 10, padding: '13px 16px' }}>
-                <div style={{ fontSize: 11, color: '#334155', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-                  Tenant Contact
+            {/* Compact Info Strip */}
+            <div style={{
+              display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))',
+              gap: 1, background: '#E2E8F0', borderRadius: 10, overflow: 'hidden', marginBottom: 18,
+            }}>
+              {[
+                { label: 'Tenant Contact', value: tenantContact },
+                { label: 'Tenant Email', value: editForm.tenant_email || contract.tenant?.email || '—' },
+                { label: 'Deposit Mode', value: (contract.deposit_type || editForm.deposit_type || 'CHEQUE').toUpperCase() },
+                { label: 'DEWA Deposit', value: `AED ${Number(contract.dewa_deposit || editForm.dewa_deposit || 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}` },
+                { label: 'Total Received', value: `AED ${Number(totalReceived).toLocaleString(undefined, { minimumFractionDigits: 2 })}`, highlight: true },
+              ].map(item => (
+                <div key={item.label} style={{
+                  background: item.highlight ? '#ECFDF5' : '#FFFFFF', padding: '12px 16px',
+                }}>
+                  <div style={{ fontSize: 10.5, color: item.highlight ? '#065F46' : '#64748B', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                    {item.label}
+                  </div>
+                  <div style={{
+                    fontSize: 13.5, fontWeight: 700, color: item.highlight ? '#059669' : '#0F172A',
+                    marginTop: 3, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+                  }}>
+                    {item.value}
+                  </div>
                 </div>
-                <div style={{ fontSize: 14, fontWeight: 800, color: '#0F172A', marginTop: 5 }}>
-                  {tenantContact}
-                </div>
-              </div>
-
-              <div style={{ background: '#F8FAFC', border: '1px solid #E2E8F0', borderRadius: 10, padding: '13px 16px' }}>
-                <div style={{ fontSize: 11, color: '#334155', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-                  Tenant Email
-                </div>
-                <div style={{ fontSize: 14, fontWeight: 800, color: '#0F172A', marginTop: 5, wordBreak: 'break-all' }}>
-                  {editForm.tenant_email || contract.tenant?.email || '—'}
-                </div>
-              </div>
-
-              <div style={{ background: '#F8FAFC', border: '1px solid #E2E8F0', borderRadius: 10, padding: '13px 16px' }}>
-                <div style={{ fontSize: 11, color: '#334155', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-                  Deposit Mode
-                </div>
-                <div style={{ fontSize: 14, fontWeight: 800, color: '#0F172A', marginTop: 5 }}>
-                  {(contract.deposit_type || editForm.deposit_type || 'CHEQUE').toUpperCase()}
-                </div>
-              </div>
-
-              <div style={{ background: '#F8FAFC', border: '1px solid #E2E8F0', borderRadius: 10, padding: '13px 16px' }}>
-                <div style={{ fontSize: 11, color: '#334155', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-                  DEWA Deposit
-                </div>
-                <div style={{ fontSize: 14, fontWeight: 800, color: '#0F172A', marginTop: 5 }}>
-                  AED {Number(contract.dewa_deposit || editForm.dewa_deposit || 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}
-                </div>
-              </div>
-
-              <div style={{ background: '#ECFDF5', border: '1px solid #A7F3D0', borderRadius: 10, padding: '13px 16px' }}>
-                <div style={{ fontSize: 11, color: '#065F46', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-                  Total Received
-                </div>
-                <div style={{ fontSize: 14, fontWeight: 800, color: '#059669', marginTop: 5 }}>
-                  AED {Number(totalReceived).toLocaleString(undefined, { minimumFractionDigits: 2 })}
-                </div>
-              </div>
+              ))}
             </div>
 
-            {/* Uniform 4-Column Functional Action Buttons Grid */}
-            <div
-              style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(195px, 1fr))',
-                gap: 12,
-              }}
-            >
+            {/* Action Buttons Row: 2 primary + More Actions dropdown */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
               <button
                 type="button"
                 onClick={() => openPaymentModal('rent')}
                 style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: 8,
-                  height: 42,
-                  padding: '0 16px',
-                  borderRadius: 8,
-                  background: '#10B981',
-                  border: '1px solid #10B981',
-                  color: '#FFFFFF',
-                  fontSize: 13,
-                  fontWeight: 700,
-                  cursor: 'pointer',
+                  display: 'inline-flex', alignItems: 'center', gap: 7, height: 40, padding: '0 18px',
+                  borderRadius: 8, background: '#10B981', border: 'none', color: '#FFFFFF',
+                  fontSize: 13, fontWeight: 700, cursor: 'pointer', boxShadow: '0 1px 3px rgba(14,124,91,0.2)',
                 }}
               >
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.3">
-                  <line x1="12" y1="5" x2="12" y2="19" />
-                  <line x1="5" y1="12" x2="19" y2="12" />
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                  <line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" />
                 </svg>
-                <span>Collect Payment</span>
+                Collect Payment
               </button>
 
               <button
                 type="button"
                 onClick={() => openPaymentModal('dewa')}
                 style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: 8,
-                  height: 42,
-                  padding: '0 16px',
-                  borderRadius: 8,
-                  background: '#0284C7',
-                  border: '1px solid #0284C7',
-                  color: '#FFFFFF',
-                  fontSize: 13,
-                  fontWeight: 700,
-                  cursor: 'pointer',
+                  display: 'inline-flex', alignItems: 'center', gap: 7, height: 40, padding: '0 18px',
+                  borderRadius: 8, background: '#0284C7', border: 'none', color: '#FFFFFF',
+                  fontSize: 13, fontWeight: 700, cursor: 'pointer',
                 }}
               >
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.3">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.3">
                   <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
                 </svg>
-                <span>Add DEWA / Utility</span>
+                Add DEWA / Utility
               </button>
 
-              <button
-                type="button"
-                onClick={() => handleWorkspaceTabChange('cheques')}
-                style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: 8,
-                  height: 42,
-                  padding: '0 16px',
-                  borderRadius: 8,
-                  background: '#1E293B',
-                  border: '1px solid #1E293B',
-                  color: '#FFFFFF',
-                  fontSize: 13,
-                  fontWeight: 700,
-                  cursor: 'pointer',
-                }}
-              >
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
-                  <rect x="2" y="5" width="20" height="14" rx="2" />
-                  <line x1="2" y1="10" x2="22" y2="10" />
-                </svg>
-                <span>Manage Cheques ({(contract.cheques || []).length})</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setCallLogModalOpen(true)}
-                style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: 8,
-                  height: 42,
-                  padding: '0 16px',
-                  borderRadius: 8,
-                  background: '#FFFBEB',
-                  border: '1px solid #F59E0B',
-                  color: '#B45309',
-                  fontSize: 13,
-                  fontWeight: 700,
-                  cursor: 'pointer',
-                }}
-              >
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
-                  <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z" />
-                </svg>
-                <span>+ Call Log</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => printReceipt('SEC')}
-                style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: 8,
-                  height: 42,
-                  padding: '0 16px',
-                  borderRadius: 8,
-                  background: '#F0F9FF',
-                  border: '1px solid #38BDF8',
-                  color: '#0369A1',
-                  fontSize: 13,
-                  fontWeight: 700,
-                  cursor: 'pointer',
-                }}
-              >
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
-                  <polyline points="6 9 6 2 18 2 18 9" />
-                  <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
-                  <rect x="6" y="14" width="12" height="8" />
-                </svg>
-                <span>Print SEC Receipt</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => printReceipt('DEWA')}
-                style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: 8,
-                  height: 42,
-                  padding: '0 16px',
-                  borderRadius: 8,
-                  background: '#F0F9FF',
-                  border: '1px solid #38BDF8',
-                  color: '#0369A1',
-                  fontSize: 13,
-                  fontWeight: 700,
-                  cursor: 'pointer',
-                }}
-              >
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
-                  <polyline points="6 9 6 2 18 2 18 9" />
-                  <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
-                  <rect x="6" y="14" width="12" height="8" />
-                </svg>
-                <span>Print DEWA Receipt</span>
-              </button>
-
-              {!isCashier && contract.status === 'active' && (
+              {/* More Actions Dropdown */}
+              <div style={{ position: 'relative' }}>
                 <button
                   type="button"
-                  onClick={() => {
-                    setRenewData({ new_end_date: '', new_rent_amount: String(contract.rent_amount) })
-                    setRenewModalOpen(true)
-                  }}
+                  className="gfh-actions-trigger"
+                  onClick={() => setActionsDropdownOpen(!actionsDropdownOpen)}
                   style={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: 8,
-                    height: 42,
-                    padding: '0 16px',
-                    borderRadius: 8,
-                    background: '#ECFDF5',
-                    border: '1px solid #10B981',
-                    color: '#065F46',
-                    fontSize: 13,
-                    fontWeight: 700,
-                    cursor: 'pointer',
+                    display: 'inline-flex', alignItems: 'center', gap: 7, height: 40, padding: '0 16px',
+                    borderRadius: 8, background: '#FFFFFF', border: '1px solid #CBD5E1', color: '#0F172A',
+                    fontSize: 13, fontWeight: 700, cursor: 'pointer',
                   }}
                 >
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
-                    <polyline points="23 4 23 10 17 10" />
-                    <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" />
+                  More Actions
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="6 9 12 15 18 9" />
                   </svg>
-                  <span>Renew Contract</span>
                 </button>
-              )}
+                {actionsDropdownOpen && (
+                  <div
+                    className="gfh-actions-dropdown"
+                    style={{
+                      position: 'absolute', left: 0, top: 44, background: '#FFFFFF',
+                      border: '1px solid #E2E8F0', borderRadius: 10, boxShadow: '0 12px 32px rgba(15,23,42,0.16)',
+                      zIndex: 9999, minWidth: 220, overflow: 'hidden', padding: '6px 0',
+                    }}
+                  >
+                    {/* Manage Cheques */}
+                    <button
+                      type="button"
+                      onClick={() => { setActionsDropdownOpen(false); handleWorkspaceTabChange('cheques') }}
+                      style={{ width: '100%', padding: '10px 16px', background: 'none', border: 'none', color: '#0F172A', fontSize: 13, fontWeight: 600, cursor: 'pointer', textAlign: 'left', display: 'flex', alignItems: 'center', gap: 10 }}
+                      onMouseEnter={e => (e.currentTarget.style.background = '#F8FAFC')}
+                      onMouseLeave={e => (e.currentTarget.style.background = 'none')}
+                    >
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#64748B" strokeWidth="2">
+                        <rect x="2" y="5" width="20" height="14" rx="2" /><line x1="2" y1="10" x2="22" y2="10" />
+                      </svg>
+                      Manage Cheques ({(contract.cheques || []).length})
+                    </button>
 
-              {contract.status !== 'vacated' && (
-                <button
-                  type="button"
-                  onClick={() => setVacateModalOpen(true)}
-                  style={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: 8,
-                    height: 42,
-                    padding: '0 16px',
-                    borderRadius: 8,
-                    background: '#FEF2F2',
-                    border: '1px solid #F87171',
-                    color: '#DC2626',
-                    fontSize: 13,
-                    fontWeight: 700,
-                    cursor: 'pointer',
-                  }}
-                >
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
-                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-                    <polyline points="16 17 21 12 16 7" />
-                    <line x1="21" y1="12" x2="9" y2="12" />
-                  </svg>
-                  <span>Vacate Unit</span>
-                </button>
-              )}
+                    {/* Call Log */}
+                    <button
+                      type="button"
+                      onClick={() => { setActionsDropdownOpen(false); setCallLogModalOpen(true) }}
+                      style={{ width: '100%', padding: '10px 16px', background: 'none', border: 'none', color: '#0F172A', fontSize: 13, fontWeight: 600, cursor: 'pointer', textAlign: 'left', display: 'flex', alignItems: 'center', gap: 10 }}
+                      onMouseEnter={e => (e.currentTarget.style.background = '#F8FAFC')}
+                      onMouseLeave={e => (e.currentTarget.style.background = 'none')}
+                    >
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#64748B" strokeWidth="2">
+                        <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z" />
+                      </svg>
+                      Add Call Log
+                    </button>
+
+                    {/* Divider */}
+                    <div style={{ height: 1, background: '#E2E8F0', margin: '4px 0' }} />
+
+                    {/* Print SEC Receipt */}
+                    <button
+                      type="button"
+                      onClick={() => { setActionsDropdownOpen(false); printReceipt('SEC') }}
+                      style={{ width: '100%', padding: '10px 16px', background: 'none', border: 'none', color: '#0F172A', fontSize: 13, fontWeight: 600, cursor: 'pointer', textAlign: 'left', display: 'flex', alignItems: 'center', gap: 10 }}
+                      onMouseEnter={e => (e.currentTarget.style.background = '#F8FAFC')}
+                      onMouseLeave={e => (e.currentTarget.style.background = 'none')}
+                    >
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#64748B" strokeWidth="2">
+                        <polyline points="6 9 6 2 18 2 18 9" />
+                        <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
+                        <rect x="6" y="14" width="12" height="8" />
+                      </svg>
+                      Print SEC Receipt
+                    </button>
+
+                    {/* Print DEWA Receipt */}
+                    <button
+                      type="button"
+                      onClick={() => { setActionsDropdownOpen(false); printReceipt('DEWA') }}
+                      style={{ width: '100%', padding: '10px 16px', background: 'none', border: 'none', color: '#0F172A', fontSize: 13, fontWeight: 600, cursor: 'pointer', textAlign: 'left', display: 'flex', alignItems: 'center', gap: 10 }}
+                      onMouseEnter={e => (e.currentTarget.style.background = '#F8FAFC')}
+                      onMouseLeave={e => (e.currentTarget.style.background = 'none')}
+                    >
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#64748B" strokeWidth="2">
+                        <polyline points="6 9 6 2 18 2 18 9" />
+                        <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
+                        <rect x="6" y="14" width="12" height="8" />
+                      </svg>
+                      Print DEWA Receipt
+                    </button>
+
+                    {/* Divider */}
+                    <div style={{ height: 1, background: '#E2E8F0', margin: '4px 0' }} />
+
+                    {/* Renew Contract (conditional) */}
+                    {!isCashier && contract.status === 'active' && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setActionsDropdownOpen(false)
+                          setRenewData({ new_end_date: '', new_rent_amount: String(contract.rent_amount) })
+                          setRenewModalOpen(true)
+                        }}
+                        style={{ width: '100%', padding: '10px 16px', background: 'none', border: 'none', color: '#065F46', fontSize: 13, fontWeight: 700, cursor: 'pointer', textAlign: 'left', display: 'flex', alignItems: 'center', gap: 10 }}
+                        onMouseEnter={e => (e.currentTarget.style.background = '#ECFDF5')}
+                        onMouseLeave={e => (e.currentTarget.style.background = 'none')}
+                      >
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <polyline points="23 4 23 10 17 10" />
+                          <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" />
+                        </svg>
+                        Renew Contract
+                      </button>
+                    )}
+
+                    {/* Vacate Unit (conditional) */}
+                    {contract.status !== 'vacated' && (
+                      <button
+                        type="button"
+                        onClick={() => { setActionsDropdownOpen(false); setVacateModalOpen(true) }}
+                        style={{ width: '100%', padding: '10px 16px', background: 'none', border: 'none', color: '#DC2626', fontSize: 13, fontWeight: 700, cursor: 'pointer', textAlign: 'left', display: 'flex', alignItems: 'center', gap: 10 }}
+                        onMouseEnter={e => (e.currentTarget.style.background = '#FEF2F2')}
+                        onMouseLeave={e => (e.currentTarget.style.background = 'none')}
+                      >
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                          <polyline points="16 17 21 12 16 7" />
+                          <line x1="21" y1="12" x2="9" y2="12" />
+                        </svg>
+                        Vacate Unit
+                      </button>
+                    )}
+                  </div>
+                )}
+              </div>
             </div>
           </div>
 
