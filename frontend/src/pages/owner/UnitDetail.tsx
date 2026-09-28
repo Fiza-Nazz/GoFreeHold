@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import api from '../../api/axios'
 import { Icon, ICONS, portalPageCss, ghostBtnStyle, thStyle, tdStyle } from '../../components/gfh/adminTheme'
-import { safeUpper } from '../../utils/safeLabel'
 
 interface TenantInfo {
   id: number
@@ -69,16 +68,11 @@ interface UnitDetail {
 }
 
 const LOCAL_ICONS = {
-  user: 'M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z',
-  mail: 'M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z M22 6l-10 7L2 6',
   calendar: 'M19 4H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zM16 2v4M8 2v4M3 10h18',
   mapPin: 'M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z M12 10a3 3 0 1 0 0-6 3 3 0 0 0 0 6z',
-  tag: 'M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82zM7 7h.01',
-  shield: 'M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z',
   layers: 'M12 2L2 7l10 5 10-5-10-5z M2 17l10 5 10-5 M2 12l10 5 10-5',
   checkCircle: 'M22 11.08V12a10 10 0 1 1-5.93-9.14 M22 4L12 14.01l-3-3',
   clock: 'M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20z M12 6v6l4 2',
-  bolt: 'M13 10V3L4 14h7v7l9-11h-7z',
 }
 
 function formatDate(dateStr?: string | null): string {
@@ -178,7 +172,7 @@ export default function UnitDetailPage() {
     background: '#FFFFFF',
     borderRadius: 10,
     border: '1px solid #E2E8F0',
-    padding: '18px 20px',
+    padding: '16px 18px',
     boxShadow: '0 1px 3px rgba(15, 23, 42, 0.03)',
   }
 
@@ -199,7 +193,7 @@ export default function UnitDetailPage() {
         }
       `}</style>
 
-      {/* ─── 1. CLEAN TOP HEADER CARD ─── */}
+      {/* ─── 1. TOP HEADER CARD (Unit Identity & Primary Actions) ─── */}
       <div
         className="fade-in"
         style={{
@@ -211,38 +205,20 @@ export default function UnitDetailPage() {
           boxShadow: '0 1px 3px rgba(15, 23, 42, 0.03)',
         }}
       >
-        {/* Top Line: Breadcrumb + Status Badge */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 10, marginBottom: 10 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: '#64748B', fontWeight: 500 }}>
-            <Link to="/owner/dashboard" style={{ color: '#065F46', textDecoration: 'none', fontWeight: 600 }}>Portfolio</Link>
-            <span>/</span>
-            <Link to="/owner/units" style={{ color: '#065F46', textDecoration: 'none', fontWeight: 600 }}>Units</Link>
-            <span>/</span>
-            <span style={{ color: '#0F172A', fontWeight: 700 }}>Unit {unit?.number || unitId}</span>
-          </div>
-
-          {unit && (
-            <span style={{
-              background: statusBadge.bg,
-              color: statusBadge.color,
-              border: `1px solid ${statusBadge.border}`,
-              fontSize: 11.5,
-              fontWeight: 700,
-              padding: '3px 10px',
-              borderRadius: 999,
-              letterSpacing: '0.4px',
-              textTransform: 'uppercase',
-            }}>
-              {statusBadge.label}
-            </span>
-          )}
+        {/* Breadcrumb line */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: '#64748B', fontWeight: 500, marginBottom: 8 }}>
+          <Link to="/owner/dashboard" style={{ color: '#065F46', textDecoration: 'none', fontWeight: 600 }}>Portfolio</Link>
+          <span>/</span>
+          <Link to="/owner/units" style={{ color: '#065F46', textDecoration: 'none', fontWeight: 600 }}>Units</Link>
+          <span>/</span>
+          <span style={{ color: '#0F172A', fontWeight: 700 }}>Unit {unit?.number || unitId}</span>
         </div>
 
-        {/* Main Header Row: Title & Specs (Left) | Action Buttons (Right) */}
+        {/* Title Row: Unit Number + Type Badge + Status Badge (Left) | Action Buttons (Right) */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 14 }}>
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-              <h1 style={{ fontSize: 20, fontWeight: 800, color: '#0F172A', margin: 0, letterSpacing: '-0.015em' }}>
+              <h1 style={{ fontSize: 22, fontWeight: 800, color: '#0F172A', margin: 0, letterSpacing: '-0.015em' }}>
                 Unit #{unit?.number || '—'}
               </h1>
               {unit?.type && (
@@ -259,17 +235,30 @@ export default function UnitDetailPage() {
                   {unit.type}
                 </span>
               )}
+              {unit && (
+                <span style={{
+                  background: statusBadge.bg,
+                  color: statusBadge.color,
+                  border: `1px solid ${statusBadge.border}`,
+                  fontSize: 11.5,
+                  fontWeight: 700,
+                  padding: '2px 10px',
+                  borderRadius: 999,
+                  letterSpacing: '0.4px',
+                  textTransform: 'uppercase',
+                }}>
+                  {statusBadge.label}
+                </span>
+              )}
             </div>
 
-            <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12.5, color: '#64748B', marginTop: 4, fontWeight: 500 }}>
-              <span style={{ fontWeight: 600, color: '#1E293B' }}>{unit?.property?.name || 'Property'}</span>
-              {unit?.property?.city && <span>• {unit.property.city}</span>}
-              {unit?.floor != null && <span>• Floor {unit.floor}</span>}
-              {unit?.size && <span>• {Number(unit.size).toLocaleString()} SQFT</span>}
+            <div style={{ fontSize: 13, color: '#64748B', marginTop: 4, fontWeight: 500 }}>
+              {unit?.property?.name ? `${unit.property.name}` : ''}
+              {unit?.property?.city ? `, ${unit.property.city}` : ''}
             </div>
           </div>
 
-          {/* Action Buttons */}
+          {/* Action Buttons: Only shown here once */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
             <Link
               to="/owner/units"
@@ -338,7 +327,7 @@ export default function UnitDetailPage() {
                   fontSize: 12.5,
                   fontWeight: 600,
                 }}
-                title="Start vacate and move-out settlement process for this unit"
+                title="Start vacate process for this unit"
               >
                 <Icon path={ICONS.door} size={14} />
                 Vacate Unit
@@ -386,14 +375,14 @@ export default function UnitDetailPage() {
         </div>
       ) : (
         <>
-          {/* ─── 2. COMPACT UNIFIED METRICS ROW (Clean White Cards) ─── */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(190px, 1fr))', gap: 10, marginBottom: 14 }}>
+          {/* ─── 2. TOP METRICS ROW (4 Distinct Key Metrics — No Redundant Duplicates) ─── */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 10, marginBottom: 14 }}>
             {/* Card 1: Annual Rent */}
             <div style={{ background: '#FFFFFF', borderRadius: 8, border: '1px solid #E2E8F0', padding: '12px 16px' }}>
               <div style={{ fontSize: 11, fontWeight: 700, color: '#64748B', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
                 Annual Rent
               </div>
-              <div style={{ fontSize: 17, fontWeight: 800, color: '#065F46', marginTop: 3 }}>
+              <div style={{ fontSize: 18, fontWeight: 800, color: '#065F46', marginTop: 3 }}>
                 AED {Number(activeContract?.rent_amount || unit.price || 0).toLocaleString()}
               </div>
               <div style={{ fontSize: 11.5, color: '#64748B', marginTop: 2 }}>
@@ -401,51 +390,38 @@ export default function UnitDetailPage() {
               </div>
             </div>
 
-            {/* Card 2: Occupancy Status */}
-            <div style={{ background: '#FFFFFF', borderRadius: 8, border: '1px solid #E2E8F0', padding: '12px 16px' }}>
-              <div style={{ fontSize: 11, fontWeight: 700, color: '#64748B', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-                Occupancy Status
-              </div>
-              <div style={{ fontSize: 17, fontWeight: 800, color: statusBadge.color, marginTop: 3 }}>
-                {safeUpper(unit.status)}
-              </div>
-              <div style={{ fontSize: 11.5, color: '#64748B', marginTop: 2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                {activeTenant?.name ? `Tenant: ${activeTenant.name}` : 'Ready for occupancy'}
-              </div>
-            </div>
-
-            {/* Card 3: Size & Floor */}
+            {/* Card 2: Built-Up Area */}
             <div style={{ background: '#FFFFFF', borderRadius: 8, border: '1px solid #E2E8F0', padding: '12px 16px' }}>
               <div style={{ fontSize: 11, fontWeight: 700, color: '#64748B', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
                 Built-Up Area
               </div>
-              <div style={{ fontSize: 17, fontWeight: 800, color: '#0F172A', marginTop: 3 }}>
+              <div style={{ fontSize: 18, fontWeight: 800, color: '#0F172A', marginTop: 3 }}>
                 {unit.size ? Number(unit.size).toLocaleString() : '—'} <span style={{ fontSize: 12, fontWeight: 600, color: '#64748B' }}>SQFT</span>
               </div>
               <div style={{ fontSize: 11.5, color: '#64748B', marginTop: 2 }}>
-                Floor {unit.floor ?? '—'} • {unit.type || 'Standard'}
+                Net Interior Area
               </div>
             </div>
 
-            {/* Card 4: Furnishing */}
+            {/* Card 3: Floor Level */}
             <div style={{ background: '#FFFFFF', borderRadius: 8, border: '1px solid #E2E8F0', padding: '12px 16px' }}>
               <div style={{ fontSize: 11, fontWeight: 700, color: '#64748B', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-                Furnishing
+                Floor Level
               </div>
-              <div style={{ fontSize: 17, fontWeight: 800, color: '#0F172A', marginTop: 3 }}>
-                {unit.furnished ? 'Furnished' : 'Unfurnished'}
+              <div style={{ fontSize: 18, fontWeight: 800, color: '#0F172A', marginTop: 3 }}>
+                Floor {unit.floor ?? '—'}
               </div>
               <div style={{ fontSize: 11.5, color: '#64748B', marginTop: 2 }}>
-                {unit.dhewa_no ? `DEWA: ${unit.dhewa_no}` : (unit.category || 'Standard residential')}
+                Building Level
               </div>
             </div>
 
-            {/* Card 5: Service Charge */}
+            {/* Card 4: Service Charge */}
             <div style={{ background: '#FFFFFF', borderRadius: 8, border: '1px solid #E2E8F0', padding: '12px 16px' }}>
               <div style={{ fontSize: 11, fontWeight: 700, color: '#64748B', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-                Service Charge
+                Monthly Service Charge
               </div>
-              <div style={{ fontSize: 17, fontWeight: 800, color: '#0F172A', marginTop: 3 }}>
+              <div style={{ fontSize: 18, fontWeight: 800, color: '#0F172A', marginTop: 3 }}>
                 AED {Number(unit.monthly_service_charge || 0).toLocaleString()} <span style={{ fontSize: 12, fontWeight: 600, color: '#64748B' }}>/ MO</span>
               </div>
               <div style={{ fontSize: 11.5, color: '#64748B', marginTop: 2 }}>
@@ -458,13 +434,10 @@ export default function UnitDetailPage() {
           <div className="unit-detail-grid">
             {/* LEFT COLUMN */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-              {/* Section 1: Active Tenancy Contract */}
+              {/* Section 1: Active Tenancy Contract (Only shown if active, clean message if vacant) */}
               <div style={cardStyle}>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14, borderBottom: '1px solid #E2E8F0', paddingBottom: 10 }}>
-                  <div>
-                    <h2 style={{ fontSize: 14, fontWeight: 800, color: '#0F172A', margin: 0 }}>Active Tenancy Lease</h2>
-                    <div style={{ fontSize: 11.5, color: '#64748B', marginTop: 1 }}>Current lease contract & registered tenant information</div>
-                  </div>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12, borderBottom: '1px solid #E2E8F0', paddingBottom: 8 }}>
+                  <h2 style={{ fontSize: 14, fontWeight: 800, color: '#0F172A', margin: 0 }}>Active Tenancy Lease</h2>
                   {activeContract && (
                     <span style={{
                       fontSize: 11,
@@ -472,7 +445,7 @@ export default function UnitDetailPage() {
                       background: '#F0FDF4',
                       color: '#065F46',
                       border: '1px solid #BBF7D0',
-                      padding: '3px 8px',
+                      padding: '2px 8px',
                       borderRadius: 999,
                     }}>
                       Lease #{activeContract.id}
@@ -482,7 +455,7 @@ export default function UnitDetailPage() {
 
                 {activeContract ? (
                   <div>
-                    {/* Clean Key-Value Table */}
+                    {/* Non-redundant key-value table: Only tenant & lease agreement particulars */}
                     <div style={{ border: '1px solid #E2E8F0', borderRadius: 8, overflow: 'hidden' }}>
                       {[
                         { label: 'Primary Tenant', value: activeTenant?.name || '—', highlight: true },
@@ -490,7 +463,6 @@ export default function UnitDetailPage() {
                         { label: 'Email Address', value: activeTenant?.email || '—' },
                         { label: 'Payment Mode', value: activeContract.mode_of_payment || 'Cheque / Wire' },
                         { label: 'Lease Duration', value: `${formatDate(activeContract.start_date)} – ${formatDate(activeContract.end_date)}` },
-                        { label: 'Annual Rent', value: `AED ${Number(activeContract.rent_amount || 0).toLocaleString()}` },
                         { label: 'Security Deposit', value: `AED ${Number(activeContract.security_deposit || 0).toLocaleString()}` },
                         { label: 'Outstanding Balance', value: `AED ${Number(activeContract.due || 0).toLocaleString()}`, alert: Number(activeContract.due) > 0 },
                       ].map((row, idx, arr) => (
@@ -517,13 +489,10 @@ export default function UnitDetailPage() {
                       ))}
                     </div>
 
-                    <div style={{ marginTop: 12, textAlign: 'right' }}>
+                    <div style={{ marginTop: 10, textAlign: 'right' }}>
                       <Link
                         to={`/owner/contracts/${activeContract.id}`}
                         style={{
-                          display: 'inline-flex',
-                          alignItems: 'center',
-                          gap: 6,
                           fontSize: 12.5,
                           fontWeight: 700,
                           color: '#065F46',
@@ -535,34 +504,18 @@ export default function UnitDetailPage() {
                     </div>
                   </div>
                 ) : (
-                  <div style={{ textAlign: 'center', padding: '28px 16px', background: '#F8FAFC', borderRadius: 8, border: '1px dashed #CBD5E1' }}>
-                    <div style={{ fontSize: 14, fontWeight: 700, color: '#0F172A' }}>Unit is Currently Vacant</div>
-                    <div style={{ fontSize: 12, color: '#64748B', marginTop: 3, marginBottom: 14 }}>
-                      There is no active tenant lease registered for this unit.
+                  <div style={{ padding: '16px 14px', background: '#F8FAFC', borderRadius: 8, border: '1px dashed #CBD5E1', textAlign: 'center' }}>
+                    <div style={{ fontSize: 13.5, fontWeight: 700, color: '#334155' }}>
+                      Unit is Currently Vacant
                     </div>
-                    <Link
-                      to={`/owner/contracts?create=1&unit_id=${unit.id}&property_id=${unit.property?.id || ''}`}
-                      style={{
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        gap: 6,
-                        padding: '7px 16px',
-                        borderRadius: 7,
-                        background: '#065F46',
-                        color: '#FFFFFF',
-                        fontSize: 12.5,
-                        fontWeight: 700,
-                        textDecoration: 'none',
-                      }}
-                    >
-                      <Icon path={ICONS.plus} size={14} />
-                      <span>Create Contract</span>
-                    </Link>
+                    <div style={{ fontSize: 12, color: '#64748B', marginTop: 3 }}>
+                      No active lease contract on file. Use the &quot;+ Create Contract&quot; button in the header to register a new tenant lease.
+                    </div>
                   </div>
                 )}
               </div>
 
-              {/* Section 2: Unit Specifications Table */}
+              {/* Section 2: Unit Specifications Table (Only non-duplicated attributes) */}
               <div style={cardStyle}>
                 <div style={{ marginBottom: 12, borderBottom: '1px solid #E2E8F0', paddingBottom: 8 }}>
                   <h2 style={{ fontSize: 14, fontWeight: 800, color: '#0F172A', margin: 0 }}>Unit Specifications</h2>
@@ -570,14 +523,10 @@ export default function UnitDetailPage() {
 
                 <div style={{ border: '1px solid #E2E8F0', borderRadius: 8, overflow: 'hidden' }}>
                   {[
-                    { label: 'Unit Number', value: `#${unit.number}` },
-                    { label: 'Building / Tower', value: unit.property?.name || '—' },
-                    { label: 'Floor Level', value: `Floor ${unit.floor ?? '—'}` },
-                    { label: 'Layout Type', value: unit.type || 'Apartment' },
-                    { label: 'Built-up Area', value: unit.size ? `${Number(unit.size).toLocaleString()} SQFT` : '—' },
                     { label: 'Furnishing Status', value: unit.furnished ? 'Fully Furnished' : 'Unfurnished' },
                     { label: 'DEWA Premise #', value: unit.dhewa_no || 'Not Registered' },
                     { label: 'Usage Category', value: unit.category || 'Residential' },
+                    { label: 'Standard Asking Price', value: `AED ${Number(unit.price || 0).toLocaleString()}` },
                   ].map((row, idx, arr) => (
                     <div
                       key={row.label}
