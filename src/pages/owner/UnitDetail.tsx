@@ -434,11 +434,11 @@ export default function UnitDetailPage() {
           <div className="unit-detail-grid">
             {/* LEFT COLUMN */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-              {/* Section 1: Active Tenancy Contract (Only shown if active, clean message if vacant) */}
-              <div style={cardStyle}>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12, borderBottom: '1px solid #E2E8F0', paddingBottom: 8 }}>
-                  <h2 style={{ fontSize: 14, fontWeight: 800, color: '#0F172A', margin: 0 }}>Active Tenancy Lease</h2>
-                  {activeContract && (
+              {/* Section 1: Active Tenancy Contract (Only displayed when unit has an active contract) */}
+              {activeContract && (
+                <div style={cardStyle}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12, borderBottom: '1px solid #E2E8F0', paddingBottom: 8 }}>
+                    <h2 style={{ fontSize: 14, fontWeight: 800, color: '#0F172A', margin: 0 }}>Active Tenancy Lease</h2>
                     <span style={{
                       fontSize: 11,
                       fontWeight: 700,
@@ -450,10 +450,8 @@ export default function UnitDetailPage() {
                     }}>
                       Lease #{activeContract.id}
                     </span>
-                  )}
-                </div>
+                  </div>
 
-                {activeContract ? (
                   <div>
                     {/* Non-redundant key-value table: Only tenant & lease agreement particulars */}
                     <div style={{ border: '1px solid #E2E8F0', borderRadius: 8, overflow: 'hidden' }}>
@@ -503,17 +501,8 @@ export default function UnitDetailPage() {
                       </Link>
                     </div>
                   </div>
-                ) : (
-                  <div style={{ padding: '16px 14px', background: '#F8FAFC', borderRadius: 8, border: '1px dashed #CBD5E1', textAlign: 'center' }}>
-                    <div style={{ fontSize: 13.5, fontWeight: 700, color: '#334155' }}>
-                      Unit is Currently Vacant
-                    </div>
-                    <div style={{ fontSize: 12, color: '#64748B', marginTop: 3 }}>
-                      No active lease contract on file. Use the &quot;+ Create Contract&quot; button in the header to register a new tenant lease.
-                    </div>
-                  </div>
-                )}
-              </div>
+                </div>
+              )}
 
               {/* Section 2: Unit Specifications Table (Only non-duplicated attributes) */}
               <div style={cardStyle}>
