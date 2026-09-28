@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Link, useSearchParams, useNavigate } from 'react-router-dom'
 import api from '../../api/axios'
-import AuthShell, { FieldIcon, AUTH_ICONS } from '../../components/auth/AuthShell'
+import AuthShell, { FieldIcon, PasswordEyeIcon, AUTH_ICONS } from '../../components/auth/AuthShell'
 
 export default function ResetPasswordPage() {
   const [searchParams] = useSearchParams()
@@ -11,6 +11,8 @@ export default function ResetPasswordPage() {
   const [email, setEmail] = useState(emailParam || '')
   const [password, setPassword] = useState('')
   const [passwordConfirmation, setPasswordConfirmation] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
+  const [showConfirm, setShowConfirm] = useState(false)
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
   const [message, setMessage] = useState('')
   const navigate = useNavigate()
@@ -96,14 +98,23 @@ export default function ResetPasswordPage() {
             <FieldIcon path={AUTH_ICONS.lock} />
             <input
               id="password"
-              type="password"
+              type={showPassword ? 'text' : 'password'}
               className="auth-input"
-              placeholder="••••••••"
+              placeholder="Enter your new password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
               minLength={8}
+              style={{ paddingRight: 42 }}
             />
+            <button
+              type="button"
+              className="auth-toggle-pw"
+              onClick={() => setShowPassword((s) => !s)}
+              aria-label={showPassword ? 'Hide password' : 'Show password'}
+            >
+              <PasswordEyeIcon visible={showPassword} />
+            </button>
           </div>
         </div>
 
@@ -113,13 +124,22 @@ export default function ResetPasswordPage() {
             <FieldIcon path={AUTH_ICONS.lock} />
             <input
               id="passwordConfirmation"
-              type="password"
+              type={showConfirm ? 'text' : 'password'}
               className="auth-input"
-              placeholder="••••••••"
+              placeholder="Confirm your new password"
               value={passwordConfirmation}
               onChange={(e) => setPasswordConfirmation(e.target.value)}
               required
+              style={{ paddingRight: 42 }}
             />
+            <button
+              type="button"
+              className="auth-toggle-pw"
+              onClick={() => setShowConfirm((s) => !s)}
+              aria-label={showConfirm ? 'Hide password' : 'Show password'}
+            >
+              <PasswordEyeIcon visible={showConfirm} />
+            </button>
           </div>
         </div>
 

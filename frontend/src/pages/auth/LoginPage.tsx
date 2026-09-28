@@ -1,7 +1,7 @@
 import { useState, useRef } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuthStore, getRoleDashboardPath } from '../../store/authStore'
-import AuthShell, { FieldIcon, AUTH_ICONS } from '../../components/auth/AuthShell'
+import AuthShell, { FieldIcon, PasswordEyeIcon, AUTH_ICONS } from '../../components/auth/AuthShell'
 
 export default function LoginPage() {
   const [email, setEmail] = useState('')
@@ -46,7 +46,7 @@ export default function LoginPage() {
 
       <form onSubmit={handleSubmit} className="auth-form" noValidate>
         <div>
-          <label className="auth-label" htmlFor="email">Email address</label>
+          <label className="auth-label" htmlFor="email">Email Address</label>
           <div className="auth-input-wrap">
             <FieldIcon path={AUTH_ICONS.mail} />
             <input
@@ -75,13 +75,13 @@ export default function LoginPage() {
               id="password"
               type={showPassword ? 'text' : 'password'}
               className="auth-input"
-              placeholder="••••••••"
+              placeholder="Enter your password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               onKeyUp={handlePasswordKey}
               onKeyDown={handlePasswordKey}
               required
-              style={{ paddingRight: 56 }}
+              style={{ paddingRight: 42 }}
             />
             <button
               type="button"
@@ -89,7 +89,7 @@ export default function LoginPage() {
               onClick={() => setShowPassword((s) => !s)}
               aria-label={showPassword ? 'Hide password' : 'Show password'}
             >
-              {showPassword ? 'Hide' : 'Show'}
+              <PasswordEyeIcon visible={showPassword} />
             </button>
           </div>
           {capsLockOn && <p className="auth-caps">Caps lock is on.</p>}

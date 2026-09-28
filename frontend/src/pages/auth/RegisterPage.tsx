@@ -4,7 +4,7 @@ import type { UserRole } from '../../types'
 import api from '../../api/axios'
 import { useAuthStore, getRoleDashboardPath } from '../../store/authStore'
 import ReCAPTCHA from 'react-google-recaptcha'
-import AuthShell, { FieldIcon, AUTH_ICONS } from '../../components/auth/AuthShell'
+import AuthShell, { FieldIcon, PasswordEyeIcon, AUTH_ICONS } from '../../components/auth/AuthShell'
 
 const ROLE_OPTIONS: { value: UserRole; label: string }[] = [
   { value: 'tenant', label: 'Tenant' },
@@ -16,6 +16,8 @@ export default function RegisterPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [passwordConfirmation, setPasswordConfirmation] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
+  const [showConfirm, setShowConfirm] = useState(false)
   const [role, setRole] = useState<UserRole>('tenant')
   const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null)
 
@@ -156,14 +158,23 @@ export default function RegisterPage() {
               <FieldIcon path={AUTH_ICONS.lock} />
               <input
                 id="password"
-                type="password"
+                type={showPassword ? 'text' : 'password'}
                 className="auth-input"
-                placeholder="••••••••"
+                placeholder="Enter password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 minLength={8}
+                style={{ paddingRight: 38 }}
               />
+              <button
+                type="button"
+                className="auth-toggle-pw"
+                onClick={() => setShowPassword((s) => !s)}
+                aria-label={showPassword ? 'Hide password' : 'Show password'}
+              >
+                <PasswordEyeIcon visible={showPassword} />
+              </button>
             </div>
           </div>
           <div>
@@ -172,13 +183,22 @@ export default function RegisterPage() {
               <FieldIcon path={AUTH_ICONS.lock} />
               <input
                 id="passwordConfirmation"
-                type="password"
+                type={showConfirm ? 'text' : 'password'}
                 className="auth-input"
-                placeholder="••••••••"
+                placeholder="Confirm password"
                 value={passwordConfirmation}
                 onChange={(e) => setPasswordConfirmation(e.target.value)}
                 required
+                style={{ paddingRight: 38 }}
               />
+              <button
+                type="button"
+                className="auth-toggle-pw"
+                onClick={() => setShowConfirm((s) => !s)}
+                aria-label={showConfirm ? 'Hide password' : 'Show password'}
+              >
+                <PasswordEyeIcon visible={showConfirm} />
+              </button>
             </div>
           </div>
         </div>
