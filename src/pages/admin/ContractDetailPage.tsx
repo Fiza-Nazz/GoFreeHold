@@ -860,30 +860,29 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
       <div
         style={{
           background: '#FFFFFF',
-          borderRadius: 14,
+          borderRadius: 12,
           border: '1px solid #E2E8F0',
-          padding: '26px 30px',
-          marginBottom: 18,
-          boxShadow: '0 2px 8px rgba(15, 23, 42, 0.04)',
+          padding: '18px 22px',
+          marginBottom: 12,
+          boxShadow: '0 1px 4px rgba(15, 23, 42, 0.04)',
         }}
       >
         {/* Top Row: Unit Badge + Title + Active Pill (Left) | Back + View Contract Buttons (Right) */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 16 }}>
-          <div style={{ display: 'flex', alignItems: 'flex-start', gap: 18 }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 12 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
             <div
               style={{
-                width: 56,
-                height: 56,
-                borderRadius: 12,
+                width: 42,
+                height: 42,
+                borderRadius: 10,
                 background: '#10B981',
                 color: '#FFFFFF',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 fontWeight: 800,
-                fontSize: 18,
+                fontSize: 15,
                 flexShrink: 0,
-                boxShadow: '0 4px 10px rgba(14, 124, 91, 0.22)',
               }}
             >
               {unitNumber}
@@ -891,19 +890,19 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
             <div>
               <div
                 style={{
-                  fontSize: 12,
-                  color: '#334155',
-                  fontWeight: 700,
+                  fontSize: 11,
+                  color: '#64748B',
+                  fontWeight: 600,
                   textTransform: 'uppercase',
-                  letterSpacing: '0.05em',
+                  letterSpacing: '0.04em',
                 }}
               >
-                {propertyName} • {contractType} • CONTRACT #GFH-{String(contract.id).padStart(5, '0')}
+                {propertyName} • {contractType} • #GFH-{String(contract.id).padStart(5, '0')}
               </div>
               <h1
                 style={{
-                  margin: '4px 0 10px 0',
-                  fontSize: 22,
+                  margin: '2px 0 4px 0',
+                  fontSize: 18,
                   fontWeight: 800,
                   color: '#0F172A',
                   letterSpacing: '-0.015em',
@@ -941,25 +940,25 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
             </div>
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
             <button
               type="button"
               onClick={() => navigate(`${effectiveBasePath}/contracts`)}
               style={{
                 display: 'inline-flex',
                 alignItems: 'center',
-                gap: 6,
-                padding: '10px 16px',
-                borderRadius: 8,
+                gap: 5,
+                padding: '7px 12px',
+                borderRadius: 7,
                 border: '1px solid #CBD5E1',
                 background: '#F8FAFC',
-                color: '#0F172A',
-                fontSize: 13,
-                fontWeight: 700,
+                color: '#64748B',
+                fontSize: 12.5,
+                fontWeight: 600,
                 cursor: 'pointer',
               }}
             >
-              ← Back to Contracts
+              ← Back
             </button>
 
             <button
@@ -969,103 +968,51 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
               style={{
                 display: 'inline-flex',
                 alignItems: 'center',
-                gap: 8,
-                padding: '10px 20px',
-                borderRadius: 8,
+                gap: 6,
+                padding: '7px 14px',
+                borderRadius: 7,
                 background: '#10B981',
-                border: '1px solid #10B981',
+                border: 'none',
                 color: '#FFFFFF',
-                fontSize: 13,
+                fontSize: 12.5,
                 fontWeight: 700,
                 cursor: 'pointer',
-                boxShadow: '0 2px 4px rgba(14, 124, 91, 0.2)',
               }}
             >
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
                 <polyline points="14 2 14 8 20 8" />
-                <line x1="16" y1="13" x2="8" y2="13" />
-                <line x1="16" y1="17" x2="8" y2="17" />
               </svg>
-              <span>{pdfLoading ? 'Preparing...' : 'View Contract PDF'}</span>
+              <span>{pdfLoading ? 'Preparing...' : 'Contract PDF'}</span>
             </button>
           </div>
         </div>
 
-        {/* 4 Functional KPI Boxes Row: Annual Rent | Outstanding Balance | Security Deposit | Next Due Date */}
         <div
           style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-            marginTop: 22,
-            paddingTop: 20,
+            gridTemplateColumns: 'repeat(4, 1fr)',
+            marginTop: 14,
+            paddingTop: 14,
             borderTop: '1px solid #E2E8F0',
-            gap: 16,
+            gap: 10,
           }}
         >
-          <div
-            style={{
-              background: '#ECFDF8',
-              border: '1px solid #A7F3DC',
-              borderRadius: 10,
-              padding: '14px 18px',
-            }}
-          >
-            <div style={{ fontSize: 11.5, color: '#065F46', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-              Annual Rent
+          {[
+            { label: 'Annual Rent', value: `AED ${totalRentFormatted}`, bg: '#ECFDF8', border: '#A7F3DC', labelColor: '#065F46' },
+            { label: 'Outstanding', value: `AED ${Number(balanceDue).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, bg: balanceDue > 0 ? '#FEF2F2' : '#F0FDF4', border: balanceDue > 0 ? '#FECACA' : '#BBF7D0', labelColor: balanceDue > 0 ? '#991B1B' : '#166534', valueColor: balanceDue > 0 ? '#DC2626' : '#059669' },
+            { label: 'Security Deposit', value: `AED ${Number(contract.security_deposit || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`, bg: '#F0F9FF', border: '#BAE6FD', labelColor: '#075985' },
+            { label: 'Next Due', value: nextDueDateStr, bg: '#FFFBEB', border: '#FDE68A', labelColor: '#92400E' },
+          ].map(kpi => (
+            <div key={kpi.label} style={{ background: kpi.bg, border: `1px solid ${kpi.border}`, borderRadius: 8, padding: '10px 14px' }}>
+              <div style={{ fontSize: 10.5, color: kpi.labelColor, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                {kpi.label}
+              </div>
+              <div style={{ fontSize: 15, fontWeight: 800, color: kpi.valueColor || '#0F172A', marginTop: 3 }}>
+                {kpi.value}
+              </div>
             </div>
-            <div style={{ fontSize: 18, fontWeight: 800, color: '#0F172A', marginTop: 6 }}>
-              AED {totalRentFormatted}
-            </div>
-          </div>
-
-          <div
-            style={{
-              background: balanceDue > 0 ? '#FEF2F2' : '#F0FDF4',
-              border: `1px solid ${balanceDue > 0 ? '#FECACA' : '#BBF7D0'}`,
-              borderRadius: 10,
-              padding: '14px 18px',
-            }}
-          >
-            <div style={{ fontSize: 11.5, color: balanceDue > 0 ? '#991B1B' : '#166534', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-              Outstanding Balance
-            </div>
-            <div style={{ fontSize: 18, fontWeight: 800, color: balanceDue > 0 ? '#DC2626' : '#059669', marginTop: 6 }}>
-              AED {Number(balanceDue).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-            </div>
-          </div>
-
-          <div
-            style={{
-              background: '#F0F9FF',
-              border: '1px solid #BAE6FD',
-              borderRadius: 10,
-              padding: '14px 18px',
-            }}
-          >
-            <div style={{ fontSize: 11.5, color: '#075985', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-              Security Deposit
-            </div>
-            <div style={{ fontSize: 18, fontWeight: 800, color: '#0F172A', marginTop: 6 }}>
-              AED {Number(contract.security_deposit || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-            </div>
-          </div>
-
-          <div
-            style={{
-              background: '#FFFBEB',
-              border: '1px solid #FDE68A',
-              borderRadius: 10,
-              padding: '14px 18px',
-            }}
-          >
-            <div style={{ fontSize: 11.5, color: '#92400E', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-              Next Payment Due
-            </div>
-            <div style={{ fontSize: 18, fontWeight: 800, color: '#0F172A', marginTop: 6 }}>
-              {nextDueDateStr}
-            </div>
-          </div>
+          ))}
         </div>
       </div>
 
@@ -1073,14 +1020,13 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
       <div
         style={{
           display: 'flex',
-          gap: 8,
+          gap: 4,
           overflowX: 'auto',
           background: '#FFFFFF',
           border: '1px solid #E2E8F0',
-          borderRadius: 12,
-          padding: '6px 8px',
-          marginBottom: 22,
-          boxShadow: '0 1px 3px rgba(15, 23, 42, 0.03)',
+          borderRadius: 10,
+          padding: '4px 6px',
+          marginBottom: 14,
         }}
       >
         {[
@@ -1097,7 +1043,7 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
               type="button"
               onClick={() => handleWorkspaceTabChange(t.key)}
               style={{
-                padding: '9px 18px',
+                padding: '7px 14px',
                 background: active ? '#10B981' : 'transparent',
                 border: 'none',
                 borderRadius: 8,
@@ -1117,48 +1063,26 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
 
       {/* ─── TAB 1: OVERVIEW ─── */}
       {workspaceTab === 'overview' && (
-        <div className="fade-in" style={{ display: 'flex', flexDirection: 'column', gap: 22 }}>
+        <div className="fade-in" style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
           {/* Row 1: Two Balanced Cards (Recent Payments + Contract Details) */}
-          <div className="gfh-overview-two-col" style={{ display: 'grid', gridTemplateColumns: '1.6fr 1fr', gap: 22, alignItems: 'stretch' }}>
+          <div className="gfh-overview-two-col" style={{ display: 'grid', gridTemplateColumns: '1.6fr 1fr', gap: 14, alignItems: 'stretch' }}>
             {/* Left Card: Recent Payments */}
             <div
               style={{
                 background: '#FFFFFF',
-                borderRadius: 14,
+                borderRadius: 12,
                 border: '1px solid #E2E8F0',
-                padding: '24px 26px',
-                boxShadow: '0 2px 8px rgba(15, 23, 42, 0.03)',
+                padding: '16px 18px',
                 display: 'flex',
                 flexDirection: 'column',
                 justifyContent: 'space-between',
               }}
             >
               <div>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10, marginBottom: 16 }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                    <div
-                      style={{
-                        width: 34,
-                        height: 34,
-                        borderRadius: 8,
-                        background: '#ECFDF5',
-                        color: '#10B981',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                      }}
-                    >
-                      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
-                        <circle cx="12" cy="12" r="10" />
-                        <polyline points="12 6 12 12 16 14" />
-                      </svg>
-                    </div>
-                    <div>
-                      <h3 style={{ fontSize: 16, fontWeight: 800, color: '#0F172A', margin: 0 }}>
-                        Recent Payments
-                      </h3>
-                    </div>
-                  </div>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10, marginBottom: 12 }}>
+                  <h3 style={{ fontSize: 14, fontWeight: 800, color: '#0F172A', margin: 0 }}>
+                    Recent Payments
+                  </h3>
 
                   <button
                     type="button"
@@ -1352,42 +1276,18 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
             <div
               style={{
                 background: '#FFFFFF',
-                borderRadius: 14,
+                borderRadius: 12,
                 border: '1px solid #E2E8F0',
-                padding: '24px 26px',
-                boxShadow: '0 2px 8px rgba(15, 23, 42, 0.03)',
+                padding: '16px 18px',
                 display: 'flex',
                 flexDirection: 'column',
                 justifyContent: 'space-between',
               }}
             >
               <div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16 }}>
-                  <div
-                    style={{
-                      width: 34,
-                      height: 34,
-                      borderRadius: 8,
-                      background: '#F0F9FF',
-                      color: '#0284C7',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                    }}
-                  >
-                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                      <polyline points="14 2 14 8 20 8" />
-                      <line x1="16" y1="13" x2="8" y2="13" />
-                      <line x1="16" y1="17" x2="8" y2="17" />
-                    </svg>
-                  </div>
-                  <div>
-                    <h3 style={{ fontSize: 16, fontWeight: 800, color: '#0F172A', margin: 0 }}>
-                      Contract Details
-                    </h3>
-                  </div>
-                </div>
+                <h3 style={{ fontSize: 14, fontWeight: 800, color: '#0F172A', margin: '0 0 10px 0' }}>
+                  Contract Details
+                </h3>
 
                 <div style={{ border: '1px solid #E2E8F0', borderRadius: 10, overflow: 'hidden' }}>
                   {[
@@ -1438,13 +1338,12 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
           {/* ─── SECTION 2: CONTRACT OPERATIONS & QUICK ACTIONS ─── */}
           <div style={{
             background: '#FFFFFF',
-            borderRadius: 14,
+            borderRadius: 12,
             border: '1px solid #E2E8F0',
-            padding: '20px 26px',
-            boxShadow: '0 2px 8px rgba(15, 23, 42, 0.03)',
+            padding: '16px 18px',
           }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 18 }}>
-              <h3 style={{ fontSize: 16, fontWeight: 800, color: '#0F172A', margin: 0 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+              <h3 style={{ fontSize: 14, fontWeight: 800, color: '#0F172A', margin: 0 }}>
                 Contract Operations
               </h3>
               <button
@@ -1659,32 +1558,26 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
           <div
             style={{
               background: '#FFFFFF',
-              borderRadius: 14,
+              borderRadius: 12,
               border: '1px solid #E2E8F0',
-              padding: '24px 28px',
-              boxShadow: '0 2px 8px rgba(15, 23, 42, 0.03)',
+              padding: '16px 18px',
             }}
           >
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12, marginBottom: 18 }}>
-              <div>
-                <h3 style={{ fontSize: 16, fontWeight: 800, color: '#0F172A', margin: 0 }}>Rent Statement &amp; Ledger</h3>
-                <p style={{ fontSize: 13, color: '#475569', margin: '4px 0 0 0', fontWeight: 500 }}>
-                  Chronological debit charges, rent credits, and running balance for this contract.
-                </p>
-              </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 10, marginBottom: 12 }}>
+              <h3 style={{ fontSize: 14, fontWeight: 800, color: '#0F172A', margin: 0 }}>Rent Statement &amp; Ledger</h3>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
                 {!isCashier && (
                   <button
                     type="button"
                     onClick={() => setChargeModalOpen(true)}
                     style={{
-                      padding: '9px 16px',
-                      borderRadius: 8,
+                      padding: '7px 12px',
+                      borderRadius: 7,
                       border: '1px solid #CBD5E1',
                       background: '#F8FAFC',
                       color: '#0F172A',
-                      fontSize: 13,
-                      fontWeight: 700,
+                      fontSize: 12.5,
+                      fontWeight: 600,
                       cursor: 'pointer',
                     }}
                   >
@@ -1696,12 +1589,12 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
                   onClick={handleExportExcel}
                   disabled={exportLoading}
                   style={{
-                    padding: '9px 16px',
-                    borderRadius: 8,
-                    border: '1px solid #10B981',
+                    padding: '7px 14px',
+                    borderRadius: 7,
+                    border: 'none',
                     background: '#10B981',
                     color: '#FFFFFF',
-                    fontSize: 13,
+                    fontSize: 12.5,
                     fontWeight: 700,
                     cursor: 'pointer',
                   }}
