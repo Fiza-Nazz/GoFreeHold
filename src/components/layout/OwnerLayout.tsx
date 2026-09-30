@@ -293,9 +293,10 @@ export default function OwnerLayout() {
           padding: 10px 14px;
           margin-bottom: 10px;
           border-radius: 8px;
-          color: #334155;
-          font-size: 13.5px;
-          font-weight: 600;
+          color: #0F172A;
+          font-size: 14px;
+          font-weight: 800;
+          letter-spacing: -0.01em;
           text-decoration: none;
           transition: background 0.15s ease, color 0.15s ease;
         }
@@ -308,7 +309,7 @@ export default function OwnerLayout() {
         .gfh-dashboard-item.active {
           background: #E8F8F0;
           color: #0F8A67;
-          font-weight: 700;
+          font-weight: 800;
           border: 1px solid #D1FAE5;
         }
 
@@ -560,7 +561,7 @@ export default function OwnerLayout() {
             <span className="gfh-dash-icon" style={{ display: 'flex' }}>
               <Icon path={icons.dashboard} size={17} />
             </span>
-            <span>Dashboard</span>
+            <span style={{ fontWeight: 800, letterSpacing: '-0.01em' }}>Dashboard</span>
           </NavLink>
 
           {/* 2. Organized Menu Groups strictly per Paul Brit's mockup */}
