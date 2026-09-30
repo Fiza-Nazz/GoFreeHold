@@ -18,6 +18,7 @@ interface ContractInfo {
   rent_amount?: number | string
   security_deposit?: number | string
   due?: number | string
+  grace_period?: number | string
   status?: string
   mode_of_payment?: string
   tenant?: TenantInfo
@@ -36,6 +37,17 @@ interface ComplaintInfo {
       name: string
     }
   }
+}
+
+interface PaymentInfo {
+  id: number
+  contract_id?: number
+  type?: string
+  mode?: string
+  amount?: number | string
+  date?: string
+  remarks?: string
+  receipt_number?: string
 }
 
 interface PropertyInfo {
@@ -65,6 +77,7 @@ interface UnitDetail {
   contracts_count?: number
   recent_contracts?: ContractInfo[]
   recent_complaints?: ComplaintInfo[]
+  recent_payments?: PaymentInfo[]
 }
 
 const LOCAL_ICONS = {
@@ -73,6 +86,11 @@ const LOCAL_ICONS = {
   layers: 'M12 2L2 7l10 5 10-5-10-5z M2 17l10 5 10-5 M2 12l10 5 10-5',
   checkCircle: 'M22 11.08V12a10 10 0 1 1-5.93-9.14 M22 4L12 14.01l-3-3',
   clock: 'M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20z M12 6v6l4 2',
+  phone: 'M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-5.4-5.4A19.79 19.79 0 0 1 2.72 4.18 2 2 0 0 1 4.68 2h3a2 2 0 0 1 2 1.72 12.05 12.05 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11l-1.27 1.27a16 16 0 0 0 5.4 5.4l1.27-1.27a2 2 0 0 1 2.11-.45 12.05 12.05 0 0 0 2.81.7A2 2 0 0 1 22 16.92z',
+  user: 'M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2 M12 3a4 4 0 1 0 0 8 4 4 0 0 0 0-8z',
+  edit: 'M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7 M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z',
+  trash: 'M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0-1 14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2L4 6h16z',
+  eye: 'M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z M12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6z',
 }
 
 function formatDate(dateStr?: string | null): string {
@@ -176,184 +194,35 @@ export default function UnitDetailPage() {
     boxShadow: '0 1px 3px rgba(15, 23, 42, 0.03)',
   }
 
+  /* ── Compute contract detail rows for the right-side key-value table ── */
+  const contractDetailRows = activeContract ? [
+    { label: 'Lease Term', value: activeContract.mode_of_payment || 'Monthly' },
+    { label: 'Rent Amount', value: `AED ${Number(activeContract.rent_amount || 0).toLocaleString()}` },
+    { label: 'Security Deposit', value: `AED ${Number(activeContract.security_deposit || 0).toLocaleString()}` },
+    { label: 'Grace Period', value: activeContract.grace_period ? `${activeContract.grace_period} Days` : '—' },
+    { label: 'Start Date', value: formatDate(activeContract.start_date) },
+    { label: 'End Date', value: formatDate(activeContract.end_date) },
+    { label: 'Balance Due', value: `AED ${Number(activeContract.due || 0).toLocaleString()}` },
+  ] : []
+
   return (
     <div className="gfh-portal-page" style={{ fontFamily: "'Inter', system-ui, sans-serif", background: '#F8FAFC', minHeight: '100vh', paddingBottom: 40 }}>
       <style>{`
         ${portalPageCss}
-        .unit-detail-grid {
+        .unit-detail-two-col {
           display: grid;
-          grid-template-columns: minmax(0, 1.8fr) minmax(0, 1.2fr);
+          grid-template-columns: 1.4fr 1fr;
           gap: 16px;
           align-items: start;
         }
         @media (max-width: 1060px) {
-          .unit-detail-grid {
+          .unit-detail-two-col {
             grid-template-columns: 1fr;
           }
         }
       `}</style>
 
-      {/* ─── 1. TOP HEADER CARD (Unit Identity & Primary Actions) ─── */}
-      <div
-        className="fade-in"
-        style={{
-          background: '#FFFFFF',
-          borderRadius: 10,
-          border: '1px solid #E2E8F0',
-          padding: '16px 20px',
-          marginBottom: 14,
-          boxShadow: '0 1px 3px rgba(15, 23, 42, 0.03)',
-        }}
-      >
-        {/* Breadcrumb line */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: '#64748B', fontWeight: 500, marginBottom: 8 }}>
-          <Link to="/owner/dashboard" style={{ color: '#065F46', textDecoration: 'none', fontWeight: 600 }}>Portfolio</Link>
-          <span>/</span>
-          <Link to="/owner/units" style={{ color: '#065F46', textDecoration: 'none', fontWeight: 600 }}>Units</Link>
-          <span>/</span>
-          <span style={{ color: '#0F172A', fontWeight: 700 }}>Unit {unit?.number || unitId}</span>
-        </div>
-
-        {/* Title Row: Unit Number + Type Badge + Status Badge (Left) | Action Buttons (Right) */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 14 }}>
-          <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-              <h1 style={{ fontSize: 22, fontWeight: 800, color: '#0F172A', margin: 0, letterSpacing: '-0.015em' }}>
-                Unit #{unit?.number || '—'}
-              </h1>
-              {unit?.type && (
-                <span style={{
-                  background: '#F1F5F9',
-                  color: '#475569',
-                  border: '1px solid #E2E8F0',
-                  fontSize: 11.5,
-                  fontWeight: 700,
-                  padding: '2px 8px',
-                  borderRadius: 6,
-                  textTransform: 'uppercase',
-                }}>
-                  {unit.type}
-                </span>
-              )}
-              {unit && (
-                <span style={{
-                  background: statusBadge.bg,
-                  color: statusBadge.color,
-                  border: `1px solid ${statusBadge.border}`,
-                  fontSize: 11.5,
-                  fontWeight: 700,
-                  padding: '2px 10px',
-                  borderRadius: 999,
-                  letterSpacing: '0.4px',
-                  textTransform: 'uppercase',
-                }}>
-                  {statusBadge.label}
-                </span>
-              )}
-            </div>
-
-            <div style={{ fontSize: 13, color: '#64748B', marginTop: 4, fontWeight: 500 }}>
-              {unit?.property?.name ? `${unit.property.name}` : ''}
-              {unit?.property?.city ? `, ${unit.property.city}` : ''}
-            </div>
-          </div>
-
-          {/* Action Buttons: Only shown here once */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
-            <Link
-              to="/owner/units"
-              className="gfh-portal-btn"
-              style={{
-                ...ghostBtnStyle,
-                background: '#F8FAFC',
-                color: '#475569',
-                border: '1px solid #CBD5E1',
-                padding: '6px 12px',
-                fontSize: 12.5,
-                fontWeight: 600,
-              }}
-            >
-              ← Back to Units
-            </Link>
-
-            {!activeContract && (unit?.status === 'AVAILABLE' || unit?.status === 'VACANT') && (
-              <Link
-                to={`/owner/contracts?create=1&unit_id=${unit.id}&property_id=${unit.property?.id || ''}`}
-                className="gfh-portal-btn"
-                style={{
-                  ...ghostBtnStyle,
-                  background: '#065F46',
-                  color: '#FFFFFF',
-                  border: 'none',
-                  padding: '6px 14px',
-                  fontSize: 12.5,
-                  fontWeight: 700,
-                }}
-              >
-                <Icon path={ICONS.plus} size={14} />
-                Create Contract
-              </Link>
-            )}
-
-            {activeContract && (
-              <Link
-                to={`/owner/contracts/${activeContract.id}`}
-                className="gfh-portal-btn"
-                style={{
-                  ...ghostBtnStyle,
-                  background: '#065F46',
-                  color: '#FFFFFF',
-                  border: 'none',
-                  padding: '6px 14px',
-                  fontSize: 12.5,
-                  fontWeight: 700,
-                }}
-              >
-                <Icon path={ICONS.contracts} size={14} />
-                View Active Lease
-              </Link>
-            )}
-
-            {activeContract && (
-              <Link
-                to={`/owner/contracts/${activeContract.id}?action=vacate`}
-                className="gfh-portal-btn"
-                style={{
-                  ...ghostBtnStyle,
-                  background: '#FEF2F2',
-                  color: '#991B1B',
-                  border: '1px solid #FECACA',
-                  padding: '6px 12px',
-                  fontSize: 12.5,
-                  fontWeight: 600,
-                }}
-                title="Start vacate process for this unit"
-              >
-                <Icon path={ICONS.door} size={14} />
-                Vacate Unit
-              </Link>
-            )}
-
-            <Link
-              to="/owner/complaints"
-              className="gfh-portal-btn"
-              style={{
-                ...ghostBtnStyle,
-                background: '#F8FAFC',
-                color: '#475569',
-                border: '1px solid #CBD5E1',
-                padding: '6px 12px',
-                fontSize: 12.5,
-                fontWeight: 600,
-              }}
-            >
-              <Icon path={ICONS.wrench} size={14} />
-              Complaints
-            </Link>
-          </div>
-        </div>
-      </div>
-
+      {/* ═══════════════ LOADING / ERROR / NOT FOUND STATES ═══════════════ */}
       {isLoading ? (
         <div style={{ ...cardStyle, textAlign: 'center', padding: '60px 20px' }}>
           <div style={{ display: 'inline-block', width: 32, height: 32, border: '3px solid #E2E8F0', borderTopColor: '#065F46', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
@@ -375,148 +244,271 @@ export default function UnitDetailPage() {
         </div>
       ) : (
         <>
-          {/* ─── 2. TOP METRICS ROW (4 Distinct Key Metrics — No Redundant Duplicates) ─── */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 10, marginBottom: 14 }}>
-            {/* Card 1: Annual Rent */}
-            <div style={{ background: '#FFFFFF', borderRadius: 8, border: '1px solid #E2E8F0', padding: '12px 16px' }}>
-              <div style={{ fontSize: 11, fontWeight: 700, color: '#64748B', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-                Annual Rent
+          {/* ═══════════════ 1. HEADER CARD — Property + Unit + Back ═══════════════ */}
+          <div
+            className="fade-in"
+            style={{
+              background: '#FFFFFF',
+              borderRadius: 10,
+              border: '1px solid #E2E8F0',
+              padding: '16px 20px',
+              marginBottom: 2,
+              boxShadow: '0 1px 3px rgba(15, 23, 42, 0.03)',
+            }}
+          >
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 10 }}>
+              <div>
+                <div style={{ fontSize: 13, color: '#64748B', fontWeight: 600, marginBottom: 2 }}>
+                  {unit.property?.name || 'Property'}
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                  <h1 style={{ fontSize: 22, fontWeight: 800, color: '#DC2626', margin: 0, letterSpacing: '-0.01em' }}>
+                    {unit.number || '—'} {unit.type ? unit.type.toUpperCase() : ''}
+                  </h1>
+                  <span style={{
+                    background: statusBadge.bg,
+                    color: statusBadge.color,
+                    border: `1px solid ${statusBadge.border}`,
+                    fontSize: 10.5,
+                    fontWeight: 700,
+                    padding: '2px 8px',
+                    borderRadius: 999,
+                    textTransform: 'uppercase',
+                  }}>
+                    {statusBadge.label}
+                  </span>
+                </div>
               </div>
-              <div style={{ fontSize: 18, fontWeight: 800, color: '#065F46', marginTop: 3 }}>
-                AED {Number(activeContract?.rent_amount || unit.price || 0).toLocaleString()}
-              </div>
-              <div style={{ fontSize: 11.5, color: '#64748B', marginTop: 2 }}>
-                {activeContract ? 'Active Lease Value' : 'Asking Rent'}
-              </div>
-            </div>
-
-            {/* Card 2: Built-Up Area */}
-            <div style={{ background: '#FFFFFF', borderRadius: 8, border: '1px solid #E2E8F0', padding: '12px 16px' }}>
-              <div style={{ fontSize: 11, fontWeight: 700, color: '#64748B', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-                Built-Up Area
-              </div>
-              <div style={{ fontSize: 18, fontWeight: 800, color: '#0F172A', marginTop: 3 }}>
-                {unit.size ? Number(unit.size).toLocaleString() : '—'} <span style={{ fontSize: 12, fontWeight: 600, color: '#64748B' }}>SQFT</span>
-              </div>
-              <div style={{ fontSize: 11.5, color: '#64748B', marginTop: 2 }}>
-                Net Interior Area
-              </div>
-            </div>
-
-            {/* Card 3: Floor Level */}
-            <div style={{ background: '#FFFFFF', borderRadius: 8, border: '1px solid #E2E8F0', padding: '12px 16px' }}>
-              <div style={{ fontSize: 11, fontWeight: 700, color: '#64748B', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-                Floor Level
-              </div>
-              <div style={{ fontSize: 18, fontWeight: 800, color: '#0F172A', marginTop: 3 }}>
-                Floor {unit.floor ?? '—'}
-              </div>
-              <div style={{ fontSize: 11.5, color: '#64748B', marginTop: 2 }}>
-                Building Level
-              </div>
-            </div>
-
-            {/* Card 4: Service Charge */}
-            <div style={{ background: '#FFFFFF', borderRadius: 8, border: '1px solid #E2E8F0', padding: '12px 16px' }}>
-              <div style={{ fontSize: 11, fontWeight: 700, color: '#64748B', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-                Monthly Service Charge
-              </div>
-              <div style={{ fontSize: 18, fontWeight: 800, color: '#0F172A', marginTop: 3 }}>
-                AED {Number(unit.monthly_service_charge || 0).toLocaleString()} <span style={{ fontSize: 12, fontWeight: 600, color: '#64748B' }}>/ MO</span>
-              </div>
-              <div style={{ fontSize: 11.5, color: '#64748B', marginTop: 2 }}>
-                Yearly: AED {(Number(unit.monthly_service_charge || 0) * 12).toLocaleString()}
-              </div>
+              <Link
+                to="/owner/units"
+                className="gfh-portal-btn"
+                style={{
+                  ...ghostBtnStyle,
+                  background: '#075985',
+                  color: '#FFFFFF',
+                  border: 'none',
+                  padding: '7px 16px',
+                  fontSize: 12.5,
+                  fontWeight: 700,
+                  borderRadius: 6,
+                }}
+              >
+                Back
+              </Link>
             </div>
           </div>
 
-          {/* ─── 3. MAIN CONTENT: LEFT (60%) & RIGHT (40%) ─── */}
-          <div className="unit-detail-grid">
-            {/* LEFT COLUMN */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-              {/* Section 1: Active Tenancy Contract (Only displayed when unit has an active contract) */}
-              {activeContract && (
-                <div style={cardStyle}>
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12, borderBottom: '1px solid #E2E8F0', paddingBottom: 8 }}>
-                    <h2 style={{ fontSize: 14, fontWeight: 800, color: '#0F172A', margin: 0 }}>Active Tenancy Lease</h2>
-                    <span style={{
-                      fontSize: 11,
-                      fontWeight: 700,
-                      background: '#F0FDF4',
-                      color: '#065F46',
-                      border: '1px solid #BBF7D0',
-                      padding: '2px 8px',
-                      borderRadius: 999,
-                    }}>
-                      Lease #{activeContract.id}
-                    </span>
+          {/* ═══════════════ 2. TENANT INFO STRIP ═══════════════ */}
+          <div
+            style={{
+              background: '#FFFFFF',
+              borderRadius: 10,
+              border: '1px solid #E2E8F0',
+              padding: '12px 20px',
+              marginBottom: 14,
+              borderTop: '3px solid #3B82F6',
+              boxShadow: '0 1px 3px rgba(15, 23, 42, 0.03)',
+            }}
+          >
+            {activeTenant ? (
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 10 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                  <div style={{
+                    width: 36, height: 36, borderRadius: '50%', background: '#0F8A67', color: '#FFF',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    fontWeight: 700, fontSize: 14, flexShrink: 0,
+                  }}>
+                    {activeTenant.name ? activeTenant.name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase() : 'TN'}
                   </div>
-
                   <div>
-                    {/* Non-redundant key-value table: Only tenant & lease agreement particulars */}
-                    <div style={{ border: '1px solid #E2E8F0', borderRadius: 8, overflow: 'hidden' }}>
-                      {[
-                        { label: 'Primary Tenant', value: activeTenant?.name || '—', highlight: true },
-                        { label: 'Contact Phone', value: activeTenant?.phone || activeTenant?.contact || '—' },
-                        { label: 'Email Address', value: activeTenant?.email || '—' },
-                        { label: 'Payment Mode', value: activeContract.mode_of_payment || 'Cheque / Wire' },
-                        { label: 'Lease Duration', value: `${formatDate(activeContract.start_date)} – ${formatDate(activeContract.end_date)}` },
-                        { label: 'Security Deposit', value: `AED ${Number(activeContract.security_deposit || 0).toLocaleString()}` },
-                        { label: 'Outstanding Balance', value: `AED ${Number(activeContract.due || 0).toLocaleString()}`, alert: Number(activeContract.due) > 0 },
-                      ].map((row, idx, arr) => (
-                        <div
-                          key={row.label}
-                          style={{
-                            display: 'flex',
-                            justifyContent: 'space-between',
-                            alignItems: 'center',
-                            padding: '10px 14px',
-                            background: idx % 2 === 0 ? '#FFFFFF' : '#F8FAFC',
-                            borderBottom: idx < arr.length - 1 ? '1px solid #E2E8F0' : 'none',
-                            fontSize: 13,
-                          }}
-                        >
-                          <span style={{ color: '#475569', fontWeight: 600 }}>{row.label}</span>
-                          <strong style={{
-                            color: row.alert ? '#DC2626' : (row.highlight ? '#065F46' : '#0F172A'),
-                            fontWeight: 700,
-                          }}>
-                            {row.value}
-                          </strong>
-                        </div>
-                      ))}
+                    <div style={{ fontSize: 15, fontWeight: 800, color: '#0F172A', letterSpacing: '-0.01em' }}>
+                      {activeTenant.name || '—'}
                     </div>
-
-                    <div style={{ marginTop: 10, textAlign: 'right' }}>
-                      <Link
-                        to={`/owner/contracts/${activeContract.id}`}
-                        style={{
-                          fontSize: 12.5,
-                          fontWeight: 700,
-                          color: '#065F46',
-                          textDecoration: 'none',
-                        }}
-                      >
-                        View Full Contract Details →
-                      </Link>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginTop: 2 }}>
+                      {(activeTenant.phone || activeTenant.contact) && (
+                        <span style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 12.5, color: '#475569', fontWeight: 500 }}>
+                          <Icon path={LOCAL_ICONS.phone} size={13} />
+                          {activeTenant.phone || activeTenant.contact}
+                        </span>
+                      )}
+                      {activeTenant.email && (
+                        <span style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 12.5, color: '#475569', fontWeight: 500 }}>
+                          <Icon path="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z M22 6l-10 7L2 6" size={13} />
+                          {activeTenant.email}
+                        </span>
+                      )}
                     </div>
                   </div>
+                </div>
+                {/* Action Buttons — Compact row like Paul's reference */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
+                  {activeContract && (
+                    <Link
+                      to={`/owner/contracts/${activeContract.id}`}
+                      style={{
+                        display: 'inline-flex', alignItems: 'center', gap: 5, padding: '6px 12px',
+                        borderRadius: 5, background: '#065F46', color: '#FFF', border: 'none',
+                        fontSize: 12, fontWeight: 700, textDecoration: 'none',
+                      }}
+                    >
+                      <Icon path={ICONS.contracts} size={13} />
+                      View Lease
+                    </Link>
+                  )}
+                  {activeContract && (
+                    <Link
+                      to={`/owner/contracts/${activeContract.id}?action=vacate`}
+                      style={{
+                        display: 'inline-flex', alignItems: 'center', gap: 5, padding: '6px 12px',
+                        borderRadius: 5, background: '#DC2626', color: '#FFF', border: 'none',
+                        fontSize: 12, fontWeight: 700, textDecoration: 'none',
+                      }}
+                    >
+                      <Icon path={ICONS.door} size={13} />
+                      Vacate
+                    </Link>
+                  )}
+                  {!activeContract && (unit.status === 'AVAILABLE' || unit.status === 'VACANT') && (
+                    <Link
+                      to={`/owner/contracts?create=1&unit_id=${unit.id}&property_id=${unit.property?.id || ''}`}
+                      style={{
+                        display: 'inline-flex', alignItems: 'center', gap: 5, padding: '6px 12px',
+                        borderRadius: 5, background: '#065F46', color: '#FFF', border: 'none',
+                        fontSize: 12, fontWeight: 700, textDecoration: 'none',
+                      }}
+                    >
+                      <Icon path={ICONS.plus} size={13} />
+                      Create Contract
+                    </Link>
+                  )}
+                  <Link
+                    to="/owner/complaints"
+                    style={{
+                      display: 'inline-flex', alignItems: 'center', gap: 5, padding: '6px 12px',
+                      borderRadius: 5, background: '#F8FAFC', color: '#475569', border: '1px solid #CBD5E1',
+                      fontSize: 12, fontWeight: 600, textDecoration: 'none',
+                    }}
+                  >
+                    <Icon path={ICONS.wrench} size={13} />
+                    Complaints
+                  </Link>
+                </div>
+              </div>
+            ) : (
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 10 }}>
+                <div style={{ fontSize: 13.5, color: '#64748B', fontWeight: 600 }}>
+                  No active tenant — unit is currently vacant
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                  {(unit.status === 'AVAILABLE' || unit.status === 'VACANT') && (
+                    <Link
+                      to={`/owner/contracts?create=1&unit_id=${unit.id}&property_id=${unit.property?.id || ''}`}
+                      style={{
+                        display: 'inline-flex', alignItems: 'center', gap: 5, padding: '6px 12px',
+                        borderRadius: 5, background: '#065F46', color: '#FFF', border: 'none',
+                        fontSize: 12, fontWeight: 700, textDecoration: 'none',
+                      }}
+                    >
+                      <Icon path={ICONS.plus} size={13} />
+                      Create Contract
+                    </Link>
+                  )}
+                  <Link
+                    to="/owner/complaints"
+                    style={{
+                      display: 'inline-flex', alignItems: 'center', gap: 5, padding: '6px 12px',
+                      borderRadius: 5, background: '#F8FAFC', color: '#475569', border: '1px solid #CBD5E1',
+                      fontSize: 12, fontWeight: 600, textDecoration: 'none',
+                    }}
+                  >
+                    <Icon path={ICONS.wrench} size={13} />
+                    Complaints
+                  </Link>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* ═══════════════ 3. TWO-COLUMN GRID: Payments (Left) | Contract Details (Right) ═══════════════ */}
+          <div className="unit-detail-two-col" style={{ marginBottom: 14 }}>
+            {/* LEFT: Recent Payments Table */}
+            <div style={cardStyle}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12, borderBottom: '1px solid #E2E8F0', paddingBottom: 8 }}>
+                <h2 style={{ fontSize: 14, fontWeight: 800, color: '#0F172A', margin: 0 }}>Recent Payments</h2>
+                {activeContract && (
+                  <Link
+                    to={`/owner/contracts/${activeContract.id}`}
+                    style={{ fontSize: 11, fontWeight: 700, color: '#065F46', textDecoration: 'none' }}
+                  >
+                    View All
+                  </Link>
+                )}
+              </div>
+
+              {(unit.recent_payments && unit.recent_payments.length > 0) ? (
+                <div style={{ overflowX: 'auto', border: '1px solid #E2E8F0', borderRadius: 8 }}>
+                  <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
+                    <thead>
+                      <tr style={{ background: '#F8FAFC', borderBottom: '1px solid #E2E8F0' }}>
+                        <th style={{ ...thStyle, padding: '9px 12px', fontSize: 11 }}>Payment Date</th>
+                        <th style={{ ...thStyle, padding: '9px 12px', fontSize: 11 }}>Description</th>
+                        <th style={{ ...thStyle, padding: '9px 12px', fontSize: 11 }}>Amount</th>
+                        <th style={{ ...thStyle, padding: '9px 12px', fontSize: 11 }}>Pay Mode</th>
+                        <th style={{ ...thStyle, padding: '9px 12px', fontSize: 11 }}>Remarks</th>
+                        <th style={{ ...thStyle, padding: '9px 12px', fontSize: 11, textAlign: 'center' }}>Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {unit.recent_payments.map((p) => (
+                        <tr key={p.id} style={{ borderBottom: '1px solid #E2E8F0' }}>
+                          <td style={{ ...tdStyle, padding: '9px 12px', fontSize: 12, color: '#475569' }}>
+                            {formatDate(p.date)}
+                          </td>
+                          <td style={{ ...tdStyle, padding: '9px 12px', fontSize: 12, fontWeight: 600, color: '#0F172A', textTransform: 'uppercase' }}>
+                            {p.type || '—'}
+                          </td>
+                          <td style={{ ...tdStyle, padding: '9px 12px', fontSize: 12, fontWeight: 700, color: '#065F46' }}>
+                            AED {Number(p.amount || 0).toLocaleString()}
+                          </td>
+                          <td style={{ ...tdStyle, padding: '9px 12px', fontSize: 12, color: '#475569', textTransform: 'uppercase' }}>
+                            {p.mode || '—'}
+                          </td>
+                          <td style={{ ...tdStyle, padding: '9px 12px', fontSize: 12, color: '#64748B', maxWidth: 120, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                            {p.remarks || '—'}
+                          </td>
+                          <td style={{ ...tdStyle, padding: '9px 12px', textAlign: 'center' }}>
+                            {activeContract && (
+                              <Link
+                                to={`/owner/contracts/${activeContract.id}`}
+                                title="View contract"
+                                style={{ color: '#065F46', display: 'inline-flex' }}
+                              >
+                                <Icon path={LOCAL_ICONS.eye} size={15} />
+                              </Link>
+                            )}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              ) : (
+                <div style={{ textAlign: 'center', padding: '28px 16px', background: '#F8FAFC', borderRadius: 8, border: '1px solid #E2E8F0' }}>
+                  <div style={{ fontSize: 12.5, fontWeight: 700, color: '#0F172A' }}>No payments recorded</div>
+                  <div style={{ fontSize: 11.5, color: '#64748B', marginTop: 2 }}>Payments will appear here once collected</div>
                 </div>
               )}
+            </div>
 
-              {/* Section 2: Unit Specifications Table (Only non-duplicated attributes) */}
-              <div style={cardStyle}>
-                <div style={{ marginBottom: 12, borderBottom: '1px solid #E2E8F0', paddingBottom: 8 }}>
-                  <h2 style={{ fontSize: 14, fontWeight: 800, color: '#0F172A', margin: 0 }}>Unit Specifications</h2>
-                </div>
+            {/* RIGHT: Contract Details Key-Value Table */}
+            <div style={cardStyle}>
+              <div style={{ marginBottom: 12, borderBottom: '1px solid #E2E8F0', paddingBottom: 8 }}>
+                <h2 style={{ fontSize: 14, fontWeight: 800, color: '#0F172A', margin: 0 }}>Contract Details</h2>
+              </div>
 
+              {activeContract ? (
                 <div style={{ border: '1px solid #E2E8F0', borderRadius: 8, overflow: 'hidden' }}>
-                  {[
-                    { label: 'Furnishing Status', value: unit.furnished ? 'Fully Furnished' : 'Unfurnished' },
-                    { label: 'DEWA Premise #', value: unit.dhewa_no || 'Not Registered' },
-                    { label: 'Usage Category', value: unit.category || 'Residential' },
-                    { label: 'Standard Asking Price', value: `AED ${Number(unit.price || 0).toLocaleString()}` },
-                  ].map((row, idx, arr) => (
+                  {contractDetailRows.map((row, idx, arr) => (
                     <div
                       key={row.label}
                       style={{
@@ -530,157 +522,198 @@ export default function UnitDetailPage() {
                       }}
                     >
                       <span style={{ color: '#475569', fontWeight: 600 }}>{row.label}</span>
-                      <strong style={{ color: '#0F172A', fontWeight: 700 }}>{row.value}</strong>
+                      <strong style={{
+                        color: row.label === 'Balance Due' && Number(activeContract.due || 0) > 0 ? '#DC2626' : '#0F172A',
+                        fontWeight: 700,
+                      }}>
+                        {row.value}
+                      </strong>
                     </div>
                   ))}
                 </div>
-              </div>
-
-              {/* Section 3: Past Contracts History Table */}
-              <div style={cardStyle}>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12, borderBottom: '1px solid #E2E8F0', paddingBottom: 8 }}>
-                  <h2 style={{ fontSize: 14, fontWeight: 800, color: '#0F172A', margin: 0 }}>Tenancy Contract History</h2>
-                  <span style={{ fontSize: 11, fontWeight: 700, background: '#F1F5F9', color: '#475569', padding: '2px 8px', borderRadius: 999 }}>
-                    {unit.recent_contracts?.length || 0} Records
-                  </span>
+              ) : (
+                <div style={{ textAlign: 'center', padding: '28px 16px', background: '#F8FAFC', borderRadius: 8, border: '1px solid #E2E8F0' }}>
+                  <div style={{ fontSize: 12.5, fontWeight: 700, color: '#0F172A' }}>No active contract</div>
+                  <div style={{ fontSize: 11.5, color: '#64748B', marginTop: 2 }}>Create a lease contract to view details</div>
                 </div>
+              )}
 
-                {unit.recent_contracts && unit.recent_contracts.length > 0 ? (
-                  <div style={{ overflowX: 'auto', border: '1px solid #E2E8F0', borderRadius: 8 }}>
-                    <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
-                      <thead>
-                        <tr style={{ background: '#F8FAFC', borderBottom: '1px solid #E2E8F0' }}>
-                          <th style={{ ...thStyle, padding: '10px 12px', fontSize: 11.5 }}>REF #</th>
-                          <th style={{ ...thStyle, padding: '10px 12px', fontSize: 11.5 }}>Tenant</th>
-                          <th style={{ ...thStyle, padding: '10px 12px', fontSize: 11.5 }}>Duration</th>
-                          <th style={{ ...thStyle, padding: '10px 12px', fontSize: 11.5 }}>Rent (AED)</th>
-                          <th style={{ ...thStyle, padding: '10px 12px', fontSize: 11.5 }}>Status</th>
-                          <th style={{ ...thStyle, padding: '10px 12px', fontSize: 11.5, textAlign: 'right' }}>Action</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {unit.recent_contracts.map((c) => {
-                          const badge = getContractStatusBadge(c.status)
-                          return (
-                            <tr key={c.id} style={{ borderBottom: '1px solid #E2E8F0' }}>
-                              <td style={{ ...tdStyle, padding: '10px 12px' }}>
-                                <span style={{ fontWeight: 700, color: '#0F172A', fontSize: 12.5 }}>
-                                  CTR-#{c.id}
-                                </span>
-                              </td>
-                              <td style={{ ...tdStyle, padding: '10px 12px' }}>
-                                <div style={{ fontWeight: 600, color: '#1E293B', fontSize: 12.5 }}>{c.tenant?.name || '—'}</div>
-                              </td>
-                              <td style={{ ...tdStyle, padding: '10px 12px', fontSize: 12, color: '#475569' }}>
-                                {formatDate(c.start_date)} – {formatDate(c.end_date)}
-                              </td>
-                              <td style={{ ...tdStyle, padding: '10px 12px', fontWeight: 700, color: '#0F172A', fontSize: 12.5 }}>
-                                AED {Number(c.rent_amount || 0).toLocaleString()}
-                              </td>
-                              <td style={{ ...tdStyle, padding: '10px 12px' }}>
-                                <span style={{
-                                  background: badge.bg,
-                                  color: badge.color,
-                                  border: `1px solid ${badge.border}`,
-                                  fontSize: 10.5,
-                                  fontWeight: 700,
-                                  padding: '2px 7px',
-                                  borderRadius: 999,
-                                  textTransform: 'uppercase',
-                                }}>
-                                  {badge.label}
-                                </span>
-                              </td>
-                              <td style={{ ...tdStyle, padding: '10px 12px', textAlign: 'right' }}>
-                                <Link
-                                  to={`/owner/contracts/${c.id}`}
-                                  className="gfh-portal-btn"
-                                  style={{
-                                    ...ghostBtnStyle,
-                                    padding: '4px 10px',
-                                    fontSize: 11.5,
-                                    background: '#F8FAFC',
-                                    color: '#065F46',
-                                    border: '1px solid #CBD5E1',
-                                  }}
-                                >
-                                  View
-                                </Link>
-                              </td>
-                            </tr>
-                          )
-                        })}
-                      </tbody>
-                    </table>
+              {activeContract && (
+                <div style={{ marginTop: 10, textAlign: 'right' }}>
+                  <Link
+                    to={`/owner/contracts/${activeContract.id}`}
+                    style={{ fontSize: 12.5, fontWeight: 700, color: '#065F46', textDecoration: 'none' }}
+                  >
+                    View Full Contract →
+                  </Link>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* ═══════════════ 4. UNIT SPECIFICATIONS — Compact Single Row ═══════════════ */}
+          <div style={{ ...cardStyle, marginBottom: 14 }}>
+            <div style={{ marginBottom: 12, borderBottom: '1px solid #E2E8F0', paddingBottom: 8 }}>
+              <h2 style={{ fontSize: 14, fontWeight: 800, color: '#0F172A', margin: 0 }}>Unit Specifications</h2>
+            </div>
+            <div style={{
+              display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))',
+              gap: 1, background: '#E2E8F0', borderRadius: 8, overflow: 'hidden',
+            }}>
+              {[
+                { label: 'Floor', value: `Floor ${unit.floor ?? '—'}` },
+                { label: 'Area', value: unit.size ? `${Number(unit.size).toLocaleString()} SQFT` : '—' },
+                { label: 'Furnishing', value: unit.furnished ? 'Furnished' : 'Unfurnished' },
+                { label: 'DEWA #', value: unit.dhewa_no || 'N/A' },
+                { label: 'Category', value: unit.category || 'Residential' },
+                { label: 'Asking Price', value: `AED ${Number(unit.price || 0).toLocaleString()}` },
+                { label: 'Service Charge', value: `AED ${Number(unit.monthly_service_charge || 0).toLocaleString()}/mo` },
+              ].map(item => (
+                <div key={item.label} style={{ background: '#FFFFFF', padding: '10px 14px' }}>
+                  <div style={{ fontSize: 10, color: '#64748B', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                    {item.label}
                   </div>
-                ) : (
-                  <div style={{ textAlign: 'center', padding: '24px 16px', color: '#64748B', fontSize: 12.5 }}>
-                    No contracts recorded for this unit yet.
+                  <div style={{ fontSize: 13, fontWeight: 700, color: '#0F172A', marginTop: 3 }}>
+                    {item.value}
                   </div>
-                )}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* ═══════════════ 5. BOTTOM TWO-COLUMN: Contract History (Left) | Building + Complaints (Right) ═══════════════ */}
+          <div className="unit-detail-two-col">
+            {/* LEFT: Tenancy Contract History */}
+            <div style={cardStyle}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12, borderBottom: '1px solid #E2E8F0', paddingBottom: 8 }}>
+                <h2 style={{ fontSize: 14, fontWeight: 800, color: '#0F172A', margin: 0 }}>Tenancy Contract History</h2>
+                <span style={{ fontSize: 11, fontWeight: 700, background: '#F1F5F9', color: '#475569', padding: '2px 8px', borderRadius: 999 }}>
+                  {unit.recent_contracts?.length || 0} Records
+                </span>
               </div>
+
+              {unit.recent_contracts && unit.recent_contracts.length > 0 ? (
+                <div style={{ overflowX: 'auto', border: '1px solid #E2E8F0', borderRadius: 8 }}>
+                  <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
+                    <thead>
+                      <tr style={{ background: '#F8FAFC', borderBottom: '1px solid #E2E8F0' }}>
+                        <th style={{ ...thStyle, padding: '9px 12px', fontSize: 11 }}>REF #</th>
+                        <th style={{ ...thStyle, padding: '9px 12px', fontSize: 11 }}>Tenant</th>
+                        <th style={{ ...thStyle, padding: '9px 12px', fontSize: 11 }}>Duration</th>
+                        <th style={{ ...thStyle, padding: '9px 12px', fontSize: 11 }}>Rent</th>
+                        <th style={{ ...thStyle, padding: '9px 12px', fontSize: 11 }}>Status</th>
+                        <th style={{ ...thStyle, padding: '9px 12px', fontSize: 11, textAlign: 'right' }}>Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {unit.recent_contracts.map((c) => {
+                        const badge = getContractStatusBadge(c.status)
+                        return (
+                          <tr key={c.id} style={{ borderBottom: '1px solid #E2E8F0' }}>
+                            <td style={{ ...tdStyle, padding: '9px 12px' }}>
+                              <span style={{ fontWeight: 700, color: '#0F172A', fontSize: 12 }}>
+                                CTR-#{c.id}
+                              </span>
+                            </td>
+                            <td style={{ ...tdStyle, padding: '9px 12px' }}>
+                              <div style={{ fontWeight: 600, color: '#1E293B', fontSize: 12 }}>{c.tenant?.name || '—'}</div>
+                            </td>
+                            <td style={{ ...tdStyle, padding: '9px 12px', fontSize: 11.5, color: '#475569' }}>
+                              {formatDate(c.start_date)} – {formatDate(c.end_date)}
+                            </td>
+                            <td style={{ ...tdStyle, padding: '9px 12px', fontWeight: 700, color: '#0F172A', fontSize: 12 }}>
+                              AED {Number(c.rent_amount || 0).toLocaleString()}
+                            </td>
+                            <td style={{ ...tdStyle, padding: '9px 12px' }}>
+                              <span style={{
+                                background: badge.bg,
+                                color: badge.color,
+                                border: `1px solid ${badge.border}`,
+                                fontSize: 10,
+                                fontWeight: 700,
+                                padding: '2px 7px',
+                                borderRadius: 999,
+                                textTransform: 'uppercase',
+                              }}>
+                                {badge.label}
+                              </span>
+                            </td>
+                            <td style={{ ...tdStyle, padding: '9px 12px', textAlign: 'right' }}>
+                              <Link
+                                to={`/owner/contracts/${c.id}`}
+                                className="gfh-portal-btn"
+                                style={{
+                                  ...ghostBtnStyle,
+                                  padding: '4px 10px',
+                                  fontSize: 11,
+                                  background: '#F8FAFC',
+                                  color: '#065F46',
+                                  border: '1px solid #CBD5E1',
+                                }}
+                              >
+                                View
+                              </Link>
+                            </td>
+                          </tr>
+                        )
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              ) : (
+                <div style={{ textAlign: 'center', padding: '24px 16px', color: '#64748B', fontSize: 12.5 }}>
+                  No contracts recorded for this unit yet.
+                </div>
+              )}
             </div>
 
-            {/* RIGHT COLUMN */}
+            {/* RIGHT: Building Profile + Maintenance Complaints */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-              {/* Section 4: Property & Building Profile Card */}
+              {/* Building Profile */}
               <div style={cardStyle}>
-                <div style={{ marginBottom: 12, borderBottom: '1px solid #E2E8F0', paddingBottom: 8 }}>
+                <div style={{ marginBottom: 10, borderBottom: '1px solid #E2E8F0', paddingBottom: 8 }}>
                   <h2 style={{ fontSize: 14, fontWeight: 800, color: '#0F172A', margin: 0 }}>Building Profile</h2>
-                  <div style={{ fontSize: 11.5, color: '#64748B', marginTop: 1 }}>Parent property specifications</div>
                 </div>
-
-                <div style={{ background: '#F8FAFC', border: '1px solid #E2E8F0', borderRadius: 8, padding: '12px 14px', marginBottom: 12 }}>
-                  <div style={{ fontSize: 15, fontWeight: 800, color: '#0F172A' }}>
+                <div style={{ background: '#F8FAFC', border: '1px solid #E2E8F0', borderRadius: 8, padding: '12px 14px', marginBottom: 10 }}>
+                  <div style={{ fontSize: 14, fontWeight: 800, color: '#0F172A' }}>
                     {unit.property?.name || 'Property'}
                   </div>
-                  <div style={{ fontSize: 12.5, color: '#64748B', marginTop: 4 }}>
+                  <div style={{ fontSize: 12, color: '#64748B', marginTop: 3 }}>
                     {unit.property?.address}{unit.property?.city ? `, ${unit.property.city}` : ''}
                   </div>
                   {unit.property?.type && (
-                    <div style={{ marginTop: 8 }}>
-                      <span style={{ fontSize: 10.5, fontWeight: 700, background: '#F1F5F9', color: '#475569', border: '1px solid #E2E8F0', padding: '2px 7px', borderRadius: 999, textTransform: 'uppercase' }}>
+                    <div style={{ marginTop: 6 }}>
+                      <span style={{ fontSize: 10, fontWeight: 700, background: '#F1F5F9', color: '#475569', border: '1px solid #E2E8F0', padding: '2px 7px', borderRadius: 999, textTransform: 'uppercase' }}>
                         {unit.property.type}
                       </span>
                     </div>
                   )}
                 </div>
-
                 <Link
                   to={`/owner/units?q=${encodeURIComponent(unit.property?.name || '')}`}
                   style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: 6,
-                    width: '100%',
-                    padding: '8px 12px',
-                    borderRadius: 7,
-                    background: '#FFFFFF',
-                    border: '1px solid #CBD5E1',
-                    color: '#065F46',
-                    fontWeight: 700,
-                    fontSize: 12.5,
-                    textDecoration: 'none',
-                    boxSizing: 'border-box',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
+                    width: '100%', padding: '7px 12px', borderRadius: 7,
+                    background: '#FFFFFF', border: '1px solid #CBD5E1', color: '#065F46',
+                    fontWeight: 700, fontSize: 12, textDecoration: 'none', boxSizing: 'border-box',
                   }}
                 >
-                  <Icon path={ICONS.door} size={14} />
-                  View All Units in this Building
+                  <Icon path={ICONS.door} size={13} />
+                  All Units in Building
                 </Link>
               </div>
 
-              {/* Section 5: Maintenance Complaints Card */}
+              {/* Maintenance Complaints */}
               <div style={cardStyle}>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12, borderBottom: '1px solid #E2E8F0', paddingBottom: 8 }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10, borderBottom: '1px solid #E2E8F0', paddingBottom: 8 }}>
                   <h2 style={{ fontSize: 14, fontWeight: 800, color: '#0F172A', margin: 0 }}>Recent Maintenance</h2>
-                  <Link to="/owner/complaints" style={{ fontSize: 11.5, fontWeight: 700, color: '#065F46', textDecoration: 'none' }}>
+                  <Link to="/owner/complaints" style={{ fontSize: 11, fontWeight: 700, color: '#065F46', textDecoration: 'none' }}>
                     View All →
                   </Link>
                 </div>
 
                 {unit.recent_complaints && unit.recent_complaints.length > 0 ? (
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
                     {unit.recent_complaints.map((comp) => {
                       const prioBadge = getPriorityBadge(comp.priority)
                       const stBadge = getComplaintStatusBadge(comp.status)
@@ -691,42 +724,31 @@ export default function UnitDetailPage() {
                             background: '#F8FAFC',
                             border: '1px solid #E2E8F0',
                             borderRadius: 8,
-                            padding: '10px 12px',
+                            padding: '9px 12px',
                           }}
                         >
-                          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 6, marginBottom: 4 }}>
-                            <div style={{ fontSize: 12.5, fontWeight: 700, color: '#0F172A', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 6, marginBottom: 3 }}>
+                            <div style={{ fontSize: 12, fontWeight: 700, color: '#0F172A', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                               {comp.title}
                             </div>
                             <div style={{ display: 'flex', alignItems: 'center', gap: 4, flexShrink: 0 }}>
                               <span style={{
-                                background: prioBadge.bg,
-                                color: prioBadge.color,
+                                background: prioBadge.bg, color: prioBadge.color,
                                 border: `1px solid ${prioBadge.border}`,
-                                fontSize: 9.5,
-                                fontWeight: 700,
-                                padding: '1px 5px',
-                                borderRadius: 999,
-                                textTransform: 'uppercase',
+                                fontSize: 9, fontWeight: 700, padding: '1px 5px', borderRadius: 999, textTransform: 'uppercase',
                               }}>
                                 {prioBadge.label}
                               </span>
                               <span style={{
-                                background: stBadge.bg,
-                                color: stBadge.color,
+                                background: stBadge.bg, color: stBadge.color,
                                 border: `1px solid ${stBadge.border}`,
-                                fontSize: 9.5,
-                                fontWeight: 700,
-                                padding: '1px 5px',
-                                borderRadius: 999,
-                                textTransform: 'uppercase',
+                                fontSize: 9, fontWeight: 700, padding: '1px 5px', borderRadius: 999, textTransform: 'uppercase',
                               }}>
                                 {stBadge.label}
                               </span>
                             </div>
                           </div>
-
-                          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: 11, color: '#94A3B8', marginTop: 4 }}>
+                          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: 10.5, color: '#94A3B8', marginTop: 2 }}>
                             <span>{formatDate(comp.created_at)}</span>
                             <span>{comp.job?.assignedTo?.name ? `Assigned: ${comp.job.assignedTo.name}` : 'Unassigned'}</span>
                           </div>
@@ -735,57 +757,42 @@ export default function UnitDetailPage() {
                     })}
                   </div>
                 ) : (
-                  <div style={{ textAlign: 'center', padding: '18px 12px', background: '#F8FAFC', borderRadius: 8, border: '1px solid #E2E8F0' }}>
-                    <div style={{ fontSize: 12.5, fontWeight: 700, color: '#0F172A' }}>No Open Complaints</div>
-                    <div style={{ fontSize: 11.5, color: '#64748B', marginTop: 2 }}>Unit has no pending maintenance issues reported.</div>
+                  <div style={{ textAlign: 'center', padding: '16px 12px', background: '#F8FAFC', borderRadius: 8, border: '1px solid #E2E8F0' }}>
+                    <div style={{ fontSize: 12, fontWeight: 700, color: '#0F172A' }}>No Open Complaints</div>
+                    <div style={{ fontSize: 11, color: '#64748B', marginTop: 2 }}>No pending maintenance issues</div>
                   </div>
                 )}
               </div>
 
-              {/* Section 6: Quick Navigation Links */}
+              {/* Quick Navigation */}
               <div style={cardStyle}>
-                <div style={{ fontSize: 13, fontWeight: 800, color: '#0F172A', marginBottom: 10 }}>
+                <div style={{ fontSize: 13, fontWeight: 800, color: '#0F172A', marginBottom: 8 }}>
                   Quick Navigation
                 </div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
                   <Link
                     to="/owner/contracts"
                     style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'space-between',
-                      padding: '8px 12px',
-                      borderRadius: 7,
-                      background: '#F8FAFC',
-                      border: '1px solid #E2E8F0',
-                      color: '#0F172A',
-                      fontSize: 12.5,
-                      fontWeight: 600,
-                      textDecoration: 'none',
+                      display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                      padding: '7px 12px', borderRadius: 7, background: '#F8FAFC',
+                      border: '1px solid #E2E8F0', color: '#0F172A', fontSize: 12,
+                      fontWeight: 600, textDecoration: 'none',
                     }}
                   >
                     <span>View All Contracts</span>
-                    <Icon path={ICONS.arrowRight} size={13} />
+                    <Icon path={ICONS.arrowRight} size={12} />
                   </Link>
-
                   <Link
                     to="/owner/properties"
                     style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'space-between',
-                      padding: '8px 12px',
-                      borderRadius: 7,
-                      background: '#F8FAFC',
-                      border: '1px solid #E2E8F0',
-                      color: '#0F172A',
-                      fontSize: 12.5,
-                      fontWeight: 600,
-                      textDecoration: 'none',
+                      display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                      padding: '7px 12px', borderRadius: 7, background: '#F8FAFC',
+                      border: '1px solid #E2E8F0', color: '#0F172A', fontSize: 12,
+                      fontWeight: 600, textDecoration: 'none',
                     }}
                   >
                     <span>Browse Properties</span>
-                    <Icon path={ICONS.arrowRight} size={13} />
+                    <Icon path={ICONS.arrowRight} size={12} />
                   </Link>
                 </div>
               </div>

@@ -131,11 +131,21 @@ class DashboardController extends Controller
             ->take(5)
             ->get();
 
+        // Load recent payments for the active contract
+        $recentPayments = [];
+        if ($activeContract) {
+            $recentPayments = \App\Domain\Payment\Models\Payment::where('contract_id', $activeContract->id)
+                ->latest('date')
+                ->take(10)
+                ->get(['id', 'contract_id', 'type', 'mode', 'amount', 'date', 'remarks', 'receipt_number']);
+        }
+
         $unitData = (new UnitDetailResource($unit))->resolve();
         $unitData['active_contract'] = $activeContract;
         $unitData['contracts_count'] = $unit->contracts->count();
         $unitData['recent_contracts'] = $unit->contracts->take(5);
         $unitData['recent_complaints'] = $complaints;
+        $unitData['recent_payments'] = $recentPayments;
 
         return response()->json([
             'status' => 'success',
