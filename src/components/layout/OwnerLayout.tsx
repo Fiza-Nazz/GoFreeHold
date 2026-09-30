@@ -3,7 +3,7 @@ import { Outlet, NavLink, useNavigate, useLocation, useSearchParams } from 'reac
 import { useAuthStore } from '../../store/authStore'
 
 const Icon = ({ path, size = 18 }: { path: string; size?: number }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
     <path d={path} />
   </svg>
 )
@@ -11,99 +11,110 @@ const Icon = ({ path, size = 18 }: { path: string; size?: number }) => (
 const icons = {
   dashboard: 'M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z M9 22V12h6v10',
   building: 'M3 21h18M5 21V5a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v16M13 21V9a1 1 0 0 1 1-1h5a1 1 0 0 1 1 1v12M8 7h1M8 11h1M8 15h1M16 12h1M16 16h1',
-  door: 'M14 3h5v18h-5M14 3L6 4.5v15L14 21M9.5 12h.01',
   contracts: 'M9 3h6l4 4v14a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1zM9 9h6M9 13h6M9 17h4',
-  bank: 'M3 21h18M4 10h16M12 3 3 8h18L12 3zM6 10v8M10 10v8M14 10v8M18 10v8',
-  phone: 'M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.362 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.338 1.85.573 2.81.7A2 2 0 0 1 22 16.92z',
-  card: 'M2 5h20v14H2V5zm0 5h20M6 15h4',
-  ledger: 'M4 19.5A2.5 2.5 0 0 1 6.5 17H20M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z',
-  wallet: 'M21 12V7H5a2 2 0 0 1 0-4h14v4M3 5v14a2 2 0 0 0 2 2h16v-5M18 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4z',
-  folder: 'M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7z',
-  bolt: 'M13 2 3 14h7l-1 8 10-12h-7l1-8z',
-  trending: 'M22 7 13.5 15.5l-5-5L2 18M16 7h6v6',
-  handshake: 'M11 12H3v-2l4-4 4 4M22 12h-8l-2-2M8 15l3 3 6-6M15 9l2-2 4 4-2 2',
-  wrench: 'M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.8 2.8-2-2 2.8-2.8z',
-  toolbox: 'M2 12h20M6 12V8a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v4M2 12v7a1 1 0 0 0 1 1h18a1 1 0 0 0 1-1v-7M10 12v2M14 12v2',
   box: 'M21 8v13H3V8M1 3h22v5H1V3zM10 12h4',
-  tv: 'M4 6h16v11H4V6zM9 20h6M12 17v3',
-  cart: 'M6 6h15l-1.5 9h-12L6 6zM6 6 5 3H2M9 20a1 1 0 1 0 0-2 1 1 0 0 0 0 2zM18 20a1 1 0 1 0 0-2 1 1 0 0 0 0 2z',
+  card: 'M2 5h20v14H2V5zm0 5h20M6 15h4',
   scale: 'M12 3v18M6 7h12M6 7 3 13a3 3 0 0 0 6 0L6 7zM18 7l-3 6a3 3 0 0 0 6 0l-3-6M9 21h6',
-  chart: 'M3 3v18h18M8 17V9m4 8V5m4 12v-6',
+  gavel: 'M14 7l3 3m-9 9l7-7m-5-5l5 5m-2-8l3-3a2.121 2.121 0 0 1 3 3l-3 3m-8 8l-3 3a2.121 2.121 0 0 1-3-3l3-3',
   settings: 'M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM19.4 15a1.7 1.7 0 0 0 .34 1.87l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.7 1.7 0 0 0-1.87-.34 1.7 1.7 0 0 0-1.04 1.56V21a2 2 0 0 1-4 0v-.09A1.7 1.7 0 0 0 9 19.35a1.7 1.7 0 0 0-1.87.34l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.7 1.7 0 0 0 4.65 15a1.7 1.7 0 0 0-1.56-1.04H3a2 2 0 0 1 0-4h.09A1.7 1.7 0 0 0 4.65 9a1.7 1.7 0 0 0-.34-1.87l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.7 1.7 0 0 0 9 4.65a1.7 1.7 0 0 0 1.04-1.56V3a2 2 0 0 1 4 0v.09A1.7 1.7 0 0 0 15 4.65a1.7 1.7 0 0 0 1.87.34l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.7 1.7 0 0 0 19.35 9a1.7 1.7 0 0 0 1.56 1.04H21a2 2 0 0 1 0 4h-.09a1.7 1.7 0 0 0-1.51 1.96z',
   logout: 'M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9',
-  menu: 'M3 12h18M3 6h18M3 18h18',
-  user: 'M20 21a8 8 0 0 0-16 0M12 13a4 4 0 1 0 0-8 4 4 0 0 0 0 8z',
-  chevron: 'M9 18l6-6-6-6',
-  search: 'M11 19a8 8 0 1 0 0-16 8 8 0 0 0 0 16zM21 21l-4.35-4.35',
+  chevronDown: 'M6 9l6 6 6-6',
 }
 
-/** Owner navigation sections strictly matching Admin structure while preserving Owner features */
-const ownerNavItems = [
-  { section: 'MAIN', items: [
-    { to: '/owner/dashboard', icon: icons.dashboard, label: 'Dashboard' },
-  ]},
-  { section: 'Lease & Expense', items: [
-    { to: '/owner/call-logs', icon: icons.phone, label: 'Call Logs' },
-    { to: '/owner/payments', icon: icons.card, label: 'Payments' },
-    { to: '/owner/ledger', icon: icons.ledger, label: 'Rent Ledger' },
-    { to: '/owner/receivables', icon: icons.wallet, label: 'Receivables' },
-    { to: '/owner/receivables-categorized', icon: icons.folder, label: 'Categorized Dues' },
-    { to: '/owner/service-charges', icon: icons.bolt, label: 'Service Charges' },
-    { to: '/owner/financial-tracking', icon: icons.trending, label: 'Financial Tracking' },
-    { to: '/owner/settlements', icon: icons.handshake, label: 'Settlements' },
-  ]},
-  { section: 'Accounts', items: [
-    { to: '/owner/contract-payables', icon: icons.wallet, label: 'Contract Payables' },
-    { to: '/owner/bank-accounts', icon: icons.bank, label: 'Bank Accounts' },
-    { to: '/owner/settlement-payments', icon: icons.card, label: 'Settlement Payments' },
-    { to: '/owner/tenancy-res', icon: icons.contracts, label: 'Tenancy Res' },
-    { to: '/owner/terms', icon: icons.contracts, label: 'Terms' },
-  ]},
-  { section: 'Operations', items: [
-    { to: '/owner/complaints', icon: icons.wrench, label: 'Maintenance & Complaints' },
-    { to: '/owner/jobs', icon: icons.toolbox, label: 'Jobs' },
-    { to: '/owner/teams', icon: icons.handshake, label: 'Teams' },
-    { to: '/owner/maintenances', icon: icons.wrench, label: 'Maintenances' },
-    { to: '/owner/daily-maintenance', icon: icons.toolbox, label: 'Daily Maint. Report' },
-    { to: '/owner/inventory', icon: icons.box, label: 'Inventory' },
-    { to: '/owner/item-store', icon: icons.box, label: 'Item Store' },
-    { to: '/owner/purchase-orders', icon: icons.cart, label: 'Purchase Orders' },
-    { to: '/owner/legal', icon: icons.scale, label: 'Legal Cases' },
-  ]},
-  { section: 'Reports & Settings', items: [
-    { to: '/owner/reports', icon: icons.chart, label: 'Reports' },
-    { to: '/owner/vacant-units', icon: icons.search, label: 'Vacant Units' },
-    { to: '/owner/settings', icon: icons.settings, label: 'Settings' },
-    { to: '/owner/staff', icon: icons.user, label: 'Manage Staff' },
-    { to: '/owner/profile', icon: icons.user, label: 'Profile' },
-  ]},
-]
+interface SubMenuItem {
+  to: string
+  label: string
+}
 
-const ownerMenuGroups = [
+interface MenuGroup {
+  key: string
+  label: string
+  icon: string
+  iconColor: string
+  iconBg: string
+  paths: string[]
+  items: SubMenuItem[]
+}
+
+/** Strictly organized Owner navigation groups matching Paul Brit's mockup layout */
+const ownerMenuGroups: MenuGroup[] = [
   {
     key: 'properties',
     label: 'Properties',
     icon: icons.building,
+    iconColor: '#2563EB',
+    iconBg: '#EFF6FF',
     paths: ['/owner/properties', '/owner/units', '/owner/appliances'],
     items: [
-      { to: '/owner/properties', icon: icons.building, label: 'Properties' },
-      { to: '/owner/units', icon: icons.door, label: 'Units' },
-      { to: '/owner/appliances', icon: icons.tv, label: 'Appliance' },
+      { to: '/owner/properties', label: 'Properties' },
+      { to: '/owner/units', label: 'Units' },
+      { to: '/owner/appliances', label: 'Appliance' },
     ],
   },
   {
     key: 'contracts',
     label: 'Contracts',
     icon: icons.contracts,
-    paths: ['/owner/contracts', '/owner/pdc', '/owner/tenants'],
+    iconColor: '#0284C7',
+    iconBg: '#F0F9FF',
+    paths: ['/owner/contracts', '/owner/tenants'],
     items: [
-      { to: '/owner/contracts?status=active', icon: icons.contracts, label: 'Current Contracts List' },
-      { to: '/owner/pdc', icon: icons.bank, label: 'Cheque Details' },
-      { to: '/owner/tenants/add', icon: icons.user, label: 'Add Tenant' },
-      { to: '/owner/tenants', icon: icons.user, label: 'Tenant List' },
-      { to: '/owner/tenants/previous', icon: icons.user, label: 'Previous Tenants List' },
-      { to: '/owner/contracts?action=add', icon: icons.contracts, label: 'Tenancy Contract' },
-      { to: '/owner/contracts?status=expired', icon: icons.contracts, label: 'Expired Contracts' },
+      { to: '/owner/contracts?status=active', label: 'Current Contracts' },
+      { to: '/owner/tenants/add', label: 'Add Tenant' },
+      { to: '/owner/tenants', label: 'Tenant List' },
+      { to: '/owner/tenants/previous', label: 'Previous Tenants' },
+      { to: '/owner/contracts?action=add', label: 'Tenancy Contract' },
+      { to: '/owner/contracts?status=expired', label: 'Expired Contracts' },
+    ],
+  },
+  {
+    key: 'inventory',
+    label: 'Inventory Maintenance',
+    icon: icons.box,
+    iconColor: '#EA580C',
+    iconBg: '#FFF7ED',
+    paths: ['/owner/item-store', '/owner/purchase-orders', '/owner/inventory'],
+    items: [
+      { to: '/owner/item-store', label: 'Item Store' },
+      { to: '/owner/purchase-orders', label: 'Purchase Orders' },
+    ],
+  },
+  {
+    key: 'accounts',
+    label: 'Accounts',
+    icon: icons.card,
+    iconColor: '#0D9488',
+    iconBg: '#F0FDFA',
+    paths: ['/owner/contract-payables', '/owner/bank-accounts', '/owner/settlement-payments', '/owner/tenancy-res', '/owner/terms'],
+    items: [
+      { to: '/owner/contract-payables', label: 'Contract Payables' },
+      { to: '/owner/bank-accounts', label: 'Bank Accounts' },
+      { to: '/owner/settlement-payments', label: 'Settlement Payments' },
+      { to: '/owner/tenancy-res', label: 'Tenancy Res' },
+      { to: '/owner/terms', label: 'Terms' },
+    ],
+  },
+  {
+    key: 'legal',
+    label: 'Legal',
+    icon: icons.scale,
+    iconColor: '#4F46E5',
+    iconBg: '#EEF2FF',
+    paths: ['/owner/legal'],
+    items: [
+      { to: '/owner/legal', label: 'Legal Cases' },
+    ],
+  },
+  {
+    key: 'settings',
+    label: 'Settings',
+    icon: icons.settings,
+    iconColor: '#475569',
+    iconBg: '#F1F5F9',
+    paths: ['/owner/staff', '/owner/profile', '/owner/settings'],
+    items: [
+      { to: '/owner/staff', label: 'Manage Staff' },
+      { to: '/owner/profile', label: 'Profile' },
     ],
   },
 ]
@@ -161,18 +172,28 @@ export default function OwnerLayout() {
   const location = useLocation()
   const [searchParams, setSearchParams] = useSearchParams()
   const [sidebarOpen, setSidebarOpen] = useState(false)
+
+  // All groups open by default per Paul's screenshot, preserving user collapse toggle
   const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({
-    properties: ownerMenuGroups[0].paths.some(path => location.pathname.startsWith(path)),
-    contracts: ownerMenuGroups[1].paths.some(path => location.pathname.startsWith(path)),
+    properties: true,
+    contracts: true,
+    inventory: true,
+    accounts: true,
+    legal: true,
+    settings: true,
   })
+
   const pageTitle = resolveTitle(location.pathname)
   const searchQuery = searchParams.get('q') || ''
 
+  // Ensure active route's group stays open
   useEffect(() => {
     setOpenGroups(current => {
       const next = { ...current }
       ownerMenuGroups.forEach(group => {
-        if (group.paths.some(path => location.pathname.startsWith(path))) next[group.key] = true
+        if (group.paths.some(path => location.pathname.startsWith(path))) {
+          next[group.key] = true
+        }
       })
       return next
     })
@@ -182,8 +203,8 @@ export default function OwnerLayout() {
     const [targetPath, targetQuery = ''] = target.split('?')
     if (location.pathname !== targetPath) return false
     const requiredParams = new URLSearchParams(targetQuery)
-    if ([...requiredParams].length === 0) return !location.search
-    return [...requiredParams].every(([key, value]) => searchParams.get(key) === value)
+    if ([...requiredParams.entries()].length === 0) return !location.search
+    return [...requiredParams.entries()].every(([key, value]) => searchParams.get(key) === value)
   }
 
   const handleLogout = async () => {
@@ -218,23 +239,22 @@ export default function OwnerLayout() {
         }
 
         .gfh-sidebar::-webkit-scrollbar { width: 5px; }
-        .gfh-sidebar::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 4px; }
+        .gfh-sidebar::-webkit-scrollbar-thumb { background: #E2E8F0; border-radius: 4px; }
 
         .gfh-sidebar-logo {
           display: flex;
           align-items: center;
           gap: 12px;
-          padding: 20px 20px;
-          border-bottom: 1px solid #E2E8F0;
+          padding: 18px 20px;
+          border-bottom: 1px solid #F1F5F9;
           background: #FFFFFF;
         }
 
         .gfh-logo-icon {
-          width: 40px;
-          height: 40px;
+          width: 38px;
+          height: 38px;
           border-radius: 10px;
           background: #10B981;
-          border: 1px solid #059669;
           display: flex;
           align-items: center;
           justify-content: center;
@@ -244,18 +264,18 @@ export default function OwnerLayout() {
         }
 
         .gfh-logo-text {
-          font-size: 18px;
+          font-size: 17.5px;
           font-weight: 800;
           color: #10B981;
-          line-height: 1.2;
+          line-height: 1.15;
           letter-spacing: -0.015em;
         }
 
         .gfh-logo-sub {
-          font-size: 10.5px;
+          font-size: 9.5px;
           font-weight: 700;
-          letter-spacing: 0.06em;
-          color: #64748B;
+          letter-spacing: 0.08em;
+          color: #94A3B8;
           text-transform: uppercase;
           margin-top: 2px;
         }
@@ -265,133 +285,139 @@ export default function OwnerLayout() {
           padding: 14px 12px 20px;
         }
 
-        .gfh-nav-section-label {
-          font-size: 11px;
-          font-weight: 700;
-          letter-spacing: 0.06em;
-          text-transform: uppercase;
-          color: #64748B;
-          padding: 20px 14px 8px;
-        }
-
-        .gfh-nav-item {
+        /* ── Top Dashboard Item ── */
+        .gfh-dashboard-item {
           display: flex;
           align-items: center;
           gap: 12px;
           padding: 10px 14px;
-          margin: 2px 0;
+          margin-bottom: 10px;
           border-radius: 8px;
           color: #334155;
-          font-size: 14px;
+          font-size: 13.5px;
           font-weight: 600;
-          line-height: 1.45;
           text-decoration: none;
           transition: background 0.15s ease, color 0.15s ease;
         }
 
-        .gfh-nav-item:hover {
-          background: #ECFDF5;
+        .gfh-dashboard-item:hover {
+          background: #F0FDF4;
           color: #059669;
         }
 
-        .gfh-nav-item.active {
-          background: #10B981;
-          color: #FFFFFF;
+        .gfh-dashboard-item.active {
+          background: #E8F8F0;
+          color: #0F8A67;
           font-weight: 700;
-          border-radius: 8px;
-          box-shadow: 0 2px 6px rgba(16, 185, 129, 0.25);
+          border: 1px solid #D1FAE5;
         }
 
-        .gfh-nav-item.active .gfh-nav-icon {
-          color: #FFFFFF;
+        .gfh-dashboard-item.active .gfh-dash-icon {
+          color: #0F8A67;
         }
 
+        /* ── Group Toggle Button ── */
         .gfh-nav-group-toggle {
           width: 100%;
           display: flex;
           align-items: center;
-          gap: 12px;
-          padding: 10px 14px;
-          margin: 2px 0;
-          border: 1px solid transparent;
+          gap: 10px;
+          padding: 7px 10px;
+          margin: 1px 0;
+          border: none;
           border-radius: 8px;
           background: transparent;
-          color: #334155;
-          font-size: 14px;
-          font-weight: 600;
-          line-height: 1.45;
+          color: #0F172A;
+          font-size: 13.5px;
+          font-weight: 700;
           text-align: left;
           cursor: pointer;
-          transition: background 0.15s ease, color 0.15s ease;
+          transition: background 0.15s ease;
         }
 
-        .gfh-nav-group-toggle:hover,
-        .gfh-nav-group-toggle.current {
-          background: #ECFDF5;
-          color: #059669;
-          font-weight: 700;
-          border-color: #A7F3D0;
+        .gfh-nav-group-toggle:hover {
+          background: #F8FAFC;
+        }
+
+        .gfh-group-icon-circle {
+          width: 28px;
+          height: 28px;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          flex-shrink: 0;
         }
 
         .gfh-nav-group-chevron {
           margin-left: auto;
           display: flex;
-          opacity: 0.7;
-          transition: transform 0.18s ease;
+          color: #64748B;
+          transition: transform 0.2s ease;
         }
 
-        .gfh-nav-group-chevron.open { transform: rotate(90deg); }
+        .gfh-nav-group-chevron.closed {
+          transform: rotate(-90deg);
+        }
 
+        /* ── Submenu Links ── */
         .gfh-nav-submenu {
-          margin: 4px 0 8px 18px;
-          padding-left: 10px;
-          border-left: 2px solid #A7F3D0;
+          display: flex;
+          flex-direction: column;
+          padding: 2px 0 6px 0;
         }
 
-        .gfh-nav-submenu .gfh-nav-item {
-          padding: 8px 12px;
-          gap: 10px;
-          font-size: 13.5px;
-          font-weight: 600;
-          color: #475569;
-        }
-
-        .gfh-nav-submenu .gfh-nav-item:hover {
-          background: #ECFDF5;
-          color: #059669;
-        }
-
-        .gfh-nav-submenu .gfh-nav-item.active {
-          color: #FFFFFF;
-          font-weight: 700;
-          background: #10B981;
-        }
-
-        .gfh-nav-submenu .gfh-nav-item svg {
-          width: 15px;
-          height: 15px;
-        }
-
-        .gfh-nav-icon {
+        .gfh-sub-item {
           display: flex;
           align-items: center;
-          justify-content: center;
-          flex-shrink: 0;
-          color: inherit;
+          gap: 10px;
+          padding: 5px 12px 5px 38px;
+          margin: 1px 0;
+          border-radius: 6px;
+          color: #475569;
+          font-size: 12.5px;
+          font-weight: 500;
+          text-decoration: none;
+          transition: all 0.15s ease;
         }
 
+        .gfh-sub-item:hover {
+          color: #059669;
+          background: #F0FDF4;
+        }
+
+        .gfh-sub-item.active {
+          color: #059669;
+          font-weight: 700;
+          background: #ECFDF5;
+        }
+
+        .gfh-sub-bullet {
+          width: 4px;
+          height: 4px;
+          border-radius: 50%;
+          background: #94A3B8;
+          flex-shrink: 0;
+          transition: background 0.15s ease;
+        }
+
+        .gfh-sub-item:hover .gfh-sub-bullet,
+        .gfh-sub-item.active .gfh-sub-bullet {
+          background: #059669;
+        }
+
+        /* ── Footer ── */
         .gfh-sidebar-footer {
-          padding: 14px;
-          border-top: 1px solid #E2E8F0;
-          background: #F8FAFC;
+          padding: 12px 14px;
+          border-top: 1px solid #F1F5F9;
+          background: #FFFFFF;
         }
 
         .gfh-user-row {
           display: flex;
           align-items: center;
           gap: 10px;
-          padding: 6px 8px;
-          border-radius: 8px;
+          padding: 4px;
         }
 
         .gfh-user-avatar {
@@ -399,7 +425,6 @@ export default function OwnerLayout() {
           height: 34px;
           border-radius: 50%;
           background: #10B981;
-          border: none;
           display: flex;
           align-items: center;
           justify-content: center;
@@ -410,7 +435,7 @@ export default function OwnerLayout() {
         }
 
         .gfh-user-name {
-          font-size: 13.5px;
+          font-size: 13px;
           font-weight: 700;
           color: #0F172A;
           overflow: hidden;
@@ -419,10 +444,10 @@ export default function OwnerLayout() {
         }
 
         .gfh-user-role {
-          font-size: 11px;
-          color: #64748B;
+          font-size: 10px;
+          color: #94A3B8;
           text-transform: uppercase;
-          letter-spacing: 0.05em;
+          letter-spacing: 0.06em;
           font-weight: 600;
         }
 
@@ -442,6 +467,7 @@ export default function OwnerLayout() {
           color: #DC2626;
         }
 
+        /* ── Main Layout ── */
         .gfh-main-content {
           flex: 1;
           display: flex;
@@ -510,7 +536,9 @@ export default function OwnerLayout() {
         }
       `}</style>
 
+      {/* ─── SIDEBAR ─── */}
       <aside className={`gfh-sidebar ${sidebarOpen ? 'open' : ''}`}>
+        {/* Brand Header */}
         <div className="gfh-sidebar-logo">
           <div className="gfh-logo-icon">
             <Icon path={icons.building} size={20} />
@@ -521,67 +549,72 @@ export default function OwnerLayout() {
           </div>
         </div>
 
+        {/* Navigation List */}
         <nav className="gfh-sidebar-nav">
-          {ownerNavItems.map((section) => (
-            <div key={section.section}>
-              <div className="gfh-nav-section-label">{section.section}</div>
-              {section.items.map((item) => (
-                <NavLink
-                  key={item.to}
-                  to={item.to}
-                  className={({ isActive }) => `gfh-nav-item ${isActive ? 'active' : ''}`}
-                  onClick={() => setSidebarOpen(false)}
+          {/* 1. Dashboard (Top Highlighted Button) */}
+          <NavLink
+            to="/owner/dashboard"
+            className={({ isActive }) => `gfh-dashboard-item ${isActive ? 'active' : ''}`}
+            onClick={() => setSidebarOpen(false)}
+          >
+            <span className="gfh-dash-icon" style={{ display: 'flex' }}>
+              <Icon path={icons.dashboard} size={17} />
+            </span>
+            <span>Dashboard</span>
+          </NavLink>
+
+          {/* 2. Organized Menu Groups strictly per Paul Brit's mockup */}
+          {ownerMenuGroups.map(group => {
+            const isOpen = !!openGroups[group.key]
+            return (
+              <div key={group.key} style={{ marginBottom: 4 }}>
+                <button
+                  type="button"
+                  className="gfh-nav-group-toggle"
+                  aria-expanded={isOpen}
+                  onClick={() => setOpenGroups(current => ({ ...current, [group.key]: !current[group.key] }))}
                 >
-                  <span className="gfh-nav-icon"><Icon path={item.icon} /></span>
-                  {item.label}
-                </NavLink>
-              ))}
-              {section.section === 'MAIN' && ownerMenuGroups.map(group => {
-                const isOpen = openGroups[group.key]
-                const isCurrent = group.paths.some(path => location.pathname.startsWith(path))
-                return (
-                  <div key={group.key}>
-                    <button
-                      type="button"
-                      className={`gfh-nav-group-toggle ${isCurrent ? 'current' : ''}`}
-                      aria-expanded={isOpen}
-                      aria-controls={`owner-${group.key}-submenu`}
-                      onClick={() => setOpenGroups(current => ({ ...current, [group.key]: !current[group.key] }))}
-                    >
-                      <span className="gfh-nav-icon"><Icon path={group.icon} /></span>
-                      <span>{group.label}</span>
-                      <span className={`gfh-nav-group-chevron ${isOpen ? 'open' : ''}`}><Icon path={icons.chevron} size={15} /></span>
-                    </button>
-                    {isOpen && (
-                      <div id={`owner-${group.key}-submenu`} className="gfh-nav-submenu">
-                        {group.items.map(item => (
-                          <NavLink
-                            key={item.to}
-                            to={item.to}
-                            className={() => `gfh-nav-item ${isMenuLinkActive(item.to) ? 'active' : ''}`}
-                            onClick={() => setSidebarOpen(false)}
-                          >
-                            <span className="gfh-nav-icon"><Icon path={item.icon} /></span>
-                            <span>{item.label}</span>
-                          </NavLink>
-                        ))}
-                      </div>
-                    )}
+                  <span
+                    className="gfh-group-icon-circle"
+                    style={{ background: group.iconBg, color: group.iconColor }}
+                  >
+                    <Icon path={group.icon} size={15} />
+                  </span>
+                  <span>{group.label}</span>
+                  <span className={`gfh-nav-group-chevron ${isOpen ? '' : 'closed'}`}>
+                    <Icon path={icons.chevronDown} size={14} />
+                  </span>
+                </button>
+
+                {isOpen && (
+                  <div className="gfh-nav-submenu">
+                    {group.items.map(item => (
+                      <NavLink
+                        key={item.to}
+                        to={item.to}
+                        className={() => `gfh-sub-item ${isMenuLinkActive(item.to) ? 'active' : ''}`}
+                        onClick={() => setSidebarOpen(false)}
+                      >
+                        <span className="gfh-sub-bullet" />
+                        <span>{item.label}</span>
+                      </NavLink>
+                    ))}
                   </div>
-                )
-              })}
-            </div>
-          ))}
+                )}
+              </div>
+            )
+          })}
         </nav>
 
+        {/* Footer: User profile & Logout */}
         <div className="gfh-sidebar-footer">
           <div className="gfh-user-row">
             <div className="gfh-user-avatar">
-              {user?.name?.charAt(0).toUpperCase() || 'O'}
+              {user?.name?.charAt(0).toUpperCase() || 'R'}
             </div>
             <div style={{ flex: 1, minWidth: 0 }}>
-              <div className="gfh-user-name">{user?.name || 'Owner'}</div>
-              <div className="gfh-user-role">Owner</div>
+              <div className="gfh-user-name">{user?.name || 'RMS'}</div>
+              <div className="gfh-user-role">OWNER</div>
             </div>
             <button onClick={handleLogout} title="Logout" className="gfh-logout-btn">
               <Icon path={icons.logout} size={17} />
@@ -590,6 +623,7 @@ export default function OwnerLayout() {
         </div>
       </aside>
 
+      {/* ─── MAIN CONTENT ─── */}
       <div className="gfh-main-content">
         <header className="gfh-topbar">
           <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
