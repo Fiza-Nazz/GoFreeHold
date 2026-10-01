@@ -88,6 +88,11 @@ export default function UnitDetailPage() {
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
+  // 3-dots action dropdown state
+  const [activeMenuPaymentId, setActiveMenuPaymentId] = useState<number | string | null>(null)
+  const [receiptModalPayment, setReceiptModalPayment] = useState<PaymentInfo | null>(null)
+  const [deleteConfirmPayment, setDeleteConfirmPayment] = useState<PaymentInfo | null>(null)
+
   // Payment Modal state
   const [paymentModalOpen, setPaymentModalOpen] = useState(false)
   const [paymentType, setPaymentType] = useState<'RENT' | 'DEWA' | 'OTHER'>('RENT')
@@ -99,6 +104,18 @@ export default function UnitDetailPage() {
   // Vacate Modal state
   const [vacateModalOpen, setVacateModalOpen] = useState(false)
 
+  // Close dropdown on outside click
+  useEffect(() => {
+    const handleOutsideClick = (e: MouseEvent) => {
+      const target = e.target as HTMLElement
+      if (!target.closest('.payment-action-menu-wrap')) {
+        setActiveMenuPaymentId(null)
+      }
+    }
+    document.addEventListener('click', handleOutsideClick)
+    return () => document.removeEventListener('click', handleOutsideClick)
+  }, [])
+
   useEffect(() => {
     const fetchUnit = async () => {
       setIsLoading(true)
@@ -108,11 +125,10 @@ export default function UnitDetailPage() {
         const fetchedUnit = res.data?.data?.unit || null
         setUnit(fetchedUnit)
 
-        // Populate recent payments if present from backend, or fallback
+        // Populate recent payments if present from backend, or fallback matching reference layout
         if (fetchedUnit?.recent_payments && fetchedUnit.recent_payments.length > 0) {
           setPayments(fetchedUnit.recent_payments)
         } else if (fetchedUnit?.active_contract) {
-          // Provide default/sample payment rows matching Paul's exact mockup format
           setPayments([
             {
               id: 1,
@@ -458,30 +474,164 @@ export default function UnitDetailPage() {
                           <td style={{ padding: '14px', fontSize: 13, color: '#64748B' }}>
                             {p.remarks || ''}
                           </td>
-                          <td style={{ padding: '14px', textAlign: 'center' }}>
-                            <button
-                              type="button"
-                              title="Action Options"
-                              style={{
-                                width: 28,
-                                height: 28,
-                                borderRadius: '50%',
-                                background: '#94A3B8',
-                                border: 'none',
-                                color: '#FFFFFF',
-                                display: 'inline-flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                cursor: 'pointer',
-                                fontSize: 13,
-                              }}
-                            >
-                              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-                                <circle cx="12" cy="5" r="2" />
-                                <circle cx="12" cy="12" r="2" />
-                                <circle cx="12" cy="19" r="2" />
-                              </svg>
-                            </button>
+                          <td style={{ padding: '14px', textAlign: 'center', position: 'relative' }}>
+                            {/* ── 3-Dots Action Button (Darker Slate color #475569 & White Dots) ── */}
+                            <div className="payment-action-menu-wrap" style={{ position: 'relative', display: 'inline-block' }}>
+                              <button
+                                type="button"
+                                title="Action Options"
+                                onClick={(e) => {
+                                  e.stopPropagation()
+                                  setActiveMenuPaymentId(activeMenuPaymentId === (p.id || idx) ? null : (p.id || idx))
+                                }}
+                                style={{
+                                  width: 30,
+                                  height: 30,
+                                  borderRadius: '50%',
+                                  background: activeMenuPaymentId === (p.id || idx) ? '#1E293B' : '#475569',
+                                  border: 'none',
+                                  color: '#FFFFFF',
+                                  display: 'inline-flex',
+                                  alignItems: 'center',
+                                  justifyContent: 'center',
+                                  cursor: 'pointer',
+                                  boxShadow: '0 1px 3px rgba(15, 23, 42, 0.25)',
+                                  transition: 'all 0.15s ease',
+                                }}
+                                onMouseEnter={(e) => (e.currentTarget.style.background = '#1E293B')}
+                                onMouseLeave={(e) => {
+                                  if (activeMenuPaymentId !== (p.id || idx)) {
+                                    e.currentTarget.style.background = '#475569'
+                                  }
+                                }}
+                              >
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
+                                  <circle cx="12" cy="5" r="2.2" />
+                                  <circle cx="12" cy="12" r="2.2" />
+                                  <circle cx="12" cy="19" r="2.2" />
+                                </svg>
+                              </button>
+
+                              {/* Action Dropdown Menu */}
+                              {activeMenuPaymentId === (p.id || idx) && (
+                                <div
+                                  style={{
+                                    position: 'absolute',
+                                    right: 0,
+                                    top: 36,
+                                    background: '#FFFFFF',
+                                    border: '1px solid #E2E8F0',
+                                    borderRadius: 8,
+                                    boxShadow: '0 12px 28px rgba(15, 23, 42, 0.15), 0 4px 10px rgba(15, 23, 42, 0.08)',
+                                    zIndex: 999,
+                                    minWidth: 175,
+                                    overflow: 'hidden',
+                                    padding: '4px 0',
+                                    textAlign: 'left',
+                                  }}
+                                >
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      setActiveMenuPaymentId(null)
+                                      setReceiptModalPayment(p)
+                                    }}
+                                    style={{
+                                      width: '100%',
+                                      padding: '9px 14px',
+                                      background: 'none',
+                                      border: 'none',
+                                      color: '#1E293B',
+                                      fontSize: 12.5,
+                                      fontWeight: 600,
+                                      cursor: 'pointer',
+                                      display: 'flex',
+                                      alignItems: 'center',
+                                      gap: 8,
+                                      textAlign: 'left',
+                                    }}
+                                    onMouseEnter={(e) => (e.currentTarget.style.background = '#F8FAFC')}
+                                    onMouseLeave={(e) => (e.currentTarget.style.background = 'none')}
+                                  >
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2563EB" strokeWidth="2">
+                                      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                                      <polyline points="14 2 14 8 20 8" />
+                                      <line x1="16" y1="13" x2="8" y2="13" />
+                                      <line x1="16" y1="17" x2="8" y2="17" />
+                                      <polyline points="10 9 9 9 8 9" />
+                                    </svg>
+                                    View / Print Receipt
+                                  </button>
+
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      setActiveMenuPaymentId(null)
+                                      if (activeContract) {
+                                        navigate(`/owner/contracts/${activeContract.id}`)
+                                      } else {
+                                        navigate('/owner/ledger')
+                                      }
+                                    }}
+                                    style={{
+                                      width: '100%',
+                                      padding: '9px 14px',
+                                      background: 'none',
+                                      border: 'none',
+                                      color: '#1E293B',
+                                      fontSize: 12.5,
+                                      fontWeight: 600,
+                                      cursor: 'pointer',
+                                      display: 'flex',
+                                      alignItems: 'center',
+                                      gap: 8,
+                                      textAlign: 'left',
+                                    }}
+                                    onMouseEnter={(e) => (e.currentTarget.style.background = '#F8FAFC')}
+                                    onMouseLeave={(e) => (e.currentTarget.style.background = 'none')}
+                                  >
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#0D9488" strokeWidth="2">
+                                      <line x1="18" y1="20" x2="18" y2="10" />
+                                      <line x1="12" y1="20" x2="12" y2="4" />
+                                      <line x1="6" y1="20" x2="6" y2="14" />
+                                    </svg>
+                                    View Rent Ledger
+                                  </button>
+
+                                  <div style={{ height: 1, background: '#F1F5F9', margin: '4px 0' }} />
+
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      setActiveMenuPaymentId(null)
+                                      setDeleteConfirmPayment(p)
+                                    }}
+                                    style={{
+                                      width: '100%',
+                                      padding: '9px 14px',
+                                      background: 'none',
+                                      border: 'none',
+                                      color: '#DC2626',
+                                      fontSize: 12.5,
+                                      fontWeight: 600,
+                                      cursor: 'pointer',
+                                      display: 'flex',
+                                      alignItems: 'center',
+                                      gap: 8,
+                                      textAlign: 'left',
+                                    }}
+                                    onMouseEnter={(e) => (e.currentTarget.style.background = '#FEF2F2')}
+                                    onMouseLeave={(e) => (e.currentTarget.style.background = 'none')}
+                                  >
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#DC2626" strokeWidth="2">
+                                      <polyline points="3 6 5 6 21 6" />
+                                      <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                                    </svg>
+                                    Delete Payment
+                                  </button>
+                                </div>
+                              )}
+                            </div>
                           </td>
                         </tr>
                       ))
@@ -728,6 +878,185 @@ export default function UnitDetailPage() {
                     </button>
                   </div>
                 </form>
+              </div>
+            </div>
+          )}
+
+          {/* View / Print Receipt Modal */}
+          {receiptModalPayment && (
+            <div
+              style={{
+                position: 'fixed',
+                inset: 0,
+                background: 'rgba(15, 23, 42, 0.55)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                zIndex: 9999,
+                padding: 16,
+              }}
+            >
+              <div
+                style={{
+                  background: '#FFFFFF',
+                  borderRadius: 12,
+                  width: '100%',
+                  maxWidth: 460,
+                  boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+                  overflow: 'hidden',
+                }}
+              >
+                {/* Header */}
+                <div style={{ background: '#065F46', padding: '18px 24px', color: '#FFFFFF', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <div>
+                    <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#A7F3D0' }}>
+                      Official Payment Receipt
+                    </div>
+                    <div style={{ fontSize: 17, fontWeight: 800, marginTop: 2 }}>
+                      REC-#{receiptModalPayment.id}
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setReceiptModalPayment(null)}
+                    style={{ background: 'none', border: 'none', color: '#FFFFFF', fontSize: 20, cursor: 'pointer', padding: 4 }}
+                  >
+                    ✕
+                  </button>
+                </div>
+
+                {/* Receipt Details */}
+                <div style={{ padding: '22px 24px' }}>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14, marginBottom: 18, borderBottom: '1px solid #E2E8F0', paddingBottom: 16 }}>
+                    <div>
+                      <div style={{ fontSize: 11, fontWeight: 600, color: '#64748B', textTransform: 'uppercase' }}>Property & Unit</div>
+                      <div style={{ fontSize: 13.5, fontWeight: 700, color: '#0F172A', marginTop: 2 }}>
+                        {unit.property?.name || 'DANA'} - {unit.number}
+                      </div>
+                    </div>
+                    <div>
+                      <div style={{ fontSize: 11, fontWeight: 600, color: '#64748B', textTransform: 'uppercase' }}>Payment Date</div>
+                      <div style={{ fontSize: 13.5, fontWeight: 700, color: '#0F172A', marginTop: 2 }}>
+                        {formatDateDDMMYYYY(receiptModalPayment.date)}
+                      </div>
+                    </div>
+                    <div>
+                      <div style={{ fontSize: 11, fontWeight: 600, color: '#64748B', textTransform: 'uppercase' }}>Tenant Name</div>
+                      <div style={{ fontSize: 13.5, fontWeight: 700, color: '#0F172A', marginTop: 2 }}>
+                        {activeTenant?.name || 'KARINA DZHAPAROVA'}
+                      </div>
+                    </div>
+                    <div>
+                      <div style={{ fontSize: 11, fontWeight: 600, color: '#64748B', textTransform: 'uppercase' }}>Payment Mode</div>
+                      <div style={{ fontSize: 13.5, fontWeight: 700, color: '#0F172A', marginTop: 2, textTransform: 'uppercase' }}>
+                        {receiptModalPayment.mode || 'CASH'}
+                      </div>
+                    </div>
+                    <div>
+                      <div style={{ fontSize: 11, fontWeight: 600, color: '#64748B', textTransform: 'uppercase' }}>Description</div>
+                      <div style={{ fontSize: 13.5, fontWeight: 700, color: '#0F172A', marginTop: 2, textTransform: 'uppercase' }}>
+                        {receiptModalPayment.type || 'RENT'}
+                      </div>
+                    </div>
+                    <div>
+                      <div style={{ fontSize: 11, fontWeight: 600, color: '#64748B', textTransform: 'uppercase' }}>Remarks</div>
+                      <div style={{ fontSize: 13.5, fontWeight: 700, color: '#0F172A', marginTop: 2 }}>
+                        {receiptModalPayment.remarks || '—'}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Amount Box */}
+                  <div style={{ background: '#F0FDF4', border: '1px solid #BBF7D0', borderRadius: 8, padding: '14px 18px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
+                    <span style={{ fontSize: 13, fontWeight: 700, color: '#065F46' }}>Total Amount Paid</span>
+                    <span style={{ fontSize: 20, fontWeight: 800, color: '#065F46' }}>
+                      AED {formatCurrency(receiptModalPayment.amount)}
+                    </span>
+                  </div>
+
+                  {/* Actions */}
+                  <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10 }}>
+                    <button
+                      type="button"
+                      onClick={() => setReceiptModalPayment(null)}
+                      style={{ padding: '8px 18px', borderRadius: 6, border: '1px solid #CBD5E1', background: '#F8FAFC', color: '#475569', fontSize: 13, fontWeight: 600, cursor: 'pointer' }}
+                    >
+                      Close
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => window.print()}
+                      style={{ padding: '8px 20px', borderRadius: 6, border: 'none', background: '#2563EB', color: '#FFFFFF', fontSize: 13, fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6 }}
+                    >
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <polyline points="6 9 6 2 18 2 18 9" />
+                        <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
+                        <rect x="6" y="14" width="12" height="8" />
+                      </svg>
+                      Print Receipt
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Delete Payment Modal */}
+          {deleteConfirmPayment && (
+            <div
+              style={{
+                position: 'fixed',
+                inset: 0,
+                background: 'rgba(15, 23, 42, 0.45)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                zIndex: 9999,
+                padding: 16,
+              }}
+            >
+              <div
+                style={{
+                  background: '#FFFFFF',
+                  borderRadius: 10,
+                  width: '100%',
+                  maxWidth: 380,
+                  padding: '24px',
+                  boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1)',
+                  textAlign: 'center',
+                }}
+              >
+                <div style={{ width: 44, height: 44, borderRadius: '50%', background: '#FEF2F2', color: '#DC2626', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', marginBottom: 14 }}>
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <polyline points="3 6 5 6 21 6" />
+                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                  </svg>
+                </div>
+                <h3 style={{ margin: '0 0 8px 0', fontSize: 16, fontWeight: 700, color: '#0F172A' }}>
+                  Delete this payment?
+                </h3>
+                <p style={{ margin: '0 0 20px 0', fontSize: 13, color: '#64748B', lineHeight: 1.5 }}>
+                  Are you sure you want to remove this AED {formatCurrency(deleteConfirmPayment.amount)} ({deleteConfirmPayment.type}) record?
+                </p>
+                <div style={{ display: 'flex', justifyContent: 'center', gap: 10 }}>
+                  <button
+                    type="button"
+                    onClick={() => setDeleteConfirmPayment(null)}
+                    style={{ padding: '8px 18px', borderRadius: 6, border: '1px solid #CBD5E1', background: '#F8FAFC', color: '#475569', fontSize: 13, fontWeight: 600, cursor: 'pointer' }}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setPayments(prev => prev.filter(p => p.id !== deleteConfirmPayment.id))
+                      setDeleteConfirmPayment(null)
+                    }}
+                    style={{ padding: '8px 20px', borderRadius: 6, border: 'none', background: '#DC2626', color: '#FFFFFF', fontSize: 13, fontWeight: 700, cursor: 'pointer' }}
+                  >
+                    Delete
+                  </button>
+                </div>
               </div>
             </div>
           )}
