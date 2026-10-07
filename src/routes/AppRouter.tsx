@@ -89,6 +89,7 @@ export default function AppRouter() {
           <Route path={'/'+role} element={<StaffLayout />}>
             <Route index element={<Navigate to="dashboard" replace />} />
             <Route path="units" element={<OwnerUnits />} />
+            <Route path="portfolio" element={<OwnerUnits />} />
             <Route path="units/:unitId" element={<UnitDetailPage />} />
             <Route path="contracts" element={<ContractManagement basePath={'/' + role} />} />
             <Route path="contracts/:id" element={<ContractDetailPage basePath={'/' + role} />} />
@@ -165,6 +166,7 @@ export default function AppRouter() {
             <Route path="properties" element={<BuildingManagement />} />
             <Route path="properties/add" element={<AddPropertyPage />} />
             <Route path="buildings" element={<Navigate to="/owner/properties" replace />} />
+            <Route path="portfolio" element={<OwnerUnits />} />
             <Route path="units" element={<OwnerUnits />} />
             <Route path="units/:unitId" element={<UnitDetailPage />} />
             <Route path="vacant-units" element={<VacantUnits />} />

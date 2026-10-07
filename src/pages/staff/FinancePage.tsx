@@ -179,7 +179,7 @@ export default function FinancePage(){
   const todayCollections = Number(data?.today_collections || 0)
   const dashKpis = [
     {
-      to: `${base}/units`,
+      to: `${base}/portfolio`,
       label: 'Total Properties',
       value: String(portfolioStats.totalProperties),
       prefix: undefined as string | undefined,
@@ -192,7 +192,7 @@ export default function FinancePage(){
       iconColor: '#15803D',
     },
     {
-      to: `${base}/units?status=OCCUPIED`,
+      to: `${base}/portfolio?status=occupied`,
       label: 'Occupied Units',
       value: String(portfolioStats.rented),
       prefix: undefined as string | undefined,
@@ -205,7 +205,7 @@ export default function FinancePage(){
       iconColor: '#059669',
     },
     {
-      to: `${base}/units?status=BOOKED`,
+      to: `${base}/portfolio?status=booked`,
       label: 'Booked Units',
       value: String(portfolioStats.booked),
       prefix: undefined as string | undefined,
@@ -220,7 +220,7 @@ export default function FinancePage(){
       iconColor: '#D97706',
     },
     {
-      to: `${base}/units?status=AVAILABLE`,
+      to: `${base}/portfolio?status=vacant`,
       label: 'Vacant Units',
       value: String(portfolioStats.vacant),
       prefix: undefined as string | undefined,
