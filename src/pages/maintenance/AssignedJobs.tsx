@@ -214,17 +214,17 @@ export default function AssignedJobs() {
   ]
 
   return (
-    <div className="gfh-portal-page" style={{ fontFamily: "'Inter', system-ui, sans-serif", background: THEME.pageBg, minHeight: '100%' }}>
+    <div className="gfh-portal-page" style={{ fontFamily: "'Source Sans Pro', system-ui, sans-serif", background: THEME.pageBg, minHeight: '100%' }}>
       <style>{portalPageCss}</style>
 
       {/* Hero Header */}
       <div className="fade-in" style={heroStyle}>
         <div>
-          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 12, fontWeight: 700, letterSpacing: '0.6px', textTransform: 'uppercase', color: '#10B981', marginBottom: 2 }}>
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 12, fontWeight: 600, letterSpacing: '0.6px', textTransform: 'uppercase', color: '#10B981', marginBottom: 2 }}>
             <span style={{ width: 7, height: 7, borderRadius: '50%', background: '#10B981', display: 'inline-block' }} />
             Field Operations Hub
           </div>
-          <div style={{ fontSize: 24, fontWeight: 800, color: THEME.ink, letterSpacing: '-0.02em', marginTop: 2 }}>
+          <div style={{ fontSize: 24, fontWeight: 600, color: THEME.ink, letterSpacing: '-0.02em', marginTop: 2 }}>
             My Assigned Jobs
           </div>
           <div style={{ fontSize: 13, color: THEME.textMuted, marginTop: 4 }}>
@@ -246,7 +246,7 @@ export default function AssignedJobs() {
             border: 'none',
             borderRadius: 10,
             fontSize: 13,
-            fontWeight: 700,
+            fontWeight: 600,
             cursor: loading || busy ? 'not-allowed' : 'pointer',
             boxShadow: '0 2px 6px rgba(14, 94, 72, 0.25)',
             opacity: loading || busy ? 0.75 : 1,
@@ -282,7 +282,7 @@ export default function AssignedJobs() {
           <div style={{ flex: 1 }}>{error}</div>
           <button
             onClick={() => setError('')}
-            style={{ background: 'none', border: 'none', color: '#991B1B', cursor: 'pointer', fontWeight: 800, fontSize: 14 }}
+            style={{ background: 'none', border: 'none', color: '#991B1B', cursor: 'pointer', fontWeight: 600, fontSize: 14 }}
           >
             ✕
           </button>
@@ -335,7 +335,7 @@ export default function AssignedJobs() {
                 </div>
                 <span style={{
                   fontSize: 11,
-                  fontWeight: 700,
+                  fontWeight: 600,
                   letterSpacing: '0.4px',
                   textTransform: 'uppercase',
                   background: card.badgeBg,
@@ -348,7 +348,7 @@ export default function AssignedJobs() {
                 </span>
               </div>
               <div>
-                <div style={{ fontSize: 28, fontWeight: 800, color: '#0F172A', lineHeight: 1.15, letterSpacing: '-0.02em' }}>
+                <div style={{ fontSize: 28, fontWeight: 600, color: '#0F172A', lineHeight: 1.15, letterSpacing: '-0.02em' }}>
                   {card.value}
                 </div>
                 <div style={{ fontSize: 13.5, fontWeight: 600, color: isSelected ? '#10B981' : '#64748B', marginTop: 4 }}>
@@ -401,7 +401,7 @@ export default function AssignedJobs() {
                   padding: '8px 14px',
                   borderRadius: 8,
                   fontSize: 13,
-                  fontWeight: 700,
+                  fontWeight: 600,
                   border: isActive ? '1px solid #10B981' : '1px solid #E2E8F0',
                   background: isActive ? '#10B981' : '#FFFFFF',
                   color: isActive ? '#FFFFFF' : '#475569',
@@ -416,7 +416,7 @@ export default function AssignedJobs() {
                 <span
                   style={{
                     fontSize: 11,
-                    fontWeight: 800,
+                    fontWeight: 600,
                     padding: '2px 7px',
                     borderRadius: 999,
                     background: isActive ? 'rgba(255,255,255,0.22)' : '#F1F5F9',
@@ -450,7 +450,7 @@ export default function AssignedJobs() {
                 fontSize: 13,
                 color: '#0F172A',
                 outline: 'none',
-                fontFamily: "'Inter', system-ui, sans-serif",
+                fontFamily: "'Source Sans Pro', system-ui, sans-serif",
                 boxSizing: 'border-box',
               }}
             />
@@ -520,7 +520,7 @@ export default function AssignedJobs() {
           <div style={{ width: 56, height: 56, borderRadius: '50%', background: '#F0FDF4', color: '#10B981', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
             <Icon path={icons.wrench} size={28} />
           </div>
-          <div style={{ fontSize: 18, fontWeight: 800, color: THEME.ink }}>
+          <div style={{ fontSize: 18, fontWeight: 600, color: THEME.ink }}>
             {searchQuery || status ? 'No Matching Work Orders' : 'No Assigned Jobs'}
           </div>
           <p style={{ fontSize: 13.5, color: THEME.textMuted, maxWidth: 460, margin: '8px auto 20px', lineHeight: 1.5 }}>
@@ -542,7 +542,7 @@ export default function AssignedJobs() {
                 borderRadius: 8,
                 padding: '9px 18px',
                 fontSize: 13,
-                fontWeight: 700,
+                fontWeight: 600,
                 cursor: 'pointer',
               }}
             >
@@ -579,7 +579,7 @@ export default function AssignedJobs() {
                       style={{
                         background: '#059669',
                         color: '#FFFFFF',
-                        fontWeight: 800,
+                        fontWeight: 600,
                         fontSize: 12.5,
                         padding: '4px 12px',
                         borderRadius: 8,
@@ -596,7 +596,7 @@ export default function AssignedJobs() {
                           background: pr.bg,
                           color: pr.color,
                           border: `1px solid ${pr.border}`,
-                          fontWeight: 700,
+                          fontWeight: 600,
                           fontSize: 11,
                           padding: '3px 10px',
                           borderRadius: 999,
@@ -644,7 +644,7 @@ export default function AssignedJobs() {
                         background: st.bg,
                         color: st.color,
                         border: `1px solid ${st.border}`,
-                        fontWeight: 800,
+                        fontWeight: 600,
                         fontSize: 12,
                         padding: '4px 12px',
                         borderRadius: 999,
@@ -659,7 +659,7 @@ export default function AssignedJobs() {
 
                 {/* Job / Issue Title & Description */}
                 <div style={{ marginTop: 16 }}>
-                  <h2 style={{ fontSize: 18, fontWeight: 800, color: THEME.ink, margin: 0, letterSpacing: '-0.01em' }}>
+                  <h2 style={{ fontSize: 18, fontWeight: 600, color: THEME.ink, margin: 0, letterSpacing: '-0.01em' }}>
                     {job.complaint?.title || `Maintenance Work Order #${job.id}`}
                   </h2>
 
@@ -676,7 +676,7 @@ export default function AssignedJobs() {
                         lineHeight: 1.5,
                       }}
                     >
-                      <div style={{ fontSize: 11, fontWeight: 700, color: '#64748B', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: 4 }}>
+                      <div style={{ fontSize: 11, fontWeight: 600, color: '#64748B', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: 4 }}>
                         Issue Description
                       </div>
                       {job.complaint.description}
@@ -712,7 +712,7 @@ export default function AssignedJobs() {
                       <div style={{ fontSize: 11, color: '#64748B', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.4px' }}>
                         Property
                       </div>
-                      <div style={{ fontSize: 13, fontWeight: 700, color: THEME.ink, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                      <div style={{ fontSize: 13, fontWeight: 600, color: THEME.ink, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                         {job.complaint?.unit?.property?.name || 'Assigned Property'}
                       </div>
                     </div>
@@ -737,7 +737,7 @@ export default function AssignedJobs() {
                       <div style={{ fontSize: 11, color: '#64748B', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.4px' }}>
                         Unit Number
                       </div>
-                      <div style={{ fontSize: 13, fontWeight: 700, color: THEME.ink }}>
+                      <div style={{ fontSize: 13, fontWeight: 600, color: THEME.ink }}>
                         Unit {job.complaint?.unit?.number || '—'}
                       </div>
                     </div>
@@ -772,7 +772,7 @@ export default function AssignedJobs() {
                 {/* Work Notes Textarea */}
                 <div style={{ marginTop: 18 }}>
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 6 }}>
-                    <label style={{ fontSize: 12.5, fontWeight: 700, color: '#334155' }}>
+                    <label style={{ fontSize: 12.5, fontWeight: 600, color: '#334155' }}>
                       Technician Work Notes & Handover Log
                     </label>
                     <span style={{ fontSize: 11, color: '#94A3B8' }}>
@@ -794,7 +794,7 @@ export default function AssignedJobs() {
                       background: '#FFFFFF',
                       fontSize: 13,
                       color: '#0F172A',
-                      fontFamily: "'Inter', system-ui, sans-serif",
+                      fontFamily: "'Source Sans Pro', system-ui, sans-serif",
                       outline: 'none',
                       boxSizing: 'border-box',
                       resize: 'vertical',
@@ -817,7 +817,7 @@ export default function AssignedJobs() {
                         background: '#ECFDF8',
                         color: '#065F46',
                         fontSize: 12,
-                        fontWeight: 700,
+                        fontWeight: 600,
                       }}
                     >
                       <Icon path={icons.check} size={13} />
@@ -854,7 +854,7 @@ export default function AssignedJobs() {
                       color: '#FFFFFF',
                       border: 'none',
                       fontSize: 13,
-                      fontWeight: 700,
+                      fontWeight: 600,
                       cursor: busy ? 'not-allowed' : 'pointer',
                       opacity: busy ? 0.7 : 1,
                       boxShadow: '0 1px 3px rgba(7, 89, 133, 0.2)',
@@ -883,7 +883,7 @@ export default function AssignedJobs() {
                           color: '#FFFFFF',
                           border: 'none',
                           fontSize: 13,
-                          fontWeight: 700,
+                          fontWeight: 600,
                           cursor: busy ? 'not-allowed' : 'pointer',
                           opacity: busy ? 0.7 : 1,
                           boxShadow: '0 2px 6px rgba(2, 132, 199, 0.25)',
@@ -910,7 +910,7 @@ export default function AssignedJobs() {
                           color: '#FFFFFF',
                           border: 'none',
                           fontSize: 13,
-                          fontWeight: 700,
+                          fontWeight: 600,
                           cursor: busy ? 'not-allowed' : 'pointer',
                           opacity: busy ? 0.7 : 1,
                           boxShadow: '0 2px 6px rgba(6, 95, 70, 0.25)',
@@ -934,7 +934,7 @@ export default function AssignedJobs() {
                           color: '#065F46',
                           border: '1px solid #A7F3DC',
                           fontSize: 12.5,
-                          fontWeight: 700,
+                          fontWeight: 600,
                         }}
                       >
                         <Icon path={icons.check} size={15} />
@@ -984,7 +984,7 @@ export default function AssignedJobs() {
                 Previous
               </button>
 
-              <div style={{ fontSize: 13, fontWeight: 700, color: '#334155' }}>
+              <div style={{ fontSize: 13, fontWeight: 600, color: '#334155' }}>
                 Page <span style={{ color: '#10B981' }}>{page}</span> of {data.jobs.last_page}
                 {data.jobs.total ? (
                   <span style={{ fontSize: 12, color: '#64748B', fontWeight: 500, marginLeft: 8 }}>

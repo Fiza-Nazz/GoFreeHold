@@ -320,7 +320,7 @@ export default function ServiceCharges() {
   }
 
   return (
-    <div className="gfh-portal-page" style={{ fontFamily: "'Inter', system-ui, sans-serif", padding: '24px 32px', backgroundColor: '#f8fafc', minHeight: '100vh' }}>
+    <div className="gfh-portal-page" style={{ fontFamily: 'var(--font-sans)' }}>
       <style>{portalPageCss}</style>
 
       {/* Top Header */}
@@ -330,7 +330,7 @@ export default function ServiceCharges() {
         </div>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12 }}>
           <div>
-            <h1 style={{ fontSize: 24, fontWeight: 700, color: '#0f172a', margin: 0, letterSpacing: '-0.3px' }}>
+            <h1 style={{ fontSize: 24, fontWeight: 600, color: '#0f172a', margin: 0, letterSpacing: '-0.3px' }}>
               Service charge analytics
             </h1>
           </div>
@@ -459,7 +459,7 @@ export default function ServiceCharges() {
                 height: 38,
                 padding: '8px 16px',
                 fontSize: 13,
-                fontWeight: 700,
+                fontWeight: 600,
                 borderRadius: 4,
                 border: 'none',
                 background: '#0284c7',
@@ -523,9 +523,9 @@ export default function ServiceCharges() {
             <Icon path={icons.calendar} size={20} />
           </div>
           <div>
-            <div style={{ fontSize: 12, color: '#0E7490', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.3px' }}>Approx yearly</div>
-            <div style={{ fontSize: 18, fontWeight: 800, color: '#0E7490', marginTop: 2 }}>
-              <span style={{ fontSize: 12.5, fontWeight: 700, color: '#0E7490', marginRight: 3 }}>AED</span>
+            <div style={{ fontSize: 12, color: '#0E7490', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.3px' }}>Approx yearly</div>
+            <div style={{ fontSize: 18, fontWeight: 600, color: '#0E7490', marginTop: 2 }}>
+              <span style={{ fontSize: 12.5, fontWeight: 600, color: '#0E7490', marginRight: 3 }}>AED</span>
               {approxYearlyTotal.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
             </div>
             <div style={{ fontSize: 11, color: '#0891B2', marginTop: 2 }}>Annualized projection</div>
@@ -538,9 +538,9 @@ export default function ServiceCharges() {
             <Icon path={icons.calendar} size={20} />
           </div>
           <div>
-            <div style={{ fontSize: 12, color: '#0369A1', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.3px' }}>Approx quarter</div>
-            <div style={{ fontSize: 18, fontWeight: 800, color: '#0369A1', marginTop: 2 }}>
-              <span style={{ fontSize: 12.5, fontWeight: 700, color: '#0369A1', marginRight: 3 }}>AED</span>
+            <div style={{ fontSize: 12, color: '#0369A1', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.3px' }}>Approx quarter</div>
+            <div style={{ fontSize: 18, fontWeight: 600, color: '#0369A1', marginTop: 2 }}>
+              <span style={{ fontSize: 12.5, fontWeight: 600, color: '#0369A1', marginRight: 3 }}>AED</span>
               {approxQuarterTotal.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
             </div>
             <div style={{ fontSize: 11, color: '#0284C7', marginTop: 2 }}>Quarterly cycle baseline</div>
@@ -553,9 +553,9 @@ export default function ServiceCharges() {
             <Icon path={icons.check} size={20} />
           </div>
           <div>
-            <div style={{ fontSize: 12, color: '#15803D', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.3px' }}>Paid</div>
-            <div style={{ fontSize: 18, fontWeight: 800, color: '#15803D', marginTop: 2 }}>
-              <span style={{ fontSize: 12.5, fontWeight: 700, color: '#15803D', marginRight: 3 }}>AED</span>
+            <div style={{ fontSize: 12, color: '#15803D', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.3px' }}>Paid</div>
+            <div style={{ fontSize: 18, fontWeight: 600, color: '#15803D', marginTop: 2 }}>
+              <span style={{ fontSize: 12.5, fontWeight: 600, color: '#15803D', marginRight: 3 }}>AED</span>
               {totalPaid.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
             </div>
             <div style={{ fontSize: 11, color: '#16A34A', fontWeight: 600, marginTop: 2 }}>{donutData.paidPct}% collected</div>
@@ -564,13 +564,13 @@ export default function ServiceCharges() {
 
         {/* Card 4: Outstanding */}
         <div style={{ background: '#FEF2F2', border: '1px solid #FECACA', borderRadius: 10, padding: '16px 18px', display: 'flex', alignItems: 'center', gap: 14, boxShadow: '0 1px 3px rgba(0,0,0,0.03)' }}>
-          <div style={{ width: 44, height: 44, borderRadius: 8, background: '#dc2626', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff', fontWeight: 900, fontSize: 20 }}>
+          <div style={{ width: 44, height: 44, borderRadius: 8, background: '#dc2626', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ffffff', fontWeight: 600, fontSize: 20 }}>
             !
           </div>
           <div>
-            <div style={{ fontSize: 12, color: '#B91C1C', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.3px' }}>Outstanding</div>
-            <div style={{ fontSize: 18, fontWeight: 800, color: '#B91C1C', marginTop: 2 }}>
-              <span style={{ fontSize: 12.5, fontWeight: 700, color: '#B91C1C', marginRight: 3 }}>AED</span>
+            <div style={{ fontSize: 12, color: '#B91C1C', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.3px' }}>Outstanding</div>
+            <div style={{ fontSize: 18, fontWeight: 600, color: '#B91C1C', marginTop: 2 }}>
+              <span style={{ fontSize: 12.5, fontWeight: 600, color: '#B91C1C', marginRight: 3 }}>AED</span>
               {totalOutstanding.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
             </div>
             <div style={{ fontSize: 11, color: '#DC2626', fontWeight: 600, marginTop: 2 }}>{donutData.outPct}% pending</div>
@@ -587,7 +587,7 @@ export default function ServiceCharges() {
               <div style={{ fontSize: 11.5, color: '#64748b', marginBottom: 4 }}>
                 Billed: {totalBilled.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} &nbsp;&nbsp; Approx monthly: {approxMonthlyTotal.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
               </div>
-              <h3 style={{ fontSize: 15, fontWeight: 700, color: '#0f172a', margin: 0 }}>
+              <h3 style={{ fontSize: 15, fontWeight: 600, color: '#0f172a', margin: 0 }}>
                 Billed vs paid by month
               </h3>
             </div>
@@ -708,7 +708,7 @@ export default function ServiceCharges() {
         {/* Right Chart: Paid vs outstanding */}
         <div style={{ background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: 4, padding: '20px 22px', boxShadow: '0 1px 3px rgba(0,0,0,0.03)', display: 'flex', flexDirection: 'column' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
-            <h3 style={{ fontSize: 14.5, fontWeight: 700, color: '#0f172a', margin: 0 }}>
+            <h3 style={{ fontSize: 14.5, fontWeight: 600, color: '#0f172a', margin: 0 }}>
               Paid vs outstanding
             </h3>
             <div style={{ display: 'flex', alignItems: 'center', gap: 10, fontSize: 11.5, color: '#475569' }}>
@@ -759,10 +759,10 @@ export default function ServiceCharges() {
 
             {/* Center Label */}
             <div style={{ position: 'absolute', textAlign: 'center' }}>
-              <div style={{ fontSize: 20, fontWeight: 800, color: '#0f172a' }}>
+              <div style={{ fontSize: 20, fontWeight: 600, color: '#0f172a' }}>
                 {donutData.paidPct}%
               </div>
-              <div style={{ fontSize: 11, color: '#10b981', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+              <div style={{ fontSize: 11, color: '#10b981', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
                 Collected
               </div>
             </div>
@@ -772,15 +772,15 @@ export default function ServiceCharges() {
           <div style={{ marginTop: 14, paddingTop: 14, borderTop: '1px solid #f1f5f9', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
             <div style={{ background: '#f0fdf4', padding: '8px 12px', borderRadius: 4, border: '1px solid #dcfce7' }}>
               <div style={{ fontSize: 11, color: '#065f46', fontWeight: 600 }}>Paid</div>
-              <div style={{ fontSize: 13, fontWeight: 800, color: '#065f46', marginTop: 2 }}>
-                <span style={{ fontSize: 11, fontWeight: 700, marginRight: 2 }}>AED</span>
+              <div style={{ fontSize: 13, fontWeight: 600, color: '#065f46', marginTop: 2 }}>
+                <span style={{ fontSize: 11, fontWeight: 600, marginRight: 2 }}>AED</span>
                 {totalPaid.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
               </div>
             </div>
             <div style={{ background: '#fef2f2', padding: '8px 12px', borderRadius: 4, border: '1px solid #fee2e2' }}>
               <div style={{ fontSize: 11, color: '#991b1b', fontWeight: 600 }}>Outstanding</div>
-              <div style={{ fontSize: 13, fontWeight: 800, color: '#991b1b', marginTop: 2 }}>
-                <span style={{ fontSize: 11, fontWeight: 700, marginRight: 2 }}>AED</span>
+              <div style={{ fontSize: 13, fontWeight: 600, color: '#991b1b', marginTop: 2 }}>
+                <span style={{ fontSize: 11, fontWeight: 600, marginRight: 2 }}>AED</span>
                 {totalOutstanding.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
               </div>
             </div>
@@ -792,7 +792,7 @@ export default function ServiceCharges() {
       <div style={{ background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: 6, padding: '20px 22px', boxShadow: '0 1px 3px rgba(0,0,0,0.03)' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16, borderBottom: '1px solid #f1f5f9', paddingBottom: 10 }}>
           <div>
-            <h3 style={{ fontSize: 15, fontWeight: 700, color: '#0f172a', margin: 0 }}>
+            <h3 style={{ fontSize: 15, fontWeight: 600, color: '#0f172a', margin: 0 }}>
               Property breakdown
             </h3>
             <div style={{ fontSize: 12, color: '#64748b', marginTop: 2 }}>
@@ -830,13 +830,13 @@ export default function ServiceCharges() {
             <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12.5 }}>
               <thead>
                 <tr style={{ borderBottom: '1px solid #e2e8f0', background: '#f8fafc' }}>
-                  <th style={{ padding: '10px 12px', textAlign: 'left', fontWeight: 700, color: '#475569' }}>Property</th>
-                  <th style={{ padding: '10px 12px', textAlign: 'center', fontWeight: 700, color: '#475569' }}>Units</th>
-                  <th style={{ padding: '10px 12px', textAlign: 'right', fontWeight: 700, color: '#475569' }}>Approx monthly</th>
-                  <th style={{ padding: '10px 12px', textAlign: 'right', fontWeight: 700, color: '#475569' }}>Approx quarter</th>
-                  <th style={{ padding: '10px 12px', textAlign: 'right', fontWeight: 700, color: '#475569' }}>Billed</th>
-                  <th style={{ padding: '10px 12px', textAlign: 'right', fontWeight: 700, color: '#475569' }}>Paid</th>
-                  <th style={{ padding: '10px 12px', textAlign: 'right', fontWeight: 700, color: '#475569' }}>Outstanding</th>
+                  <th style={{ padding: '10px 12px', textAlign: 'left', fontWeight: 600, color: '#475569' }}>Property</th>
+                  <th style={{ padding: '10px 12px', textAlign: 'center', fontWeight: 600, color: '#475569' }}>Units</th>
+                  <th style={{ padding: '10px 12px', textAlign: 'right', fontWeight: 600, color: '#475569' }}>Approx monthly</th>
+                  <th style={{ padding: '10px 12px', textAlign: 'right', fontWeight: 600, color: '#475569' }}>Approx quarter</th>
+                  <th style={{ padding: '10px 12px', textAlign: 'right', fontWeight: 600, color: '#475569' }}>Billed</th>
+                  <th style={{ padding: '10px 12px', textAlign: 'right', fontWeight: 600, color: '#475569' }}>Paid</th>
+                  <th style={{ padding: '10px 12px', textAlign: 'right', fontWeight: 600, color: '#475569' }}>Outstanding</th>
                 </tr>
               </thead>
               <tbody>
@@ -881,7 +881,7 @@ export default function ServiceCharges() {
                 ))}
               </tbody>
               <tfoot>
-                <tr style={{ background: '#f8fafc', borderTop: '2px solid #cbd5e1', fontWeight: 800 }}>
+                <tr style={{ background: '#f8fafc', borderTop: '2px solid #cbd5e1', fontWeight: 600 }}>
                   <td style={{ padding: '12px', color: '#0f172a' }}>Total Portfolio</td>
                   <td style={{ padding: '12px', textAlign: 'center', color: '#0f172a' }}>
                     {propertyBreakdown.reduce((s, p) => s + p.units, 0)}
@@ -912,7 +912,7 @@ export default function ServiceCharges() {
       <div style={{ background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: 4, padding: '20px 22px', marginTop: 24, boxShadow: '0 1px 3px rgba(0,0,0,0.03)' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12, marginBottom: 16, borderBottom: '1px solid #f1f5f9', paddingBottom: 12 }}>
           <div>
-            <h3 style={{ fontSize: 15, fontWeight: 700, color: '#0f172a', margin: 0 }}>
+            <h3 style={{ fontSize: 15, fontWeight: 600, color: '#0f172a', margin: 0 }}>
               Service Charge Invoices & Records
             </h3>
             <div style={{ fontSize: 12, color: '#64748b', marginTop: 2 }}>
@@ -965,13 +965,13 @@ export default function ServiceCharges() {
           <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12.5 }}>
             <thead>
               <tr style={{ borderBottom: '1px solid #e2e8f0', background: '#f8fafc' }}>
-                <th style={{ padding: '8px 10px', textAlign: 'left', fontWeight: 700, color: '#475569' }}>#</th>
-                <th style={{ padding: '8px 10px', textAlign: 'left', fontWeight: 700, color: '#475569' }}>Property / Unit</th>
-                <th style={{ padding: '8px 10px', textAlign: 'left', fontWeight: 700, color: '#475569' }}>Charge Type</th>
-                <th style={{ padding: '8px 10px', textAlign: 'left', fontWeight: 700, color: '#475569' }}>Due Date</th>
-                <th style={{ padding: '8px 10px', textAlign: 'right', fontWeight: 700, color: '#475569' }}>Amount (AED)</th>
-                <th style={{ padding: '8px 10px', textAlign: 'center', fontWeight: 700, color: '#475569' }}>Status</th>
-                <th style={{ padding: '8px 10px', textAlign: 'center', fontWeight: 700, color: '#475569' }}>Actions</th>
+                <th style={{ padding: '8px 10px', textAlign: 'left', fontWeight: 600, color: '#475569' }}>#</th>
+                <th style={{ padding: '8px 10px', textAlign: 'left', fontWeight: 600, color: '#475569' }}>Property / Unit</th>
+                <th style={{ padding: '8px 10px', textAlign: 'left', fontWeight: 600, color: '#475569' }}>Charge Type</th>
+                <th style={{ padding: '8px 10px', textAlign: 'left', fontWeight: 600, color: '#475569' }}>Due Date</th>
+                <th style={{ padding: '8px 10px', textAlign: 'right', fontWeight: 600, color: '#475569' }}>Amount (AED)</th>
+                <th style={{ padding: '8px 10px', textAlign: 'center', fontWeight: 600, color: '#475569' }}>Status</th>
+                <th style={{ padding: '8px 10px', textAlign: 'center', fontWeight: 600, color: '#475569' }}>Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -1002,7 +1002,7 @@ export default function ServiceCharges() {
                     <td style={{ padding: '8px 10px', color: '#475569' }}>
                       {formatDate(c.due_date)}
                     </td>
-                    <td style={{ padding: '8px 10px', textAlign: 'right', fontWeight: 700, color: '#0f172a' }}>
+                    <td style={{ padding: '8px 10px', textAlign: 'right', fontWeight: 600, color: '#0f172a' }}>
                       {Number(c.amount).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                     </td>
                     <td style={{ padding: '8px 10px', textAlign: 'center' }}>
@@ -1010,7 +1010,7 @@ export default function ServiceCharges() {
                         padding: '3px 8px',
                         borderRadius: 3,
                         fontSize: 11,
-                        fontWeight: 700,
+                        fontWeight: 600,
                         textTransform: 'uppercase',
                         background: c.status === 'paid' ? '#f0fdf4' : c.status === 'waived' ? '#f1f5f9' : '#fffbeb',
                         color: c.status === 'paid' ? '#065f46' : c.status === 'waived' ? '#64748b' : '#b45309',
@@ -1062,7 +1062,7 @@ export default function ServiceCharges() {
           <div style={{ position: 'relative', width: '100%', maxWidth: 720, background: '#ffffff', borderRadius: 8, border: '1px solid #e2e8f0', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)', padding: 24, maxHeight: '85vh', overflowY: 'auto' }}>
             <CornerBrackets />
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16, borderBottom: '1px solid #f1f5f9', paddingBottom: 10 }}>
-              <h3 style={{ fontSize: 17, fontWeight: 700, color: '#0f172a', margin: 0 }}>
+              <h3 style={{ fontSize: 17, fontWeight: 600, color: '#0f172a', margin: 0 }}>
                 Service Charge Quarters (2026)
               </h3>
               <button
@@ -1077,11 +1077,11 @@ export default function ServiceCharges() {
             <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
               <thead>
                 <tr style={{ background: '#f8fafc', borderBottom: '1px solid #e2e8f0' }}>
-                  <th style={{ padding: '8px 10px', textAlign: 'left', fontWeight: 700, color: '#475569' }}>Quarter</th>
-                  <th style={{ padding: '8px 10px', textAlign: 'left', fontWeight: 700, color: '#475569' }}>Period</th>
-                  <th style={{ padding: '8px 10px', textAlign: 'right', fontWeight: 700, color: '#475569' }}>Estimated (AED)</th>
-                  <th style={{ padding: '8px 10px', textAlign: 'right', fontWeight: 700, color: '#475569' }}>Billed (AED)</th>
-                  <th style={{ padding: '8px 10px', textAlign: 'center', fontWeight: 700, color: '#475569' }}>Status</th>
+                  <th style={{ padding: '8px 10px', textAlign: 'left', fontWeight: 600, color: '#475569' }}>Quarter</th>
+                  <th style={{ padding: '8px 10px', textAlign: 'left', fontWeight: 600, color: '#475569' }}>Period</th>
+                  <th style={{ padding: '8px 10px', textAlign: 'right', fontWeight: 600, color: '#475569' }}>Estimated (AED)</th>
+                  <th style={{ padding: '8px 10px', textAlign: 'right', fontWeight: 600, color: '#475569' }}>Billed (AED)</th>
+                  <th style={{ padding: '8px 10px', textAlign: 'center', fontWeight: 600, color: '#475569' }}>Status</th>
                 </tr>
               </thead>
               <tbody>
@@ -1092,7 +1092,7 @@ export default function ServiceCharges() {
                   { q: 'Q4 2026', period: 'Oct 01 - Dec 31', est: approxQuarterTotal, billed: 0, status: 'Upcoming' },
                 ].map(item => (
                   <tr key={item.q} style={{ borderBottom: '1px solid #f1f5f9' }}>
-                    <td style={{ padding: '10px', fontWeight: 700, color: '#0f172a' }}>{item.q}</td>
+                    <td style={{ padding: '10px', fontWeight: 600, color: '#0f172a' }}>{item.q}</td>
                     <td style={{ padding: '10px', color: '#64748b' }}>{item.period}</td>
                     <td style={{ padding: '10px', textAlign: 'right', color: '#1e293b' }}>
                       {item.est.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
@@ -1105,7 +1105,7 @@ export default function ServiceCharges() {
                         padding: '3px 8px',
                         borderRadius: 4,
                         fontSize: 11,
-                        fontWeight: 700,
+                        fontWeight: 600,
                         background: item.status === 'Billed' ? '#f0fdf4' : '#f1f5f9',
                         color: item.status === 'Billed' ? '#065f46' : '#64748b',
                       }}>
@@ -1136,7 +1136,7 @@ export default function ServiceCharges() {
           <div style={{ position: 'relative', width: '100%', maxWidth: 500, background: '#ffffff', borderRadius: 8, border: '1px solid #e2e8f0', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)', padding: 26 }}>
             <CornerBrackets />
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16, borderBottom: '1px solid #f1f5f9', paddingBottom: 10 }}>
-              <h3 style={{ fontSize: 18, fontWeight: 700, color: '#0f172a', margin: 0 }}>
+              <h3 style={{ fontSize: 18, fontWeight: 600, color: '#0f172a', margin: 0 }}>
                 Add Service Charge
               </h3>
               <button
@@ -1260,7 +1260,7 @@ export default function ServiceCharges() {
                 <button
                   type="submit"
                   disabled={busy}
-                  style={{ padding: '8px 20px', fontSize: 13, fontWeight: 700, borderRadius: 4, border: 'none', background: '#10B981', color: '#ffffff', cursor: 'pointer' }}
+                  style={{ padding: '8px 20px', fontSize: 13, fontWeight: 600, borderRadius: 4, border: 'none', background: '#10B981', color: '#ffffff', cursor: 'pointer' }}
                 >
                   Save Charge
                 </button>

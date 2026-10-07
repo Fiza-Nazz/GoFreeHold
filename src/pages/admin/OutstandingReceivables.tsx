@@ -39,8 +39,8 @@ function StatCard({ label, value, color, icon, iconBg, cardBg = '#F8FAFC', cardB
       <div style={{ width: 40, height: 40, borderRadius: 8, background: iconBg, color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 12 }}>
         <Icon path={icon} size={18} />
       </div>
-      <div style={{ fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", fontSize: 24, fontWeight: 700, color }}>{value}</div>
-      <div style={{ fontSize: 12, fontWeight: 700, color, letterSpacing: '0.4px', textTransform: 'uppercase', marginTop: 6 }}>{label}</div>
+      <div style={{ fontFamily: "'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", fontSize: 24, fontWeight: 600, color }}>{value}</div>
+      <div style={{ fontSize: 12, fontWeight: 600, color, letterSpacing: '0.4px', textTransform: 'uppercase', marginTop: 6 }}>{label}</div>
     </div>
   )
 }
@@ -77,13 +77,13 @@ export default function OutstandingReceivables() {
   }
 
   return (
-    <div className="gfh-portal-page" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
+    <div className="gfh-portal-page" style={{ fontFamily: "'Source Sans Pro', system-ui, sans-serif" }}>
       <style>{portalPageCss}</style>
 
       <div className="fade-in" style={heroStyle}>
         <CornerBrackets />
         <div>
-          <h1 style={{ fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", fontSize: 30, fontWeight: 700, color: THEME.ink, margin: 0 }}>
+          <h1 style={{ fontFamily: "'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", fontSize: 30, fontWeight: 600, color: THEME.ink, margin: 0 }}>
             Categorized Outstanding Receivables
           </h1>
           <p style={{ fontSize: 14, color: THEME.textMuted, marginTop: 8, marginBottom: 0 }}>
@@ -168,13 +168,13 @@ export default function OutstandingReceivables() {
               <tbody>
                 {items.map((item, idx) => (
                   <tr key={idx} className="gfh-portal-row" style={{ borderBottom: `1px solid ${THEME.border}` }}>
-                    <td style={{ ...tdStyle, fontWeight: 700, color: THEME.purple }}>GFH-{String(item.contract_id).padStart(5,'0')}</td>
+                    <td style={{ ...tdStyle, fontWeight: 600, color: THEME.purple }}>GFH-{String(item.contract_id).padStart(5,'0')}</td>
                     <td style={tdStyle}>{item.tenant_name}</td>
                     <td style={tdStyle}>
                       <span style={{
                         backgroundColor: item.tenant_type === 'current' ? '#dbeafe' : '#fef3c7',
                         color: item.tenant_type === 'current' ? '#1e40af' : '#92400e',
-                        padding: '4px 11px', borderRadius: 8, fontSize: 11.5, fontWeight: 700, letterSpacing: '0.3px'
+                        padding: '4px 11px', borderRadius: 8, fontSize: 11.5, fontWeight: 600, letterSpacing: '0.3px'
                       }}>
                         {(item.tenant_type || '—').toString().toUpperCase()}
                       </span>
@@ -184,7 +184,7 @@ export default function OutstandingReceivables() {
                       {item.unit_number} <span style={{ fontSize: 12.5, color: THEME.textMuted, fontWeight: 500 }}>({item.building_name})</span>
                     </td>
                     <td style={tdStyle}>
-                      <strong style={{ color: '#dc2626', fontSize: 16.5, fontWeight: 800 }}>AED {Number(item.outstanding).toLocaleString()}</strong>
+                      <strong style={{ color: '#dc2626', fontSize: 16.5, fontWeight: 600 }}>AED {Number(item.outstanding).toLocaleString()}</strong>
                     </td>
                   </tr>
                 ))}

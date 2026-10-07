@@ -7,6 +7,9 @@ import { THEME, Icon, ICONS, CornerBrackets, portalPageCss, heroStyle, panelStyl
 import TenancyContractTemplate, { type ContractData } from '../../components/gfh/TenancyContractTemplate'
 import { generateContractPDF } from '../../utils/generateContractPDF'
 import VacateSettlementModal from '../../components/gfh/VacateSettlementModal'
+import UaeBankSelect from '../../components/gfh/UaeBankSelect'
+import { DEFAULT_UAE_BANK } from '../../utils/uaeBanks'
+import { normalizeLeaseTerm } from '../../utils/monthlyDue'
 
 interface Contract {
   id: number
@@ -58,6 +61,52 @@ function computeOneYearLater(startStr: string): string {
   return d.toISOString().split('T')[0]
 }
 
+type PdcChequeDraft = {
+  cheque_number: string
+  bank_name: string
+  amount: string
+  due_date: string
+}
+
+function addMonthsKeepDay(dateStr: string, months: number): string {
+  const d = new Date(dateStr)
+  if (isNaN(d.getTime())) return dateStr
+  const day = d.getDate()
+  d.setMonth(d.getMonth() + months)
+  // Keep calendar day when possible (e.g. avoid 31 Jan + 1m → 2/3 Mar)
+  if (d.getDate() < day) d.setDate(0)
+  return d.toISOString().split('T')[0]
+}
+
+function buildPdcSchedule(opts: {
+  count: number
+  rentAmount: string | number
+  firstDueDate: string
+  bankName: string
+  firstChequeNumber: string
+}): PdcChequeDraft[] {
+  const count = Math.max(0, Math.min(24, Math.floor(Number(opts.count) || 0)))
+  if (count <= 0) return []
+
+  const total = Math.round((Number(opts.rentAmount) || 0) * 100)
+  const base = count > 0 ? Math.floor(total / count) : 0
+  const remainder = total - base * count
+  const monthStep = count > 0 ? Math.max(1, Math.round(12 / count)) : 1
+  const startNum = /^\d+$/.test(String(opts.firstChequeNumber || '').trim())
+    ? Number(opts.firstChequeNumber.trim())
+    : null
+
+  return Array.from({ length: count }, (_, i) => {
+    const cents = base + (i === count - 1 ? remainder : 0)
+    return {
+      cheque_number: startNum != null ? String(startNum + i) : (opts.firstChequeNumber ? `${opts.firstChequeNumber}${i > 0 ? `-${i + 1}` : ''}` : ''),
+      bank_name: opts.bankName || DEFAULT_UAE_BANK,
+      amount: (cents / 100).toFixed(2),
+      due_date: addMonthsKeepDay(opts.firstDueDate || new Date().toISOString().split('T')[0], i * monthStep),
+    }
+  })
+}
+
 export default function ContractManagement({ basePath }: { basePath?: string } = {}) {
   const navigate = useNavigate()
   const location = useLocation()
@@ -81,6 +130,7 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [renewModal, setRenewModal] = useState<Contract | null>(null)
   const [vacateContract, setVacateContract] = useState<Contract | null>(null)
+  const [actionMenuOpen, setActionMenuOpen] = useState<number | null>(null)
 
   // Guided Contract Creation Wizard states
   const [wizardStep, setWizardStep] = useState<1 | 2 | 3 | 'success'>(1)
@@ -89,6 +139,7 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
   const [showMoreDetails, setShowMoreDetails] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [createdContract, setCreatedContract] = useState<Contract | null>(null)
+  const [pdcCheques, setPdcCheques] = useState<PdcChequeDraft[]>([])
 
   // Filters
   const [selectedPropertyId, setSelectedPropertyId] = useState<string>('')
@@ -109,9 +160,9 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
     unit_id: '', tenant_id: '', owner_id: '',
     tenant_name: '', tenant_phone: '', tenant_emirates_id: '', tenant_email: '', tenant_nationality: '', tenant_address: '',
     start_date: todayStr, end_date: defaultEndStr,
-    rent_amount: '', security_deposit: '5000',
+    rent_amount: '', security_deposit: '5000', lease_term: 'Yearly',
     payment_frequency: '4 Cheques', number_of_cheques: '4', first_payment_due_date: todayStr,
-    first_cheque_number: '', cheque_bank: 'Emirates NBD',
+    first_cheque_number: '', cheque_bank: DEFAULT_UAE_BANK,
     dewa_deposit: '', deposit_type: 'CHEQUE',
     type: 'residential', notes: '',
     mode_of_payment: 'cheque', contract_value: '', discount_type: '', discount_info: '',
@@ -231,11 +282,12 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
       end_date: defaultEndStr,
       rent_amount: defaultRent,
       security_deposit: '5000',
+      lease_term: 'Yearly',
       payment_frequency: '4 Cheques',
       number_of_cheques: '4',
       first_payment_due_date: todayStr,
       first_cheque_number: '',
-      cheque_bank: 'Emirates NBD',
+      cheque_bank: DEFAULT_UAE_BANK,
       dewa_deposit: '',
       deposit_type: 'CHEQUE',
       type: 'residential',
@@ -249,10 +301,57 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
       tenant_id_image: null,
       tenant_id_back_image: null,
     })
+    setPdcCheques(buildPdcSchedule({
+      count: 4,
+      rentAmount: defaultRent,
+      firstDueDate: todayStr,
+      bankName: DEFAULT_UAE_BANK,
+      firstChequeNumber: '',
+    }))
     setIsModalOpen(true)
   }
 
+  const isChequePayment = formData.mode_of_payment === 'cheque' && Number(formData.number_of_cheques) > 0
+
+  const regeneratePdcSchedule = (overrides?: Partial<{
+    count: number | string
+    rentAmount: string
+    firstDueDate: string
+    bankName: string
+    firstChequeNumber: string
+    mode: string
+  }>) => {
+    const mode = overrides?.mode ?? formData.mode_of_payment
+    const count = Number(overrides?.count ?? formData.number_of_cheques) || 0
+    if (mode !== 'cheque' || count <= 0) {
+      setPdcCheques([])
+      return
+    }
+    setPdcCheques(buildPdcSchedule({
+      count,
+      rentAmount: overrides?.rentAmount ?? formData.rent_amount,
+      firstDueDate: overrides?.firstDueDate ?? formData.first_payment_due_date,
+      bankName: overrides?.bankName ?? formData.cheque_bank,
+      firstChequeNumber: overrides?.firstChequeNumber ?? formData.first_cheque_number,
+    }))
+  }
+
+  const updatePdcCheque = (index: number, field: keyof PdcChequeDraft, value: string) => {
+    setPdcCheques(prev => prev.map((row, i) => (i === index ? { ...row, [field]: value } : row)))
+  }
+
   useEffect(() => { fetchAll() }, [])
+
+  useEffect(() => {
+    if (actionMenuOpen == null) return
+    const close = (e: MouseEvent) => {
+      const target = e.target as HTMLElement | null
+      if (target?.closest?.('.gfh-contract-actions-menu')) return
+      setActionMenuOpen(null)
+    }
+    document.addEventListener('mousedown', close)
+    return () => document.removeEventListener('mousedown', close)
+  }, [actionMenuOpen])
 
   // Auto-open guided wizard when navigated with ?create=1&unit_id=...
   useEffect(() => {
@@ -314,6 +413,29 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
         headers: { 'Content-Type': 'multipart/form-data' }
       })
       const created = res.data?.data?.contract || null
+
+      // Attach PDC cheques after contract create (cheque payment mode only)
+      if (created?.id && isChequePayment && pdcCheques.length > 0) {
+        const chequeErrors: string[] = []
+        for (const [idx, ch] of pdcCheques.entries()) {
+          if (!ch.amount || Number(ch.amount) <= 0 || !ch.due_date) continue
+          try {
+            await api.post(`${apiPrefix}/contracts/${created.id}/cheques`, {
+              cheque_number: ch.cheque_number || undefined,
+              bank_name: ch.bank_name || formData.cheque_bank || DEFAULT_UAE_BANK,
+              amount: Number(ch.amount),
+              due_date: ch.due_date,
+              status: 'pending',
+            })
+          } catch (chequeErr: any) {
+            chequeErrors.push(`Cheque ${idx + 1}: ${chequeErr.response?.data?.message || 'failed to save'}`)
+          }
+        }
+        if (chequeErrors.length > 0) {
+          alert(`Contract saved, but some PDC cheques failed:\n${chequeErrors.join('\n')}`)
+        }
+      }
+
       setCreatedContract(created)
       setWizardStep('success')
       fetchAll()
@@ -364,10 +486,10 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
   }
 
   const formCss = `
-    .gfh-form * { font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif; }
+    .gfh-form * { font-family: 'Source Sans Pro', 'Segoe UI', system-ui, -apple-system, sans-serif; }
     .gfh-section-title {
       font-size: 10.5px;
-      font-weight: 800;
+      font-weight: 600;
       letter-spacing: 1.1px;
       text-transform: uppercase;
       color: ${THEME.violetLight};
@@ -393,7 +515,7 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
     .gfh-label {
       display: block;
       font-size: 11px;
-      font-weight: 800;
+      font-weight: 600;
       letter-spacing: 0.4px;
       text-transform: uppercase;
       color: #0f172a !important;
@@ -435,7 +557,7 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
 
   const labelInline: React.CSSProperties = {
     fontSize: 11,
-    fontWeight: 800,
+    fontWeight: 600,
     textTransform: 'uppercase',
     letterSpacing: '0.4px',
     color: '#0f172a',
@@ -529,11 +651,11 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
   }
 
   return (
-    <div className="gfh-portal-page" style={{ fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" }}>
+    <div className="gfh-portal-page" style={{ fontFamily: "'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" }}>
       <style>{portalPageCss}</style>
       <style>{`
         .gfh-contract-filter {
-          font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+          font-family: 'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
           font-size: 14px;
           border: 1px solid #E2E8F0;
           border-radius: 8px;
@@ -615,7 +737,7 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
           marginBottom: 22,
         }}>
           <div>
-            <h2 style={{ fontSize: 24, fontWeight: 700, color: '#0F172A', margin: 0, letterSpacing: '-0.015em', lineHeight: 1.25 }}>
+            <h2 style={{ fontSize: 24, fontWeight: 600, color: '#0F172A', margin: 0, letterSpacing: '-0.015em', lineHeight: 1.25 }}>
               Contract Management
             </h2>
             <p style={{ fontSize: 14, color: '#64748B', margin: '4px 0 0', fontWeight: 400, lineHeight: 1.5 }}>
@@ -640,7 +762,7 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
               cursor: 'pointer',
               boxShadow: '0 1px 2px rgba(13, 92, 70, 0.2)',
               transition: 'background 0.15s ease, transform 0.15s ease',
-              fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, sans-serif",
+              fontFamily: "'Source Sans Pro', -apple-system, BlinkMacSystemFont, sans-serif",
             }}
             onMouseEnter={e => {
               e.currentTarget.style.background = '#094535'
@@ -794,14 +916,13 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
             No contracts found matching your filters.
           </div>
         ) : (
-          <div style={{ overflowX: 'auto' }}>
-            <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
+          <div style={{ overflow: 'visible', width: '100%' }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', tableLayout: 'auto' }}>
               <thead>
                 <tr style={{ borderBottom: '1px solid #E2E8F0', background: '#F8FAFC' }}>
                   <th style={{ padding: '13px 16px', fontSize: 12, fontWeight: 600, color: '#64748B', textTransform: 'uppercase', letterSpacing: '0.04em' }}>REF #</th>
                   <th style={{ padding: '13px 16px', fontSize: 12, fontWeight: 600, color: '#64748B', textTransform: 'uppercase', letterSpacing: '0.04em' }}>UNIT ⇅</th>
                   <th style={{ padding: '13px 16px', fontSize: 12, fontWeight: 600, color: '#64748B', textTransform: 'uppercase', letterSpacing: '0.04em' }}>TENANT</th>
-                  <th style={{ padding: '13px 16px', fontSize: 12, fontWeight: 600, color: '#64748B', textTransform: 'uppercase', letterSpacing: '0.04em' }}>OWNER</th>
                   <th style={{ padding: '13px 16px', fontSize: 12, fontWeight: 600, color: '#64748B', textTransform: 'uppercase', letterSpacing: '0.04em' }}>DURATION</th>
                   <th style={{ padding: '13px 16px', fontSize: 12, fontWeight: 600, color: '#64748B', textTransform: 'uppercase', letterSpacing: '0.04em' }}>RENT (AED)</th>
                   <th style={{ padding: '13px 16px', fontSize: 12, fontWeight: 600, color: '#64748B', textTransform: 'uppercase', letterSpacing: '0.04em' }}>STATUS</th>
@@ -843,11 +964,6 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
                         {c.tenant?.name || '—'}
                       </td>
 
-                      {/* OWNER */}
-                      <td style={{ padding: '16px 16px', fontWeight: 500, fontSize: 14, color: '#334155', lineHeight: 1.4 }}>
-                        {c.owner?.name || '—'}
-                      </td>
-
                       {/* DURATION */}
                       <td style={{ padding: '16px 16px' }}>
                         <div style={{ fontSize: 14, color: '#0F172A', display: 'flex', alignItems: 'center', gap: 6, fontWeight: 500 }}>
@@ -867,7 +983,7 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
                       {/* RENT (AED) — Financial values: 16–20px, bold */}
                       <td style={{ padding: '16px 16px' }}>
                         <div style={{ fontSize: 12, color: '#64748B', fontWeight: 500 }}>AED</div>
-                        <div style={{ fontSize: 16, fontWeight: 700, color: '#0F172A', letterSpacing: '-0.01em' }}>
+                        <div style={{ fontSize: 16, fontWeight: 600, color: '#0F172A', letterSpacing: '-0.01em' }}>
                           {Number(c.rent_amount).toLocaleString()}
                         </div>
                       </td>
@@ -896,124 +1012,109 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
                             </span>
                           )}
                           {c.on_case && (
-                            <span style={{ fontSize: 10.5, color: '#DC2626', fontWeight: 700 }}>
+                            <span style={{ fontSize: 10.5, color: '#DC2626', fontWeight: 600 }}>
                               ● Legal Case Active
                             </span>
                           )}
                         </div>
                       </td>
 
-                      {/* ACTIONS (Clean spacious horizontal row) */}
-                      <td style={{ padding: '14px 14px' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
-                          {/* Details button */}
-                          <Link
-                            to={`${effectiveBasePath}/contracts/${c.id}`}
-                            style={{
-                              display: 'inline-flex',
-                              alignItems: 'center',
-                              justifyContent: 'center',
-                              gap: 5,
-                              padding: '7px 12px',
-                              borderRadius: 8,
-                              border: '1px solid #CBD5E1',
-                              background: '#FFFFFF',
-                              color: '#0F172A',
-                              fontSize: 12.5,
-                              fontWeight: 600,
-                              textDecoration: 'none',
-                              boxShadow: '0 1px 2px rgba(15,23,42,0.03)',
-                            }}
-                          >
-                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                              <circle cx="12" cy="12" r="3" />
-                              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-                            </svg>
-                            <span>Details</span>
-                          </Link>
-
-                          {/* PDF button */}
+                      {/* ACTIONS — single ⋮ menu */}
+                      <td style={{ padding: '14px 14px', textAlign: 'right' }}>
+                        <div className="gfh-contract-actions-menu" style={{ position: 'relative', display: 'inline-block' }}>
                           <button
-                            onClick={() => downloadPdf(c.id)}
-                            disabled={pdfLoading === c.id}
+                            type="button"
+                            title="Actions"
+                            aria-label="Contract actions"
+                            aria-expanded={actionMenuOpen === c.id}
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              setActionMenuOpen(actionMenuOpen === c.id ? null : c.id)
+                            }}
                             style={{
+                              width: 34,
+                              height: 34,
+                              borderRadius: 8,
+                              border: '1px solid #CBD5E1',
+                              background: actionMenuOpen === c.id ? '#F1F5F9' : '#FFFFFF',
+                              color: '#0F172A',
                               display: 'inline-flex',
                               alignItems: 'center',
                               justifyContent: 'center',
-                              gap: 5,
-                              padding: '7px 12px',
-                              borderRadius: 8,
-                              border: '1px solid #CBD5E1',
-                              background: '#FFFFFF',
-                              color: '#0F172A',
-                              fontSize: 12.5,
-                              fontWeight: 600,
                               cursor: 'pointer',
                               boxShadow: '0 1px 2px rgba(15,23,42,0.03)',
                             }}
                           >
-                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                              <polyline points="7 10 12 15 17 10" />
-                              <line x1="12" y1="15" x2="12" y2="3" />
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                              <circle cx="12" cy="5" r="2" />
+                              <circle cx="12" cy="12" r="2" />
+                              <circle cx="12" cy="19" r="2" />
                             </svg>
-                            <span>{pdfLoading === c.id ? '...' : 'PDF'}</span>
                           </button>
 
-                          {/* Renew button */}
-                          {!isCashier && c.status?.toLowerCase() === 'active' && (
-                            <button
-                              onClick={() => {
-                                setRenewModal(c)
-                                setRenewData({ new_end_date: '', new_rent_amount: String(c.rent_amount) })
-                              }}
+                          {actionMenuOpen === c.id && (
+                            <div
                               style={{
-                                display: 'inline-flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                gap: 5,
-                                padding: '7px 12px',
-                                borderRadius: 8,
-                                border: 'none',
-                                background: '#10B981',
-                                color: '#FFFFFF',
-                                fontSize: 12.5,
-                                fontWeight: 600,
-                                cursor: 'pointer',
+                                position: 'absolute',
+                                right: 0,
+                                top: 40,
+                                background: '#FFFFFF',
+                                border: '1px solid #E2E8F0',
+                                borderRadius: 10,
+                                boxShadow: '0 10px 28px rgba(15,23,42,0.16)',
+                                zIndex: 40,
+                                minWidth: 168,
+                                overflow: 'hidden',
                               }}
                             >
-                              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                                <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l6.07-1.19" />
-                              </svg>
-                              <span>Renew</span>
-                            </button>
-                          )}
-
-                          {/* Vacate button */}
-                          {!isCashier && c.status?.toLowerCase() === 'active' && (
-                            <button
-                              onClick={() => setVacateContract(c)}
-                              style={{
-                                display: 'inline-flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                gap: 5,
-                                padding: '7px 12px',
-                                borderRadius: 8,
-                                border: '1px solid #FECACA',
-                                background: '#FEF2F2',
-                                color: '#DC2626',
-                                fontSize: 12.5,
-                                fontWeight: 600,
-                                cursor: 'pointer',
-                              }}
-                            >
-                              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                                <line x1="18" y1="6" x2="6" y2="18" />
-                                <line x1="6" y1="6" x2="18" y2="18" />
-                              </svg>
-                              <span>Vacate</span>
-                            </button>
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setActionMenuOpen(null)
+                                  navigate(`${effectiveBasePath}/contracts/${c.id}`)
+                                }}
+                                style={{ width: '100%', padding: '11px 14px', background: 'none', border: 'none', color: '#0F172A', fontSize: 13, fontWeight: 600, cursor: 'pointer', textAlign: 'left' }}
+                              >
+                                View Details
+                              </button>
+                              <button
+                                type="button"
+                                disabled={pdfLoading === c.id}
+                                onClick={() => {
+                                  setActionMenuOpen(null)
+                                  downloadPdf(c.id)
+                                }}
+                                style={{ width: '100%', padding: '11px 14px', background: 'none', border: 'none', color: '#0F172A', fontSize: 13, fontWeight: 600, cursor: pdfLoading === c.id ? 'wait' : 'pointer', textAlign: 'left', opacity: pdfLoading === c.id ? 0.6 : 1 }}
+                              >
+                                {pdfLoading === c.id ? 'Downloading PDF…' : 'Download PDF'}
+                              </button>
+                              {!isCashier && c.status?.toLowerCase() === 'active' && (
+                                <>
+                                  <div style={{ height: 1, background: '#F1F5F9' }} />
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      setActionMenuOpen(null)
+                                      setRenewModal(c)
+                                      setRenewData({ new_end_date: '', new_rent_amount: String(c.rent_amount) })
+                                    }}
+                                    style={{ width: '100%', padding: '11px 14px', background: 'none', border: 'none', color: '#065F46', fontSize: 13, fontWeight: 600, cursor: 'pointer', textAlign: 'left' }}
+                                  >
+                                    Renew Contract
+                                  </button>
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      setActionMenuOpen(null)
+                                      setVacateContract(c)
+                                    }}
+                                    style={{ width: '100%', padding: '11px 14px', background: 'none', border: 'none', color: '#DC2626', fontSize: 13, fontWeight: 600, cursor: 'pointer', textAlign: 'left' }}
+                                  >
+                                    Vacate
+                                  </button>
+                                </>
+                              )}
+                            </div>
                           )}
                         </div>
                       </td>
@@ -1118,7 +1219,7 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
             {/* Wizard Header */}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 18 }}>
               <div>
-                <h2 style={{ fontSize: 20, fontWeight: 800, color: '#0F172A', margin: 0 }}>
+                <h2 style={{ fontSize: 20, fontWeight: 600, color: '#0F172A', margin: 0 }}>
                   {wizardStep === 'success'
                     ? 'Contract Created'
                     : wizardStep === 1
@@ -1175,7 +1276,7 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
                         borderRadius: 8,
                         background: isCurrent ? '#10B981' : isDone ? '#ECFDF5' : 'transparent',
                         color: isCurrent ? '#FFFFFF' : isDone ? '#065F46' : '#64748B',
-                        fontWeight: 700,
+                        fontWeight: 600,
                         fontSize: 12,
                         cursor: isDone ? 'pointer' : 'default',
                       }}
@@ -1190,7 +1291,7 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
                         alignItems: 'center',
                         justifyContent: 'center',
                         fontSize: 11,
-                        fontWeight: 800,
+                        fontWeight: 600,
                         flexShrink: 0,
                       }}>
                         {isDone ? '✓' : st.num}
@@ -1225,13 +1326,13 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
                       Selected Unit: <strong>{selectedUnitObj.number}</strong>
                       {selectedUnitObj.property?.name ? ` (${selectedUnitObj.property.name})` : ''}
                     </span>
-                    <span style={{ fontSize: 11.5, background: '#10B981', color: '#FFFFFF', padding: '2px 8px', borderRadius: 999, fontWeight: 700 }}>
+                    <span style={{ fontSize: 11.5, background: '#10B981', color: '#FFFFFF', padding: '2px 8px', borderRadius: 999, fontWeight: 600 }}>
                       AVAILABLE
                     </span>
                   </div>
                 )}
 
-                <div style={{ fontSize: 13, fontWeight: 700, color: '#0F172A' }}>
+                <div style={{ fontSize: 13, fontWeight: 600, color: '#0F172A' }}>
                   Tenant Information
                 </div>
 
@@ -1246,7 +1347,7 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
                       border: tenantMode === 'existing' ? '2px solid #10B981' : '1px solid #CBD5E1',
                       background: tenantMode === 'existing' ? '#ECFDF5' : '#FFFFFF',
                       color: tenantMode === 'existing' ? '#065F46' : '#334155',
-                      fontWeight: 700,
+                      fontWeight: 600,
                       fontSize: 13,
                       cursor: 'pointer',
                     }}
@@ -1265,7 +1366,7 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
                       border: tenantMode === 'new' ? '2px solid #10B981' : '1px solid #CBD5E1',
                       background: tenantMode === 'new' ? '#ECFDF5' : '#FFFFFF',
                       color: tenantMode === 'new' ? '#065F46' : '#334155',
-                      fontWeight: 700,
+                      fontWeight: 600,
                       fontSize: 13,
                       cursor: 'pointer',
                     }}
@@ -1277,7 +1378,7 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
                 {tenantMode === 'existing' ? (
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
                     <div>
-                      <label style={{ fontSize: 12, fontWeight: 700, color: '#334155', display: 'block', marginBottom: 5 }}>
+                      <label style={{ fontSize: 12, fontWeight: 600, color: '#334155', display: 'block', marginBottom: 5 }}>
                         Search existing tenant (by Name / Mobile / Emirates ID)
                       </label>
                       <input
@@ -1291,7 +1392,7 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
                     </div>
 
                     <div>
-                      <label style={{ fontSize: 12, fontWeight: 700, color: '#334155', display: 'block', marginBottom: 5 }}>
+                      <label style={{ fontSize: 12, fontWeight: 600, color: '#334155', display: 'block', marginBottom: 5 }}>
                         Choose Tenant ({filteredExistingTenants.length} found) *
                       </label>
                       <select
@@ -1320,7 +1421,7 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
                         borderRadius: 10,
                         padding: '14px 16px',
                       }}>
-                        <div style={{ fontSize: 11.5, fontWeight: 800, color: '#10B981', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: 8 }}>
+                        <div style={{ fontSize: 11.5, fontWeight: 600, color: '#10B981', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: 8 }}>
                           ✓ Selected Tenant Confirmation
                         </div>
                         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, fontSize: 13, color: '#1E293B' }}>
@@ -1363,7 +1464,7 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
                             background: '#FFFFFF',
                             color: '#B45309',
                             fontSize: 12,
-                            fontWeight: 700,
+                            fontWeight: 600,
                             cursor: 'pointer',
                           }}
                         >
@@ -1374,7 +1475,7 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
 
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
                       <div>
-                        <label style={{ fontSize: 12, fontWeight: 700, color: '#334155', display: 'block', marginBottom: 5 }}>
+                        <label style={{ fontSize: 12, fontWeight: 600, color: '#334155', display: 'block', marginBottom: 5 }}>
                           Tenant Name *
                         </label>
                         <input
@@ -1387,7 +1488,7 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
                         />
                       </div>
                       <div>
-                        <label style={{ fontSize: 12, fontWeight: 700, color: '#334155', display: 'block', marginBottom: 5 }}>
+                        <label style={{ fontSize: 12, fontWeight: 600, color: '#334155', display: 'block', marginBottom: 5 }}>
                           Mobile Number *
                         </label>
                         <input
@@ -1403,7 +1504,7 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
 
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
                       <div>
-                        <label style={{ fontSize: 12, fontWeight: 700, color: '#334155', display: 'block', marginBottom: 5 }}>
+                        <label style={{ fontSize: 12, fontWeight: 600, color: '#334155', display: 'block', marginBottom: 5 }}>
                           Emirates ID
                         </label>
                         <input
@@ -1416,7 +1517,7 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
                         />
                       </div>
                       <div>
-                        <label style={{ fontSize: 12, fontWeight: 700, color: '#334155', display: 'block', marginBottom: 5 }}>
+                        <label style={{ fontSize: 12, fontWeight: 600, color: '#334155', display: 'block', marginBottom: 5 }}>
                           Email Address
                         </label>
                         <input
@@ -1432,7 +1533,7 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
 
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
                       <div>
-                        <label style={{ fontSize: 12, fontWeight: 700, color: '#334155', display: 'block', marginBottom: 5 }}>
+                        <label style={{ fontSize: 12, fontWeight: 600, color: '#334155', display: 'block', marginBottom: 5 }}>
                           Nationality
                         </label>
                         <input
@@ -1445,7 +1546,7 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
                         />
                       </div>
                       <div>
-                        <label style={{ fontSize: 12, fontWeight: 700, color: '#334155', display: 'block', marginBottom: 5 }}>
+                        <label style={{ fontSize: 12, fontWeight: 600, color: '#334155', display: 'block', marginBottom: 5 }}>
                           Address
                         </label>
                         <input
@@ -1496,7 +1597,7 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
                       border: 'none',
                       background: '#10B981',
                       color: '#FFFFFF',
-                      fontWeight: 700,
+                      fontWeight: 600,
                       cursor: 'pointer',
                     }}
                   >
@@ -1511,12 +1612,12 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
               <div style={{ display: 'flex', flexDirection: 'column', gap: 15 }}>
                 {/* Unit Section: Building & Unit number */}
                 <div style={{ background: '#F8FAFC', border: '1px solid #E2E8F0', borderRadius: 10, padding: '14px 16px' }}>
-                  <div style={{ fontSize: 12, fontWeight: 800, color: '#10B981', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: 10 }}>
+                  <div style={{ fontSize: 12, fontWeight: 600, color: '#10B981', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: 10 }}>
                     Unit
                   </div>
                   <div style={{ display: 'grid', gridTemplateColumns: isOwnerStaff ? '1fr 1fr' : '1fr 1fr 1fr', gap: 12 }}>
                     <div>
-                      <label style={{ fontSize: 12, fontWeight: 700, color: '#334155', display: 'block', marginBottom: 5 }}>
+                      <label style={{ fontSize: 12, fontWeight: 600, color: '#334155', display: 'block', marginBottom: 5 }}>
                         Building
                       </label>
                       <select
@@ -1536,7 +1637,7 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
                     </div>
 
                     <div>
-                      <label style={{ fontSize: 12, fontWeight: 700, color: '#334155', display: 'block', marginBottom: 5 }}>
+                      <label style={{ fontSize: 12, fontWeight: 600, color: '#334155', display: 'block', marginBottom: 5 }}>
                         Unit Number *
                       </label>
                       <select
@@ -1570,7 +1671,7 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
 
                     {!isOwnerStaff && (
                       <div>
-                        <label style={{ fontSize: 12, fontWeight: 700, color: '#334155', display: 'block', marginBottom: 5 }}>Owner *</label>
+                        <label style={{ fontSize: 12, fontWeight: 600, color: '#334155', display: 'block', marginBottom: 5 }}>Owner *</label>
                         <select
                           value={formData.owner_id}
                           onChange={e => setFormData({ ...formData, owner_id: e.target.value })}
@@ -1588,12 +1689,12 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
 
                 {/* Contract Period Section */}
                 <div style={{ background: '#F8FAFC', border: '1px solid #E2E8F0', borderRadius: 10, padding: '14px 16px' }}>
-                  <div style={{ fontSize: 12, fontWeight: 800, color: '#10B981', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: 10 }}>
+                  <div style={{ fontSize: 12, fontWeight: 600, color: '#10B981', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: 10 }}>
                     Contract Period
                   </div>
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
                     <div>
-                      <label style={{ fontSize: 12, fontWeight: 700, color: '#334155', display: 'block', marginBottom: 5 }}>
+                      <label style={{ fontSize: 12, fontWeight: 600, color: '#334155', display: 'block', marginBottom: 5 }}>
                         Start Date *
                       </label>
                       <input
@@ -1615,7 +1716,7 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
                       />
                     </div>
                     <div>
-                      <label style={{ fontSize: 12, fontWeight: 700, color: '#334155', display: 'block', marginBottom: 5 }}>
+                      <label style={{ fontSize: 12, fontWeight: 600, color: '#334155', display: 'block', marginBottom: 5 }}>
                         End Date *
                       </label>
                       <input
@@ -1632,35 +1733,53 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
 
                 {/* Financial Details Section */}
                 <div style={{ background: '#F8FAFC', border: '1px solid #E2E8F0', borderRadius: 10, padding: '14px 16px' }}>
-                  <div style={{ fontSize: 12, fontWeight: 800, color: '#10B981', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: 10 }}>
+                  <div style={{ fontSize: 12, fontWeight: 600, color: '#10B981', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: 10 }}>
                     Financial Details
                   </div>
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 12 }}>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 12, marginBottom: 12 }}>
                     <div>
-                      <label style={{ fontSize: 12, fontWeight: 700, color: '#334155', display: 'block', marginBottom: 5 }}>
-                        Annual / Contract Rent (AED) *
+                      <label style={{ fontSize: 12, fontWeight: 600, color: '#334155', display: 'block', marginBottom: 5 }}>
+                        Lease Term *
+                      </label>
+                      <select
+                        value={normalizeLeaseTerm(formData.lease_term)}
+                        onChange={e => setFormData({ ...formData, lease_term: e.target.value })}
+                        className="gfh-contract-filter"
+                        style={{ width: '100%' }}
+                      >
+                        <option value="Monthly">Monthly</option>
+                        <option value="Yearly">Yearly</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label style={{ fontSize: 12, fontWeight: 600, color: '#334155', display: 'block', marginBottom: 5 }}>
+                        {normalizeLeaseTerm(formData.lease_term) === 'Monthly' ? 'Monthly Rent (AED) *' : 'Annual / Contract Rent (AED) *'}
                       </label>
                       <input
                         type="number"
                         required
-                        placeholder="e.g. 60000"
+                        placeholder={normalizeLeaseTerm(formData.lease_term) === 'Monthly' ? 'e.g. 3500' : 'e.g. 42000'}
                         value={formData.rent_amount}
-                        onChange={e => setFormData({
-                          ...formData,
-                          rent_amount: e.target.value,
-                          contract_value: e.target.value,
-                        })}
+                        onChange={e => {
+                          const rent_amount = e.target.value
+                          setFormData({
+                            ...formData,
+                            rent_amount,
+                            contract_value: rent_amount,
+                          })
+                          regeneratePdcSchedule({ rentAmount: rent_amount })
+                        }}
                         className="gfh-contract-filter"
                         style={{ width: '100%' }}
                       />
-                      {Number(formData.rent_amount) > 0 && (
+                      {Number(formData.rent_amount) > 0 && normalizeLeaseTerm(formData.lease_term) === 'Yearly' && (
                         <div style={{ fontSize: 11, color: '#64748B', marginTop: 4 }}>
                           Monthly Equivalent: AED {Math.round(Number(formData.rent_amount) / 12).toLocaleString()} / mo
                         </div>
                       )}
                     </div>
                     <div>
-                      <label style={{ fontSize: 12, fontWeight: 700, color: '#334155', display: 'block', marginBottom: 5 }}>
+                      <label style={{ fontSize: 12, fontWeight: 600, color: '#334155', display: 'block', marginBottom: 5 }}>
                         Security Deposit (AED) *
                       </label>
                       <input
@@ -1677,7 +1796,7 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
 
                   <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 0.8fr 1fr', gap: 12 }}>
                     <div>
-                      <label style={{ fontSize: 12, fontWeight: 700, color: '#334155', display: 'block', marginBottom: 5 }}>
+                      <label style={{ fontSize: 12, fontWeight: 600, color: '#334155', display: 'block', marginBottom: 5 }}>
                         Payment Frequency
                       </label>
                       <select
@@ -1693,6 +1812,7 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
                             number_of_cheques: chequesCount,
                             mode_of_payment: mode,
                           })
+                          regeneratePdcSchedule({ count: chequesCount, mode })
                         }}
                         className="gfh-contract-filter"
                         style={{ width: '100%' }}
@@ -1708,33 +1828,176 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
                     </div>
 
                     <div>
-                      <label style={{ fontSize: 12, fontWeight: 700, color: '#334155', display: 'block', marginBottom: 5 }}>
+                      <label style={{ fontSize: 12, fontWeight: 600, color: '#334155', display: 'block', marginBottom: 5 }}>
                         Number of Cheques
                       </label>
                       <input
                         type="number"
                         min={0}
                         max={24}
+                        disabled={formData.mode_of_payment !== 'cheque'}
                         value={formData.number_of_cheques}
-                        onChange={e => setFormData({ ...formData, number_of_cheques: e.target.value })}
+                        onChange={e => {
+                          const number_of_cheques = e.target.value
+                          setFormData({ ...formData, number_of_cheques })
+                          regeneratePdcSchedule({ count: number_of_cheques })
+                        }}
                         className="gfh-contract-filter"
-                        style={{ width: '100%' }}
+                        style={{ width: '100%', opacity: formData.mode_of_payment !== 'cheque' ? 0.55 : 1 }}
                       />
                     </div>
 
                     <div>
-                      <label style={{ fontSize: 12, fontWeight: 700, color: '#334155', display: 'block', marginBottom: 5 }}>
+                      <label style={{ fontSize: 12, fontWeight: 600, color: '#334155', display: 'block', marginBottom: 5 }}>
                         First Payment Due Date
                       </label>
                       <input
                         type="date"
                         value={formData.first_payment_due_date}
-                        onChange={e => setFormData({ ...formData, first_payment_due_date: e.target.value })}
+                        onChange={e => {
+                          const first_payment_due_date = e.target.value
+                          setFormData({ ...formData, first_payment_due_date })
+                          regeneratePdcSchedule({ firstDueDate: first_payment_due_date })
+                        }}
                         className="gfh-contract-filter"
                         style={{ width: '100%' }}
                       />
                     </div>
                   </div>
+
+                  {/* PDC Cheques — only when paying by cheque */}
+                  {isChequePayment && (
+                    <div style={{
+                      marginTop: 14,
+                      padding: '14px 16px',
+                      background: '#F0FDFA',
+                      border: '1px solid #99F6E4',
+                      borderRadius: 10,
+                    }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 12, marginBottom: 12, flexWrap: 'wrap' }}>
+                        <div>
+                          <div style={{ fontSize: 13, fontWeight: 700, color: '#0F766E' }}>PDC Cheques</div>
+                          <div style={{ fontSize: 12, color: '#64748B', marginTop: 2 }}>
+                            Enter post-dated cheques for this lease. Amounts default to annual rent ÷ {formData.number_of_cheques}.
+                          </div>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => regeneratePdcSchedule()}
+                          style={{
+                            padding: '7px 12px',
+                            borderRadius: 7,
+                            border: '1px solid #5EEAD4',
+                            background: '#FFFFFF',
+                            color: '#0F766E',
+                            fontSize: 12,
+                            fontWeight: 600,
+                            cursor: 'pointer',
+                          }}
+                        >
+                          Regenerate schedule
+                        </button>
+                      </div>
+
+                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 12 }}>
+                        <div>
+                          <label style={{ fontSize: 12, fontWeight: 600, color: '#334155', display: 'block', marginBottom: 5 }}>
+                            Cheque Bank (UAE)
+                          </label>
+                          <UaeBankSelect
+                            value={formData.cheque_bank}
+                            onChange={cheque_bank => {
+                              setFormData({ ...formData, cheque_bank })
+                              if (cheque_bank && cheque_bank !== 'Other') {
+                                setPdcCheques(prev => prev.map(row => ({ ...row, bank_name: cheque_bank })))
+                              }
+                            }}
+                            className="gfh-contract-filter"
+                            style={{ width: '100%' }}
+                          />
+                        </div>
+                        <div>
+                          <label style={{ fontSize: 12, fontWeight: 600, color: '#334155', display: 'block', marginBottom: 5 }}>
+                            First Cheque Number
+                          </label>
+                          <input
+                            type="text"
+                            placeholder="e.g. 100201"
+                            value={formData.first_cheque_number}
+                            onChange={e => {
+                              const first_cheque_number = e.target.value
+                              setFormData({ ...formData, first_cheque_number })
+                              regeneratePdcSchedule({ firstChequeNumber: first_cheque_number })
+                            }}
+                            className="gfh-contract-filter"
+                            style={{ width: '100%' }}
+                          />
+                        </div>
+                      </div>
+
+                      <div style={{ overflowX: 'auto', border: '1px solid #CCFBF1', borderRadius: 8, background: '#FFFFFF' }}>
+                        <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: 560 }}>
+                          <thead>
+                            <tr style={{ background: '#ECFDF5' }}>
+                              <th style={{ padding: '8px 10px', textAlign: 'left', fontSize: 11, fontWeight: 700, color: '#0F766E' }}>#</th>
+                              <th style={{ padding: '8px 10px', textAlign: 'left', fontSize: 11, fontWeight: 700, color: '#0F766E' }}>Cheque No</th>
+                              <th style={{ padding: '8px 10px', textAlign: 'left', fontSize: 11, fontWeight: 700, color: '#0F766E' }}>Bank</th>
+                              <th style={{ padding: '8px 10px', textAlign: 'left', fontSize: 11, fontWeight: 700, color: '#0F766E' }}>Amount (AED)</th>
+                              <th style={{ padding: '8px 10px', textAlign: 'left', fontSize: 11, fontWeight: 700, color: '#0F766E' }}>Due Date</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {pdcCheques.map((ch, idx) => (
+                              <tr key={idx} style={{ borderTop: '1px solid #F1F5F9' }}>
+                                <td style={{ padding: '8px 10px', fontSize: 12, fontWeight: 600, color: '#64748B' }}>{idx + 1}</td>
+                                <td style={{ padding: '6px 8px' }}>
+                                  <input
+                                    type="text"
+                                    value={ch.cheque_number}
+                                    onChange={e => updatePdcCheque(idx, 'cheque_number', e.target.value)}
+                                    placeholder="Cheque no"
+                                    className="gfh-contract-filter"
+                                    style={{ width: '100%', minHeight: 36 }}
+                                  />
+                                </td>
+                                <td style={{ padding: '6px 8px' }}>
+                                  <UaeBankSelect
+                                    value={ch.bank_name}
+                                    onChange={bank => updatePdcCheque(idx, 'bank_name', bank)}
+                                    className="gfh-contract-filter"
+                                    style={{ width: '100%', minHeight: 36 }}
+                                  />
+                                </td>
+                                <td style={{ padding: '6px 8px' }}>
+                                  <input
+                                    type="number"
+                                    min="0"
+                                    step="0.01"
+                                    value={ch.amount}
+                                    onChange={e => updatePdcCheque(idx, 'amount', e.target.value)}
+                                    className="gfh-contract-filter"
+                                    style={{ width: '100%', minHeight: 36 }}
+                                  />
+                                </td>
+                                <td style={{ padding: '6px 8px' }}>
+                                  <input
+                                    type="date"
+                                    value={ch.due_date}
+                                    onChange={e => updatePdcCheque(idx, 'due_date', e.target.value)}
+                                    className="gfh-contract-filter"
+                                    style={{ width: '100%', minHeight: 36 }}
+                                  />
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                      <div style={{ marginTop: 8, fontSize: 12, color: '#0F766E', fontWeight: 600 }}>
+                        Total PDC: AED {pdcCheques.reduce((sum, ch) => sum + (Number(ch.amount) || 0), 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 {/* Collapsible [ More Contract Details ] */}
@@ -1752,7 +2015,7 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
                       background: '#FFFFFF',
                       color: '#334155',
                       fontSize: 12.5,
-                      fontWeight: 700,
+                      fontWeight: 600,
                       cursor: 'pointer',
                     }}
                   >
@@ -1770,9 +2033,9 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
                       flexDirection: 'column',
                       gap: 12,
                     }}>
-                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 12 }}>
+                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
                         <div>
-                          <label style={{ fontSize: 12, fontWeight: 700, color: '#334155', display: 'block', marginBottom: 5 }}>
+                          <label style={{ fontSize: 12, fontWeight: 600, color: '#334155', display: 'block', marginBottom: 5 }}>
                             Contract Type
                           </label>
                           <select
@@ -1787,7 +2050,7 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
                           </select>
                         </div>
                         <div>
-                          <label style={{ fontSize: 12, fontWeight: 700, color: '#334155', display: 'block', marginBottom: 5 }}>
+                          <label style={{ fontSize: 12, fontWeight: 600, color: '#334155', display: 'block', marginBottom: 5 }}>
                             DEWA Deposit (AED)
                           </label>
                           <input
@@ -1799,48 +2062,20 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
                             style={{ width: '100%' }}
                           />
                         </div>
-                        <div>
-                          <label style={{ fontSize: 12, fontWeight: 700, color: '#334155', display: 'block', marginBottom: 5 }}>
-                            Cheque Bank Name
-                          </label>
-                          <input
-                            type="text"
-                            placeholder="e.g. Emirates NBD"
-                            value={formData.cheque_bank}
-                            onChange={e => setFormData({ ...formData, cheque_bank: e.target.value })}
-                            className="gfh-contract-filter"
-                            style={{ width: '100%' }}
-                          />
-                        </div>
                       </div>
 
-                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: 12 }}>
-                        <div>
-                          <label style={{ fontSize: 12, fontWeight: 700, color: '#334155', display: 'block', marginBottom: 5 }}>
-                            First Cheque Number
-                          </label>
-                          <input
-                            type="text"
-                            placeholder="e.g. 100201"
-                            value={formData.first_cheque_number}
-                            onChange={e => setFormData({ ...formData, first_cheque_number: e.target.value })}
-                            className="gfh-contract-filter"
-                            style={{ width: '100%' }}
-                          />
-                        </div>
-                        <div>
-                          <label style={{ fontSize: 12, fontWeight: 700, color: '#334155', display: 'block', marginBottom: 5 }}>
-                            Special Notes
-                          </label>
-                          <input
-                            type="text"
-                            placeholder="Optional remarks or contract notes..."
-                            value={formData.notes}
-                            onChange={e => setFormData({ ...formData, notes: e.target.value })}
-                            className="gfh-contract-filter"
-                            style={{ width: '100%' }}
-                          />
-                        </div>
+                      <div>
+                        <label style={{ fontSize: 12, fontWeight: 600, color: '#334155', display: 'block', marginBottom: 5 }}>
+                          Special Notes
+                        </label>
+                        <input
+                          type="text"
+                          placeholder="Optional remarks or contract notes..."
+                          value={formData.notes}
+                          onChange={e => setFormData({ ...formData, notes: e.target.value })}
+                          className="gfh-contract-filter"
+                          style={{ width: '100%' }}
+                        />
                       </div>
                     </div>
                   )}
@@ -1878,6 +2113,17 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
                         alert('Please enter a valid rent amount.')
                         return
                       }
+                      if (isChequePayment) {
+                        if (pdcCheques.length === 0) {
+                          alert('Please add PDC cheques for this cheque payment contract.')
+                          return
+                        }
+                        const incomplete = pdcCheques.findIndex(ch => !ch.due_date || !ch.amount || Number(ch.amount) <= 0)
+                        if (incomplete >= 0) {
+                          alert(`Please complete amount and due date for PDC cheque #${incomplete + 1}.`)
+                          return
+                        }
+                      }
                       setWizardStep(3)
                     }}
                     style={{
@@ -1886,7 +2132,7 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
                       border: 'none',
                       background: '#10B981',
                       color: '#FFFFFF',
-                      fontWeight: 700,
+                      fontWeight: 600,
                       cursor: 'pointer',
                     }}
                   >
@@ -1906,56 +2152,82 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
                   borderRadius: 12,
                   padding: '20px 22px',
                 }}>
-                  <div style={{ fontSize: 13, fontWeight: 800, color: '#10B981', textTransform: 'uppercase', letterSpacing: '0.6px', marginBottom: 14 }}>
+                  <div style={{ fontSize: 13, fontWeight: 600, color: '#10B981', textTransform: 'uppercase', letterSpacing: '0.6px', marginBottom: 14 }}>
                     Contract Summary
                   </div>
 
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 10, fontSize: 14, color: '#0F172A' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid #E2E8F0', paddingBottom: 8 }}>
                       <span style={{ color: '#64748B', fontWeight: 600 }}>Tenant:</span>
-                      <span style={{ fontWeight: 800 }}>
+                      <span style={{ fontWeight: 600 }}>
                         {tenantMode === 'existing' ? (selectedTenantObj?.name || '—') : (formData.tenant_name || '—')}
                       </span>
                     </div>
                     <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid #E2E8F0', paddingBottom: 8 }}>
                       <span style={{ color: '#64748B', fontWeight: 600 }}>Unit:</span>
-                      <span style={{ fontWeight: 800 }}>
+                      <span style={{ fontWeight: 600 }}>
                         {selectedUnitObj?.number || '—'}
                         {selectedUnitObj?.property?.name ? ` (${selectedUnitObj.property.name})` : ''}
                       </span>
                     </div>
                     <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid #E2E8F0', paddingBottom: 8 }}>
                       <span style={{ color: '#64748B', fontWeight: 600 }}>Contract:</span>
-                      <span style={{ fontWeight: 700 }}>
+                      <span style={{ fontWeight: 600 }}>
                         {formatDate(formData.start_date)} – {formatDate(formData.end_date)}
                       </span>
                     </div>
                     <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid #E2E8F0', paddingBottom: 8 }}>
-                      <span style={{ color: '#64748B', fontWeight: 600 }}>Annual Rent:</span>
-                      <span style={{ fontWeight: 800, color: '#10B981' }}>
+                      <span style={{ color: '#64748B', fontWeight: 600 }}>Lease Term:</span>
+                      <span style={{ fontWeight: 600 }}>{normalizeLeaseTerm(formData.lease_term)}</span>
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid #E2E8F0', paddingBottom: 8 }}>
+                      <span style={{ color: '#64748B', fontWeight: 600 }}>
+                        {normalizeLeaseTerm(formData.lease_term) === 'Monthly' ? 'Monthly Rent:' : 'Annual Rent:'}
+                      </span>
+                      <span style={{ fontWeight: 600, color: '#10B981' }}>
                         AED {Number(formData.rent_amount || 0).toLocaleString()}
                       </span>
                     </div>
                     <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid #E2E8F0', paddingBottom: 8 }}>
                       <span style={{ color: '#64748B', fontWeight: 600 }}>Security Deposit:</span>
-                      <span style={{ fontWeight: 700 }}>
+                      <span style={{ fontWeight: 600 }}>
                         AED {Number(formData.security_deposit || 0).toLocaleString()}
                       </span>
                     </div>
                     <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid #E2E8F0', paddingBottom: 8 }}>
                       <span style={{ color: '#64748B', fontWeight: 600 }}>Payment Frequency:</span>
-                      <span style={{ fontWeight: 700 }}>
+                      <span style={{ fontWeight: 600 }}>
                         {formData.payment_frequency}
                         {Number(formData.number_of_cheques) > 0 ? ` (${formData.number_of_cheques} Cheques)` : ''}
                       </span>
                     </div>
                     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                       <span style={{ color: '#64748B', fontWeight: 600 }}>First Payment Due:</span>
-                      <span style={{ fontWeight: 700 }}>
+                      <span style={{ fontWeight: 600 }}>
                         {formatDate(formData.first_payment_due_date || formData.start_date)}
                       </span>
                     </div>
                   </div>
+
+                  {isChequePayment && pdcCheques.length > 0 && (
+                    <div style={{ marginTop: 16, borderTop: '1px solid #E2E8F0', paddingTop: 14 }}>
+                      <div style={{ fontSize: 12, fontWeight: 700, color: '#0F766E', marginBottom: 8 }}>
+                        PDC Cheques ({pdcCheques.length})
+                      </div>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                        {pdcCheques.map((ch, idx) => (
+                          <div key={idx} style={{ display: 'flex', justifyContent: 'space-between', gap: 10, fontSize: 13, color: '#0F172A' }}>
+                            <span style={{ color: '#64748B', fontWeight: 600 }}>
+                              #{idx + 1} {ch.cheque_number || '—'} · {ch.bank_name || '—'}
+                            </span>
+                            <span style={{ fontWeight: 600 }}>
+                              AED {Number(ch.amount || 0).toLocaleString()} · {formatDate(ch.due_date)}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 {/* Automatic system transitions note */}
@@ -1971,6 +2243,9 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
                   <strong>Upon Save, the system will automatically:</strong>
                   <div>• Set contract status to <strong>Active (Current)</strong> & change unit status from <strong>Available → Occupied</strong></div>
                   <div>• Create the default Ejari addendum, post the first rent due, and prepare the contract PDF</div>
+                  {isChequePayment && (
+                    <div>• Save {pdcCheques.length} PDC cheque{pdcCheques.length === 1 ? '' : 's'} on this contract</div>
+                  )}
                 </div>
 
                 {/* Actions: [ Edit ] | [ Save Contract ] */}
@@ -1984,7 +2259,7 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
                       border: '1px solid #CBD5E1',
                       background: '#FFFFFF',
                       color: '#1E293B',
-                      fontWeight: 700,
+                      fontWeight: 600,
                       cursor: 'pointer',
                     }}
                   >
@@ -2000,7 +2275,7 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
                       border: 'none',
                       background: '#10B981',
                       color: '#FFFFFF',
-                      fontWeight: 800,
+                      fontWeight: 600,
                       fontSize: 14,
                       cursor: isSubmitting ? 'wait' : 'pointer',
                       boxShadow: '0 2px 6px rgba(14, 94, 72, 0.25)',
@@ -2026,13 +2301,13 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
                   alignItems: 'center',
                   justifyContent: 'center',
                   fontSize: 28,
-                  fontWeight: 800,
+                  fontWeight: 600,
                   marginBottom: 14,
                 }}>
                   ✓
                 </div>
 
-                <h3 style={{ fontSize: 20, fontWeight: 800, color: '#065F46', margin: '0 0 8px' }}>
+                <h3 style={{ fontSize: 20, fontWeight: 600, color: '#065F46', margin: '0 0 8px' }}>
                   ✓ Contract Created Successfully
                 </h3>
                 <p style={{ fontSize: 13.5, color: '#475569', margin: '0 0 18px' }}>
@@ -2073,7 +2348,7 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
                       border: '1px solid #10B981',
                       background: '#FFFFFF',
                       color: '#10B981',
-                      fontWeight: 700,
+                      fontWeight: 600,
                       fontSize: 13.5,
                       cursor: 'pointer',
                     }}
@@ -2093,7 +2368,7 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
                       border: 'none',
                       background: '#10B981',
                       color: '#FFFFFF',
-                      fontWeight: 700,
+                      fontWeight: 600,
                       fontSize: 13.5,
                       cursor: 'pointer',
                     }}
@@ -2110,7 +2385,7 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
                       border: '1px solid #CBD5E1',
                       background: '#F8FAFC',
                       color: '#334155',
-                      fontWeight: 700,
+                      fontWeight: 600,
                       fontSize: 13.5,
                       cursor: 'pointer',
                     }}
@@ -2143,16 +2418,16 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
             boxShadow: '0 20px 45px -10px rgba(15, 23, 42, 0.22)',
             border: '1px solid #E2E8F0',
           }}>
-            <h2 style={{ fontSize: 18, fontWeight: 800, color: '#0F172A', margin: 0 }}>
+            <h2 style={{ fontSize: 18, fontWeight: 600, color: '#0F172A', margin: 0 }}>
               Renew Contract
             </h2>
-            <p style={{ fontSize: 13, color: '#10B981', fontWeight: 700, margin: '4px 0 16px' }}>
+            <p style={{ fontSize: 13, color: '#10B981', fontWeight: 600, margin: '4px 0 16px' }}>
               GFH-{String(renewModal.id).padStart(5, '0')}
             </p>
 
             <form onSubmit={handleRenew} style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
               <div>
-                <label style={{ fontSize: 12, fontWeight: 700, color: '#334155', display: 'block', marginBottom: 5 }}>
+                <label style={{ fontSize: 12, fontWeight: 600, color: '#334155', display: 'block', marginBottom: 5 }}>
                   New End Date (after {formatDate(renewModal.end_date)})
                 </label>
                 <input
@@ -2166,7 +2441,7 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
               </div>
 
               <div>
-                <label style={{ fontSize: 12, fontWeight: 700, color: '#334155', display: 'block', marginBottom: 5 }}>
+                <label style={{ fontSize: 12, fontWeight: 600, color: '#334155', display: 'block', marginBottom: 5 }}>
                   New Rent Amount (AED)
                 </label>
                 <input
@@ -2202,7 +2477,7 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
                     border: 'none',
                     background: '#10B981',
                     color: '#FFFFFF',
-                    fontWeight: 700,
+                    fontWeight: 600,
                     cursor: 'pointer',
                   }}
                 >

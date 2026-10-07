@@ -75,7 +75,7 @@ const inputStyle: React.CSSProperties = {
 
 const labelStyle: React.CSSProperties = {
   fontSize: 12,
-  fontWeight: 700,
+  fontWeight: 600,
   color: '#0F172A',
   letterSpacing: '0.4px',
   textTransform: 'uppercase',
@@ -329,14 +329,14 @@ export default function JobsPage() {
   }
 
   return (
-    <div className="gfh-portal-page" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
+    <div className="gfh-portal-page" style={{ fontFamily: "'Source Sans Pro', system-ui, sans-serif" }}>
       <style>{portalPageCss}</style>
 
       {/* Hero Header */}
       <div className="fade-in" style={heroStyle}>
         <CornerBrackets />
         <div>
-          <h1 style={{ fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", fontSize: 30, fontWeight: 700, color: THEME.ink, margin: 0 }}>
+          <h1 style={{ fontFamily: "'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", fontSize: 30, fontWeight: 600, color: THEME.ink, margin: 0 }}>
             Maintenance Work Orders & Jobs
           </h1>
           <p style={{ fontSize: 14, color: THEME.textMuted, marginTop: 8, marginBottom: 0 }}>
@@ -379,7 +379,7 @@ export default function JobsPage() {
               borderRadius: 10,
               padding: '10px 18px',
               fontSize: 13.5,
-              fontWeight: 700,
+              fontWeight: 600,
               cursor: 'pointer',
               boxShadow: '0 1px 3px rgba(14, 94, 72, 0.25)',
               transition: 'background 0.15s ease, transform 0.15s ease',
@@ -417,10 +417,10 @@ export default function JobsPage() {
             <Icon path={icons.toolbox} size={22} />
           </div>
           <div>
-            <div style={{ fontSize: 11, fontWeight: 700, color: '#475569', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+            <div style={{ fontSize: 11, fontWeight: 600, color: '#475569', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
               Total Work Orders
             </div>
-            <div style={{ fontSize: 24, fontWeight: 800, color: '#0F172A', marginTop: 4 }}>
+            <div style={{ fontSize: 24, fontWeight: 600, color: '#0F172A', marginTop: 4 }}>
               {stats.total}
             </div>
           </div>
@@ -442,10 +442,10 @@ export default function JobsPage() {
             <Icon path={icons.clock} size={22} />
           </div>
           <div>
-            <div style={{ fontSize: 11, fontWeight: 700, color: '#0284C7', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+            <div style={{ fontSize: 11, fontWeight: 600, color: '#0284C7', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
               In Progress
             </div>
-            <div style={{ fontSize: 24, fontWeight: 800, color: '#0369A1', marginTop: 4 }}>
+            <div style={{ fontSize: 24, fontWeight: 600, color: '#0369A1', marginTop: 4 }}>
               {stats.inProgress}
             </div>
           </div>
@@ -467,10 +467,10 @@ export default function JobsPage() {
             <Icon path={icons.userCheck} size={22} />
           </div>
           <div>
-            <div style={{ fontSize: 11, fontWeight: 700, color: '#D97706', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+            <div style={{ fontSize: 11, fontWeight: 600, color: '#D97706', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
               Dispatched / Assigned
             </div>
-            <div style={{ fontSize: 24, fontWeight: 800, color: '#B45309', marginTop: 4 }}>
+            <div style={{ fontSize: 24, fontWeight: 600, color: '#B45309', marginTop: 4 }}>
               {stats.assigned}
             </div>
           </div>
@@ -492,10 +492,10 @@ export default function JobsPage() {
             <Icon path={icons.checkCircle} size={22} />
           </div>
           <div>
-            <div style={{ fontSize: 11, fontWeight: 700, color: '#059669', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+            <div style={{ fontSize: 11, fontWeight: 600, color: '#059669', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
               Completed & Closed
             </div>
-            <div style={{ fontSize: 24, fontWeight: 800, color: '#047857', marginTop: 4 }}>
+            <div style={{ fontSize: 24, fontWeight: 600, color: '#047857', marginTop: 4 }}>
               {stats.completed}
             </div>
           </div>
@@ -655,7 +655,7 @@ export default function JobsPage() {
                         <span style={{
                           fontFamily: 'monospace',
                           fontSize: 13,
-                          fontWeight: 700,
+                          fontWeight: 600,
                           color: '#10B981',
                           background: '#ECFDF5',
                           border: '1px solid #A7F3D0',
@@ -680,7 +680,7 @@ export default function JobsPage() {
                       <div style={{ display: 'flex', gap: 6, marginTop: 4 }}>
                         <span style={{
                           fontSize: 10.5,
-                          fontWeight: 700,
+                          fontWeight: 600,
                           background: '#F1F5F9',
                           color: '#475569',
                           padding: '1px 6px',
@@ -691,7 +691,7 @@ export default function JobsPage() {
                         {job.complaint?.unit_id && (
                           <span style={{
                             fontSize: 10.5,
-                            fontWeight: 700,
+                            fontWeight: 600,
                             background: '#F8FAFC',
                             color: '#64748B',
                             padding: '1px 6px',
@@ -741,7 +741,7 @@ export default function JobsPage() {
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
-                          fontWeight: 700,
+                          fontWeight: 600,
                           fontSize: 11,
                         }}>
                           {(job.assignedTo?.name || 'T')[0].toUpperCase()}
@@ -870,7 +870,7 @@ export default function JobsPage() {
             <CornerBrackets />
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
               <div>
-                <h2 style={{ fontSize: 18, fontWeight: 700, margin: 0, color: THEME.ink }}>
+                <h2 style={{ fontSize: 18, fontWeight: 600, margin: 0, color: THEME.ink }}>
                   Dispatch New Job Order
                 </h2>
                 <p style={{ fontSize: 12.5, color: THEME.textMuted, margin: '4px 0 0' }}>
@@ -969,7 +969,7 @@ export default function JobsPage() {
                   onClick={() => setIsAddModalOpen(false)}
                   style={{
                     borderRadius: 8,
-                    fontWeight: 700,
+                    fontWeight: 600,
                     fontSize: 13,
                     padding: '9px 16px',
                     background: '#f1f5f9',
@@ -985,7 +985,7 @@ export default function JobsPage() {
                   disabled={isSaving}
                   style={{
                     borderRadius: 8,
-                    fontWeight: 700,
+                    fontWeight: 600,
                     fontSize: 13,
                     padding: '9px 20px',
                     background: '#10B981',
@@ -1034,7 +1034,7 @@ export default function JobsPage() {
             <CornerBrackets />
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
               <div>
-                <h2 style={{ fontSize: 18, fontWeight: 700, margin: 0, color: THEME.ink }}>
+                <h2 style={{ fontSize: 18, fontWeight: 600, margin: 0, color: THEME.ink }}>
                   Update Job Order #JOB-{String(editingJob.id).padStart(3, '0')}
                 </h2>
                 <p style={{ fontSize: 12.5, color: THEME.textMuted, margin: '4px 0 0' }}>
@@ -1142,7 +1142,7 @@ export default function JobsPage() {
                   }}
                   style={{
                     borderRadius: 8,
-                    fontWeight: 700,
+                    fontWeight: 600,
                     fontSize: 13,
                     padding: '9px 16px',
                     background: '#f1f5f9',
@@ -1158,7 +1158,7 @@ export default function JobsPage() {
                   disabled={isSaving}
                   style={{
                     borderRadius: 8,
-                    fontWeight: 700,
+                    fontWeight: 600,
                     fontSize: 13,
                     padding: '9px 20px',
                     background: '#10B981',

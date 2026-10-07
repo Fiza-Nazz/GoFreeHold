@@ -39,7 +39,7 @@ const inputStyle: React.CSSProperties = {
 
 const labelStyle: React.CSSProperties = {
   fontSize: 12,
-  fontWeight: 700,
+  fontWeight: 600,
   color: '#0F172A',
   letterSpacing: '0.4px',
   textTransform: 'uppercase',
@@ -142,7 +142,7 @@ export default function InventoryManagement() {
   }, [items, searchTerm, topbarQuery, categoryFilter, lowStockOnly])
 
   return (
-    <div className="gfh-portal-page" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
+    <div className="gfh-portal-page" style={{ fontFamily: "'Source Sans Pro', system-ui, sans-serif" }}>
       <style>{portalPageCss}</style>
 
       {/* Hero Header */}
@@ -150,12 +150,12 @@ export default function InventoryManagement() {
         <CornerBrackets />
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
-            <h1 style={{ fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", fontSize: 30, fontWeight: 700, color: THEME.ink, margin: 0 }}>
+            <h1 style={{ fontFamily: "'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", fontSize: 30, fontWeight: 600, color: THEME.ink, margin: 0 }}>
               Inventory & Stock Management
             </h1>
             <span style={{
               fontSize: 12,
-              fontWeight: 700,
+              fontWeight: 600,
               color: '#10B981',
               background: '#F0FDF4',
               border: '1px solid #BBF7D0',
@@ -167,7 +167,7 @@ export default function InventoryManagement() {
             {summaryMetrics.lowStockCount > 0 && (
               <span style={{
                 fontSize: 12,
-                fontWeight: 700,
+                fontWeight: 600,
                 color: '#FFFFFF',
                 background: '#DC2626',
                 borderRadius: 20,
@@ -197,11 +197,11 @@ export default function InventoryManagement() {
             borderRadius: 10,
             padding: '10px 20px',
             fontSize: 13.5,
-            fontWeight: 700,
+            fontWeight: 600,
             cursor: 'pointer',
             boxShadow: '0 1px 3px rgba(14, 94, 72, 0.25)',
             transition: 'background 0.15s ease, transform 0.15s ease',
-            fontFamily: "'Inter', sans-serif",
+            fontFamily: "'Source Sans Pro', sans-serif",
           }}
           onMouseEnter={e => { e.currentTarget.style.background = '#059669'; }}
           onMouseLeave={e => { e.currentTarget.style.background = '#10B981'; }}
@@ -228,7 +228,7 @@ export default function InventoryManagement() {
                 gap: 6,
                 padding: '9px 18px',
                 fontSize: 13,
-                fontWeight: 700,
+                fontWeight: 600,
                 borderRadius: 10,
                 border: isActive ? 'none' : '1px solid #CBD5E1',
                 background: isActive ? '#10B981' : '#FFFFFF',
@@ -236,7 +236,7 @@ export default function InventoryManagement() {
                 cursor: 'pointer',
                 boxShadow: isActive ? '0 1px 3px rgba(14, 94, 72, 0.25)' : 'none',
                 transition: 'all 0.15s ease',
-                fontFamily: "'Inter', sans-serif",
+                fontFamily: "'Source Sans Pro', sans-serif",
               }}
               onMouseEnter={e => {
                 if (!isActive) {
@@ -260,40 +260,40 @@ export default function InventoryManagement() {
       {/* 4 KPI Cards */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 16, marginBottom: 22 }}>
         <div style={{ padding: '16px 20px', background: '#F8FAFC', border: '1px solid #E2E8F0', borderRadius: 10 }}>
-          <div style={{ fontSize: 11.5, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px', color: '#64748B' }}>
+          <div style={{ fontSize: 11.5, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px', color: '#64748B' }}>
             Total Stock Quantity
           </div>
-          <div style={{ fontSize: 24, fontWeight: 800, color: '#10B981', marginTop: 4 }}>
+          <div style={{ fontSize: 24, fontWeight: 600, color: '#10B981', marginTop: 4 }}>
             {summaryMetrics.totalQuantity} Units
           </div>
           <div style={{ fontSize: 11.5, color: '#94A3B8', marginTop: 2 }}>In {tab} storage</div>
         </div>
 
         <div style={{ padding: '16px 20px', background: '#F0FDF4', border: '1px solid #BBF7D0', borderRadius: 10 }}>
-          <div style={{ fontSize: 11.5, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px', color: '#15803D' }}>
+          <div style={{ fontSize: 11.5, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px', color: '#15803D' }}>
             Stock Valuation
           </div>
-          <div style={{ fontSize: 24, fontWeight: 800, color: '#15803D', marginTop: 4 }}>
+          <div style={{ fontSize: 24, fontWeight: 600, color: '#15803D', marginTop: 4 }}>
             AED {Number(summaryMetrics.totalValuation).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
           </div>
           <div style={{ fontSize: 11.5, color: '#16A34A', marginTop: 2 }}>Total asset book value</div>
         </div>
 
         <div style={{ padding: '16px 20px', background: '#F0F9FF', border: '1px solid #BAE6FD', borderRadius: 10 }}>
-          <div style={{ fontSize: 11.5, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px', color: '#0369A1' }}>
+          <div style={{ fontSize: 11.5, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px', color: '#0369A1' }}>
             Catalog Items
           </div>
-          <div style={{ fontSize: 24, fontWeight: 800, color: '#0369A1', marginTop: 4 }}>
+          <div style={{ fontSize: 24, fontWeight: 600, color: '#0369A1', marginTop: 4 }}>
             {summaryMetrics.totalCatalogItems}
           </div>
           <div style={{ fontSize: 11.5, color: '#0284C7', marginTop: 2 }}>Unique SKU product codes</div>
         </div>
 
         <div style={{ padding: '16px 20px', background: '#FAF5FF', border: '1px solid #E9D5FF', borderRadius: 10 }}>
-          <div style={{ fontSize: 11.5, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px', color: '#7E22CE' }}>
+          <div style={{ fontSize: 11.5, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px', color: '#7E22CE' }}>
             Low Stock Alerts
           </div>
-          <div style={{ fontSize: 24, fontWeight: 800, color: summaryMetrics.lowStockCount > 0 ? '#DC2626' : '#7E22CE', marginTop: 4 }}>
+          <div style={{ fontSize: 24, fontWeight: 600, color: summaryMetrics.lowStockCount > 0 ? '#DC2626' : '#7E22CE', marginTop: 4 }}>
             {summaryMetrics.lowStockCount}
           </div>
           <div style={{ fontSize: 11.5, color: '#9333EA', marginTop: 2 }}>Items requiring reorder</div>
@@ -335,7 +335,7 @@ export default function InventoryManagement() {
               style={{
                 padding: '7px 14px',
                 fontSize: 12,
-                fontWeight: 700,
+                fontWeight: 600,
                 borderRadius: 20,
                 border: lowStockOnly ? '1px solid #DC2626' : '1px solid #CBD5E1',
                 background: lowStockOnly ? '#DC2626' : '#FFFFFF',
@@ -415,7 +415,7 @@ export default function InventoryManagement() {
                   const lineTotal = Number(item.quantity || 0) * Number(item.unit_price || 0)
                   return (
                     <tr key={item.id} className="gfh-portal-row" style={{ borderBottom: `1px solid ${THEME.border}` }}>
-                      <td style={{ ...tdStyle, fontWeight: 700, color: THEME.ink }}>
+                      <td style={{ ...tdStyle, fontWeight: 600, color: THEME.ink }}>
                         {item.name}
                       </td>
                       <td style={tdStyle}>
@@ -424,7 +424,7 @@ export default function InventoryManagement() {
                           padding: '2px 8px',
                           borderRadius: 4,
                           fontSize: 11,
-                          fontWeight: 700,
+                          fontWeight: 600,
                           background: '#F1F5F9',
                           color: '#475569',
                           border: '1px solid #CBD5E1',
@@ -434,13 +434,13 @@ export default function InventoryManagement() {
                       </td>
                       <td style={tdStyle}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                          <span style={{ fontWeight: 800, fontSize: 13, color: isLow ? '#DC2626' : THEME.ink }}>
+                          <span style={{ fontWeight: 600, fontSize: 13, color: isLow ? '#DC2626' : THEME.ink }}>
                             {item.quantity}
                           </span>
                           {isLow && (
                             <span style={{
                               fontSize: 10,
-                              fontWeight: 800,
+                              fontWeight: 600,
                               color: '#DC2626',
                               background: '#FEE2E2',
                               border: '1px solid #FCA5A5',
@@ -455,7 +455,7 @@ export default function InventoryManagement() {
                       <td style={{ ...tdStyle, fontWeight: 600, color: '#334155' }}>
                         AED {Number(item.unit_price).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                       </td>
-                      <td style={{ ...tdStyle, fontWeight: 700, color: '#10B981' }}>
+                      <td style={{ ...tdStyle, fontWeight: 600, color: '#10B981' }}>
                         AED {lineTotal.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                       </td>
                       <td style={tdStyle}>
@@ -486,7 +486,7 @@ export default function InventoryManagement() {
                             gap: 4,
                             padding: '5px 10px',
                             fontSize: 12,
-                            fontWeight: 700,
+                            fontWeight: 600,
                             borderRadius: 6,
                             background: '#991B1B',
                             color: '#fff',
@@ -522,7 +522,7 @@ export default function InventoryManagement() {
             }}
           >
             <CornerBrackets />
-            <h2 style={{ fontFamily: "'Inter', sans-serif", fontSize: 20, fontWeight: 700, marginBottom: 20, color: '#0F172A' }}>
+            <h2 style={{ fontFamily: "'Source Sans Pro', sans-serif", fontSize: 20, fontWeight: 600, marginBottom: 20, color: '#0F172A' }}>
               Add inventory item
             </h2>
             <form onSubmit={handleCreate} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
@@ -573,7 +573,7 @@ export default function InventoryManagement() {
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  style={{ borderRadius: 8, fontWeight: 700, fontSize: 13, padding: '9px 16px', background: '#f1f5f9', color: '#64748b', border: '1px solid #cbd5e1', cursor: 'pointer' }}
+                  style={{ borderRadius: 8, fontWeight: 600, fontSize: 13, padding: '9px 16px', background: '#f1f5f9', color: '#64748b', border: '1px solid #cbd5e1', cursor: 'pointer' }}
                 >
                   Cancel
                 </button>
@@ -581,7 +581,7 @@ export default function InventoryManagement() {
                   type="submit"
                   style={{
                     borderRadius: 8,
-                    fontWeight: 700,
+                    fontWeight: 600,
                     fontSize: 13,
                     padding: '9px 18px',
                     background: '#10B981',

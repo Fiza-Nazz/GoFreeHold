@@ -134,7 +134,7 @@ export default function AdminSettings() {
   }
 
   return (
-    <div className="gfh-portal-page" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
+    <div className="gfh-portal-page" style={{ fontFamily: "'Source Sans Pro', system-ui, sans-serif" }}>
       <style>{`${portalPageCss}
         .gfh-as-email-input {
           transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
@@ -150,7 +150,7 @@ export default function AdminSettings() {
       <div className="fade-in" style={heroStyle}>
         <CornerBrackets />
         <div>
-          <h1 style={{ fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", fontSize: 30, fontWeight: 700, color: THEME.ink, margin: 0 }}>
+          <h1 style={{ fontFamily: "'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", fontSize: 30, fontWeight: 600, color: THEME.ink, margin: 0 }}>
             Admin System Settings
           </h1>
           <p style={{ fontSize: 14, color: THEME.textMuted, marginTop: 8, marginBottom: 0 }}>
@@ -170,14 +170,14 @@ export default function AdminSettings() {
               color: '#FFFFFF',
               padding: '10px 20px',
               fontSize: 13.5,
-              fontWeight: 700,
+              fontWeight: 600,
               borderRadius: 10,
               border: 'none',
               cursor: isTriggering ? 'not-allowed' : 'pointer',
               opacity: isTriggering ? 0.7 : 1,
               boxShadow: '0 1px 3px rgba(14, 94, 72, 0.25)',
               transition: 'background 0.15s ease, transform 0.15s ease',
-              fontFamily: "'Inter', sans-serif",
+              fontFamily: "'Source Sans Pro', sans-serif",
             }}
             onMouseEnter={e => {
               if (!isTriggering) {
@@ -210,7 +210,7 @@ export default function AdminSettings() {
             color: feedback.type === 'success' ? '#166534' : '#991b1b',
           }}
         >
-          <div style={{ fontWeight: 700, fontSize: 13.5, marginBottom: feedback.output ? 8 : 0 }}>
+          <div style={{ fontWeight: 600, fontSize: 13.5, marginBottom: feedback.output ? 8 : 0 }}>
             {feedback.message}
           </div>
           {feedback.output && (
@@ -233,7 +233,7 @@ export default function AdminSettings() {
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 340px', gap: 24, marginBottom: 24 }}>
         <div className="fade-in" style={{ ...panelStyle, minHeight: 0 }}>
           <CornerBrackets />
-          <h3 style={{ fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", fontSize: 19, fontWeight: 700, color: THEME.ink, marginTop: 0, marginBottom: 22 }}>
+          <h3 style={{ fontFamily: "'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", fontSize: 19, fontWeight: 600, color: THEME.ink, marginTop: 0, marginBottom: 22 }}>
             Automated Notification Triggers
           </h3>
           {isLoading ? (
@@ -259,11 +259,11 @@ export default function AdminSettings() {
                 >
                   <div style={{ flex: 1, minWidth: 240 }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 10 }}>
-                      <strong style={{ fontSize: 15.5, fontWeight: 700, color: THEME.ink }}>{setting.description}</strong>
+                      <strong style={{ fontSize: 15.5, fontWeight: 600, color: THEME.ink }}>{setting.description}</strong>
                       <span
                         style={{
                           fontSize: 10.5,
-                          fontWeight: 700,
+                          fontWeight: 600,
                           letterSpacing: '0.4px',
                           padding: '3px 10px',
                           borderRadius: 8,
@@ -310,7 +310,7 @@ export default function AdminSettings() {
                         alignItems: 'center',
                         gap: 5,
                         fontSize: 12,
-                        fontWeight: 700,
+                        fontWeight: 600,
                         padding: '8px 14px',
                         borderRadius: 8,
                         cursor: activeTrigger === setting.key ? 'not-allowed' : 'pointer',
@@ -332,7 +332,7 @@ export default function AdminSettings() {
                         alignItems: 'center',
                         gap: 5,
                         fontSize: 12,
-                        fontWeight: 700,
+                        fontWeight: 600,
                         padding: '8px 14px',
                         borderRadius: 8,
                         cursor: 'pointer',
@@ -356,7 +356,7 @@ export default function AdminSettings() {
           <div style={{ width: 40, height: 40, borderRadius: 8, background: `linear-gradient(135deg, ${THEME.violetLight}, ${THEME.purple})`, color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 14 }}>
             <Icon path={icons.mail} size={18} />
           </div>
-          <h3 style={{ fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", fontSize: 17, fontWeight: 700, color: THEME.ink, marginTop: 0, marginBottom: 16 }}>
+          <h3 style={{ fontFamily: "'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", fontSize: 17, fontWeight: 600, color: THEME.ink, marginTop: 0, marginBottom: 16 }}>
             Mail Server &amp; Scheduler Status
           </h3>
           <div style={{ borderRadius: 8, border: `1px solid ${THEME.border}`, overflow: 'hidden' }}>
@@ -393,14 +393,14 @@ export default function AdminSettings() {
       <div className="fade-in" style={{ ...panelStyle, minHeight: 0 }}>
         <CornerBrackets />
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-          <h3 style={{ fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", fontSize: 18, fontWeight: 700, color: THEME.ink, margin: 0 }}>
+          <h3 style={{ fontFamily: "'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", fontSize: 18, fontWeight: 600, color: THEME.ink, margin: 0 }}>
             Recent Notification &amp; Scheduler Audit Log
           </h3>
           <button
             type="button"
             className="gfh-portal-btn"
             onClick={fetchSettings}
-            style={{ display: 'inline-flex', alignItems: 'center', gap: 4, background: '#f6f1fe', border: `1px solid ${THEME.border}`, padding: '5px 10px', fontSize: 11.5, fontWeight: 700, color: THEME.purple, cursor: 'pointer' }}
+            style={{ display: 'inline-flex', alignItems: 'center', gap: 4, background: '#f6f1fe', border: `1px solid ${THEME.border}`, padding: '5px 10px', fontSize: 11.5, fontWeight: 600, color: THEME.purple, cursor: 'pointer' }}
           >
             <Icon path={ICONS.refresh} size={12} />
             Refresh Logs
@@ -416,11 +416,11 @@ export default function AdminSettings() {
             <table style={{ width: '100%', borderCollapse: 'collapse' }}>
               <thead>
                 <tr style={{ borderBottom: `2px solid ${THEME.border}` }}>
-                  <th style={{ textAlign: 'left', padding: '10px 12px', fontSize: 12, fontWeight: 700, color: THEME.textMuted, textTransform: 'uppercase' }}>Type</th>
-                  <th style={{ textAlign: 'left', padding: '10px 12px', fontSize: 12, fontWeight: 700, color: THEME.textMuted, textTransform: 'uppercase' }}>Message</th>
-                  <th style={{ textAlign: 'left', padding: '10px 12px', fontSize: 12, fontWeight: 700, color: THEME.textMuted, textTransform: 'uppercase' }}>Recipient</th>
-                  <th style={{ textAlign: 'left', padding: '10px 12px', fontSize: 12, fontWeight: 700, color: THEME.textMuted, textTransform: 'uppercase' }}>Status</th>
-                  <th style={{ textAlign: 'left', padding: '10px 12px', fontSize: 12, fontWeight: 700, color: THEME.textMuted, textTransform: 'uppercase' }}>Date / Time</th>
+                  <th style={{ textAlign: 'left', padding: '10px 12px', fontSize: 12, fontWeight: 600, color: THEME.textMuted, textTransform: 'uppercase' }}>Type</th>
+                  <th style={{ textAlign: 'left', padding: '10px 12px', fontSize: 12, fontWeight: 600, color: THEME.textMuted, textTransform: 'uppercase' }}>Message</th>
+                  <th style={{ textAlign: 'left', padding: '10px 12px', fontSize: 12, fontWeight: 600, color: THEME.textMuted, textTransform: 'uppercase' }}>Recipient</th>
+                  <th style={{ textAlign: 'left', padding: '10px 12px', fontSize: 12, fontWeight: 600, color: THEME.textMuted, textTransform: 'uppercase' }}>Status</th>
+                  <th style={{ textAlign: 'left', padding: '10px 12px', fontSize: 12, fontWeight: 600, color: THEME.textMuted, textTransform: 'uppercase' }}>Date / Time</th>
                 </tr>
               </thead>
               <tbody>
@@ -429,7 +429,7 @@ export default function AdminSettings() {
                   const isChecked = log.status === 'checked'
                   return (
                     <tr key={log.id} style={{ borderBottom: `1px solid ${THEME.border}` }}>
-                      <td style={{ padding: '10px 12px', fontSize: 12.5, fontWeight: 700, color: THEME.ink }}>
+                      <td style={{ padding: '10px 12px', fontSize: 12.5, fontWeight: 600, color: THEME.ink }}>
                         {log.type.replace(/_/g, ' ').toUpperCase()}
                       </td>
                       <td style={{ padding: '10px 12px', fontSize: 12.5, color: THEME.ink, maxWidth: 400 }}>
@@ -442,7 +442,7 @@ export default function AdminSettings() {
                         <span style={{
                           padding: '3px 8px',
                           fontSize: 11,
-                          fontWeight: 700,
+                          fontWeight: 600,
                           borderRadius: 8,
                           backgroundColor: isSent ? '#dcfce7' : isChecked ? '#e0f2fe' : '#fee2e2',
                           color: isSent ? '#166534' : isChecked ? '#0369a1' : '#991b1b',

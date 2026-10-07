@@ -3,6 +3,7 @@ import { Link, useSearchParams, useLocation } from 'react-router-dom'
 import api from '../../api/axios'
 import { useAuthStore } from '../../store/authStore'
 import { Icon, portalPageCss } from '../../components/gfh/adminTheme'
+import { DEFAULT_UNIT_TYPE, UNIT_TYPE_OPTIONS } from '../../utils/unitTypes'
 
 interface Unit {
   id: number
@@ -51,7 +52,7 @@ const inputStyle: React.CSSProperties = {
 
 const labelStyle: React.CSSProperties = {
   fontSize: 12,
-  fontWeight: 700,
+  fontWeight: 600,
   color: '#334155',
   letterSpacing: '0.3px',
   textTransform: 'uppercase',
@@ -90,7 +91,7 @@ export default function OwnerUnits() {
     dhewa_no: '',
     category: '',
     floor: 1,
-    type: 'apartment',
+    type: DEFAULT_UNIT_TYPE,
     size: '',
     furnished: false,
     price: '',
@@ -165,7 +166,7 @@ export default function OwnerUnits() {
       dhewa_no: '',
       category: '',
       floor: 1,
-      type: 'apartment',
+      type: DEFAULT_UNIT_TYPE,
       size: '',
       furnished: false,
       price: '',
@@ -264,13 +265,13 @@ export default function OwnerUnits() {
   }, [searchTerm, propertyFilter, statusFilter, entriesPerPage])
 
   return (
-    <div className="gfh-portal-page" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
+    <div className="gfh-portal-page" style={{ fontFamily: "'Source Sans Pro', system-ui, sans-serif" }}>
       <style>{portalPageCss}</style>
       <style>{`
         @keyframes gfhOverlayFade { from { opacity: 0; } to { opacity: 1; } }
         @keyframes gfhModalPop { from { opacity: 0; transform: scale(0.95) translateY(10px); } to { opacity: 1; transform: scale(1) translateY(0); } }
         .gfh-prop-input {
-          font-family: 'Inter', system-ui, sans-serif !important;
+          font-family: 'Source Sans Pro', system-ui, sans-serif !important;
           font-size: 14px !important;
           border: 1px solid #E2E8F0 !important;
           border-radius: 8px !important;
@@ -297,7 +298,7 @@ export default function OwnerUnits() {
           cursor: pointer !important;
           box-shadow: 0 1px 2px rgba(13, 92, 70, 0.18) !important;
           transition: background 0.15s ease, transform 0.15s ease !important;
-          font-family: 'Inter', sans-serif !important;
+          font-family: 'Source Sans Pro', sans-serif !important;
         }
         .gfh-add-prop-btn:hover {
           background: #094635 !important;
@@ -336,7 +337,7 @@ export default function OwnerUnits() {
         }
         .gfh-property-name-cell {
           color: #10B981;
-          font-weight: 700;
+          font-weight: 600;
           text-decoration: none;
         }
         .gfh-property-name-cell:hover {
@@ -414,7 +415,7 @@ export default function OwnerUnits() {
           marginBottom: 24,
         }}>
           <div>
-            <h2 style={{ fontSize: 20, fontWeight: 700, color: '#0F172A', margin: 0 }}>Units</h2>
+            <h2 style={{ fontSize: 20, fontWeight: 600, color: '#0F172A', margin: 0 }}>Units</h2>
             <p style={{ fontSize: 13, color: '#64748B', margin: '4px 0 0' }}>List Of Units</p>
           </div>
           {!isCashier && (
@@ -545,7 +546,7 @@ export default function OwnerUnits() {
                             padding: '3px 9px', borderRadius: 999,
                             background: statusStyle.bg, color: statusStyle.color,
                             border: `1px solid ${statusStyle.border}`,
-                            fontSize: 11, fontWeight: 700, letterSpacing: '0.3px',
+                            fontSize: 11, fontWeight: 600, letterSpacing: '0.3px',
                             display: 'inline-flex', alignItems: 'center', gap: 5,
                             whiteSpace: 'nowrap',
                           }}>
@@ -675,7 +676,7 @@ export default function OwnerUnits() {
             animation: 'gfhModalPop 0.25s cubic-bezier(.2,.8,.2,1)',
           }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
-              <h2 style={{ fontSize: 18, fontWeight: 800, color: '#0F172A', margin: 0 }}>
+              <h2 style={{ fontSize: 18, fontWeight: 600, color: '#0F172A', margin: 0 }}>
                 {editingUnit ? 'Edit Unit' : 'Add New Unit'}
               </h2>
               <button
@@ -734,10 +735,9 @@ export default function OwnerUnits() {
                     value={formData.type}
                     onChange={e => setFormData({ ...formData, type: e.target.value })}
                   >
-                    <option value="apartment">Apartment</option>
-                    <option value="office">Office</option>
-                    <option value="shop">Shop</option>
-                    <option value="warehouse">Warehouse</option>
+                    {UNIT_TYPE_OPTIONS.map((opt) => (
+                      <option key={opt.value} value={opt.value}>{opt.label}</option>
+                    ))}
                   </select>
                 </div>
                 <div>
@@ -799,7 +799,7 @@ export default function OwnerUnits() {
                   style={{
                     display: 'inline-flex', alignItems: 'center', gap: 6,
                     padding: '9px 18px', background: '#F1F5F9', border: '1px solid #CBD5E1',
-                    color: '#334155', borderRadius: 8, fontWeight: 700, fontSize: 13,
+                    color: '#334155', borderRadius: 8, fontWeight: 600, fontSize: 13,
                     cursor: 'pointer',
                   }}
                 >

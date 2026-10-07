@@ -75,7 +75,7 @@ function StatCard({ label, value, sub, icon, iconBg, iconColor, badgeBg, badgeCo
         </div>
         <span style={{
           fontSize: 11,
-          fontWeight: 700,
+          fontWeight: 600,
           letterSpacing: '0.4px',
           textTransform: 'uppercase',
           background: '#FFFFFF',
@@ -88,7 +88,7 @@ function StatCard({ label, value, sub, icon, iconBg, iconColor, badgeBg, badgeCo
         </span>
       </div>
       <div>
-        <div style={{ fontSize: 22, fontWeight: 800, color: badgeColor, lineHeight: 1.15, letterSpacing: '-0.02em' }}>
+        <div style={{ fontSize: 22, fontWeight: 600, color: badgeColor, lineHeight: 1.15, letterSpacing: '-0.02em' }}>
           {value}
         </div>
         <div style={{ fontSize: 13, fontWeight: 600, color: '#475569', marginTop: 4 }}>
@@ -119,12 +119,12 @@ export default function OwnerFinancePage({ kind }: { kind: FinanceKind }) {
   }, [kind])
 
   return (
-    <div className="gfh-portal-page" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
+    <div className="gfh-portal-page" style={{ fontFamily: "'Source Sans Pro', system-ui, sans-serif" }}>
       <style>{portalPageCss}</style>
 
       <div className="fade-in" style={heroStyle}>
         <div>
-          <div style={{ fontSize: 22, fontWeight: 800, color: THEME.ink, margin: 0 }}>{meta.title}</div>
+          <div style={{ fontSize: 22, fontWeight: 600, color: THEME.ink, margin: 0 }}>{meta.title}</div>
           <div style={{ fontSize: 12, color: '#9ca3af', marginTop: 6 }}>{meta.subtitle}</div>
         </div>
         <Link to="/owner/dashboard" className="gfh-portal-btn" style={{ ...ghostBtnStyle, background: '#10B981', borderRadius: 8 }}>
@@ -222,13 +222,13 @@ export default function OwnerFinancePage({ kind }: { kind: FinanceKind }) {
                   <tbody>
                     {data.entries.map((e: any) => (
                       <tr key={e.id} className="gfh-portal-row" style={{ borderBottom: `1px solid ${THEME.border}` }}>
-                        <td style={{ ...tdStyle, fontWeight: 700 }}>{gfhRef(e.contract_id)}</td>
+                        <td style={{ ...tdStyle, fontWeight: 600 }}>{gfhRef(e.contract_id)}</td>
                         <td style={tdStyle}>{e.contract?.unit?.number} ({e.contract?.unit?.property?.name})</td>
                         <td style={tdStyle}>{e.contract?.tenant?.name || '—'}</td>
                         <td style={tdStyle}>{formatDate(e.date)}</td>
                         <td style={tdStyle}>{e.description || '—'}</td>
-                        <td style={{ ...tdStyle, color: '#991b1b', fontWeight: 700 }}>{Number(e.debit).toLocaleString()}</td>
-                        <td style={{ ...tdStyle, color: '#065f46', fontWeight: 700 }}>{Number(e.credit).toLocaleString()}</td>
+                        <td style={{ ...tdStyle, color: '#991b1b', fontWeight: 600 }}>{Number(e.debit).toLocaleString()}</td>
+                        <td style={{ ...tdStyle, color: '#065f46', fontWeight: 600 }}>{Number(e.credit).toLocaleString()}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -251,17 +251,17 @@ export default function OwnerFinancePage({ kind }: { kind: FinanceKind }) {
                   <tbody>
                     {data.contracts.map((c: any) => (
                       <tr key={c.id} className="gfh-portal-row" style={{ borderBottom: `1px solid ${THEME.border}` }}>
-                        <td style={{ ...tdStyle, fontWeight: 700 }}>{gfhRef(c.id)}</td>
+                        <td style={{ ...tdStyle, fontWeight: 600 }}>{gfhRef(c.id)}</td>
                         <td style={tdStyle}>{c.unit?.number} ({c.unit?.property?.name})</td>
                         <td style={tdStyle}>{c.tenant?.name || '—'}</td>
                         <td style={tdStyle}>
-                          <span style={{ fontSize: 11.5, fontWeight: 700, padding: '3px 10px', borderRadius: 999, display: 'inline-block', background: c.status === 'active' ? '#f0fdf4' : '#f3f4f6', color: c.status === 'active' ? '#065f46' : '#374151', border: `1px solid ${c.status === 'active' ? '#bbf7d0' : '#d1d5db'}` }}>
+                          <span style={{ fontSize: 11.5, fontWeight: 600, padding: '3px 10px', borderRadius: 999, display: 'inline-block', background: c.status === 'active' ? '#f0fdf4' : '#f3f4f6', color: c.status === 'active' ? '#065f46' : '#374151', border: `1px solid ${c.status === 'active' ? '#bbf7d0' : '#d1d5db'}` }}>
                             {safeUpper(c.status)}
                           </span>
                         </td>
                         <td style={tdStyle}>{Number(c.total_debit ?? 0).toLocaleString()}</td>
                         <td style={tdStyle}>{Number(c.total_credit ?? 0).toLocaleString()}</td>
-                        <td style={{ ...tdStyle, color: c.balance > 0 ? '#991b1b' : '#065f46', fontWeight: 700 }}>{Number(c.balance ?? 0).toLocaleString()}</td>
+                        <td style={{ ...tdStyle, color: c.balance > 0 ? '#991b1b' : '#065f46', fontWeight: 600 }}>{Number(c.balance ?? 0).toLocaleString()}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -284,12 +284,12 @@ export default function OwnerFinancePage({ kind }: { kind: FinanceKind }) {
                   <tbody>
                     {data.payments.map((p: any) => (
                       <tr key={p.id} className="gfh-portal-row" style={{ borderBottom: `1px solid ${THEME.border}` }}>
-                        <td style={{ ...tdStyle, fontWeight: 700 }}>{gfhRef(p.contract_id)}</td>
+                        <td style={{ ...tdStyle, fontWeight: 600 }}>{gfhRef(p.contract_id)}</td>
                         <td style={tdStyle}>{p.contract?.unit?.number} ({p.contract?.unit?.property?.name})</td>
                         <td style={tdStyle}>{p.tenant?.name || '—'}</td>
-                        <td style={{ ...tdStyle, textTransform: 'uppercase', fontSize: 12.5, fontWeight: 700, color: '#075985' }}>{String(p.type || '').replace('_', ' ')}</td>
+                        <td style={{ ...tdStyle, textTransform: 'uppercase', fontSize: 12.5, fontWeight: 600, color: '#075985' }}>{String(p.type || '').replace('_', ' ')}</td>
                         <td style={{ ...tdStyle, textTransform: 'capitalize' }}>{String(p.mode || '').replace('_', ' ')}</td>
-                        <td style={{ ...tdStyle, color: '#065f46', fontWeight: 700 }}>{Number(p.amount).toLocaleString()}</td>
+                        <td style={{ ...tdStyle, color: '#065f46', fontWeight: 600 }}>{Number(p.amount).toLocaleString()}</td>
                         <td style={tdStyle}>{formatDate(p.date)}</td>
                       </tr>
                     ))}

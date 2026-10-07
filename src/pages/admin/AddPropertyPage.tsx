@@ -26,7 +26,7 @@ const labelStyle: React.CSSProperties = {
   marginBottom: 6,
   color: '#334155',
   fontSize: 12,
-  fontWeight: 700,
+  fontWeight: 600,
   textTransform: 'uppercase',
   letterSpacing: '0.35px',
 }
@@ -76,7 +76,7 @@ export default function AddPropertyPage() {
   }
 
   return (
-    <div className="gfh-portal-page gfh-add-property-page" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
+    <div className="gfh-portal-page gfh-add-property-page" style={{ fontFamily: "'Source Sans Pro', system-ui, sans-serif" }}>
       <style>{portalPageCss}</style>
       <style>{`
         .gfh-add-property-page { padding: 0; width: 100%; }
@@ -106,10 +106,10 @@ export default function AddPropertyPage() {
       `}</style>
       <div className="fade-in gfh-property-form-header" style={{ ...heroStyle, marginBottom: 0 }}>
         <div>
-          <h1 style={{ margin: 0, color: THEME.ink, fontSize: 24, fontWeight: 800 }}>Add Property</h1>
+          <h1 style={{ margin: 0, color: THEME.ink, fontSize: 24, fontWeight: 600 }}>Add Property</h1>
           <p style={{ margin: '6px 0 0', color: THEME.textMuted, fontSize: 13 }}>Register a new property and assign its owner</p>
         </div>
-        <button type="button" className="gfh-portal-btn" onClick={() => navigate(`${basePath}/properties`)} style={{ border: '1px solid #A7F3DC', background: '#ECFDF8', color: '#065F46', padding: '10px 15px', cursor: 'pointer', fontWeight: 700 }}>
+        <button type="button" className="gfh-portal-btn" onClick={() => navigate(`${basePath}/properties`)} style={{ border: '1px solid #A7F3DC', background: '#ECFDF8', color: '#065F46', padding: '10px 15px', cursor: 'pointer', fontWeight: 600 }}>
           ← Back to Buildings
         </button>
       </div>
@@ -150,8 +150,8 @@ export default function AddPropertyPage() {
               <input id="property-city" style={inputStyle} value={formData.city} onChange={event => setFormData({ ...formData, city: event.target.value })} placeholder="e.g. Dubai" maxLength={255} required />
             </div>
             <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10, flexWrap: 'wrap' }}>
-              <button type="button" onClick={() => navigate(`${basePath}/properties`)} style={{ padding: '10px 18px', border: '1px solid #CBD5E1', background: '#FFFFFF', color: '#475569', cursor: 'pointer', fontWeight: 700 }}>Cancel</button>
-              <button type="submit" disabled={isSaving} style={{ display: 'inline-flex', alignItems: 'center', gap: 7, padding: '10px 20px', border: 'none', background: '#10B981', color: '#FFFFFF', cursor: isSaving ? 'wait' : 'pointer', fontWeight: 700, opacity: isSaving ? 0.7 : 1 }}>
+              <button type="button" onClick={() => navigate(`${basePath}/properties`)} style={{ padding: '10px 18px', border: '1px solid #CBD5E1', background: '#FFFFFF', color: '#475569', cursor: 'pointer', fontWeight: 600 }}>Cancel</button>
+              <button type="submit" disabled={isSaving} style={{ display: 'inline-flex', alignItems: 'center', gap: 7, padding: '10px 20px', border: 'none', background: '#10B981', color: '#FFFFFF', cursor: isSaving ? 'wait' : 'pointer', fontWeight: 600, opacity: isSaving ? 0.7 : 1 }}>
                 <Icon path={ICONS.plus} size={16} />
                 {isSaving ? 'Saving…' : 'Save Property'}
               </button>

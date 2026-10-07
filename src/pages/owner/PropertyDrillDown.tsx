@@ -3,6 +3,7 @@ import api from '../../api/axios'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { THEME, ADMIN_COLORS, Icon, ICONS, CornerBrackets, portalPageCss, heroStyle, panelStyle, ghostBtnStyle, thStyle, tdStyle, RADIUS } from '../../components/gfh/adminTheme'
 import { safeUpper } from '../../utils/safeLabel'
+import { DEFAULT_UNIT_TYPE, UNIT_TYPE_OPTIONS } from '../../utils/unitTypes'
 
 interface UnitSummary {
   id: number
@@ -135,7 +136,7 @@ export default function PropertyDrillDown() {
     property_id: '',
     number: '',
     floor: '1',
-    type: 'apartment',
+    type: DEFAULT_UNIT_TYPE,
     size: '850',
     price: '65000',
     dhewa_no: '',
@@ -248,7 +249,7 @@ export default function PropertyDrillDown() {
         property_id: '',
         number: '',
         floor: '1',
-        type: 'apartment',
+        type: DEFAULT_UNIT_TYPE,
         size: '850',
         price: '65000',
         dhewa_no: '',
@@ -362,14 +363,14 @@ export default function PropertyDrillDown() {
   }
 
   return (
-    <div className="gfh-portal-page" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
+    <div className="gfh-portal-page" style={{ fontFamily: "'Source Sans Pro', system-ui, sans-serif" }}>
       <style>{portalPageCss}</style>
       <style>{propertyDrillDownCss}</style>
 
       {/* Hero Bar */}
       <div className="fade-in" style={heroStyle}>
         <div>
-          <div style={{ fontSize: 22, fontWeight: 800, color: THEME.ink, margin: 0 }}>Property Drill-down</div>
+          <div style={{ fontSize: 22, fontWeight: 600, color: THEME.ink, margin: 0 }}>Property Drill-down</div>
           <div style={{ fontSize: 12, color: '#9ca3af', marginTop: 6 }}>
             Search, filter, and inspect detailed occupancy and unit lists across your portfolio
           </div>
@@ -383,7 +384,7 @@ export default function PropertyDrillDown() {
               background: '#10B981',
               color: '#FFFFFF',
               borderRadius: 8,
-              fontWeight: 700,
+              fontWeight: 600,
               fontSize: 13,
               padding: '9px 16px',
               border: 'none',
@@ -487,7 +488,7 @@ export default function PropertyDrillDown() {
               </div>
               <span style={{
                 fontSize: 11,
-                fontWeight: 700,
+                fontWeight: 600,
                 letterSpacing: '0.4px',
                 textTransform: 'uppercase',
                 background: card.badgeBg,
@@ -500,10 +501,10 @@ export default function PropertyDrillDown() {
               </span>
             </div>
             <div>
-              <div style={{ fontSize: 26, fontWeight: 800, color: '#0F172A', lineHeight: 1.15, letterSpacing: '-0.02em' }}>
+              <div style={{ fontSize: 26, fontWeight: 600, color: '#0F172A', lineHeight: 1.15, letterSpacing: '-0.02em' }}>
                 {card.value}
               </div>
-              <div style={{ fontSize: 13, fontWeight: 700, color: '#0F172A', marginTop: 4 }}>
+              <div style={{ fontSize: 13, fontWeight: 600, color: '#0F172A', marginTop: 4 }}>
                 {card.label}
               </div>
               <div style={{ fontSize: 11.5, color: '#64748B', marginTop: 2 }}>
@@ -557,7 +558,7 @@ export default function PropertyDrillDown() {
                 fontSize: 13,
                 color: '#0F172A',
                 outline: 'none',
-                fontFamily: "'Inter', system-ui, sans-serif",
+                fontFamily: "'Source Sans Pro', system-ui, sans-serif",
                 boxSizing: 'border-box',
               }}
             />
@@ -599,7 +600,7 @@ export default function PropertyDrillDown() {
               fontSize: 13,
               fontWeight: 600,
               outline: 'none',
-              fontFamily: "'Inter', system-ui, sans-serif",
+              fontFamily: "'Source Sans Pro', system-ui, sans-serif",
               cursor: 'pointer',
             }}
           >
@@ -622,7 +623,7 @@ export default function PropertyDrillDown() {
               fontSize: 13,
               fontWeight: 600,
               outline: 'none',
-              fontFamily: "'Inter', system-ui, sans-serif",
+              fontFamily: "'Source Sans Pro', system-ui, sans-serif",
               cursor: 'pointer',
             }}
           >
@@ -645,7 +646,7 @@ export default function PropertyDrillDown() {
               fontSize: 13,
               fontWeight: 600,
               outline: 'none',
-              fontFamily: "'Inter', system-ui, sans-serif",
+              fontFamily: "'Source Sans Pro', system-ui, sans-serif",
               cursor: 'pointer',
             }}
           >
@@ -687,7 +688,7 @@ export default function PropertyDrillDown() {
         {/* Properties List Column */}
         <div className="fade-in gfh-owner-drilldown-panel" style={{ ...panelStyle, minHeight: 420 }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
-            <h2 style={{ fontSize: 16, fontWeight: 800, color: THEME.ink, margin: 0 }}>
+            <h2 style={{ fontSize: 16, fontWeight: 600, color: THEME.ink, margin: 0 }}>
               Properties ({filteredProperties.length})
             </h2>
             <span style={{ fontSize: 12, color: '#64748B', fontWeight: 600 }}>
@@ -702,7 +703,7 @@ export default function PropertyDrillDown() {
               <div style={{ width: 44, height: 44, borderRadius: 10, background: '#ECFDF8', color: '#10B981', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', marginBottom: 10 }}>
                 <Icon path={icons.building} size={22} />
               </div>
-              <p style={{ fontSize: 15, fontWeight: 700, color: '#0F172A', margin: '0 0 6px 0' }}>No properties registered yet</p>
+              <p style={{ fontSize: 15, fontWeight: 600, color: '#0F172A', margin: '0 0 6px 0' }}>No properties registered yet</p>
               <p style={{ fontSize: 13, color: '#64748B', margin: '0 0 16px 0' }}>
                 Add your first building to start managing units, leases, and tenant rent collections.
               </p>
@@ -716,7 +717,7 @@ export default function PropertyDrillDown() {
                   background: '#10B981',
                   color: '#FFFFFF',
                   fontSize: 13,
-                  fontWeight: 700,
+                  fontWeight: 600,
                   cursor: 'pointer',
                   display: 'inline-flex',
                   alignItems: 'center',
@@ -731,7 +732,7 @@ export default function PropertyDrillDown() {
               <div style={{ width: 44, height: 44, borderRadius: 10, background: '#FEF2F2', color: '#DC2626', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', marginBottom: 10 }}>
                 <Icon path={icons.alert} size={22} />
               </div>
-              <p style={{ fontSize: 14, fontWeight: 700, color: '#0F172A', margin: '0 0 6px 0' }}>No matching properties found</p>
+              <p style={{ fontSize: 14, fontWeight: 600, color: '#0F172A', margin: '0 0 6px 0' }}>No matching properties found</p>
               <p style={{ fontSize: 12.5, color: '#64748B', margin: '0 0 14px 0' }}>
                 No buildings match &quot;{searchQuery}&quot; with the selected filters.
               </p>
@@ -773,13 +774,13 @@ export default function PropertyDrillDown() {
                   >
                     <div className="gfh-owner-property-info">
                       <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
-                        <h3 className="gfh-owner-property-name" style={{ margin: 0, color: isSelected ? '#10B981' : THEME.ink, fontSize: 15, fontWeight: 800 }}>
+                        <h3 className="gfh-owner-property-name" style={{ margin: 0, color: isSelected ? '#10B981' : THEME.ink, fontSize: 15, fontWeight: 600 }}>
                           {prop.name}
                         </h3>
                         {prop.type && (
                           <span style={{
                             fontSize: 10.5,
-                            fontWeight: 700,
+                            fontWeight: 600,
                             padding: '2px 8px',
                             borderRadius: 999,
                             background: '#F1F5F9',
@@ -798,18 +799,18 @@ export default function PropertyDrillDown() {
 
                     <div className="gfh-owner-property-metrics">
                       <div style={{ minWidth: 44 }}>
-                        <div style={{ fontSize: 17, fontWeight: 800, color: '#0F172A' }}>{prop.total_units}</div>
-                        <div style={{ fontSize: 10.5, color: '#64748B', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.3px' }}>Total</div>
+                        <div style={{ fontSize: 17, fontWeight: 600, color: '#0F172A' }}>{prop.total_units}</div>
+                        <div style={{ fontSize: 10.5, color: '#64748B', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.3px' }}>Total</div>
                       </div>
                       <div style={{ minWidth: 44 }}>
-                        <div style={{ fontSize: 17, fontWeight: 800, color: '#065F46' }}>{prop.occupied_units}</div>
-                        <div style={{ fontSize: 10.5, color: '#065F46', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.3px' }}>Occ.</div>
+                        <div style={{ fontSize: 17, fontWeight: 600, color: '#065F46' }}>{prop.occupied_units}</div>
+                        <div style={{ fontSize: 10.5, color: '#065F46', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.3px' }}>Occ.</div>
                       </div>
                       <div style={{ minWidth: 44 }}>
-                        <div style={{ fontSize: 17, fontWeight: 800, color: prop.vacant_units > 0 ? '#991B1B' : '#64748B' }}>
+                        <div style={{ fontSize: 17, fontWeight: 600, color: prop.vacant_units > 0 ? '#991B1B' : '#64748B' }}>
                           {prop.vacant_units}
                         </div>
-                        <div style={{ fontSize: 10.5, color: prop.vacant_units > 0 ? '#991B1B' : '#64748B', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.3px' }}>Vac.</div>
+                        <div style={{ fontSize: 10.5, color: prop.vacant_units > 0 ? '#991B1B' : '#64748B', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.3px' }}>Vac.</div>
                       </div>
                     </div>
                   </div>
@@ -825,7 +826,7 @@ export default function PropertyDrillDown() {
             {/* Header with Title and Close Button */}
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
               <div>
-                <h3 style={{ fontSize: 17, fontWeight: 800, color: THEME.ink, margin: 0 }}>
+                <h3 style={{ fontSize: 17, fontWeight: 600, color: THEME.ink, margin: 0 }}>
                   {selectedProperty.name}
                 </h3>
                 <div style={{ fontSize: 11.5, color: '#64748B', marginTop: 2 }}>
@@ -848,7 +849,7 @@ export default function PropertyDrillDown() {
                     padding: '6px 12px',
                     cursor: 'pointer',
                     fontSize: 12,
-                    fontWeight: 700,
+                    fontWeight: 600,
                     display: 'flex',
                     alignItems: 'center',
                     gap: 5,
@@ -897,7 +898,7 @@ export default function PropertyDrillDown() {
                     color: '#0F172A',
                     outline: 'none',
                     boxSizing: 'border-box',
-                    fontFamily: "'Inter', system-ui, sans-serif",
+                    fontFamily: "'Source Sans Pro', system-ui, sans-serif",
                   }}
                 />
                 <svg
@@ -959,7 +960,7 @@ export default function PropertyDrillDown() {
                     border: 'none',
                     color: '#10B981',
                     fontSize: 12,
-                    fontWeight: 700,
+                    fontWeight: 600,
                     cursor: 'pointer',
                     textDecoration: 'underline',
                   }}
@@ -985,7 +986,7 @@ export default function PropertyDrillDown() {
                         style={{ borderBottom: `1px solid ${THEME.border}`, cursor: 'pointer' }}
                         onClick={() => navigate(`/owner/units/${unit.id}`)}
                       >
-                        <td style={{ ...tdStyle, fontWeight: 700 }}>
+                        <td style={{ ...tdStyle, fontWeight: 600 }}>
                           <Link to={`/owner/units/${unit.id}`} className="gfh-portal-link" style={{ color: '#10B981' }} onClick={(e) => e.stopPropagation()}>
                             {unit.number}
                           </Link>
@@ -999,7 +1000,7 @@ export default function PropertyDrillDown() {
                               padding: '3px 9px',
                               borderRadius: 999,
                               display: 'inline-block',
-                              fontWeight: 700,
+                              fontWeight: 600,
                               background:
                                 unit.status === 'AVAILABLE' ? '#f0fdf4' :
                                 unit.status === 'OCCUPIED' ? '#fef2f2' : '#fffbeb',
@@ -1015,7 +1016,7 @@ export default function PropertyDrillDown() {
                             {safeUpper(unit.status)}
                           </span>
                         </td>
-                        <td style={{ ...tdStyle, fontWeight: 700, color: '#065f46' }}>
+                        <td style={{ ...tdStyle, fontWeight: 600, color: '#065f46' }}>
                           {Number(unit.price).toLocaleString()}
                         </td>
                       </tr>
@@ -1054,7 +1055,7 @@ export default function PropertyDrillDown() {
             }}>
               <Icon path={icons.building} size={26} />
             </div>
-            <div style={{ fontSize: 16, fontWeight: 800, color: '#0F172A', marginBottom: 6 }}>
+            <div style={{ fontSize: 16, fontWeight: 600, color: '#0F172A', marginBottom: 6 }}>
               Select a Property
             </div>
             <div style={{ fontSize: 13, color: '#64748B', maxWidth: 280, lineHeight: 1.5 }}>
@@ -1086,7 +1087,7 @@ export default function PropertyDrillDown() {
 
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 14 }}>
               <div>
-                <h2 style={{ fontSize: 20, fontWeight: 800, margin: 0, color: '#0F172A' }}>
+                <h2 style={{ fontSize: 20, fontWeight: 600, margin: 0, color: '#0F172A' }}>
                   Add New Property
                 </h2>
                 <div style={{ fontSize: 12.5, color: '#10B981', fontWeight: 600, marginTop: 3 }}>
@@ -1110,7 +1111,7 @@ export default function PropertyDrillDown() {
 
             <form onSubmit={handleCreateProperty} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
               <div>
-                <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: '#334155', marginBottom: 4 }}>
+                <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#334155', marginBottom: 4 }}>
                   Property / Building Name *
                 </label>
                 <input
@@ -1125,7 +1126,7 @@ export default function PropertyDrillDown() {
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
                 <div>
-                  <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: '#334155', marginBottom: 4 }}>
+                  <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#334155', marginBottom: 4 }}>
                     Type *
                   </label>
                   <select
@@ -1139,7 +1140,7 @@ export default function PropertyDrillDown() {
                   </select>
                 </div>
                 <div>
-                  <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: '#334155', marginBottom: 4 }}>
+                  <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#334155', marginBottom: 4 }}>
                     City *
                   </label>
                   <input
@@ -1154,7 +1155,7 @@ export default function PropertyDrillDown() {
               </div>
 
               <div>
-                <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: '#334155', marginBottom: 4 }}>
+                <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#334155', marginBottom: 4 }}>
                   Address / Location *
                 </label>
                 <input
@@ -1168,7 +1169,7 @@ export default function PropertyDrillDown() {
               </div>
 
               <div>
-                <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: '#334155', marginBottom: 4 }}>
+                <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#334155', marginBottom: 4 }}>
                   Description / Notes (Optional)
                 </label>
                 <textarea
@@ -1184,7 +1185,7 @@ export default function PropertyDrillDown() {
                 <button
                   type="button"
                   onClick={() => setShowAddPropertyModal(false)}
-                  style={{ borderRadius: 8, fontWeight: 700, fontSize: 13, padding: '9px 16px', backgroundColor: '#f1f5f9', color: '#64748B', border: '1px solid #E2E8F0', cursor: 'pointer' }}
+                  style={{ borderRadius: 8, fontWeight: 600, fontSize: 13, padding: '9px 16px', backgroundColor: '#f1f5f9', color: '#64748B', border: '1px solid #E2E8F0', cursor: 'pointer' }}
                 >
                   Cancel
                 </button>
@@ -1193,7 +1194,7 @@ export default function PropertyDrillDown() {
                   disabled={addPropertyBusy}
                   style={{
                     borderRadius: 8,
-                    fontWeight: 700,
+                    fontWeight: 600,
                     fontSize: 13,
                     padding: '9px 20px',
                     backgroundColor: '#10B981',
@@ -1233,7 +1234,7 @@ export default function PropertyDrillDown() {
 
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 14 }}>
               <div>
-                <h2 style={{ fontSize: 20, fontWeight: 800, margin: 0, color: '#0F172A' }}>
+                <h2 style={{ fontSize: 20, fontWeight: 600, margin: 0, color: '#0F172A' }}>
                   Add New Unit
                 </h2>
                 <div style={{ fontSize: 12.5, color: '#10B981', fontWeight: 600, marginTop: 3 }}>
@@ -1257,7 +1258,7 @@ export default function PropertyDrillDown() {
 
             <form onSubmit={handleCreateUnit} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
               <div>
-                <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: '#334155', marginBottom: 4 }}>
+                <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#334155', marginBottom: 4 }}>
                   Target Property *
                 </label>
                 <select
@@ -1274,7 +1275,7 @@ export default function PropertyDrillDown() {
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
                 <div>
-                  <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: '#334155', marginBottom: 4 }}>
+                  <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#334155', marginBottom: 4 }}>
                     Unit Number *
                   </label>
                   <input
@@ -1287,7 +1288,7 @@ export default function PropertyDrillDown() {
                   />
                 </div>
                 <div>
-                  <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: '#334155', marginBottom: 4 }}>
+                  <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#334155', marginBottom: 4 }}>
                     Floor *
                   </label>
                   <input
@@ -1303,7 +1304,7 @@ export default function PropertyDrillDown() {
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
                 <div>
-                  <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: '#334155', marginBottom: 4 }}>
+                  <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#334155', marginBottom: 4 }}>
                     Unit Type *
                   </label>
                   <select
@@ -1312,17 +1313,13 @@ export default function PropertyDrillDown() {
                     required
                     style={{ width: '100%', padding: '9px 12px', borderRadius: 8, border: '1px solid #CBD5E1', fontSize: 13, color: '#0F172A', outline: 'none', boxSizing: 'border-box', background: '#fff' }}
                   >
-                    <option value="apartment">Apartment</option>
-                    <option value="studio">Studio</option>
-                    <option value="villa">Villa</option>
-                    <option value="penthouse">Penthouse</option>
-                    <option value="office">Office</option>
-                    <option value="retail">Retail / Shop</option>
-                    <option value="warehouse">Warehouse</option>
+                    {UNIT_TYPE_OPTIONS.map((opt) => (
+                      <option key={opt.value} value={opt.value}>{opt.label}</option>
+                    ))}
                   </select>
                 </div>
                 <div>
-                  <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: '#334155', marginBottom: 4 }}>
+                  <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#334155', marginBottom: 4 }}>
                     Initial Status *
                   </label>
                   <select
@@ -1339,7 +1336,7 @@ export default function PropertyDrillDown() {
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
                 <div>
-                  <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: '#334155', marginBottom: 4 }}>
+                  <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#334155', marginBottom: 4 }}>
                     Size (Sq. Ft.) *
                   </label>
                   <input
@@ -1353,7 +1350,7 @@ export default function PropertyDrillDown() {
                   />
                 </div>
                 <div>
-                  <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: '#334155', marginBottom: 4 }}>
+                  <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#334155', marginBottom: 4 }}>
                     Annual Rent / Price (AED) *
                   </label>
                   <input
@@ -1370,7 +1367,7 @@ export default function PropertyDrillDown() {
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
                 <div>
-                  <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: '#334155', marginBottom: 4 }}>
+                  <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#334155', marginBottom: 4 }}>
                     DEWA Premise / Meter No.
                   </label>
                   <input
@@ -1382,7 +1379,7 @@ export default function PropertyDrillDown() {
                   />
                 </div>
                 <div>
-                  <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: '#334155', marginBottom: 4 }}>
+                  <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#334155', marginBottom: 4 }}>
                     Category
                   </label>
                   <input
@@ -1412,7 +1409,7 @@ export default function PropertyDrillDown() {
                 <button
                   type="button"
                   onClick={() => setShowAddUnitModal(false)}
-                  style={{ borderRadius: 8, fontWeight: 700, fontSize: 13, padding: '9px 16px', backgroundColor: '#f1f5f9', color: '#64748B', border: '1px solid #E2E8F0', cursor: 'pointer' }}
+                  style={{ borderRadius: 8, fontWeight: 600, fontSize: 13, padding: '9px 16px', backgroundColor: '#f1f5f9', color: '#64748B', border: '1px solid #E2E8F0', cursor: 'pointer' }}
                 >
                   Cancel
                 </button>
@@ -1421,7 +1418,7 @@ export default function PropertyDrillDown() {
                   disabled={addUnitBusy}
                   style={{
                     borderRadius: 8,
-                    fontWeight: 700,
+                    fontWeight: 600,
                     fontSize: 13,
                     padding: '9px 20px',
                     backgroundColor: '#10B981',

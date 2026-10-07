@@ -59,7 +59,7 @@ const inputStyle: React.CSSProperties = {
 
 const labelStyle: React.CSSProperties = {
   fontSize: 12.5,
-  fontWeight: 700,
+  fontWeight: 600,
   color: THEME.purple,
   letterSpacing: '0.4px',
   textTransform: 'uppercase',
@@ -81,7 +81,7 @@ const statusStyle = (status: string): React.CSSProperties => {
     padding: '3px 10px',
     borderRadius: 8,
     fontSize: 12,
-    fontWeight: 700,
+    fontWeight: 600,
     letterSpacing: '0.3px',
     textTransform: 'uppercase',
   }
@@ -97,7 +97,7 @@ const legalCaseBadgeStyle: React.CSSProperties = {
   padding: '3px 10px',
   borderRadius: 8,
   fontSize: 11,
-  fontWeight: 800,
+  fontWeight: 600,
   letterSpacing: '0.4px',
   textTransform: 'uppercase',
 }
@@ -265,13 +265,13 @@ export default function LegalCases() {
   }
 
   return (
-    <div className="gfh-portal-page" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
+    <div className="gfh-portal-page" style={{ fontFamily: "'Source Sans Pro', system-ui, sans-serif" }}>
       <style>{portalPageCss}</style>
 
       <div className="fade-in" style={heroStyle}>
         <CornerBrackets />
         <div>
-          <h1 style={{ fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", fontSize: 30, fontWeight: 700, color: THEME.ink, margin: 0 }}>
+          <h1 style={{ fontFamily: "'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", fontSize: 30, fontWeight: 600, color: THEME.ink, margin: 0 }}>
             Legal cases
           </h1>
           <p style={{ fontSize: 14, color: THEME.textMuted, marginTop: 8, marginBottom: 0 }}>
@@ -287,7 +287,7 @@ export default function LegalCases() {
       <div style={{ display: 'grid', gridTemplateColumns: 'minmax(280px, 1fr) minmax(360px, 1.4fr)', gap: 16 }}>
         <div className="fade-in" style={{ ...panelStyle, minHeight: 420 }}>
           <CornerBrackets />
-          <h2 style={{ fontSize: 16, fontWeight: 700, marginTop: 0, marginBottom: 14, color: THEME.ink }}>Cases</h2>
+          <h2 style={{ fontSize: 16, fontWeight: 600, marginTop: 0, marginBottom: 14, color: THEME.ink }}>Cases</h2>
           {isLoading ? (
             <div style={{ textAlign: 'center', padding: 40 }}><span className="spinner" /></div>
           ) : cases.length === 0 ? (
@@ -331,7 +331,7 @@ export default function LegalCases() {
 
           {!isLoading && flaggedContracts.length > 0 ? (
             <div style={{ borderTop: `1px solid ${THEME.border}`, marginTop: 18, paddingTop: 16 }}>
-              <h3 style={{ fontSize: 14, fontWeight: 800, margin: '0 0 10px', color: THEME.ink }}>Contracts on legal case</h3>
+              <h3 style={{ fontSize: 14, fontWeight: 600, margin: '0 0 10px', color: THEME.ink }}>Contracts on legal case</h3>
               <div style={{ display: 'grid', gap: 8 }}>
                 {flaggedContracts.map((contract) => (
                   <Link
@@ -369,7 +369,7 @@ export default function LegalCases() {
             <div>
               <div style={{ display: 'flex', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap', marginBottom: 16 }}>
                 <div>
-                  <h2 style={{ fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", fontSize: 22, fontWeight: 700, margin: 0, color: THEME.purple }}>
+                  <h2 style={{ fontFamily: "'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", fontSize: 22, fontWeight: 600, margin: 0, color: THEME.purple }}>
                     CASE-{String(detail.id).padStart(4, '0')}
                   </h2>
                   <p style={{ fontSize: 13, color: THEME.textMuted, marginTop: 6 }}>
@@ -437,7 +437,7 @@ export default function LegalCases() {
               </div>
 
               <div style={{ borderTop: `1px solid ${THEME.border}`, paddingTop: 14 }}>
-                <p style={{ fontSize: 13, fontWeight: 700, marginBottom: 8, color: THEME.ink }}>Related documents</p>
+                <p style={{ fontSize: 13, fontWeight: 600, marginBottom: 8, color: THEME.ink }}>Related documents</p>
                 {(detail.documents || []).length === 0 ? (
                   <p style={{ fontSize: 12, color: THEME.textMuted }}>No documents uploaded yet.</p>
                 ) : (
@@ -447,7 +447,7 @@ export default function LegalCases() {
                         {doc.file_name}{' '}
                         <button
                           type="button"
-                          style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '3px 9px', fontSize: 11, fontWeight: 700, marginLeft: 8, borderRadius: 8, background: '#991b1b', color: '#fff', border: 'none', cursor: 'pointer' }}
+                          style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '3px 9px', fontSize: 11, fontWeight: 600, marginLeft: 8, borderRadius: 8, background: '#991b1b', color: '#fff', border: 'none', cursor: 'pointer' }}
                           onClick={() => deleteDoc(doc.id)}
                         >
                           <Icon path={ICONS.trash} size={12} />
@@ -484,7 +484,7 @@ export default function LegalCases() {
             }}
           >
             <CornerBrackets />
-            <h2 style={{ fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", fontSize: 22, fontWeight: 700, marginBottom: 16, color: THEME.purple }}>
+            <h2 style={{ fontFamily: "'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", fontSize: 22, fontWeight: 600, marginBottom: 16, color: THEME.purple }}>
               New legal case
             </h2>
             <form onSubmit={createCase} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
@@ -543,7 +543,7 @@ export default function LegalCases() {
                 <button
                   type="button"
                   onClick={() => setIsCreateOpen(false)}
-                  style={{ borderRadius: 8, fontWeight: 700, fontSize: 13, padding: '9px 16px', background: '#f1f5f9', color: THEME.textMuted, border: `1px solid ${THEME.border}`, cursor: 'pointer' }}
+                  style={{ borderRadius: 8, fontWeight: 600, fontSize: 13, padding: '9px 16px', background: '#f1f5f9', color: THEME.textMuted, border: `1px solid ${THEME.border}`, cursor: 'pointer' }}
                 >
                   Cancel
                 </button>

@@ -95,6 +95,17 @@ export interface Property {
 // ─── Unit ─────────────────────────────────────────────────────────────────────
 export type UnitStatus = 'AVAILABLE' | 'BOOKED' | 'OCCUPIED' | 'SOLD'
 
+export interface UnitImage {
+  id: number
+  unit_id?: number
+  file_name?: string | null
+  file_path?: string | null
+  url?: string | null
+  path?: string | null
+  image_url?: string | null
+  created_at?: string
+}
+
 export interface Unit {
   id: number
   property_id: number
@@ -108,6 +119,7 @@ export interface Unit {
   furnished?: boolean
   status: UnitStatus
   price: number
+  images?: UnitImage[]
   property?: Property
   current_tenant?: Tenant
   created_at: string

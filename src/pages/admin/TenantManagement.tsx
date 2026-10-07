@@ -38,7 +38,7 @@ interface Props {
 const inactiveStatuses = new Set(['expired', 'terminated', 'vacated', 'settled', 'completed', 'cancelled'])
 
 const inputStyle: React.CSSProperties = { width: '100%', boxSizing: 'border-box', padding: '10px 12px', border: '1px solid #CBD5E1', borderRadius: 8, color: '#0F172A', background: '#FFFFFF', fontSize: 13.5, outline: 'none' }
-const labelStyle: React.CSSProperties = { display: 'block', marginBottom: 6, color: '#334155', fontSize: 11.5, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.35px' }
+const labelStyle: React.CSSProperties = { display: 'block', marginBottom: 6, color: '#334155', fontSize: 11.5, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.35px' }
 
 export default function TenantManagement({ mode = 'list' }: Props) {
   const navigate = useNavigate()
@@ -178,8 +178,8 @@ export default function TenantManagement({ mode = 'list' }: Props) {
       <div className="gfh-portal-page">
         <style>{portalPageCss}</style>
         <div className="fade-in" style={heroStyle}>
-          <div><h1 style={{ margin: 0, color: THEME.ink, fontSize: 24, fontWeight: 800 }}>Add Tenant</h1><p style={{ margin: '6px 0 0', color: THEME.textMuted, fontSize: 13 }}>Create a tenant record scoped to the property owner</p></div>
-          <button type="button" onClick={() => navigate(`${basePath}/tenants`)} style={{ padding: '10px 15px', border: '1px solid #A7F3DC', background: '#ECFDF8', color: '#065F46', cursor: 'pointer', fontWeight: 700 }}>← Tenant List</button>
+          <div><h1 style={{ margin: 0, color: THEME.ink, fontSize: 24, fontWeight: 600 }}>Add Tenant</h1><p style={{ margin: '6px 0 0', color: THEME.textMuted, fontSize: 13 }}>Create a tenant record scoped to the property owner</p></div>
+          <button type="button" onClick={() => navigate(`${basePath}/tenants`)} style={{ padding: '10px 15px', border: '1px solid #A7F3DC', background: '#ECFDF8', color: '#065F46', cursor: 'pointer', fontWeight: 600 }}>← Tenant List</button>
         </div>
         <div className="fade-in" style={{ ...panelStyle, width: '100%', minHeight: 0 }}>
           {error && <div role="alert" style={{ marginBottom: 16, padding: 11, border: '1px solid #FECACA', borderRadius: 8, background: '#FEF2F2', color: '#991B1B', fontWeight: 600 }}>{error}</div>}
@@ -204,8 +204,8 @@ export default function TenantManagement({ mode = 'list' }: Props) {
             {tenantFields.map(field => <div key={field.key}><label style={labelStyle} htmlFor={`tenant-${field.key}`}>{field.label}{field.required ? ' *' : ''}</label><input id={`tenant-${field.key}`} type={field.key === 'email' ? 'email' : 'text'} required={field.required} style={inputStyle} value={formData[field.key]} onChange={event => setFormData({ ...formData, [field.key]: event.target.value })} /></div>)}
             <div style={{ gridColumn: '1 / -1' }}><label style={labelStyle} htmlFor="tenant-address">Address</label><textarea id="tenant-address" style={{ ...inputStyle, minHeight: 80, resize: 'vertical' }} value={formData.address} onChange={event => setFormData({ ...formData, address: event.target.value })} /></div>
             <div style={{ gridColumn: '1 / -1', display: 'flex', justifyContent: 'flex-end', gap: 10 }}>
-              <button type="button" onClick={() => navigate(`${basePath}/tenants`)} style={{ padding: '10px 18px', border: '1px solid #CBD5E1', background: '#FFFFFF', color: '#475569', cursor: 'pointer', fontWeight: 700 }}>Cancel</button>
-              <button type="submit" disabled={isSaving} style={{ display: 'inline-flex', alignItems: 'center', gap: 7, padding: '10px 20px', border: 'none', background: '#10B981', color: '#FFFFFF', cursor: isSaving ? 'wait' : 'pointer', fontWeight: 700, opacity: isSaving ? 0.7 : 1 }}><Icon path={ICONS.plus} size={16} />{isSaving ? 'Saving…' : 'Save Tenant'}</button>
+              <button type="button" onClick={() => navigate(`${basePath}/tenants`)} style={{ padding: '10px 18px', border: '1px solid #CBD5E1', background: '#FFFFFF', color: '#475569', cursor: 'pointer', fontWeight: 600 }}>Cancel</button>
+              <button type="submit" disabled={isSaving} style={{ display: 'inline-flex', alignItems: 'center', gap: 7, padding: '10px 20px', border: 'none', background: '#10B981', color: '#FFFFFF', cursor: isSaving ? 'wait' : 'pointer', fontWeight: 600, opacity: isSaving ? 0.7 : 1 }}><Icon path={ICONS.plus} size={16} />{isSaving ? 'Saving…' : 'Save Tenant'}</button>
             </div>
           </form>
         </div>
@@ -221,8 +221,8 @@ export default function TenantManagement({ mode = 'list' }: Props) {
     <div className="gfh-portal-page">
       <style>{portalPageCss}</style>
       <div className="fade-in" style={heroStyle}>
-        <div><h1 style={{ margin: 0, color: THEME.ink, fontSize: 24, fontWeight: 800 }}>{mode === 'previous' ? 'Previous Tenants' : 'Tenant List'}</h1><p style={{ margin: '6px 0 0', color: THEME.textMuted, fontSize: 13 }}>{mode === 'previous' ? 'Tenants whose contracts ended or are no longer active' : 'View tenant records available for contracts'}</p></div>
-        <button type="button" onClick={() => navigate(`${basePath}/tenants/add`)} style={{ display: 'inline-flex', alignItems: 'center', gap: 7, padding: '10px 16px', border: 'none', background: '#10B981', color: '#FFFFFF', cursor: 'pointer', fontWeight: 700 }}><Icon path={ICONS.plus} size={16} />Add Tenant</button>
+        <div><h1 style={{ margin: 0, color: THEME.ink, fontSize: 24, fontWeight: 600 }}>{mode === 'previous' ? 'Previous Tenants' : 'Tenant List'}</h1><p style={{ margin: '6px 0 0', color: THEME.textMuted, fontSize: 13 }}>{mode === 'previous' ? 'Tenants whose contracts ended or are no longer active' : 'View tenant records available for contracts'}</p></div>
+        <button type="button" onClick={() => navigate(`${basePath}/tenants/add`)} style={{ display: 'inline-flex', alignItems: 'center', gap: 7, padding: '10px 16px', border: 'none', background: '#10B981', color: '#FFFFFF', cursor: 'pointer', fontWeight: 600 }}><Icon path={ICONS.plus} size={16} />Add Tenant</button>
       </div>
       <div className="fade-in" style={{ ...panelStyle, minHeight: 360 }}>
         <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 18 }}>
@@ -252,7 +252,7 @@ export default function TenantManagement({ mode = 'list' }: Props) {
                   const resolvedOwnerName = tenant.owner?.name || (tenant.owner_id ? ownerMap.get(Number(tenant.owner_id)) : '') || '—'
                   return (
                     <tr key={tenant.id} className="gfh-portal-row" style={{ borderBottom: `1px solid ${THEME.border}` }}>
-                      <td style={{ ...tdStyle, fontWeight: 700 }}>{tenant.name}</td>
+                      <td style={{ ...tdStyle, fontWeight: 600 }}>{tenant.name}</td>
                       {!isOwnerPortal && (
                         <td style={tdStyle}>
                           <span style={{ display: 'inline-block', padding: '3px 9px', borderRadius: 6, background: '#ECFDF5', color: '#065F46', border: '1px solid #A7F3D0', fontSize: 12, fontWeight: 600 }}>

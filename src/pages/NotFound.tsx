@@ -13,7 +13,7 @@ export default function NotFound() {
         alignItems: 'center',
         justifyContent: 'center',
         background: '#F6F8FA',
-        fontFamily: "'Inter', system-ui, sans-serif",
+        fontFamily: "'Source Sans Pro', system-ui, sans-serif",
         padding: 24,
       }}
     >
@@ -21,7 +21,7 @@ export default function NotFound() {
         .gfh-nf-btn {
           transition: all 0.2s ease;
           border-radius: 8px;
-          font-family: 'Inter', sans-serif;
+          font-family: 'Source Sans Pro', sans-serif;
           cursor: pointer;
           box-shadow: 0 4px 14px rgba(16, 185, 129, 0.25);
         }
@@ -52,9 +52,9 @@ export default function NotFound() {
 
         <div
           style={{
-            fontFamily: "'Inter', sans-serif",
+            fontFamily: "'Source Sans Pro', sans-serif",
             fontSize: 72,
-            fontWeight: 900,
+            fontWeight: 600,
             background: 'linear-gradient(135deg, #059669 0%, #10B981 100%)',
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
@@ -69,9 +69,9 @@ export default function NotFound() {
 
         <h1
           style={{
-            fontFamily: "'Inter', sans-serif",
+            fontFamily: "'Source Sans Pro', sans-serif",
             fontSize: 22,
-            fontWeight: 800,
+            fontWeight: 600,
             color: '#0F172A',
             margin: '0 0 10px',
             letterSpacing: '-0.01em',
@@ -92,7 +92,7 @@ export default function NotFound() {
             gap: 8,
             borderRadius: 8,
             fontSize: 13,
-            fontWeight: 700,
+            fontWeight: 600,
             padding: '12px 26px',
             background: '#10B981',
             color: '#FFFFFF',

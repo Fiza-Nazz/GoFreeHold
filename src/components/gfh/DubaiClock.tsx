@@ -1,4 +1,4 @@
-﻿import { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 
 export default function DubaiClock() {
   const [timeData, setTimeData] = useState(() => getDubaiTime())
@@ -31,7 +31,7 @@ export default function DubaiClock() {
         fontSize: 12.5,
         fontWeight: 600,
         color: '#065F46',
-        fontFamily: "'Inter', system-ui, sans-serif",
+        fontFamily: "'Source Sans Pro', system-ui, sans-serif",
         boxShadow: '0 1px 2px rgba(16, 185, 129, 0.06)',
       }}
       title="Real-time Dubai Local Time (GST / UTC+4)"
@@ -50,7 +50,7 @@ export default function DubaiClock() {
         {timeData.weekday}, {timeData.date}
       </span>
       <span style={{ color: '#A7F3DC' }}>|</span>
-      <span style={{ color: '#065F46', fontWeight: 700, letterSpacing: '0.2px' }}>
+      <span style={{ color: '#065F46', fontWeight: 600, letterSpacing: '0.2px' }}>
         {timeData.time} <span style={{ fontSize: 10, color: '#059669', textTransform: 'uppercase' }}>GST</span>
       </span>
     </div>

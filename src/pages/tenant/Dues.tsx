@@ -67,17 +67,17 @@ export default function TenantDues() {
   }, [entries, searchQuery])
 
   return (
-    <div className="gfh-portal-page" style={{ fontFamily: "'Inter', system-ui, sans-serif", background: THEME.pageBg, minHeight: '100%' }}>
+    <div className="gfh-portal-page" style={{ fontFamily: "'Source Sans Pro', system-ui, sans-serif", background: THEME.pageBg, minHeight: '100%' }}>
       <style>{portalPageCss}</style>
 
       {/* Hero Header */}
       <div className="fade-in" style={heroStyle}>
         <div>
-          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 12, fontWeight: 700, letterSpacing: '0.6px', textTransform: 'uppercase', color: '#10B981', marginBottom: 2 }}>
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 12, fontWeight: 600, letterSpacing: '0.6px', textTransform: 'uppercase', color: '#10B981', marginBottom: 2 }}>
             <span style={{ width: 7, height: 7, borderRadius: '50%', background: '#10B981', display: 'inline-block' }} />
             Financial Statement
           </div>
-          <div style={{ fontSize: 24, fontWeight: 800, color: THEME.ink, letterSpacing: '-0.02em', marginTop: 2 }}>
+          <div style={{ fontSize: 24, fontWeight: 600, color: THEME.ink, letterSpacing: '-0.02em', marginTop: 2 }}>
             Rent &amp; DEWA Ledger
           </div>
           <div style={{ fontSize: 13, color: THEME.textMuted, marginTop: 4 }}>
@@ -157,7 +157,7 @@ export default function TenantDues() {
                 </div>
                 <span style={{
                   fontSize: 11,
-                  fontWeight: 700,
+                  fontWeight: 600,
                   letterSpacing: '0.4px',
                   textTransform: 'uppercase',
                   background: card.badgeBg,
@@ -170,7 +170,7 @@ export default function TenantDues() {
                 </span>
               </div>
               <div>
-                <div style={{ fontSize: 24, fontWeight: 800, color: '#0F172A', lineHeight: 1.15, letterSpacing: '-0.02em' }}>
+                <div style={{ fontSize: 24, fontWeight: 600, color: '#0F172A', lineHeight: 1.15, letterSpacing: '-0.02em' }}>
                   {card.value}
                 </div>
                 <div style={{ fontSize: 13, fontWeight: 600, color: '#64748B', marginTop: 4 }}>
@@ -209,7 +209,7 @@ export default function TenantDues() {
       <div className="fade-in" style={{ ...panelStyle, minHeight: 280, borderRadius: 16 }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16, flexWrap: 'wrap', gap: 12 }}>
           <div>
-            <h3 style={{ fontSize: 17, fontWeight: 800, color: THEME.ink, margin: 0 }}>
+            <h3 style={{ fontSize: 17, fontWeight: 600, color: THEME.ink, margin: 0 }}>
               Transaction History
             </h3>
             <div style={{ fontSize: 12, color: '#64748B', marginTop: 2 }}>
@@ -250,7 +250,7 @@ export default function TenantDues() {
             <div style={{ width: 48, height: 48, borderRadius: '50%', background: '#F8FAFC', color: '#94A3B8', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 12px' }}>
               <Icon path={icons.receipt} size={22} />
             </div>
-            <p style={{ fontSize: 14, fontWeight: 700, color: THEME.ink, margin: 0 }}>
+            <p style={{ fontSize: 14, fontWeight: 600, color: THEME.ink, margin: 0 }}>
               {searchQuery ? 'No transactions match your search.' : 'No ledger transactions recorded yet.'}
             </p>
             <p style={{ fontSize: 12.5, color: THEME.textMuted, marginTop: 4 }}>
@@ -287,7 +287,7 @@ export default function TenantDues() {
                             padding: '3px 10px',
                             borderRadius: 999,
                             fontSize: 11,
-                            fontWeight: 800,
+                            fontWeight: 600,
                             textTransform: 'uppercase',
                             background: isDebit ? '#FEF2F2' : '#ECFDF8',
                             color: isDebit ? '#991B1B' : '#065F46',
@@ -297,10 +297,10 @@ export default function TenantDues() {
                           {isDebit ? 'Charge' : 'Payment'}
                         </span>
                       </td>
-                      <td style={{ ...tdStyle, textAlign: 'right', fontWeight: 700, color: isDebit ? '#DC2626' : '#94A3B8' }}>
+                      <td style={{ ...tdStyle, textAlign: 'right', fontWeight: 600, color: isDebit ? '#DC2626' : '#94A3B8' }}>
                         {isDebit ? `AED ${Number(e.debit).toLocaleString(undefined, { minimumFractionDigits: 2 })}` : '—'}
                       </td>
-                      <td style={{ ...tdStyle, textAlign: 'right', fontWeight: 700, color: !isDebit && Number(e.credit) > 0 ? '#059669' : '#94A3B8' }}>
+                      <td style={{ ...tdStyle, textAlign: 'right', fontWeight: 600, color: !isDebit && Number(e.credit) > 0 ? '#059669' : '#94A3B8' }}>
                         {!isDebit && Number(e.credit) > 0 ? `AED ${Number(e.credit).toLocaleString(undefined, { minimumFractionDigits: 2 })}` : '—'}
                       </td>
                     </tr>

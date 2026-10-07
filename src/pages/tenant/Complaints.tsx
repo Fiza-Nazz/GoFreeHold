@@ -128,17 +128,17 @@ export default function TenantComplaints() {
   ]
 
   return (
-    <div className="gfh-portal-page" style={{ fontFamily: "'Inter', system-ui, sans-serif", background: THEME.pageBg, minHeight: '100%' }}>
+    <div className="gfh-portal-page" style={{ fontFamily: "'Source Sans Pro', system-ui, sans-serif", background: THEME.pageBg, minHeight: '100%' }}>
       <style>{portalPageCss}</style>
 
       {/* Hero Header */}
       <div className="fade-in" style={heroStyle}>
         <div>
-          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 12, fontWeight: 700, letterSpacing: '0.6px', textTransform: 'uppercase', color: '#10B981', marginBottom: 2 }}>
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 12, fontWeight: 600, letterSpacing: '0.6px', textTransform: 'uppercase', color: '#10B981', marginBottom: 2 }}>
             <span style={{ width: 7, height: 7, borderRadius: '50%', background: '#10B981', display: 'inline-block' }} />
             Resident Support
           </div>
-          <div style={{ fontSize: 24, fontWeight: 800, color: THEME.ink, letterSpacing: '-0.02em', marginTop: 2 }}>
+          <div style={{ fontSize: 24, fontWeight: 600, color: THEME.ink, letterSpacing: '-0.02em', marginTop: 2 }}>
             Maintenance Requests &amp; Tickets
           </div>
           <div style={{ fontSize: 13, color: THEME.textMuted, marginTop: 4 }}>
@@ -158,7 +158,7 @@ export default function TenantComplaints() {
             color: '#FFFFFF',
             borderRadius: 10,
             fontSize: 13,
-            fontWeight: 700,
+            fontWeight: 600,
             textDecoration: 'none',
             boxShadow: '0 2px 6px rgba(14, 94, 72, 0.25)',
           }}
@@ -210,7 +210,7 @@ export default function TenantComplaints() {
                 </div>
                 <span style={{
                   fontSize: 11,
-                  fontWeight: 700,
+                  fontWeight: 600,
                   letterSpacing: '0.4px',
                   textTransform: 'uppercase',
                   background: card.badgeBg,
@@ -223,7 +223,7 @@ export default function TenantComplaints() {
                 </span>
               </div>
               <div>
-                <div style={{ fontSize: 28, fontWeight: 800, color: '#0F172A', lineHeight: 1.15, letterSpacing: '-0.02em' }}>
+                <div style={{ fontSize: 28, fontWeight: 600, color: '#0F172A', lineHeight: 1.15, letterSpacing: '-0.02em' }}>
                   {isLoading ? '—' : card.value}
                 </div>
                 <div style={{ fontSize: 13.5, fontWeight: 600, color: isSelected ? '#10B981' : '#64748B', marginTop: 4 }}>
@@ -273,7 +273,7 @@ export default function TenantComplaints() {
                   padding: '8px 14px',
                   borderRadius: 8,
                   fontSize: 13,
-                  fontWeight: 700,
+                  fontWeight: 600,
                   border: isActive ? '1px solid #10B981' : '1px solid #E2E8F0',
                   background: isActive ? '#10B981' : '#FFFFFF',
                   color: isActive ? '#FFFFFF' : '#475569',
@@ -288,7 +288,7 @@ export default function TenantComplaints() {
                 <span
                   style={{
                     fontSize: 11,
-                    fontWeight: 800,
+                    fontWeight: 600,
                     padding: '2px 7px',
                     borderRadius: 999,
                     background: isActive ? 'rgba(255,255,255,0.22)' : '#F1F5F9',
@@ -329,7 +329,7 @@ export default function TenantComplaints() {
       {/* Main Complaints List Panel */}
       <div className="fade-in" style={{ ...panelStyle, minHeight: 280, borderRadius: 16 }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
-          <h3 style={{ fontSize: 17, fontWeight: 800, color: THEME.ink, margin: 0 }}>
+          <h3 style={{ fontSize: 17, fontWeight: 600, color: THEME.ink, margin: 0 }}>
             Maintenance Tickets
           </h3>
           <div style={{ fontSize: 12, color: '#64748B' }}>
@@ -344,7 +344,7 @@ export default function TenantComplaints() {
             <div style={{ width: 48, height: 48, borderRadius: '50%', background: '#F8FAFC', color: '#94A3B8', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 12px' }}>
               <Icon path={icons.wrench} size={22} />
             </div>
-            <p style={{ fontSize: 14, fontWeight: 700, color: THEME.ink, margin: 0 }}>
+            <p style={{ fontSize: 14, fontWeight: 600, color: THEME.ink, margin: 0 }}>
               {searchQuery || statusFilter !== 'all'
                 ? 'No maintenance complaints match the current filter.'
                 : 'No maintenance complaints submitted yet.'}
@@ -364,7 +364,7 @@ export default function TenantComplaints() {
                   color: '#fff',
                   border: 'none',
                   fontSize: 12.5,
-                  fontWeight: 700,
+                  fontWeight: 600,
                   cursor: 'pointer',
                 }}
               >
@@ -392,13 +392,13 @@ export default function TenantComplaints() {
 
                   return (
                     <tr key={item.id} className="gfh-portal-row" style={{ borderBottom: `1px solid ${THEME.border}` }}>
-                      <td style={{ ...tdStyle, fontWeight: 800 }}>
+                      <td style={{ ...tdStyle, fontWeight: 600 }}>
                         <span style={{ background: '#F1F5F9', color: '#0F172A', padding: '3px 8px', borderRadius: 6, fontSize: 12 }}>
                           #TKT-{String(item.id).padStart(4, '0')}
                         </span>
                       </td>
                       <td style={tdStyle}>
-                        <div style={{ fontWeight: 700, color: THEME.ink, fontSize: 14 }}>{item.title}</div>
+                        <div style={{ fontWeight: 600, color: THEME.ink, fontSize: 14 }}>{item.title}</div>
                         {item.description && (
                           <div style={{ fontSize: 12.5, color: '#64748B', marginTop: 3, maxWidth: 380, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                             {item.description}
@@ -407,7 +407,7 @@ export default function TenantComplaints() {
                       </td>
                       <td style={tdStyle}>
                         {item.priority ? (
-                          <span style={{ background: pr.bg, color: pr.color, border: `1px solid ${pr.border}`, padding: '3px 10px', borderRadius: 999, fontSize: 11, fontWeight: 700, textTransform: 'uppercase' }}>
+                          <span style={{ background: pr.bg, color: pr.color, border: `1px solid ${pr.border}`, padding: '3px 10px', borderRadius: 999, fontSize: 11, fontWeight: 600, textTransform: 'uppercase' }}>
                             {safeUpper(item.priority)}
                           </span>
                         ) : (
@@ -415,7 +415,7 @@ export default function TenantComplaints() {
                         )}
                       </td>
                       <td style={tdStyle}>
-                        <span style={{ background: st.bg, color: st.color, border: `1px solid ${st.border}`, padding: '3px 10px', borderRadius: 999, fontSize: 11, fontWeight: 800, textTransform: 'uppercase' }}>
+                        <span style={{ background: st.bg, color: st.color, border: `1px solid ${st.border}`, padding: '3px 10px', borderRadius: 999, fontSize: 11, fontWeight: 600, textTransform: 'uppercase' }}>
                           {safeUpperLabel(item.status)}
                         </span>
                       </td>
@@ -435,7 +435,7 @@ export default function TenantComplaints() {
                             color: '#0284C7',
                             border: '1px solid #BAE6FD',
                             fontSize: 12,
-                            fontWeight: 700,
+                            fontWeight: 600,
                             textDecoration: 'none',
                           }}
                         >

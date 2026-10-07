@@ -91,7 +91,7 @@ const Circle = ({ checked }: { checked: boolean }) => (
     display:'inline-block', width:13, height:13,
     border:`1.5px solid ${checked?NAVY:'#555'}`,
     borderRadius:'50%', textAlign:'center', lineHeight:'11px',
-    fontSize:9, fontWeight:900, color:checked?NAVY:'transparent',
+    fontSize:9, fontWeight: 600, color:checked?NAVY:'transparent',
     verticalAlign:'middle',
   }}>
     {checked ? '⊗' : ''}
@@ -105,7 +105,7 @@ const FR = ({ en, val, ar }: { en:string; val:string; ar:string }) => (
       paddingBottom:3, paddingTop:3, width:100 }}>
       {en}
     </td>
-    <td style={{ fontFamily:ENFNT, fontSize:9, fontWeight:700, color:'#000',
+    <td style={{ fontFamily:ENFNT, fontSize:9, fontWeight: 600, color:'#000',
       borderBottom:'1px dashed #bbb', padding:'1px 5px 2px 5px' }}>
       {val}
     </td>
@@ -124,11 +124,11 @@ const FR2 = ({en1,val1,ar1,en2,val2,ar2}:{
 }) => (
   <tr>
     <td style={{fontFamily:ENFNT,fontSize:8,color:'#666',whiteSpace:'nowrap',paddingTop:3,paddingBottom:3,width:100}}>{en1}</td>
-    <td style={{fontFamily:ENFNT,fontSize:9,fontWeight:700,color:'#000',borderBottom:'1px dashed #bbb',padding:'1px 4px 2px 4px',width:120}}>{val1}</td>
+    <td style={{fontFamily:ENFNT,fontSize:9,fontWeight: 600,color:'#000',borderBottom:'1px dashed #bbb',padding:'1px 4px 2px 4px',width:120}}>{val1}</td>
     <td style={{fontFamily:ARFNT,fontSize:10,color:'#666',textAlign:'right',direction:'rtl',unicodeBidi:'embed',whiteSpace:'nowrap',paddingLeft:6,width:120}}>{ar1}</td>
     <td style={{width:8}}/>
     <td style={{fontFamily:ENFNT,fontSize:8,color:'#666',whiteSpace:'nowrap',paddingLeft:6,width:85}}>{en2}</td>
-    <td style={{fontFamily:ENFNT,fontSize:9,fontWeight:700,color:'#000',borderBottom:'1px dashed #bbb',padding:'1px 4px 2px 4px'}}>{val2}</td>
+    <td style={{fontFamily:ENFNT,fontSize:9,fontWeight: 600,color:'#000',borderBottom:'1px dashed #bbb',padding:'1px 4px 2px 4px'}}>{val2}</td>
     <td style={{fontFamily:ARFNT,fontSize:10,color:'#666',textAlign:'right',direction:'rtl',unicodeBidi:'embed',whiteSpace:'nowrap',paddingLeft:6,width:110}}>{ar2}</td>
   </tr>
 )
@@ -139,8 +139,8 @@ const SecBar = ({ en, ar }: { en:string; ar:string }) => (
     <td colSpan={99}>
       <div style={{ background:NAVY, display:'flex', justifyContent:'space-between',
         alignItems:'center', padding:'5px 10px', marginTop:8, marginBottom:2 }}>
-        <span style={{ fontFamily:ENFNT, fontSize:8.5, fontWeight:700, color:'#fff' }}>{en}</span>
-        <span style={{ fontFamily:ARFNT, fontSize:12, fontWeight:700, color:'#fff',
+        <span style={{ fontFamily:ENFNT, fontSize:8.5, fontWeight: 600, color:'#fff' }}>{en}</span>
+        <span style={{ fontFamily:ARFNT, fontSize:12, fontWeight: 600, color:'#fff',
           direction:'rtl', unicodeBidi:'embed' }}>{ar}</span>
       </div>
     </td>
@@ -152,7 +152,7 @@ const Clause = ({ n, en, ar }: { n:number|string; en:string; ar:string }) => (
   <tr style={{ borderBottom:'1px solid #eef2f7' }}>
     <td style={{ width:18, verticalAlign:'top', paddingTop:4 }}>
       <div style={{ width:14,height:14,border:'1px solid #aaa',borderRadius:'50%',
-        textAlign:'center',lineHeight:'12px',fontSize:7,color:'#555',fontWeight:700 }}>{n}</div>
+        textAlign:'center',lineHeight:'12px',fontSize:7,color:'#555',fontWeight: 600 }}>{n}</div>
     </td>
     <td style={{ width:'47%', fontFamily:ENFNT, fontSize:7.5, lineHeight:1.4,
       color:'#111', padding:'3px 5px', verticalAlign:'top' }}>{en}</td>
@@ -161,7 +161,7 @@ const Clause = ({ n, en, ar }: { n:number|string; en:string; ar:string }) => (
       direction:'rtl', unicodeBidi:'embed' }}>{ar}</td>
     <td style={{ width:18, verticalAlign:'top', paddingTop:4 }}>
       <div style={{ width:14,height:14,border:'1px solid #aaa',borderRadius:'50%',
-        textAlign:'center',lineHeight:'12px',fontSize:7,color:'#555',fontWeight:700 }}>{n}</div>
+        textAlign:'center',lineHeight:'12px',fontSize:7,color:'#555',fontWeight: 600 }}>{n}</div>
     </td>
   </tr>
 )
@@ -173,9 +173,9 @@ const Sigs = () => (
       <tr>
         {[['إمضاء المستأجر','Tenant Signature'],['إمضاء المؤجر','Landlord Signature']].map(([ar,en])=>(
           <td key={en} style={{ width:'50%', textAlign:'center', padding:'0 16px' }}>
-            <div style={{ fontFamily:ARFNT, fontSize:11, fontWeight:700, color:NAVY,
+            <div style={{ fontFamily:ARFNT, fontSize:11, fontWeight: 600, color:NAVY,
               direction:'rtl', unicodeBidi:'embed' }}>{ar}</div>
-            <div style={{ fontFamily:ENFNT, fontSize:8, fontWeight:700, color:NAVY }}>{en}</div>
+            <div style={{ fontFamily:ENFNT, fontSize:8, fontWeight: 600, color:NAVY }}>{en}</div>
             <div style={{ borderBottom:'1px dashed #777', marginTop:22 }}/>
             <div style={{ fontFamily:ENFNT, fontSize:7, color:'#777', marginTop:3 }}>
               Date: ................. &nbsp;
@@ -228,13 +228,13 @@ const LandLogo = ({ size=56 }: { size?: number }) => (
 const GovDubaiLogo = () => (
   <div>
     <div style={{
-      fontFamily: ARFNT, fontSize: 32, fontWeight: 700,
+      fontFamily: ARFNT, fontSize: 32, fontWeight: 600,
       color: RED, direction: 'rtl', unicodeBidi: 'embed',
       lineHeight: 1.1, letterSpacing: 2,
     }}>
       حكومة دبي
     </div>
-    <div style={{ fontFamily: ENFNT, fontSize: 7.5, fontWeight: 700,
+    <div style={{ fontFamily: ENFNT, fontSize: 7.5, fontWeight: 600,
       color: RED, letterSpacing: 0.8, marginTop: 2 }}>
       GOVERNMENT OF DUBAI
     </div>
@@ -321,11 +321,11 @@ export default function TenancyContractTemplate({ data, containerRef }: Props) {
 
           {/* Right: Land Department */}
           <div style={{ textAlign:'right', display:'flex', flexDirection:'column', alignItems:'flex-end', gap:2 }}>
-            <div style={{ fontFamily:ARFNT, fontSize:14, fontWeight:700, color:NAVY,
+            <div style={{ fontFamily:ARFNT, fontSize:14, fontWeight: 600, color:NAVY,
               direction:'rtl', unicodeBidi:'embed', letterSpacing:0.5 }}>
               دائرة الأراضي والأملاك
             </div>
-            <div style={{ fontFamily:ENFNT, fontSize:8.5, fontWeight:700, color:NAVY }}>
+            <div style={{ fontFamily:ENFNT, fontSize:8.5, fontWeight: 600, color:NAVY }}>
               Land Department
             </div>
             <LandLogo size={52}/>
@@ -342,18 +342,18 @@ export default function TenancyContractTemplate({ data, containerRef }: Props) {
             {/* Date */}
             <div style={{ display:'flex', alignItems:'center', gap:3, marginBottom:6 }}>
               <span style={{ fontFamily:ENFNT, fontSize:7.5, color:'#444', marginRight:3 }}>Date</span>
-              <span style={{ fontFamily:ENFNT, fontSize:9.5, fontWeight:700, borderBottom:'1.2px solid #333', minWidth:20, textAlign:'center', padding:'0 2px' }}>{dd}</span>
-              <span style={{ fontFamily:ENFNT, fontSize:9.5, fontWeight:700 }}>/</span>
-              <span style={{ fontFamily:ENFNT, fontSize:9.5, fontWeight:700, borderBottom:'1.2px solid #333', minWidth:20, textAlign:'center', padding:'0 2px' }}>{mm}</span>
-              <span style={{ fontFamily:ENFNT, fontSize:9.5, fontWeight:700 }}>/</span>
-              <span style={{ fontFamily:ENFNT, fontSize:9.5, fontWeight:700, borderBottom:'1.2px solid #333', minWidth:34, textAlign:'center', padding:'0 2px' }}>{yy}</span>
+              <span style={{ fontFamily:ENFNT, fontSize:9.5, fontWeight: 600, borderBottom:'1.2px solid #333', minWidth:20, textAlign:'center', padding:'0 2px' }}>{dd}</span>
+              <span style={{ fontFamily:ENFNT, fontSize:9.5, fontWeight: 600 }}>/</span>
+              <span style={{ fontFamily:ENFNT, fontSize:9.5, fontWeight: 600, borderBottom:'1.2px solid #333', minWidth:20, textAlign:'center', padding:'0 2px' }}>{mm}</span>
+              <span style={{ fontFamily:ENFNT, fontSize:9.5, fontWeight: 600 }}>/</span>
+              <span style={{ fontFamily:ENFNT, fontSize:9.5, fontWeight: 600, borderBottom:'1.2px solid #333', minWidth:34, textAlign:'center', padding:'0 2px' }}>{yy}</span>
               <span style={{ fontFamily:ARFNT, fontSize:10, color:NAVY, marginLeft:6,
                 direction:'rtl', unicodeBidi:'embed' }}>التاريخ</span>
             </div>
             {/* No */}
             <div style={{ display:'flex', alignItems:'center', gap:3 }}>
               <span style={{ fontFamily:ENFNT, fontSize:7.5, color:'#444', marginRight:3 }}>No.</span>
-              <span style={{ fontFamily:ENFNT, fontSize:9.5, fontWeight:700, borderBottom:'1.2px solid #333', minWidth:90, padding:'0 4px' }}>{cNo}</span>
+              <span style={{ fontFamily:ENFNT, fontSize:9.5, fontWeight: 600, borderBottom:'1.2px solid #333', minWidth:90, padding:'0 4px' }}>{cNo}</span>
               <span style={{ fontFamily:ARFNT, fontSize:10, color:NAVY, marginLeft:6,
                 direction:'rtl', unicodeBidi:'embed' }}>الرقم</span>
             </div>
@@ -361,11 +361,11 @@ export default function TenancyContractTemplate({ data, containerRef }: Props) {
 
           {/* Right: Title */}
           <div style={{ flex:1, textAlign:'center', padding:'6px 12px', display:'flex', flexDirection:'column', justifyContent:'center' }}>
-            <div style={{ fontFamily:ARFNT, fontSize:28, fontWeight:700, color:NAVY,
+            <div style={{ fontFamily:ARFNT, fontSize:28, fontWeight: 600, color:NAVY,
               letterSpacing:6, direction:'rtl', unicodeBidi:'embed', lineHeight:1.1 }}>
               عـقـد إيـجـار
             </div>
-            <div style={{ fontFamily:ENFNT, fontSize:13, fontWeight:700, color:NAVY, letterSpacing:3, marginTop:3 }}>
+            <div style={{ fontFamily:ENFNT, fontSize:13, fontWeight: 600, color:NAVY, letterSpacing:3, marginTop:3 }}>
               TENANCY CONTRACT
             </div>
           </div>
@@ -411,30 +411,30 @@ export default function TenancyContractTemplate({ data, containerRef }: Props) {
               {/* 3-column: Size | Type | No */}
               <tr>
                 <td style={{fontFamily:ENFNT,fontSize:8,color:'#666',whiteSpace:'nowrap',paddingTop:3,paddingBottom:3,width:100}}>Property Size (S.M)</td>
-                <td style={{fontFamily:ENFNT,fontSize:9,fontWeight:700,color:'#000',borderBottom:'1px dashed #bbb',padding:'1px 4px',width:55}}>{pSz}</td>
+                <td style={{fontFamily:ENFNT,fontSize:9,fontWeight: 600,color:'#000',borderBottom:'1px dashed #bbb',padding:'1px 4px',width:55}}>{pSz}</td>
                 <td style={{fontFamily:ARFNT,fontSize:9.5,color:'#666',textAlign:'right',direction:'rtl',unicodeBidi:'embed',paddingLeft:4,width:120}}>مساحة الوحدة (متر مربع)</td>
                 <td style={{fontFamily:ENFNT,fontSize:8,color:'#666',paddingLeft:6,whiteSpace:'nowrap',width:80}}>Property Type</td>
-                <td style={{fontFamily:ENFNT,fontSize:9,fontWeight:700,color:'#000',borderBottom:'1px dashed #bbb',padding:'1px 4px',width:65}}>{pTp}</td>
+                <td style={{fontFamily:ENFNT,fontSize:9,fontWeight: 600,color:'#000',borderBottom:'1px dashed #bbb',padding:'1px 4px',width:65}}>{pTp}</td>
                 <td style={{fontFamily:ARFNT,fontSize:9.5,color:'#666',textAlign:'right',direction:'rtl',unicodeBidi:'embed',paddingLeft:4,width:70}}>نوع الوحدة</td>
                 <td style={{fontFamily:ENFNT,fontSize:8,color:'#666',paddingLeft:6,whiteSpace:'nowrap',width:70}}>Property No.</td>
-                <td style={{fontFamily:ENFNT,fontSize:9,fontWeight:700,color:'#000',borderBottom:'1px dashed #bbb',padding:'1px 4px'}}>{pNo}</td>
+                <td style={{fontFamily:ENFNT,fontSize:9,fontWeight: 600,color:'#000',borderBottom:'1px dashed #bbb',padding:'1px 4px'}}>{pNo}</td>
                 <td style={{fontFamily:ARFNT,fontSize:9.5,color:'#666',textAlign:'right',direction:'rtl',unicodeBidi:'embed',paddingLeft:4,width:65}}>رقم الوحدة</td>
               </tr>
 
               {/* DEWA / Plot */}
               <tr>
                 <td style={{fontFamily:ENFNT,fontSize:8,color:'#666',whiteSpace:'nowrap',paddingTop:3,paddingBottom:3}}>Premises No (DEWA)</td>
-                <td colSpan={2} style={{fontFamily:ENFNT,fontSize:9,fontWeight:700,color:'#000',borderBottom:'1px dashed #bbb',padding:'1px 4px'}}>{dewa}</td>
+                <td colSpan={2} style={{fontFamily:ENFNT,fontSize:9,fontWeight: 600,color:'#000',borderBottom:'1px dashed #bbb',padding:'1px 4px'}}>{dewa}</td>
                 <td style={{fontFamily:ARFNT,fontSize:9.5,color:'#666',textAlign:'right',direction:'rtl',unicodeBidi:'embed',paddingLeft:4}}>رقم العقار (ديوا)</td>
                 <td style={{fontFamily:ENFNT,fontSize:8,color:'#666',paddingLeft:6,whiteSpace:'nowrap'}}>Plot No.</td>
-                <td colSpan={2} style={{fontFamily:ENFNT,fontSize:9,fontWeight:700,color:'#000',borderBottom:'1px dashed #bbb',padding:'1px 4px'}}>{plot}</td>
+                <td colSpan={2} style={{fontFamily:ENFNT,fontSize:9,fontWeight: 600,color:'#000',borderBottom:'1px dashed #bbb',padding:'1px 4px'}}>{plot}</td>
                 <td colSpan={2} style={{fontFamily:ARFNT,fontSize:9.5,color:'#666',textAlign:'right',direction:'rtl',unicodeBidi:'embed',paddingLeft:4}}>رقم الأرض</td>
               </tr>
 
               {/* Contract Period */}
               <tr>
                 <td style={{fontFamily:ENFNT,fontSize:8,color:'#666',whiteSpace:'nowrap',paddingTop:3,paddingBottom:3}}>Contract Period</td>
-                <td colSpan={7} style={{fontFamily:ENFNT,fontSize:9,fontWeight:700,borderBottom:'1px dashed #bbb',padding:'1px 6px'}}>
+                <td colSpan={7} style={{fontFamily:ENFNT,fontSize:9,fontWeight: 600,borderBottom:'1px dashed #bbb',padding:'1px 6px'}}>
                   To &nbsp;<strong>{pTo}</strong>
                   &nbsp;&nbsp;&nbsp;&nbsp;
                   <span style={{fontFamily:ARFNT,fontSize:10,direction:'rtl',unicodeBidi:'embed'}}>إلى</span>
@@ -449,7 +449,7 @@ export default function TenancyContractTemplate({ data, containerRef }: Props) {
               {/* Annual Rent */}
               <tr>
                 <td style={{fontFamily:ENFNT,fontSize:8,color:'#666',whiteSpace:'nowrap',paddingTop:3,paddingBottom:3}}>Annual Rent</td>
-                <td colSpan={7} style={{fontFamily:ENFNT,fontSize:9,fontWeight:700,borderBottom:'1px dashed #bbb',padding:'1px 6px'}}>
+                <td colSpan={7} style={{fontFamily:ENFNT,fontSize:9,fontWeight: 600,borderBottom:'1px dashed #bbb',padding:'1px 6px'}}>
                   <strong>{fmtNum(rentAmt)}</strong>&nbsp;&nbsp;({rentW})
                 </td>
                 <td style={{fontFamily:ARFNT,fontSize:10,color:'#666',textAlign:'right',direction:'rtl',unicodeBidi:'embed',whiteSpace:'nowrap',paddingLeft:4}}>الإيجار السنوي</td>
@@ -458,7 +458,7 @@ export default function TenancyContractTemplate({ data, containerRef }: Props) {
               {/* Contract Value */}
               <tr>
                 <td style={{fontFamily:ENFNT,fontSize:8,color:'#666',whiteSpace:'nowrap',paddingTop:3,paddingBottom:3}}>Contract Value</td>
-                <td colSpan={7} style={{fontFamily:ENFNT,fontSize:9,fontWeight:700,borderBottom:'1px dashed #bbb',padding:'1px 6px'}}>
+                <td colSpan={7} style={{fontFamily:ENFNT,fontSize:9,fontWeight: 600,borderBottom:'1px dashed #bbb',padding:'1px 6px'}}>
                   <strong>{fmtNum(cValAmt)}</strong>&nbsp;&nbsp;({cValW})
                 </td>
                 <td style={{fontFamily:ARFNT,fontSize:10,color:'#666',textAlign:'right',direction:'rtl',unicodeBidi:'embed',whiteSpace:'nowrap',paddingLeft:4}}>قيمة العقد</td>
@@ -467,10 +467,10 @@ export default function TenancyContractTemplate({ data, containerRef }: Props) {
               {/* Security Deposit | MOP */}
               <tr>
                 <td style={{fontFamily:ENFNT,fontSize:8,color:'#666',whiteSpace:'nowrap',paddingTop:3}}>Security Deposit Amount</td>
-                <td colSpan={2} style={{fontFamily:ENFNT,fontSize:9,fontWeight:700,borderBottom:'1px dashed #bbb',padding:'1px 4px'}}>{secDep}</td>
+                <td colSpan={2} style={{fontFamily:ENFNT,fontSize:9,fontWeight: 600,borderBottom:'1px dashed #bbb',padding:'1px 4px'}}>{secDep}</td>
                 <td style={{fontFamily:ARFNT,fontSize:10,color:'#666',textAlign:'right',direction:'rtl',unicodeBidi:'embed',paddingLeft:4}}>مبلغ التأمين</td>
                 <td style={{fontFamily:ENFNT,fontSize:8,color:'#666',paddingLeft:6,whiteSpace:'nowrap'}}>Mode of Payment</td>
-                <td colSpan={2} style={{fontFamily:ENFNT,fontSize:9,fontWeight:700,borderBottom:'1px dashed #bbb',padding:'1px 4px'}}>{mop}</td>
+                <td colSpan={2} style={{fontFamily:ENFNT,fontSize:9,fontWeight: 600,borderBottom:'1px dashed #bbb',padding:'1px 4px'}}>{mop}</td>
                 <td colSpan={2} style={{fontFamily:ARFNT,fontSize:10,color:'#666',textAlign:'right',direction:'rtl',unicodeBidi:'embed',paddingLeft:4}}>طريقة السداد</td>
               </tr>
             </tbody>
@@ -559,13 +559,13 @@ export default function TenancyContractTemplate({ data, containerRef }: Props) {
         <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',marginBottom:10}}>
           <GovDubaiLogo/>
           <div style={{textAlign:'right',display:'flex',flexDirection:'column',alignItems:'flex-end',gap:2}}>
-            <div style={{fontFamily:ARFNT,fontSize:14,fontWeight:700,color:NAVY,direction:'rtl',unicodeBidi:'embed'}}>دائرة الأراضي والأملاك</div>
-            <div style={{fontFamily:ENFNT,fontSize:8.5,fontWeight:700,color:NAVY}}>Land Department</div>
+            <div style={{fontFamily:ARFNT,fontSize:14,fontWeight: 600,color:NAVY,direction:'rtl',unicodeBidi:'embed'}}>دائرة الأراضي والأملاك</div>
+            <div style={{fontFamily:ENFNT,fontSize:8.5,fontWeight: 600,color:NAVY}}>Land Department</div>
             <LandLogo size={48}/>
           </div>
         </div>
 
-        <div style={{textAlign:'center',fontFamily:ENFNT,fontSize:11,fontWeight:700,border:`1.8px solid #4a6fa5`,borderRadius:5,padding:'6px 10px',marginBottom:12,color:NAVY,display:'flex',justifyContent:'center',alignItems:'center',gap:16}}>
+        <div style={{textAlign:'center',fontFamily:ENFNT,fontSize:11,fontWeight: 600,border:`1.8px solid #4a6fa5`,borderRadius:5,padding:'6px 10px',marginBottom:12,color:NAVY,display:'flex',justifyContent:'center',alignItems:'center',gap:16}}>
           ADDENDUM NO.{add?.addendum_no ?? '1'} TO TENANCY CONTRACT
           <span style={{fontFamily:ARFNT,fontSize:14,direction:'rtl',unicodeBidi:'embed'}}>ملحق عقد الإيجار</span>
         </div>
@@ -574,7 +574,7 @@ export default function TenancyContractTemplate({ data, containerRef }: Props) {
           <tbody>
             {[['Tenant',tenN,'المستأجر'],['Contact',tenEm,'التواصل'],['Building',`${bld} - ${pNo} - ${pTp}`,'المبنى']].map(([lbl,val,ar])=>(
               <tr key={lbl as string}>
-                <td style={{width:70,fontWeight:700,padding:'2px 4px'}}>{lbl}</td>
+                <td style={{width:70,fontWeight: 600,padding:'2px 4px'}}>{lbl}</td>
                 <td style={{padding:'2px 4px',borderBottom:'1px dashed #aaa'}}>{val}</td>
                 <td style={{width:70,fontFamily:ARFNT,fontSize:10,textAlign:'right',direction:'rtl',unicodeBidi:'embed',padding:'2px 4px'}}>{ar}</td>
               </tr>
@@ -589,9 +589,9 @@ export default function TenancyContractTemplate({ data, containerRef }: Props) {
         <table style={{width:'100%',borderCollapse:'collapse',border:'1px solid #ddd'}}>
           <thead>
             <tr style={{background:NAVY}}>
-              <td style={{padding:'4px 8px',color:'#fff',fontFamily:ENFNT,fontSize:8,fontWeight:700}}>Item</td>
-              <td style={{padding:'4px 8px',color:'#fff',fontFamily:ENFNT,fontSize:8,fontWeight:700,textAlign:'center',width:80}}>Qty</td>
-              <td style={{padding:'4px 8px',color:'#fff',fontFamily:ENFNT,fontSize:8,fontWeight:700,textAlign:'center',width:90}}>Condition</td>
+              <td style={{padding:'4px 8px',color:'#fff',fontFamily:ENFNT,fontSize:8,fontWeight: 600}}>Item</td>
+              <td style={{padding:'4px 8px',color:'#fff',fontFamily:ENFNT,fontSize:8,fontWeight: 600,textAlign:'center',width:80}}>Qty</td>
+              <td style={{padding:'4px 8px',color:'#fff',fontFamily:ENFNT,fontSize:8,fontWeight: 600,textAlign:'center',width:90}}>Condition</td>
             </tr>
           </thead>
           <tbody>
@@ -609,7 +609,7 @@ export default function TenancyContractTemplate({ data, containerRef }: Props) {
           </tbody>
         </table>
 
-        <p style={{fontFamily:ENFNT,fontSize:8.5,marginTop:16,fontWeight:700,color:NAVY}}>
+        <p style={{fontFamily:ENFNT,fontSize:8.5,marginTop:16,fontWeight: 600,color:NAVY}}>
           Agreed and Accepted /&nbsp;
           <span style={{fontFamily:ARFNT,fontSize:11,direction:'rtl',unicodeBidi:'embed'}}>موافق ومقبول</span>
         </p>

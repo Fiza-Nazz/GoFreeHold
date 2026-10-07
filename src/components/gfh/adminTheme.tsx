@@ -89,18 +89,18 @@ export const CornerBrackets = (_props?: { color?: string }) => null
 export const portalPageCss = `
   .gfh-portal-page {
     background: #F6F8FA !important;
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+    font-family: var(--font-sans) !important;
     -webkit-font-smoothing: antialiased;
     color: #0F172A;
     line-height: 1.5;
     font-size: 14px;
   }
   .gfh-portal-page * {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+    font-family: var(--font-sans) !important;
   }
   .gfh-portal-page h1 {
     font-size: 26px !important;
-    font-weight: 700 !important;
+    font-weight: 600 !important;
     color: #0F172A;
     letter-spacing: -0.015em;
     line-height: 1.25;

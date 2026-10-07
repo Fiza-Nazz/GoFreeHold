@@ -76,17 +76,17 @@ export default function TenantComplaintDetail() {
   const isAssigned = status === 'assigned' || isInProgress
 
   return (
-    <div className="gfh-portal-page" style={{ fontFamily: "'Inter', system-ui, sans-serif", background: THEME.pageBg, minHeight: '100%' }}>
+    <div className="gfh-portal-page" style={{ fontFamily: "'Source Sans Pro', system-ui, sans-serif", background: THEME.pageBg, minHeight: '100%' }}>
       <style>{portalPageCss}</style>
 
       {/* Hero Header */}
       <div className="fade-in" style={heroStyle}>
         <div>
-          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 12, fontWeight: 700, letterSpacing: '0.6px', textTransform: 'uppercase', color: '#10B981', marginBottom: 2 }}>
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 12, fontWeight: 600, letterSpacing: '0.6px', textTransform: 'uppercase', color: '#10B981', marginBottom: 2 }}>
             <span style={{ width: 7, height: 7, borderRadius: '50%', background: '#10B981', display: 'inline-block' }} />
             Ticket Overview
           </div>
-          <div style={{ fontSize: 24, fontWeight: 800, color: THEME.ink, letterSpacing: '-0.02em', marginTop: 2 }}>
+          <div style={{ fontSize: 24, fontWeight: 600, color: THEME.ink, letterSpacing: '-0.02em', marginTop: 2 }}>
             Complaint #{id}
           </div>
           <div style={{ fontSize: 13, color: THEME.textMuted, marginTop: 4 }}>
@@ -107,7 +107,7 @@ export default function TenantComplaintDetail() {
             border: '1px solid #E2E8F0',
             borderRadius: 8,
             fontSize: 13,
-            fontWeight: 700,
+            fontWeight: 600,
             textDecoration: 'none',
             boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
           }}
@@ -127,7 +127,7 @@ export default function TenantComplaintDetail() {
         <div style={{ ...panelStyle, textAlign: 'center', padding: '40px 20px', borderRadius: 16, color: ADMIN_COLORS.red, fontWeight: 600 }}>
           <Icon path={icons.alert} size={32} />
           <div style={{ marginTop: 10, fontSize: 16 }}>{error}</div>
-          <Link to="/tenant/complaints" style={{ display: 'inline-block', marginTop: 16, padding: '8px 16px', borderRadius: 8, background: '#10B981', color: '#fff', textDecoration: 'none', fontSize: 13, fontWeight: 700 }}>
+          <Link to="/tenant/complaints" style={{ display: 'inline-block', marginTop: 16, padding: '8px 16px', borderRadius: 8, background: '#10B981', color: '#fff', textDecoration: 'none', fontSize: 13, fontWeight: 600 }}>
             Return to Complaints
           </Link>
         </div>
@@ -144,7 +144,7 @@ export default function TenantComplaintDetail() {
               boxShadow: '0 1px 3px rgba(16,24,40,0.04)',
             }}
           >
-            <div style={{ fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.6px', color: '#64748B', marginBottom: 20 }}>
+            <div style={{ fontSize: 12, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.6px', color: '#64748B', marginBottom: 20 }}>
               Resolution Timeline
             </div>
 
@@ -166,7 +166,7 @@ export default function TenantComplaintDetail() {
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      fontWeight: 800,
+                      fontWeight: 600,
                       fontSize: 14,
                       flexShrink: 0,
                       boxShadow: step.done || step.active ? '0 2px 8px rgba(14, 94, 72, 0.2)' : 'none',
@@ -175,7 +175,7 @@ export default function TenantComplaintDetail() {
                     {step.done ? <Icon path={icons.check} size={16} /> : idx + 1}
                   </div>
                   <div>
-                    <div style={{ fontSize: 13, fontWeight: 800, color: step.active ? '#0F172A' : '#94A3B8' }}>
+                    <div style={{ fontSize: 13, fontWeight: 600, color: step.active ? '#0F172A' : '#94A3B8' }}>
                       {step.title}
                     </div>
                     <div style={{ fontSize: 11.5, color: '#64748B', marginTop: 1 }}>
@@ -201,10 +201,10 @@ export default function TenantComplaintDetail() {
             {/* Header: Title and Status Pill */}
             <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: 12, paddingBottom: 18, borderBottom: `1px solid #F1F5F9` }}>
               <div>
-                <span style={{ fontSize: 12, fontWeight: 800, background: '#F1F5F9', color: '#0F172A', padding: '3px 9px', borderRadius: 6 }}>
+                <span style={{ fontSize: 12, fontWeight: 600, background: '#F1F5F9', color: '#0F172A', padding: '3px 9px', borderRadius: 6 }}>
                   #TKT-{String(complaint.id).padStart(4, '0')}
                 </span>
-                <h1 style={{ fontSize: 22, fontWeight: 800, color: THEME.ink, margin: '8px 0 0', letterSpacing: '-0.01em' }}>
+                <h1 style={{ fontSize: 22, fontWeight: 600, color: THEME.ink, margin: '8px 0 0', letterSpacing: '-0.01em' }}>
                   {complaint.title}
                 </h1>
               </div>
@@ -219,7 +219,7 @@ export default function TenantComplaintDetail() {
                       padding: '4px 12px',
                       borderRadius: 999,
                       fontSize: 12,
-                      fontWeight: 800,
+                      fontWeight: 600,
                       textTransform: 'uppercase',
                     }}
                   >
@@ -234,7 +234,7 @@ export default function TenantComplaintDetail() {
                     padding: '4px 14px',
                     borderRadius: 999,
                     fontSize: 12.5,
-                    fontWeight: 800,
+                    fontWeight: 600,
                     textTransform: 'uppercase',
                   }}
                 >
@@ -245,7 +245,7 @@ export default function TenantComplaintDetail() {
 
             {/* Description Block */}
             <div style={{ marginTop: 20 }}>
-              <div style={{ fontSize: 11.5, fontWeight: 700, color: '#64748B', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: 6 }}>
+              <div style={{ fontSize: 11.5, fontWeight: 600, color: '#64748B', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: 6 }}>
                 Issue Description
               </div>
               <div
@@ -269,9 +269,9 @@ export default function TenantComplaintDetail() {
               <div style={{ padding: '14px 16px', borderRadius: 12, border: '1px solid #E2E8F0', background: '#F6F8FA' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#10B981', marginBottom: 4 }}>
                   <Icon path={icons.building} size={16} />
-                  <span style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Leased Unit</span>
+                  <span style={{ fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Leased Unit</span>
                 </div>
-                <div style={{ fontSize: 14, fontWeight: 700, color: THEME.ink }}>
+                <div style={{ fontSize: 14, fontWeight: 600, color: THEME.ink }}>
                   Unit {complaint.unit?.number || '—'}
                 </div>
                 <div style={{ fontSize: 12, color: '#64748B', marginTop: 2 }}>
@@ -283,9 +283,9 @@ export default function TenantComplaintDetail() {
               <div style={{ padding: '14px 16px', borderRadius: 12, border: '1px solid #E2E8F0', background: '#F6F8FA' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#0284C7', marginBottom: 4 }}>
                   <Icon path={icons.clock} size={16} />
-                  <span style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Date Submitted</span>
+                  <span style={{ fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Date Submitted</span>
                 </div>
-                <div style={{ fontSize: 13.5, fontWeight: 700, color: THEME.ink }}>
+                <div style={{ fontSize: 13.5, fontWeight: 600, color: THEME.ink }}>
                   {complaint.created_at ? formatDubaiDateTime(complaint.created_at) : '—'}
                 </div>
                 <div style={{ fontSize: 12, color: '#64748B', marginTop: 2 }}>
@@ -297,9 +297,9 @@ export default function TenantComplaintDetail() {
               <div style={{ padding: '14px 16px', borderRadius: 12, border: '1px solid #E2E8F0', background: '#F6F8FA' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#D97706', marginBottom: 4 }}>
                   <Icon path={icons.wrench} size={16} />
-                  <span style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Assigned Handler</span>
+                  <span style={{ fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Assigned Handler</span>
                 </div>
-                <div style={{ fontSize: 13.5, fontWeight: 700, color: THEME.ink }}>
+                <div style={{ fontSize: 13.5, fontWeight: 600, color: THEME.ink }}>
                   Property Maintenance Team
                 </div>
                 <div style={{ fontSize: 12, color: '#64748B', marginTop: 2 }}>

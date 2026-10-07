@@ -24,7 +24,7 @@ const inputStyle: React.CSSProperties = {
 
 const labelStyle: React.CSSProperties = {
   fontSize: 11,
-  fontWeight: 700,
+  fontWeight: 600,
   letterSpacing: '0.4px',
   textTransform: 'uppercase',
   color: THEME.purpleMid,
@@ -85,13 +85,13 @@ export default function PaymentForm({ onSuccess }: PaymentFormProps) {
   }
 
   return (
-    <div className="gfh-portal-page" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
+    <div className="gfh-portal-page" style={{ fontFamily: "'Source Sans Pro', system-ui, sans-serif" }}>
       <style>{portalPageCss}</style>
 
       <div className="fade-in" style={heroStyle}>
         <CornerBrackets />
         <div>
-          <h1 style={{ fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", fontSize: 30, fontWeight: 700, color: THEME.ink, margin: 0 }}>
+          <h1 style={{ fontFamily: "'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", fontSize: 30, fontWeight: 600, color: THEME.ink, margin: 0 }}>
             Record Payment
           </h1>
           <p style={{ fontSize: 14, color: THEME.textMuted, marginTop: 8, marginBottom: 0 }}>
@@ -106,7 +106,7 @@ export default function PaymentForm({ onSuccess }: PaymentFormProps) {
           <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
 
             <div style={sectionStyle}>
-              <p style={{ fontSize: 11, fontWeight: 800, letterSpacing: '1.2px', textTransform: 'uppercase', color: THEME.violetLight, margin: '0 0 14px', display: 'flex', alignItems: 'center', gap: 8 }}>
+              <p style={{ fontSize: 11, fontWeight: 600, letterSpacing: '1.2px', textTransform: 'uppercase', color: THEME.violetLight, margin: '0 0 14px', display: 'flex', alignItems: 'center', gap: 8 }}>
                 <Icon path="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" size={14} />
                 Payment Type
               </p>
@@ -135,7 +135,7 @@ export default function PaymentForm({ onSuccess }: PaymentFormProps) {
             </div>
 
             <div style={sectionStyle}>
-              <p style={{ fontSize: 11, fontWeight: 800, letterSpacing: '1.2px', textTransform: 'uppercase', color: THEME.violetLight, margin: '0 0 14px' }}>
+              <p style={{ fontSize: 11, fontWeight: 600, letterSpacing: '1.2px', textTransform: 'uppercase', color: THEME.violetLight, margin: '0 0 14px' }}>
                 Payment Mode
               </p>
               <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
@@ -152,7 +152,7 @@ export default function PaymentForm({ onSuccess }: PaymentFormProps) {
                       color: formData.mode === mode ? '#fff' : THEME.ink,
                       cursor: 'pointer',
                       fontSize: 12,
-                      fontWeight: 700,
+                      fontWeight: 600,
                     }}
                   >
                     {mode.replace('_', ' ').toUpperCase()}
@@ -162,7 +162,7 @@ export default function PaymentForm({ onSuccess }: PaymentFormProps) {
             </div>
 
             <div style={sectionStyle}>
-              <p style={{ fontSize: 11, fontWeight: 800, letterSpacing: '1.2px', textTransform: 'uppercase', color: THEME.violetLight, margin: '0 0 14px' }}>
+              <p style={{ fontSize: 11, fontWeight: 600, letterSpacing: '1.2px', textTransform: 'uppercase', color: THEME.violetLight, margin: '0 0 14px' }}>
                 Contract &amp; Tenant
               </p>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
@@ -185,7 +185,7 @@ export default function PaymentForm({ onSuccess }: PaymentFormProps) {
             </div>
 
             <div style={sectionStyle}>
-              <p style={{ fontSize: 11, fontWeight: 800, letterSpacing: '1.2px', textTransform: 'uppercase', color: THEME.violetLight, margin: '0 0 14px' }}>
+              <p style={{ fontSize: 11, fontWeight: 600, letterSpacing: '1.2px', textTransform: 'uppercase', color: THEME.violetLight, margin: '0 0 14px' }}>
                 Amount &amp; Date
               </p>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
@@ -201,7 +201,7 @@ export default function PaymentForm({ onSuccess }: PaymentFormProps) {
             </div>
 
             <div style={sectionStyle}>
-              <p style={{ fontSize: 11, fontWeight: 800, letterSpacing: '1.2px', textTransform: 'uppercase', color: THEME.violetLight, margin: '0 0 14px' }}>
+              <p style={{ fontSize: 11, fontWeight: 600, letterSpacing: '1.2px', textTransform: 'uppercase', color: THEME.violetLight, margin: '0 0 14px' }}>
                 Additional Details
               </p>
               <div style={{ marginBottom: 14 }}>
@@ -242,7 +242,7 @@ export default function PaymentForm({ onSuccess }: PaymentFormProps) {
 
         <div className="fade-in" style={{ ...panelStyle, minHeight: 0 }}>
           <CornerBrackets />
-          <p style={{ fontSize: 11, fontWeight: 800, letterSpacing: '1.2px', textTransform: 'uppercase', color: THEME.violetLight, margin: '0 0 18px', display: 'flex', alignItems: 'center', gap: 8 }}>
+          <p style={{ fontSize: 11, fontWeight: 600, letterSpacing: '1.2px', textTransform: 'uppercase', color: THEME.violetLight, margin: '0 0 18px', display: 'flex', alignItems: 'center', gap: 8 }}>
             <Icon path="M9 3h6l4 4v14a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z" size={14} />
             Last Payment Receipt
           </p>

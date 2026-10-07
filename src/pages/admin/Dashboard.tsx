@@ -76,7 +76,7 @@ function TrendChip({ direction, percent }: { direction: TrendDirection; percent:
   return (
     <span style={{
       display: 'inline-flex', alignItems: 'center', gap: 4,
-      background: bg, color, fontSize: 11.5, fontWeight: 700,
+      background: bg, color, fontSize: 11.5, fontWeight: 600,
       padding: '2px 8px', borderRadius: 999, lineHeight: 1.6,
     }}>
       {arrow} {percent}%
@@ -124,7 +124,7 @@ function StatCard({
       </div>
       <div style={{ minWidth: 0 }}>
         <div style={{
-          fontSize, fontWeight: 800, color: iconColor,
+          fontSize, fontWeight: 600, color: iconColor,
           letterSpacing: '-0.5px', lineHeight: 1.2,
           fontVariantNumeric: 'tabular-nums', wordBreak: 'break-word',
         }}>
@@ -152,7 +152,7 @@ function OccupancyBar({ pct }: { pct: number }) {
       <div style={{ flex: 1, height: 6, borderRadius: 999, background: '#EEF0F5', overflow: 'hidden' }}>
         <div style={{ width: `${clamped}%`, height: '100%', borderRadius: 999, background: '#22C55E' }} />
       </div>
-      <span style={{ fontSize: 12, fontWeight: 700, color: '#4B5065', minWidth: 32, textAlign: 'right' }}>{clamped}%</span>
+      <span style={{ fontSize: 12, fontWeight: 600, color: '#4B5065', minWidth: 32, textAlign: 'right' }}>{clamped}%</span>
     </div>
   )
 }
@@ -161,7 +161,7 @@ function StatusBadge({ label }: { label: string }) {
   const isActive = label.toLowerCase() === 'active'
   return (
     <span style={{
-      display: 'inline-block', fontSize: 11.5, fontWeight: 700,
+      display: 'inline-block', fontSize: 11.5, fontWeight: 600,
       padding: '3px 11px', borderRadius: 999,
       background: isActive ? '#DCFCE7' : '#FEF3C7',
       color: isActive ? '#16A34A' : '#B45309',
@@ -321,7 +321,7 @@ function UnitDropdown({
           color: '#0F172A',
           fontWeight: 600,
           fontSize: 13.5,
-          fontFamily: "'Inter', system-ui, sans-serif",
+          fontFamily: "'Source Sans Pro', system-ui, sans-serif",
           cursor: 'pointer',
           textAlign: 'left',
           transition: 'border-color 0.15s ease',
@@ -363,7 +363,7 @@ function UnitDropdown({
             boxShadow: '0 12px 30px -6px rgba(15, 23, 42, 0.18)',
             zIndex: 999,
             borderRadius: 14,
-            fontFamily: "'Inter', system-ui, sans-serif",
+            fontFamily: "'Source Sans Pro', system-ui, sans-serif",
             overflow: 'hidden',
           }}
         >
@@ -383,7 +383,7 @@ function UnitDropdown({
                   border: '1px solid #E2E8F0',
                   outline: 'none',
                   boxSizing: 'border-box',
-                  fontFamily: "'Inter', sans-serif",
+                  fontFamily: "'Source Sans Pro', sans-serif",
                 }}
               />
             </div>
@@ -408,7 +408,7 @@ function UnitDropdown({
               onMouseLeave={e => (e.currentTarget.style.background = value === '' ? '#ECFDF8' : '#ffffff')}
             >
               <span>All units</span>
-              <span style={{ fontSize: 11, color: '#64748B', fontWeight: 700, background: '#F1F5F9', padding: '2px 7px', borderRadius: 999 }}>
+              <span style={{ fontSize: 11, color: '#64748B', fontWeight: 600, background: '#F1F5F9', padding: '2px 7px', borderRadius: 999 }}>
                 {units.length}
               </span>
             </div>
@@ -435,7 +435,7 @@ function UnitDropdown({
                   onMouseLeave={e => (e.currentTarget.style.background = isSelected ? '#ECFDF8' : '#ffffff')}
                 >
                   <div>
-                    <span style={{ fontWeight: 700 }}>Unit {u.number || u.id}</span>
+                    <span style={{ fontWeight: 600 }}>Unit {u.number || u.id}</span>
                     {u.property?.name && (
                       <span style={{ color: '#64748B', fontSize: 12, marginLeft: 6 }}>
                         · {u.property.name}
@@ -445,7 +445,7 @@ function UnitDropdown({
                   {u.status && (
                     <span style={{
                       fontSize: 10,
-                      fontWeight: 700,
+                      fontWeight: 600,
                       padding: '2px 6px',
                       borderRadius: 999,
                       background: u.status === 'AVAILABLE' ? '#F0FDF4' : '#F1F5F9',
@@ -598,7 +598,7 @@ export default function AdminDashboard() {
   }, [stats.monthly_revenue])
 
   return (
-    <div className="gfh-portal-page" style={{ fontFamily: "'Inter', system-ui, sans-serif", background: '#F7F8FC' }}>
+    <div className="gfh-portal-page" style={{ fontFamily: "'Source Sans Pro', system-ui, sans-serif", background: '#F7F8FC' }}>
       <style>{`
         ${portalPageCss}
         .gfh-dash-spinner {
@@ -610,7 +610,7 @@ export default function AdminDashboard() {
         .gfh-select {
           border: 1px solid #E7E9F1; border-radius: 10px; padding: 6px 10px;
           font-size: 12.5px; font-weight: 600; color: #4B5065; background: #fff;
-          font-family: 'Inter', system-ui, sans-serif; cursor: pointer;
+          font-family: 'Source Sans Pro', system-ui, sans-serif; cursor: pointer;
         }
         @media (max-width: 900px) {
           .gfh-dash-grid { grid-template-columns: 1fr !important; }
@@ -622,10 +622,10 @@ export default function AdminDashboard() {
         <CornerBrackets />
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
-            <h1 style={{ fontFamily: "'Inter', sans-serif", fontSize: 26, fontWeight: 800, color: '#0F172A', margin: 0, letterSpacing: '-0.01em' }}>
+            <h1 style={{ fontFamily: "'Source Sans Pro', sans-serif", fontSize: 26, fontWeight: 600, color: '#0F172A', margin: 0, letterSpacing: '-0.01em' }}>
               Dashboard Overview
             </h1>
-            <span style={{ fontSize: 12, fontWeight: 700, color: '#10B981', background: '#ECFDF8', border: '1px solid #A7F3DC', borderRadius: 8, padding: '4px 10px' }}>
+            <span style={{ fontSize: 12, fontWeight: 600, color: '#10B981', background: '#ECFDF8', border: '1px solid #A7F3DC', borderRadius: 8, padding: '4px 10px' }}>
               Live Metrics
             </span>
           </div>
@@ -646,13 +646,13 @@ export default function AdminDashboard() {
             border: 'none',
             borderRadius: 10,
             padding: '9px 18px',
-            fontWeight: 700,
+            fontWeight: 600,
             fontSize: 13,
             cursor: 'pointer',
             opacity: isLoading ? 0.6 : 1,
             boxShadow: '0 1px 3px rgba(16, 185, 129, 0.25)',
             transition: 'all 0.15s ease',
-            fontFamily: "'Inter', sans-serif",
+            fontFamily: "'Source Sans Pro', sans-serif",
           }}
           onMouseEnter={e => {
             e.currentTarget.style.background = '#059669'
@@ -702,7 +702,7 @@ export default function AdminDashboard() {
             alignItems: 'center',
             boxShadow: '0 1px 3px rgba(16,24,40,0.05)',
           }}>
-            <label style={{ fontSize: 13, fontWeight: 700, color: '#15112B' }}>
+            <label style={{ fontSize: 13, fontWeight: 600, color: '#15112B' }}>
               Select Unit
             </label>
             <UnitDropdown units={units} value={unitFilter} onChange={setUnitFilter} />
@@ -721,7 +721,7 @@ export default function AdminDashboard() {
             <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 14 }}>
               <div style={{ textAlign: 'right' }}>
                 <div style={{ fontSize: 12, color: '#8A8FA3', fontWeight: 600 }}>Outstanding receivables</div>
-                <div style={{ fontSize: 15, fontWeight: 800, color: '#DC2626' }}>
+                <div style={{ fontSize: 15, fontWeight: 600, color: '#DC2626' }}>
                   AED {stats.pending_receivables.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                 </div>
               </div>
@@ -742,8 +742,8 @@ export default function AdminDashboard() {
           <div className="gfh-dash-grid" style={{ display: 'grid', gridTemplateColumns: '1.4fr 1fr', gap: 18, marginBottom: 18 }}>
             <div style={{ background: '#fff', border: '1px solid #F0F1F6', borderRadius: 18, padding: '18px 20px', boxShadow: '0 1px 3px rgba(16,24,40,0.05)' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
-                <h3 style={{ margin: 0, fontSize: 16, fontWeight: 800, color: '#15112B' }}>Properties Overview</h3>
-                <Link to="/admin/properties" className="gfh-portal-link" style={{ fontSize: 13, color: '#0F172A', fontWeight: 700, textDecoration: 'none' }}>View all →</Link>
+                <h3 style={{ margin: 0, fontSize: 16, fontWeight: 600, color: '#15112B' }}>Properties Overview</h3>
+                <Link to="/admin/properties" className="gfh-portal-link" style={{ fontSize: 13, color: '#0F172A', fontWeight: 600, textDecoration: 'none' }}>View all →</Link>
               </div>
               {properties.length === 0 ? (
                 <p style={{ color: '#8A8FA3', fontWeight: 500 }}>No properties found.</p>
@@ -753,7 +753,7 @@ export default function AdminDashboard() {
                     <thead>
                       <tr style={{ borderBottom: '1px solid #F0F1F6' }}>
                         {['Property Name', 'City', 'Type', 'Units', 'Occupancy', 'Status'].map(h => (
-                          <th key={h} style={{ textAlign: 'left', padding: '0 10px 10px 0', fontSize: 11, fontWeight: 700, color: '#A0A5B8', textTransform: 'uppercase', letterSpacing: '0.4px' }}>{h}</th>
+                          <th key={h} style={{ textAlign: 'left', padding: '0 10px 10px 0', fontSize: 11, fontWeight: 600, color: '#A0A5B8', textTransform: 'uppercase', letterSpacing: '0.4px' }}>{h}</th>
                         ))}
                       </tr>
                     </thead>
@@ -763,7 +763,7 @@ export default function AdminDashboard() {
                         const statusLabel = total === 0 ? 'Vacant' : 'Active'
                         return (
                           <tr key={p.id} className="gfh-portal-row" style={{ borderBottom: '1px solid #F6F7FA' }}>
-                            <td style={{ padding: '12px 10px 12px 0', fontWeight: 700, fontSize: 13.5, color: '#15112B' }}>{p.name}</td>
+                            <td style={{ padding: '12px 10px 12px 0', fontWeight: 600, fontSize: 13.5, color: '#15112B' }}>{p.name}</td>
                             <td style={{ padding: '12px 10px', fontSize: 13, color: '#4B5065' }}>{p.city || '—'}</td>
                             <td style={{ padding: '12px 10px', fontSize: 13, color: '#4B5065' }}>{p.type || '—'}</td>
                             <td style={{ padding: '12px 10px', fontSize: 13, color: '#4B5065' }}>{p.total_units ?? total ?? '—'}</td>
@@ -783,8 +783,8 @@ export default function AdminDashboard() {
 
             <div style={{ background: '#fff', border: '1px solid #F0F1F6', borderRadius: 18, padding: '18px 20px', boxShadow: '0 1px 3px rgba(16,24,40,0.05)' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
-                <h3 style={{ margin: 0, fontSize: 16, fontWeight: 800, color: '#15112B' }}>Recent Complaints</h3>
-                <Link to="/admin/complaints" className="gfh-portal-link" style={{ fontSize: 13, color: '#0F172A', fontWeight: 700, textDecoration: 'none' }}>Open all →</Link>
+                <h3 style={{ margin: 0, fontSize: 16, fontWeight: 600, color: '#15112B' }}>Recent Complaints</h3>
+                <Link to="/admin/complaints" className="gfh-portal-link" style={{ fontSize: 13, color: '#0F172A', fontWeight: 600, textDecoration: 'none' }}>Open all →</Link>
               </div>
               {filteredComplaints.length === 0 ? (
                 <p style={{ color: '#8A8FA3', fontWeight: 500 }}>No complaints for this filter.</p>
@@ -811,7 +811,7 @@ export default function AdminDashboard() {
                           <Icon path={visual.icon} size={17} />
                         </div>
                         <div style={{ flex: 1, minWidth: 0 }}>
-                          <div style={{ fontWeight: 700, fontSize: 13, color: '#15112B', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{c.title}</div>
+                          <div style={{ fontWeight: 600, fontSize: 13, color: '#15112B', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{c.title}</div>
                           <div style={{ fontSize: 11.5, color: '#8A8FA3', marginTop: 3 }}>
                             Unit {c.unit?.number || c.unit_id || '—'} · {String(c.status || '').replace(/_/g, ' ')}
                           </div>
@@ -835,13 +835,13 @@ export default function AdminDashboard() {
           <div className="gfh-dash-grid-bottom" style={{ display: 'grid', gridTemplateColumns: '1fr 1.5fr', gap: 18 }}>
             <div style={{ background: '#fff', border: '1px solid #F0F1F6', borderRadius: 18, padding: '18px 20px', boxShadow: '0 1px 3px rgba(16,24,40,0.05)' }}>
               <div style={{ marginBottom: 16 }}>
-                <h3 style={{ margin: 0, fontSize: 16, fontWeight: 800, color: '#15112B' }}>Rent Collection Overview</h3>
+                <h3 style={{ margin: 0, fontSize: 16, fontWeight: 600, color: '#15112B' }}>Rent Collection Overview</h3>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 18, flexWrap: 'wrap' }}>
                 <DonutChart collectedPct={collectedPct} />
                 <div>
                   <div style={{ fontSize: 12, color: '#8A8FA3', fontWeight: 600 }}>Collected</div>
-                  <div style={{ fontSize: 20, fontWeight: 800, color: '#15112B', marginTop: 2 }}>
+                  <div style={{ fontSize: 20, fontWeight: 600, color: '#15112B', marginTop: 2 }}>
                     AED {stats.monthly_revenue.toLocaleString()}
                   </div>
                   <div style={{ fontSize: 12, color: '#A0A5B8', fontWeight: 500, marginTop: 2 }}>
@@ -851,11 +851,11 @@ export default function AdminDashboard() {
                 <div style={{ marginLeft: 'auto', display: 'flex', flexDirection: 'column', gap: 10 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 12.5, color: '#4B5065', fontWeight: 600 }}>
                     <span style={{ width: 9, height: 9, borderRadius: '50%', background: '#10B981', display: 'inline-block' }} />
-                    Collected <span style={{ fontWeight: 800, color: '#15112B' }}>AED {stats.monthly_revenue.toLocaleString()}</span> ({collectedPct}%)
+                    Collected <span style={{ fontWeight: 600, color: '#15112B' }}>AED {stats.monthly_revenue.toLocaleString()}</span> ({collectedPct}%)
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 12.5, color: '#4B5065', fontWeight: 600 }}>
                     <span style={{ width: 9, height: 9, borderRadius: '50%', background: '#F1F5F9', border: '2px solid #CBD5E1', display: 'inline-block' }} />
-                    Pending <span style={{ fontWeight: 800, color: '#15112B' }}>AED {stats.pending_receivables.toLocaleString()}</span> ({pendingPct}%)
+                    Pending <span style={{ fontWeight: 600, color: '#15112B' }}>AED {stats.pending_receivables.toLocaleString()}</span> ({pendingPct}%)
                   </div>
                 </div>
               </div>
@@ -863,7 +863,7 @@ export default function AdminDashboard() {
 
             <div style={{ background: '#fff', border: '1px solid #F0F1F6', borderRadius: 18, padding: '18px 20px', boxShadow: '0 1px 3px rgba(16,24,40,0.05)' }}>
               <div style={{ marginBottom: 10 }}>
-                <h3 style={{ margin: 0, fontSize: 16, fontWeight: 800, color: '#15112B' }}>Rent Portfolio Trend</h3>
+                <h3 style={{ margin: 0, fontSize: 16, fontWeight: 600, color: '#15112B' }}>Rent Portfolio Trend</h3>
               </div>
               <TrendLineChart data={trendSeries} />
             </div>

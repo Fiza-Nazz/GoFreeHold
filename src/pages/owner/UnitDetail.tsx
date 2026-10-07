@@ -1,6 +1,9 @@
 import { useEffect, useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import api from '../../api/axios'
+import { useAuthStore } from '../../store/authStore'
+import { computeMonthlyOutstanding, resolveMonthlyRent } from '../../utils/monthlyDue'
+import { getDefaultUnitImageUrl } from '../../utils/unitImages'
 
 interface TenantInfo {
   id: number
@@ -21,6 +24,7 @@ interface ContractInfo {
   grace_period?: number | string
   status?: string
   mode_of_payment?: string
+  lease_term?: string
   tenant?: TenantInfo
 }
 
@@ -83,10 +87,29 @@ function formatCurrency(val?: number | string | null): string {
 export default function UnitDetailPage() {
   const { unitId } = useParams<{ unitId: string }>()
   const navigate = useNavigate()
+  const location = useLocation()
+  const { user } = useAuthStore()
+  const basePath = location.pathname.startsWith('/cashier')
+    ? '/cashier'
+    : location.pathname.startsWith('/accountant')
+      ? '/accountant'
+      : '/owner'
+  const isStaff = user?.role === 'cashier' || user?.role === 'accountant'
   const [unit, setUnit] = useState<UnitDetail | null>(null)
   const [payments, setPayments] = useState<PaymentInfo[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [ledgerEntries, setLedgerEntries] = useState<Array<{
+    id: number
+    date: string
+    description: string
+    debit: number | string
+    credit: number | string
+    running_balance?: number
+  }>>([])
+  const [ledgerSummary, setLedgerSummary] = useState({ total_debit: 0, total_credit: 0, total_balance: 0 })
+  const [ledgerLoading, setLedgerLoading] = useState(false)
+  const [exportLoading, setExportLoading] = useState(false)
 
   // 3-dots action dropdown state
   const [activeMenuPaymentId, setActiveMenuPaymentId] = useState<number | string | null>(null)
@@ -103,6 +126,7 @@ export default function UnitDetailPage() {
 
   // Vacate Modal state
   const [vacateModalOpen, setVacateModalOpen] = useState(false)
+  const [isBookingUnit, setIsBookingUnit] = useState(false)
 
   // Close dropdown on outside click
   useEffect(() => {
@@ -116,45 +140,188 @@ export default function UnitDetailPage() {
     return () => document.removeEventListener('click', handleOutsideClick)
   }, [])
 
+  const applyLedgerPayload = (res: any) => {
+    const raw = res.data?.data?.entries || res.data?.data?.data || []
+    const list = Array.isArray(raw) ? raw : []
+    const sorted = [...list].sort(
+      (a: any, b: any) => new Date(a.date).getTime() - new Date(b.date).getTime() || a.id - b.id,
+    )
+    let running = 0
+    const calculated = sorted.map((item: any) => {
+      const d = Number(item.debit) || 0
+      const c = Number(item.credit) || 0
+      running += d - c
+      return { ...item, running_balance: running }
+    })
+    setLedgerEntries(calculated)
+    if (res.data?.data?.summary) {
+      setLedgerSummary(res.data.data.summary)
+    } else {
+      const totDeb = calculated.reduce((acc: number, curr: any) => acc + (Number(curr.debit) || 0), 0)
+      const totCred = calculated.reduce((acc: number, curr: any) => acc + (Number(curr.credit) || 0), 0)
+      setLedgerSummary({
+        total_debit: totDeb,
+        total_credit: totCred,
+        total_balance: totDeb - totCred,
+      })
+    }
+  }
+
+  const fetchLedger = async (contractId: number) => {
+    setLedgerLoading(true)
+    try {
+      if (isStaff) {
+        try {
+          const res = await api.get('/staff/finance/ledger', { params: { contract_id: contractId } })
+          applyLedgerPayload(res)
+          return
+        } catch {
+          /* fall through to owner ledger */
+        }
+      }
+      const res = await api.get(`/owner/rent-ledger?contract_id=${contractId}`)
+      applyLedgerPayload(res)
+    } catch (err) {
+      console.error('Failed to load ledger', err)
+      setLedgerEntries([])
+      setLedgerSummary({ total_debit: 0, total_credit: 0, total_balance: 0 })
+    } finally {
+      setLedgerLoading(false)
+    }
+  }
+
+  const loadContractsForUnit = async (id: string | number) => {
+    let contracts: any[] = []
+    if (isStaff) {
+      try {
+        const res = await api.get('/staff/finance/contracts')
+        const list = res.data?.data?.contracts || res.data?.data || []
+        if (Array.isArray(list)) contracts = list
+      } catch {
+        /* ignore */
+      }
+    }
+    if (contracts.length === 0) {
+      try {
+        const res = await api.get('/owner/contracts')
+        const list = res.data?.data?.contracts || res.data?.data || []
+        if (Array.isArray(list)) contracts = list
+      } catch {
+        /* ignore */
+      }
+    }
+    const forUnit = contracts.filter((c) => String(c.unit_id) === String(id))
+    return (
+      forUnit.find((c) => (c.status || '').toLowerCase() === 'active') ||
+      forUnit[0] ||
+      null
+    )
+  }
+
+  const loadUnitFallback = async (): Promise<UnitDetail | null> => {
+    // Prefer property-scoped dashboard units (works for assigned staff).
+    try {
+      const propsRes = await api.get('/owner/dashboard/properties')
+      const props = propsRes.data?.data?.properties || propsRes.data?.data || []
+      if (Array.isArray(props)) {
+        for (const p of props) {
+          try {
+            const uRes = await api.get(`/owner/dashboard/properties/${p.id}/units`)
+            const units = uRes.data?.data?.units || uRes.data?.data || []
+            const found = Array.isArray(units)
+              ? units.find((u: any) => String(u.id) === String(unitId))
+              : null
+            if (found) {
+              return {
+                ...found,
+                property:
+                  found.property || {
+                    id: p.id,
+                    name: p.name,
+                    address: p.address,
+                    city: p.city,
+                    type: p.type,
+                  },
+              }
+            }
+          } catch {
+            /* next property */
+          }
+        }
+      }
+    } catch {
+      /* ignore */
+    }
+
+    try {
+      const res = await api.get('/owner/units')
+      const list = res.data?.data?.units || res.data?.data || []
+      if (Array.isArray(list)) {
+        const found = list.find((u: any) => String(u.id) === String(unitId))
+        if (found) return found
+      }
+    } catch {
+      /* ignore */
+    }
+    return null
+  }
+
   useEffect(() => {
     const fetchUnit = async () => {
       setIsLoading(true)
       setError(null)
       try {
-        const res = await api.get(`/owner/dashboard/units/${unitId}`)
-        const fetchedUnit = res.data?.data?.unit || null
+        let fetchedUnit: UnitDetail | null = null
+        try {
+          const res = await api.get(`/owner/dashboard/units/${unitId}`)
+          fetchedUnit = res.data?.data?.unit || null
+        } catch {
+          fetchedUnit = null
+        }
+
+        if (!fetchedUnit) {
+          fetchedUnit = await loadUnitFallback()
+        }
+
+        if (fetchedUnit && !fetchedUnit.active_contract) {
+          const contract = await loadContractsForUnit(fetchedUnit.id)
+          if (contract) fetchedUnit = { ...fetchedUnit, active_contract: contract }
+        }
+
+        if (!fetchedUnit) {
+          setError('Unit record could not be found (or access is limited for your role).')
+          setUnit(null)
+          setPayments([])
+          return
+        }
+
         setUnit(fetchedUnit)
 
-        // Populate recent payments if present from backend, or fallback matching reference layout
         if (fetchedUnit?.recent_payments && fetchedUnit.recent_payments.length > 0) {
           setPayments(fetchedUnit.recent_payments)
-        } else if (fetchedUnit?.active_contract) {
-          setPayments([
-            {
-              id: 1,
-              date: fetchedUnit.active_contract.start_date || '2026-01-28',
-              type: 'RENT',
-              amount: fetchedUnit.active_contract.rent_amount ? Number(fetchedUnit.active_contract.rent_amount) / 12 : 7500,
-              mode: 'CASH',
-              remarks: '',
-            },
-            {
-              id: 2,
-              date: fetchedUnit.active_contract.start_date || '2026-01-28',
-              type: 'OTHER',
-              amount: 1000,
-              mode: 'CASH',
-              remarks: '',
-            },
-            {
-              id: 3,
-              date: '2026-02-26',
-              type: 'RENT',
-              amount: fetchedUnit.active_contract.rent_amount ? Number(fetchedUnit.active_contract.rent_amount) / 12 : 7500,
-              mode: 'BANKTRANSFER',
-              remarks: 'ADCB',
-            },
-          ])
+        } else if (isStaff && fetchedUnit?.active_contract?.id) {
+          try {
+            const payRes = await api.get('/staff/finance/payments', {
+              params: { contract_id: fetchedUnit.active_contract.id },
+            })
+            const payList =
+              payRes.data?.data?.payments?.data ||
+              payRes.data?.data?.payments ||
+              payRes.data?.data ||
+              []
+            setPayments(Array.isArray(payList) ? payList : [])
+          } catch {
+            setPayments([])
+          }
+        } else {
+          setPayments([])
+        }
+
+        if (fetchedUnit?.active_contract?.id) {
+          void fetchLedger(fetchedUnit.active_contract.id)
+        } else {
+          setLedgerEntries([])
+          setLedgerSummary({ total_debit: 0, total_credit: 0, total_balance: 0 })
         }
       } catch (err: any) {
         console.error(err)
@@ -163,17 +330,75 @@ export default function UnitDetailPage() {
         setIsLoading(false)
       }
     }
-    if (unitId) fetchUnit()
-  }, [unitId])
+    if (unitId) void fetchUnit()
+  }, [unitId, isStaff])
 
   const activeContract = unit?.active_contract
   const activeTenant = activeContract?.tenant
+  const leaseTermForDue = activeContract?.lease_term || 'Yearly'
+  const monthlyRent = resolveMonthlyRent(activeContract?.rent_amount, leaseTermForDue)
+  const isMonthlyContract = (leaseTermForDue || '').toLowerCase().includes('month')
+  const now = new Date()
+  const paymentsThisMonth = payments
+    .filter((p) => {
+      if (!p.date) return false
+      const d = new Date(p.date)
+      return d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth()
+    })
+    .reduce((sum, p) => sum + (Number(p.amount) || 0), 0)
+  const balanceDue = isMonthlyContract
+    ? (ledgerEntries.length > 0
+        ? computeMonthlyOutstanding(ledgerEntries, monthlyRent)
+        : Math.max(0, monthlyRent - paymentsThisMonth))
+    : Math.max(
+        0,
+        ledgerSummary.total_debit > 0
+          ? Number(ledgerSummary.total_balance)
+          : (Number(activeContract?.due ?? activeContract?.rent_amount ?? 0) -
+              payments.reduce((sum, p) => sum + (Number(p.amount) || 0), 0)),
+      )
+
+  const handleExportStatement = () => {
+    if (!activeContract) return
+    setExportLoading(true)
+    try {
+      const headers = ['Date', 'Description', 'Debit (AED)', 'Credit (AED)', 'Balance (AED)']
+      const rows = ledgerEntries.map((e) => [
+        `"${e.date || ''}"`,
+        `"${(e.description || '').replace(/"/g, '""')}"`,
+        `"${Number(e.debit || 0).toFixed(2)}"`,
+        `"${Number(e.credit || 0).toFixed(2)}"`,
+        `"${Number(e.running_balance || 0).toFixed(2)}"`,
+      ])
+      rows.push([])
+      rows.push(['"Total Receivable"', '', `"${Number(ledgerSummary.total_debit).toFixed(2)}"`, '', ''])
+      rows.push(['"Total Received"', '', '', `"${Number(ledgerSummary.total_credit).toFixed(2)}"`, ''])
+      rows.push(['"Due"', '', '', '', `"${Number(balanceDue).toFixed(2)}"`])
+      const csvContent = '\uFEFF' + [headers.join(','), ...rows.map((r) => r.join(','))].join('\n')
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
+      const url = window.URL.createObjectURL(blob)
+      const link = document.createElement('a')
+      link.href = url
+      link.setAttribute(
+        'download',
+        `Rent_Statement_Contract_${activeContract.id}_${new Date().toISOString().slice(0, 10)}.csv`,
+      )
+      document.body.appendChild(link)
+      link.click()
+      link.remove()
+      window.URL.revokeObjectURL(url)
+    } catch {
+      alert('Could not export statement.')
+    } finally {
+      setExportLoading(false)
+    }
+  }
 
   const openPaymentModal = (type: 'RENT' | 'DEWA' | 'OTHER') => {
     setPaymentType(type)
     if (type === 'RENT') {
-      const rentMonthly = activeContract?.rent_amount ? Number(activeContract.rent_amount) / 12 : 7500
-      setPaymentAmount(String(Math.round(rentMonthly)))
+      const rentMonthly = monthlyRent > 0 ? monthlyRent : 7500
+      setPaymentAmount(String(Math.round(rentMonthly * 100) / 100))
     } else if (type === 'DEWA') {
       setPaymentAmount('1000')
     } else {
@@ -210,21 +435,68 @@ export default function UnitDetailPage() {
 
   const handleEdit = () => {
     if (activeContract) {
-      navigate(`/owner/contracts/${activeContract.id}`)
+      navigate(`${basePath}/contracts/${activeContract.id}`)
     } else {
-      navigate(`/owner/units?edit=${unit?.id}`)
+      navigate(`${basePath}/units?edit=${unit?.id}`)
     }
   }
 
   const handleVacateConfirm = () => {
     setVacateModalOpen(false)
     if (activeContract) {
-      navigate(`/owner/contracts/${activeContract.id}?action=vacate`)
+      navigate(`${basePath}/contracts/${activeContract.id}?action=vacate`)
     }
   }
 
+  const unitStatus = (unit?.status || '').toUpperCase()
+  const isVacantUnit = !!unit && !activeContract && (unitStatus === 'AVAILABLE' || unitStatus === 'VACANT')
+  const isBookedUnit = !!unit && !activeContract && unitStatus === 'BOOKED'
+  const isIdleUnit = isVacantUnit || isBookedUnit
+
+  const handleCreateContract = () => {
+    if (!unit) return
+    const params = new URLSearchParams({
+      create: '1',
+      unit_id: String(unit.id),
+    })
+    if (unit.property?.id) params.set('property_id', String(unit.property.id))
+    navigate(`${basePath}/contracts?${params.toString()}`)
+  }
+
+  const handleBookUnit = async () => {
+    if (!unit || isBookingUnit) return
+    setIsBookingUnit(true)
+    try {
+      await api.put(`/owner/units/${unit.id}`, {
+        property_id: unit.property?.id,
+        number: unit.number,
+        floor: Number(unit.floor) || 1,
+        type: unit.type,
+        size: unit.size != null ? Number(unit.size) : 0,
+        furnished: Boolean(unit.furnished),
+        price: Number(unit.price) || 0,
+        dhewa_no: unit.dhewa_no || null,
+        category: unit.category || null,
+        status: 'BOOKED',
+      })
+      setUnit({ ...unit, status: 'BOOKED' })
+    } catch (err: any) {
+      alert(err?.response?.data?.message || 'Failed to book unit.')
+    } finally {
+      setIsBookingUnit(false)
+    }
+  }
+
+  const PersonCheckIcon = () => (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+      <circle cx="9" cy="7" r="4" />
+      <polyline points="16 11 18 13 22 9" />
+    </svg>
+  )
+
   return (
-    <div style={{ fontFamily: "'Inter', system-ui, sans-serif", background: '#F8FAFC', minHeight: '100vh', padding: '20px 28px 40px' }}>
+    <div className="gfh-portal-page" style={{ fontFamily: 'var(--font-sans)' }}>
       {/* ── Loading / Error / Not Found ── */}
       {isLoading ? (
         <div style={{ background: '#FFFFFF', borderRadius: 8, border: '1px solid #E2E8F0', padding: '60px 20px', textAlign: 'center' }}>
@@ -233,10 +505,10 @@ export default function UnitDetailPage() {
         </div>
       ) : error ? (
         <div style={{ background: '#FFFFFF', borderRadius: 8, border: '1px solid #FECACA', padding: '40px 20px', textAlign: 'center' }}>
-          <div style={{ fontSize: 15, fontWeight: 700, color: '#DC2626' }}>{error}</div>
+          <div style={{ fontSize: 15, fontWeight: 600, color: '#DC2626' }}>{error}</div>
           <button
             type="button"
-            onClick={() => navigate('/owner/units')}
+            onClick={() => navigate(`${basePath}/units`)}
             style={{ marginTop: 12, padding: '6px 16px', background: '#2563EB', color: '#FFF', border: 'none', borderRadius: 6, fontWeight: 600, cursor: 'pointer' }}
           >
             ← Back to Units
@@ -247,7 +519,7 @@ export default function UnitDetailPage() {
           <p style={{ fontSize: 14, color: '#64748B', fontWeight: 500 }}>Unit record could not be found.</p>
           <button
             type="button"
-            onClick={() => navigate('/owner/units')}
+            onClick={() => navigate(`${basePath}/units`)}
             style={{ marginTop: 10, padding: '6px 16px', background: '#2563EB', color: '#FFF', border: 'none', borderRadius: 6, fontWeight: 600, cursor: 'pointer' }}
           >
             ← Back to Units
@@ -266,21 +538,57 @@ export default function UnitDetailPage() {
               display: 'flex',
               justifyContent: 'space-between',
               alignItems: 'center',
+              gap: 16,
               boxShadow: '0 1px 3px rgba(15, 23, 42, 0.02)',
             }}
           >
-            <div>
-              <div style={{ fontSize: 16, fontWeight: 700, color: '#1E293B', textTransform: 'uppercase', letterSpacing: '0.02em' }}>
-                {unit.property?.name || 'DANA'}
-              </div>
-              <div style={{ fontSize: 22, fontWeight: 800, color: '#EF4444', marginTop: 4, letterSpacing: '-0.01em' }}>
-                {unit.number || '202'} - {unit.type ? unit.type.toUpperCase() : '2BR'}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 14, minWidth: 0 }}>
+              <img
+                src={getDefaultUnitImageUrl(unit.type)}
+                alt={`${unit.number || 'Unit'} photo`}
+                style={{
+                  width: 64,
+                  height: 64,
+                  borderRadius: 10,
+                  objectFit: 'cover',
+                  border: '1px solid #E2E8F0',
+                  flexShrink: 0,
+                  background: '#F1F5F9',
+                }}
+              />
+              <div style={{ minWidth: 0 }}>
+                <div style={{ fontSize: 16, fontWeight: 600, color: '#1E293B', textTransform: 'uppercase', letterSpacing: '0.02em' }}>
+                  {unit.property?.name || 'DANA'}
+                </div>
+                <div style={{ fontSize: 22, fontWeight: 600, color: '#EF4444', marginTop: 4, letterSpacing: '-0.01em' }}>
+                  {activeContract?.id ? (
+                    <button
+                      type="button"
+                      onClick={() => navigate(`${basePath}/contracts/${activeContract.id}`)}
+                      style={{
+                        background: 'none',
+                        border: 'none',
+                        padding: 0,
+                        margin: 0,
+                        font: 'inherit',
+                        color: 'inherit',
+                        cursor: 'pointer',
+                        textAlign: 'left',
+                      }}
+                      title="View contract"
+                    >
+                      {unit.number || '202'} - {unit.type ? unit.type.toUpperCase() : '2BR'}
+                    </button>
+                  ) : (
+                    <>{unit.number || '202'} - {unit.type ? unit.type.toUpperCase() : '2BR'}</>
+                  )}
+                </div>
               </div>
             </div>
 
             <button
               type="button"
-              onClick={() => navigate('/owner/units')}
+              onClick={() => navigate(-1)}
               style={{
                 padding: '6px 26px',
                 borderRadius: 9999,
@@ -291,6 +599,7 @@ export default function UnitDetailPage() {
                 fontWeight: 600,
                 cursor: 'pointer',
                 transition: 'all 0.15s ease',
+                flexShrink: 0,
               }}
               onMouseEnter={e => {
                 e.currentTarget.style.background = '#EFF6FF'
@@ -303,6 +612,84 @@ export default function UnitDetailPage() {
             </button>
           </div>
 
+          {isIdleUnit ? (
+            /* ═══════════════ VACANT / AVAILABLE / BOOKED (no active contract) ═══════════════ */
+            <div
+              style={{
+                background: '#FFFFFF',
+                borderRadius: 4,
+                border: '1px solid #E2E8F0',
+                borderLeft: `5px solid ${isBookedUnit ? '#ffc107' : '#28a745'}`,
+                padding: '22px 24px',
+                boxShadow: '0 1px 3px rgba(15, 23, 42, 0.02)',
+              }}
+            >
+              <div style={{ fontSize: 16, fontWeight: 600, color: '#1E293B', marginBottom: 16 }}>
+                {isBookedUnit ? (
+                  <>
+                    This Property is{' '}
+                    <span style={{ color: '#EF4444', fontWeight: 700 }}>BOOKED</span>
+                    {' '}— create a contract to complete tenancy.
+                  </>
+                ) : (
+                  <>
+                    This Property is{' '}
+                    <span style={{ color: '#EF4444', fontWeight: 700 }}>AVAILABLE</span>
+                    {' '}and ready to RENT!
+                  </>
+                )}
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
+                <button
+                  type="button"
+                  onClick={handleCreateContract}
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: 8,
+                    background: '#17a2b8',
+                    color: '#FFFFFF',
+                    border: 'none',
+                    borderRadius: 4,
+                    padding: '10px 18px',
+                    fontSize: 14,
+                    fontWeight: 600,
+                    cursor: 'pointer',
+                    boxShadow: '0 1px 2px rgba(23, 162, 184, 0.25)',
+                  }}
+                >
+                  <PersonCheckIcon />
+                  Create New Contract
+                </button>
+                {isVacantUnit && (
+                  <button
+                    type="button"
+                    onClick={() => void handleBookUnit()}
+                    disabled={isBookingUnit}
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: 8,
+                      background: '#28a745',
+                      color: '#FFFFFF',
+                      border: 'none',
+                      borderRadius: 4,
+                      padding: '10px 18px',
+                      fontSize: 14,
+                      fontWeight: 600,
+                      cursor: isBookingUnit ? 'not-allowed' : 'pointer',
+                      opacity: isBookingUnit ? 0.7 : 1,
+                      boxShadow: '0 1px 2px rgba(40, 167, 69, 0.25)',
+                    }}
+                  >
+                    <PersonCheckIcon />
+                    {isBookingUnit ? 'Booking...' : 'Book This Unit'}
+                  </button>
+                )}
+              </div>
+            </div>
+          ) : (
+          <>
           {/* ═══════════════ 2. TENANT & ACTION BUTTONS CARD (Blue top line) ═══════════════ */}
           <div
             style={{
@@ -321,10 +708,10 @@ export default function UnitDetailPage() {
             }}
           >
             <div>
-              <div style={{ fontSize: 18, fontWeight: 800, color: '#1E293B', letterSpacing: '-0.01em' }}>
+              <div style={{ fontSize: 18, fontWeight: 600, color: '#1E293B', letterSpacing: '-0.01em' }}>
                 {activeTenant?.name
                   ? activeTenant.name.toUpperCase()
-                  : (unit.status === 'AVAILABLE' || unit.status === 'VACANT' ? 'UNIT IS VACANT' : 'KARINA DZHAPAROVA')}
+                  : (unitStatus === 'BOOKED' ? 'UNIT IS BOOKED' : 'TENANT')}
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 6, fontSize: 14, color: '#475569', fontWeight: 600 }}>
                 {/* Smartphone Icon */}
@@ -356,7 +743,7 @@ export default function UnitDetailPage() {
                   borderRadius: 4,
                   padding: '9px 18px',
                   fontSize: 13,
-                  fontWeight: 700,
+                  fontWeight: 600,
                   cursor: 'pointer',
                   boxShadow: '0 1px 2px rgba(22, 163, 74, 0.2)',
                 }}
@@ -374,7 +761,7 @@ export default function UnitDetailPage() {
                   borderRadius: 4,
                   padding: '9px 18px',
                   fontSize: 13,
-                  fontWeight: 700,
+                  fontWeight: 600,
                   cursor: 'pointer',
                   boxShadow: '0 1px 2px rgba(6, 182, 212, 0.2)',
                 }}
@@ -392,7 +779,7 @@ export default function UnitDetailPage() {
                   borderRadius: 4,
                   padding: '9px 18px',
                   fontSize: 13,
-                  fontWeight: 700,
+                  fontWeight: 600,
                   cursor: 'pointer',
                   boxShadow: '0 1px 2px rgba(71, 85, 105, 0.2)',
                 }}
@@ -410,7 +797,7 @@ export default function UnitDetailPage() {
                   borderRadius: 4,
                   padding: '9px 18px',
                   fontSize: 13,
-                  fontWeight: 700,
+                  fontWeight: 600,
                   cursor: 'pointer',
                   boxShadow: '0 1px 2px rgba(239, 68, 68, 0.2)',
                 }}
@@ -439,7 +826,7 @@ export default function UnitDetailPage() {
                 boxShadow: '0 1px 3px rgba(15, 23, 42, 0.02)',
               }}
             >
-              <div style={{ fontSize: 15, fontWeight: 700, color: '#64748B', marginBottom: 16 }}>
+              <div style={{ fontSize: 15, fontWeight: 600, color: '#64748B', marginBottom: 16 }}>
                 Recent Payments
               </div>
 
@@ -447,12 +834,12 @@ export default function UnitDetailPage() {
                 <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
                   <thead>
                     <tr style={{ borderBottom: '1px solid #E2E8F0' }}>
-                      <th style={{ padding: '12px 14px', fontSize: 13, fontWeight: 700, color: '#475569' }}>Payment Date</th>
-                      <th style={{ padding: '12px 14px', fontSize: 13, fontWeight: 700, color: '#475569' }}>Description</th>
-                      <th style={{ padding: '12px 14px', fontSize: 13, fontWeight: 700, color: '#475569' }}>Amount</th>
-                      <th style={{ padding: '12px 14px', fontSize: 13, fontWeight: 700, color: '#475569' }}>Pay Mode</th>
-                      <th style={{ padding: '12px 14px', fontSize: 13, fontWeight: 700, color: '#475569' }}>Remarks</th>
-                      <th style={{ padding: '12px 14px', fontSize: 13, fontWeight: 700, color: '#475569', textAlign: 'center' }}>Action</th>
+                      <th style={{ padding: '12px 14px', fontSize: 13, fontWeight: 600, color: '#475569' }}>Payment Date</th>
+                      <th style={{ padding: '12px 14px', fontSize: 13, fontWeight: 600, color: '#475569' }}>Description</th>
+                      <th style={{ padding: '12px 14px', fontSize: 13, fontWeight: 600, color: '#475569' }}>Amount</th>
+                      <th style={{ padding: '12px 14px', fontSize: 13, fontWeight: 600, color: '#475569' }}>Pay Mode</th>
+                      <th style={{ padding: '12px 14px', fontSize: 13, fontWeight: 600, color: '#475569' }}>Remarks</th>
+                      <th style={{ padding: '12px 14px', fontSize: 13, fontWeight: 600, color: '#475569', textAlign: 'center' }}>Action</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -568,9 +955,9 @@ export default function UnitDetailPage() {
                                     onClick={() => {
                                       setActiveMenuPaymentId(null)
                                       if (activeContract) {
-                                        navigate(`/owner/contracts/${activeContract.id}`)
+                                        navigate(`${basePath}/contracts/${activeContract.id}`)
                                       } else {
-                                        navigate('/owner/ledger')
+                                        navigate(isStaff ? `${basePath}/receivables` : `${basePath}/ledger`)
                                       }
                                     }}
                                     style={{
@@ -662,10 +1049,31 @@ export default function UnitDetailPage() {
                 style={{
                   display: 'flex',
                   justifyContent: 'flex-end',
+                  alignItems: 'center',
+                  gap: 12,
                   padding: '12px 18px',
                   borderBottom: '1px solid #F1F5F9',
                 }}
               >
+                {activeContract?.id && (
+                  <button
+                    type="button"
+                    onClick={() => navigate(`${basePath}/contracts/${activeContract.id}`)}
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: 6,
+                      background: 'none',
+                      border: 'none',
+                      color: '#64748B',
+                      fontSize: 13,
+                      fontWeight: 600,
+                      cursor: 'pointer',
+                    }}
+                  >
+                    View contract
+                  </button>
+                )}
                 <button
                   type="button"
                   onClick={handleEdit}
@@ -677,7 +1085,7 @@ export default function UnitDetailPage() {
                     border: 'none',
                     color: '#2563EB',
                     fontSize: 13,
-                    fontWeight: 700,
+                    fontWeight: 600,
                     cursor: 'pointer',
                   }}
                 >
@@ -735,6 +1143,181 @@ export default function UnitDetailPage() {
             </div>
           </div>
 
+          {/* ═══════════════ Statement + Due ═══════════════ */}
+          {activeContract && (
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'minmax(0, 1.7fr) minmax(220px, 0.7fr)',
+                gap: 20,
+                alignItems: 'start',
+                marginTop: 20,
+              }}
+            >
+              <div
+                style={{
+                  background: '#FFFFFF',
+                  borderRadius: 8,
+                  border: '1px solid #E2E8F0',
+                  padding: '18px 22px',
+                  boxShadow: '0 1px 3px rgba(15, 23, 42, 0.02)',
+                }}
+              >
+                <div style={{ fontSize: 15, fontWeight: 600, color: '#64748B', marginBottom: 12 }}>Statement</div>
+                <button
+                  type="button"
+                  onClick={handleExportStatement}
+                  disabled={exportLoading}
+                  style={{
+                    marginBottom: 14,
+                    padding: '8px 16px',
+                    borderRadius: 4,
+                    border: 'none',
+                    background: '#16A34A',
+                    color: '#FFFFFF',
+                    fontSize: 13,
+                    fontWeight: 600,
+                    cursor: exportLoading ? 'not-allowed' : 'pointer',
+                  }}
+                >
+                  {exportLoading ? 'Exporting...' : 'Export to Excel'}
+                </button>
+
+                {ledgerLoading ? (
+                  <div style={{ textAlign: 'center', padding: 28, color: '#94A3B8', fontSize: 13, fontWeight: 600 }}>
+                    Loading statement...
+                  </div>
+                ) : ledgerEntries.length === 0 ? (
+                  <div style={{ textAlign: 'center', padding: 28, color: '#94A3B8', fontSize: 13, fontWeight: 600, background: '#F8FAFC', borderRadius: 8, border: '1px dashed #E2E8F0' }}>
+                    No statement entries yet
+                  </div>
+                ) : (
+                  <div style={{ overflowX: 'auto' }}>
+                    <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
+                      <thead>
+                        <tr style={{ borderBottom: '1px solid #E2E8F0' }}>
+                          {['Date', 'Description', 'Debit', 'Credit', 'Balance'].map((h) => (
+                            <th
+                              key={h}
+                              style={{
+                                padding: '10px 12px',
+                                fontSize: 13,
+                                fontWeight: 600,
+                                color: '#475569',
+                                textAlign: h === 'Date' || h === 'Description' ? 'left' : 'right',
+                              }}
+                            >
+                              {h}
+                            </th>
+                          ))}
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {ledgerEntries.map((entry, idx) => {
+                          const bal = Number(entry.running_balance ?? 0)
+                          return (
+                            <tr key={entry.id || idx} style={{ borderBottom: '1px solid #F1F5F9' }}>
+                              <td style={{ padding: '12px', fontSize: 13, color: '#334155', fontWeight: 500 }}>
+                                {formatDateDDMMYYYY(entry.date)}
+                              </td>
+                              <td style={{ padding: '12px', fontSize: 13, color: '#1E293B', fontWeight: 600 }}>
+                                {entry.description || '—'}
+                              </td>
+                              <td style={{ padding: '12px', fontSize: 13, color: '#1E293B', fontWeight: 600, textAlign: 'right' }}>
+                                {Number(entry.debit || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                              </td>
+                              <td style={{ padding: '12px', fontSize: 13, color: '#1E293B', fontWeight: 600, textAlign: 'right' }}>
+                                {Number(entry.credit || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                              </td>
+                              <td
+                                style={{
+                                  padding: '12px',
+                                  fontSize: 13,
+                                  fontWeight: 600,
+                                  textAlign: 'right',
+                                  color: bal < 0 ? '#DC2626' : '#1E293B',
+                                  fontStyle: bal < 0 ? 'italic' : 'normal',
+                                }}
+                              >
+                                {bal.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                              </td>
+                            </tr>
+                          )
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </div>
+
+              <div
+                style={{
+                  background: '#FFFFFF',
+                  borderRadius: 8,
+                  border: '1px solid #E2E8F0',
+                  padding: '22px 24px',
+                  boxShadow: '0 1px 3px rgba(15, 23, 42, 0.02)',
+                }}
+              >
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: 12 }}>
+                    <span style={{ fontSize: 14, fontWeight: 600, color: '#475569' }}>Receivable</span>
+                    <span style={{ fontSize: 15, fontWeight: 600, color: '#1E293B' }}>
+                      {Number(ledgerSummary.total_debit || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                    </span>
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: 12 }}>
+                    <span style={{ fontSize: 14, fontWeight: 600, color: '#475569' }}>Received</span>
+                    <span style={{ fontSize: 15, fontWeight: 600, color: '#16A34A' }}>
+                      {Number(ledgerSummary.total_credit || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                    </span>
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: 12 }}>
+                    <span style={{ fontSize: 14, fontWeight: 600, color: '#475569', display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+                      Other Due
+                      <span
+                        title="Non-rent charges outstanding"
+                        style={{
+                          width: 16,
+                          height: 16,
+                          borderRadius: '50%',
+                          border: '1px solid #93C5FD',
+                          color: '#2563EB',
+                          fontSize: 11,
+                          fontWeight: 700,
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          lineHeight: 1,
+                        }}
+                      >
+                        i
+                      </span>
+                    </span>
+                    <span style={{ fontSize: 15, fontWeight: 600, color: '#1E293B' }}>0.00</span>
+                  </div>
+                  <div style={{ borderTop: '1px solid #E2E8F0', paddingTop: 14, marginTop: 2 }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: 12 }}>
+                      <span style={{ fontSize: 16, fontWeight: 700, color: '#0F172A' }}>
+                        Due
+                        {isMonthlyContract && (
+                          <span style={{ display: 'block', fontSize: 11, fontWeight: 600, color: '#94A3B8', marginTop: 2 }}>
+                            Monthly outstanding
+                          </span>
+                        )}
+                      </span>
+                      <span style={{ fontSize: 28, fontWeight: 700, color: '#DC2626', letterSpacing: '-0.02em', lineHeight: 1 }}>
+                        {Number(balanceDue).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+          </>
+          )}
+
           {/* ═══════════════ MODALS ═══════════════ */}
 
           {/* Record Payment Modal */}
@@ -762,7 +1345,7 @@ export default function UnitDetailPage() {
                 }}
               >
                 <div style={{ padding: '16px 20px', borderBottom: '1px solid #E2E8F0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <h3 style={{ margin: 0, fontSize: 16, fontWeight: 700, color: '#0F172A' }}>
+                  <h3 style={{ margin: 0, fontSize: 16, fontWeight: 600, color: '#0F172A' }}>
                     Record Payment: {paymentType}
                   </h3>
                   <button
@@ -870,7 +1453,7 @@ export default function UnitDetailPage() {
                         background: '#16A34A',
                         color: '#FFFFFF',
                         fontSize: 13,
-                        fontWeight: 700,
+                        fontWeight: 600,
                         cursor: 'pointer',
                       }}
                     >
@@ -909,10 +1492,10 @@ export default function UnitDetailPage() {
                 {/* Header */}
                 <div style={{ background: '#065F46', padding: '18px 24px', color: '#FFFFFF', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <div>
-                    <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#A7F3D0' }}>
+                    <div style={{ fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#A7F3D0' }}>
                       Official Payment Receipt
                     </div>
-                    <div style={{ fontSize: 17, fontWeight: 800, marginTop: 2 }}>
+                    <div style={{ fontSize: 17, fontWeight: 600, marginTop: 2 }}>
                       REC-#{receiptModalPayment.id}
                     </div>
                   </div>
@@ -930,37 +1513,37 @@ export default function UnitDetailPage() {
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14, marginBottom: 18, borderBottom: '1px solid #E2E8F0', paddingBottom: 16 }}>
                     <div>
                       <div style={{ fontSize: 11, fontWeight: 600, color: '#64748B', textTransform: 'uppercase' }}>Property & Unit</div>
-                      <div style={{ fontSize: 13.5, fontWeight: 700, color: '#0F172A', marginTop: 2 }}>
+                      <div style={{ fontSize: 13.5, fontWeight: 600, color: '#0F172A', marginTop: 2 }}>
                         {unit.property?.name || 'DANA'} - {unit.number}
                       </div>
                     </div>
                     <div>
                       <div style={{ fontSize: 11, fontWeight: 600, color: '#64748B', textTransform: 'uppercase' }}>Payment Date</div>
-                      <div style={{ fontSize: 13.5, fontWeight: 700, color: '#0F172A', marginTop: 2 }}>
+                      <div style={{ fontSize: 13.5, fontWeight: 600, color: '#0F172A', marginTop: 2 }}>
                         {formatDateDDMMYYYY(receiptModalPayment.date)}
                       </div>
                     </div>
                     <div>
                       <div style={{ fontSize: 11, fontWeight: 600, color: '#64748B', textTransform: 'uppercase' }}>Tenant Name</div>
-                      <div style={{ fontSize: 13.5, fontWeight: 700, color: '#0F172A', marginTop: 2 }}>
+                      <div style={{ fontSize: 13.5, fontWeight: 600, color: '#0F172A', marginTop: 2 }}>
                         {activeTenant?.name || 'KARINA DZHAPAROVA'}
                       </div>
                     </div>
                     <div>
                       <div style={{ fontSize: 11, fontWeight: 600, color: '#64748B', textTransform: 'uppercase' }}>Payment Mode</div>
-                      <div style={{ fontSize: 13.5, fontWeight: 700, color: '#0F172A', marginTop: 2, textTransform: 'uppercase' }}>
+                      <div style={{ fontSize: 13.5, fontWeight: 600, color: '#0F172A', marginTop: 2, textTransform: 'uppercase' }}>
                         {receiptModalPayment.mode || 'CASH'}
                       </div>
                     </div>
                     <div>
                       <div style={{ fontSize: 11, fontWeight: 600, color: '#64748B', textTransform: 'uppercase' }}>Description</div>
-                      <div style={{ fontSize: 13.5, fontWeight: 700, color: '#0F172A', marginTop: 2, textTransform: 'uppercase' }}>
+                      <div style={{ fontSize: 13.5, fontWeight: 600, color: '#0F172A', marginTop: 2, textTransform: 'uppercase' }}>
                         {receiptModalPayment.type || 'RENT'}
                       </div>
                     </div>
                     <div>
                       <div style={{ fontSize: 11, fontWeight: 600, color: '#64748B', textTransform: 'uppercase' }}>Remarks</div>
-                      <div style={{ fontSize: 13.5, fontWeight: 700, color: '#0F172A', marginTop: 2 }}>
+                      <div style={{ fontSize: 13.5, fontWeight: 600, color: '#0F172A', marginTop: 2 }}>
                         {receiptModalPayment.remarks || '—'}
                       </div>
                     </div>
@@ -968,8 +1551,8 @@ export default function UnitDetailPage() {
 
                   {/* Amount Box */}
                   <div style={{ background: '#F0FDF4', border: '1px solid #BBF7D0', borderRadius: 8, padding: '14px 18px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
-                    <span style={{ fontSize: 13, fontWeight: 700, color: '#065F46' }}>Total Amount Paid</span>
-                    <span style={{ fontSize: 20, fontWeight: 800, color: '#065F46' }}>
+                    <span style={{ fontSize: 13, fontWeight: 600, color: '#065F46' }}>Total Amount Paid</span>
+                    <span style={{ fontSize: 20, fontWeight: 600, color: '#065F46' }}>
                       AED {formatCurrency(receiptModalPayment.amount)}
                     </span>
                   </div>
@@ -986,7 +1569,7 @@ export default function UnitDetailPage() {
                     <button
                       type="button"
                       onClick={() => window.print()}
-                      style={{ padding: '8px 20px', borderRadius: 6, border: 'none', background: '#2563EB', color: '#FFFFFF', fontSize: 13, fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6 }}
+                      style={{ padding: '8px 20px', borderRadius: 6, border: 'none', background: '#2563EB', color: '#FFFFFF', fontSize: 13, fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6 }}
                     >
                       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                         <polyline points="6 9 6 2 18 2 18 9" />
@@ -1032,7 +1615,7 @@ export default function UnitDetailPage() {
                     <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
                   </svg>
                 </div>
-                <h3 style={{ margin: '0 0 8px 0', fontSize: 16, fontWeight: 700, color: '#0F172A' }}>
+                <h3 style={{ margin: '0 0 8px 0', fontSize: 16, fontWeight: 600, color: '#0F172A' }}>
                   Delete this payment?
                 </h3>
                 <p style={{ margin: '0 0 20px 0', fontSize: 13, color: '#64748B', lineHeight: 1.5 }}>
@@ -1052,7 +1635,7 @@ export default function UnitDetailPage() {
                       setPayments(prev => prev.filter(p => p.id !== deleteConfirmPayment.id))
                       setDeleteConfirmPayment(null)
                     }}
-                    style={{ padding: '8px 20px', borderRadius: 6, border: 'none', background: '#DC2626', color: '#FFFFFF', fontSize: 13, fontWeight: 700, cursor: 'pointer' }}
+                    style={{ padding: '8px 20px', borderRadius: 6, border: 'none', background: '#DC2626', color: '#FFFFFF', fontSize: 13, fontWeight: 600, cursor: 'pointer' }}
                   >
                     Delete
                   </button>
@@ -1092,7 +1675,7 @@ export default function UnitDetailPage() {
                     <line x1="12" y1="2" x2="12" y2="12" />
                   </svg>
                 </div>
-                <h3 style={{ margin: '0 0 8px 0', fontSize: 17, fontWeight: 700, color: '#0F172A' }}>
+                <h3 style={{ margin: '0 0 8px 0', fontSize: 17, fontWeight: 600, color: '#0F172A' }}>
                   Vacate Unit {unit.number}?
                 </h3>
                 <p style={{ margin: '0 0 20px 0', fontSize: 13, color: '#64748B', lineHeight: 1.5 }}>
@@ -1125,7 +1708,7 @@ export default function UnitDetailPage() {
                       background: '#EF4444',
                       color: '#FFFFFF',
                       fontSize: 13,
-                      fontWeight: 700,
+                      fontWeight: 600,
                       cursor: 'pointer',
                     }}
                   >

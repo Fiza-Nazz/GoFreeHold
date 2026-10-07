@@ -4,8 +4,11 @@ import api from '../../api/axios'
 import { useAuthStore } from '../../store/authStore'
 import ChequeDetails, { type ChequeDetailsData } from '../../components/gfh/ChequeDetails'
 import { formatDate } from '../../utils/formatDate'
+import { computeMonthlyOutstanding, normalizeLeaseTerm, resolveMonthlyRent } from '../../utils/monthlyDue'
 import { THEME, Icon, CornerBrackets, portalPageCss, heroStyle, panelStyle, thStyle, tdStyle, ghostBtnStyle } from '../../components/gfh/adminTheme'
 import VacateSettlementModal from '../../components/gfh/VacateSettlementModal'
+import UaeBankSelect from '../../components/gfh/UaeBankSelect'
+import { DEFAULT_UAE_BANK } from '../../utils/uaeBanks'
 
 interface ContractDetail {
   id: number
@@ -63,7 +66,7 @@ const LegalCaseBadge = ({ active }: { active?: boolean }) => {
         color: '#991B1B',
         border: '1px solid #FECACA',
         fontSize: 11,
-        fontWeight: 800,
+        fontWeight: 600,
         letterSpacing: '0.6px',
         textTransform: 'uppercase',
         padding: '4px 12px',
@@ -132,7 +135,7 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
   const [chargeSubmitting, setChargeSubmitting] = useState(false)
 
   const [chequeModalOpen, setChequeModalOpen] = useState(false)
-  const [newCheque, setNewCheque] = useState({ cheque_number: '', bank_name: 'Emirates NBD', amount: '', due_date: new Date().toISOString().split('T')[0] })
+  const [newCheque, setNewCheque] = useState({ cheque_number: '', bank_name: DEFAULT_UAE_BANK, amount: '', due_date: new Date().toISOString().split('T')[0] })
 
   // 3-dots action menu state
   const [actionMenuOpen, setActionMenuOpen] = useState<number | null>(null)
@@ -144,7 +147,7 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
     tenant_address: '',
     tenant_contact: '',
     tenant_email: '',
-    lease_term: 'Monthly',
+    lease_term: 'Yearly',
     rent_amount: '',
     start_date: '',
     end_date: '',
@@ -154,7 +157,7 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
     dewa_deposit: '',
     cheque_date: '',
     cheque_number: '',
-    cheque_bank: 'Emirates NBD',
+    cheque_bank: DEFAULT_UAE_BANK,
   })
 
   useEffect(() => {
@@ -199,7 +202,7 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
           tenant_address: data.tenant?.address || 'DUBAI',
           tenant_contact: data.tenant?.phone || data.tenant?.contact || '',
           tenant_email: data.tenant?.email || '',
-          lease_term: data.lease_term || 'Monthly',
+          lease_term: normalizeLeaseTerm(data.lease_term),
           rent_amount: String(data.rent_amount ?? ''),
           start_date: data.start_date ? data.start_date.split('T')[0] : '',
           end_date: data.end_date ? data.end_date.split('T')[0] : '',
@@ -209,7 +212,7 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
           dewa_deposit: String(data.dewa_deposit ?? ''),
           cheque_date: data.cheques?.[0]?.due_date ? data.cheques[0].due_date.split('T')[0] : (data.start_date ? data.start_date.split('T')[0] : ''),
           cheque_number: data.cheques?.[0]?.cheque_number || '123456',
-          cheque_bank: data.cheques?.[0]?.bank_name || 'Emirates NBD',
+          cheque_bank: data.cheques?.[0]?.bank_name || DEFAULT_UAE_BANK,
         })
       }
       if (id) {
@@ -327,16 +330,16 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
           <style>
             body { font-family: 'Segoe UI', system-ui, sans-serif; padding: 40px; color: #0f172a; max-width: 780px; margin: 0 auto; }
             .header { border-bottom: 2px solid #10B981; padding-bottom: 16px; margin-bottom: 24px; display: flex; justify-content: space-between; align-items: flex-start; }
-            .logo { font-size: 26px; font-weight: 800; color: #10B981; }
-            .sub-logo { font-size: 11px; font-weight: 700; color: #065F46; letter-spacing: 1px; text-transform: uppercase; margin-top: 2px; }
-            .receipt-title { font-size: 18px; font-weight: 800; color: #0F172A; text-transform: uppercase; text-align: right; }
+            .logo { font-size: 26px; font-weight: 600; color: #10B981; }
+            .sub-logo { font-size: 11px; font-weight: 600; color: #065F46; letter-spacing: 1px; text-transform: uppercase; margin-top: 2px; }
+            .receipt-title { font-size: 18px; font-weight: 600; color: #0F172A; text-transform: uppercase; text-align: right; }
             .ref-no { font-size: 13px; color: #64748B; margin-top: 4px; text-align: right; }
             .table { width: 100%; border-collapse: collapse; margin-top: 24px; }
             .table th, .table td { padding: 12px 14px; border-bottom: 1px solid #E2E8F0; text-align: left; font-size: 13.5px; }
             .table th { background: #F8FAFC; color: #64748B; font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.5px; width: 35%; }
             .total-box { margin-top: 24px; background: #ECFDF5; border: 1px solid #A7F3DC; border-radius: 8px; padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; }
-            .total-label { font-size: 14px; font-weight: 700; color: #065F46; text-transform: uppercase; }
-            .total-val { font-size: 24px; font-weight: 800; color: #065F46; }
+            .total-label { font-size: 14px; font-weight: 600; color: #065F46; text-transform: uppercase; }
+            .total-val { font-size: 24px; font-weight: 600; color: #065F46; }
             .signatures { margin-top: 60px; display: flex; justify-content: space-between; }
             .sig-line { width: 220px; border-bottom: 1px solid #94A3B8; margin-bottom: 8px; }
             .sig-text { font-size: 12px; color: #64748B; }
@@ -528,16 +531,16 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
           <style>
             body { font-family: 'Segoe UI', system-ui, sans-serif; padding: 40px; color: #0f172a; max-width: 780px; margin: 0 auto; }
             .header { border-bottom: 2px solid #10B981; padding-bottom: 16px; margin-bottom: 24px; display: flex; justify-content: space-between; align-items: flex-start; }
-            .logo { font-size: 26px; font-weight: 800; color: #10B981; }
-            .sub-logo { font-size: 11px; font-weight: 700; color: #065F46; letter-spacing: 1px; text-transform: uppercase; margin-top: 2px; }
-            .receipt-title { font-size: 18px; font-weight: 800; color: #0F172A; text-transform: uppercase; text-align: right; }
+            .logo { font-size: 26px; font-weight: 600; color: #10B981; }
+            .sub-logo { font-size: 11px; font-weight: 600; color: #065F46; letter-spacing: 1px; text-transform: uppercase; margin-top: 2px; }
+            .receipt-title { font-size: 18px; font-weight: 600; color: #0F172A; text-transform: uppercase; text-align: right; }
             .ref-no { font-size: 13px; color: #64748B; margin-top: 4px; text-align: right; }
             .table { width: 100%; border-collapse: collapse; margin-top: 24px; }
             .table th, .table td { padding: 12px 14px; border-bottom: 1px solid #E2E8F0; text-align: left; font-size: 13.5px; }
             .table th { background: #F8FAFC; color: #64748B; font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.5px; width: 35%; }
             .total-box { margin-top: 24px; background: #ECFDF5; border: 1px solid #A7F3DC; border-radius: 8px; padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; }
-            .total-label { font-size: 14px; font-weight: 700; color: #065F46; text-transform: uppercase; }
-            .total-val { font-size: 24px; font-weight: 800; color: #065F46; }
+            .total-label { font-size: 14px; font-weight: 600; color: #065F46; text-transform: uppercase; }
+            .total-val { font-size: 24px; font-weight: 600; color: #065F46; }
             .signatures { margin-top: 60px; display: flex; justify-content: space-between; }
             .sig-line { width: 220px; border-bottom: 1px solid #94A3B8; margin-bottom: 8px; }
             .sig-text { font-size: 12px; color: #64748B; }
@@ -632,7 +635,8 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
         ...newPayment
       })
       setPaymentModalOpen(false)
-      fetchContract()
+      await fetchContract()
+      if (id) void fetchLedger(id)
     } catch (err: any) {
       alert(err.response?.data?.message || 'Failed to record payment')
     }
@@ -661,6 +665,10 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
   }
 
   const handleWorkspaceTabChange = (tab: WorkspaceTabType) => {
+    // Owner/staff unit-style pages only use overview + inline contract edit
+    if (isOwnerStaff && tab !== 'overview' && tab !== 'contract') {
+      return
+    }
     setWorkspaceTab(tab)
     if (tab === 'overview') {
       setMode('view')
@@ -740,6 +748,10 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
 
       alert('Contract details saved successfully!')
       await fetchContract()
+      if (isOwnerStaff) {
+        setWorkspaceTab('overview')
+        setMode('view')
+      }
     } catch (err: any) {
       alert(err.response?.data?.message || 'Failed to update contract')
     } finally {
@@ -759,7 +771,7 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
   if (!contract) {
     return (
       <div className="gfh-portal-page" style={{ padding: '60px 20px', textAlign: 'center' }}>
-        <h2 style={{ color: '#0f172a', fontSize: '22px', fontWeight: 700, marginBottom: 10 }}>
+        <h2 style={{ color: '#0f172a', fontSize: '22px', fontWeight: 600, marginBottom: 10 }}>
           Contract Not Found or Access Restricted
         </h2>
         <p style={{ color: '#64748b', fontSize: '14px', maxWidth: 480, margin: '0 auto 24px' }}>
@@ -782,7 +794,25 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
   const startDateStr = contract.start_date ? contract.start_date.split('T')[0] : '—'
   const endDateStr = contract.end_date ? contract.end_date.split('T')[0] : '—'
   const totalReceived = contract.payments?.reduce((acc, p) => acc + Number(p.amount), 0) || 0
+  const leaseTermForDue = normalizeLeaseTerm(contract.lease_term || editForm.lease_term)
+  const monthlyRent = resolveMonthlyRent(contract.rent_amount, leaseTermForDue)
+  const isMonthlyContract = leaseTermForDue === 'Monthly'
+  /** Full ledger / contract outstanding (admin KPIs) */
   const balanceDue = Math.max(0, (ledgerSummary.total_debit > 0 ? ledgerSummary.total_balance : (Number(contract.rent_amount) - totalReceived)))
+  /** Owner statement Due: monthly outstanding (current month + arrears on monthly schedule) */
+  const monthlyOutstandingDue = isMonthlyContract
+    ? (ledgerEntries.length > 0
+        ? computeMonthlyOutstanding(ledgerEntries, monthlyRent)
+        : Math.max(0, monthlyRent - (contract.payments || [])
+            .filter((p) => {
+              if (!p.date) return false
+              const d = new Date(p.date)
+              const now = new Date()
+              return d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth()
+            })
+            .reduce((acc, p) => acc + Number(p.amount || 0), 0)))
+    : balanceDue
+  const displayDue = isOwnerStaff ? monthlyOutstandingDue : balanceDue
   const nextPendingCheque = (contract.cheques || [])
     .filter(c => (c.status || 'pending').toLowerCase() === 'pending')
     .sort((a, b) => new Date(a.due_date).getTime() - new Date(b.due_date).getTime())[0]
@@ -811,7 +841,7 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
     fontSize: 14,
     color: '#0F172A',
     fontWeight: 500,
-    fontFamily: "'Inter', system-ui, sans-serif",
+    fontFamily: "'Source Sans Pro', system-ui, sans-serif",
     boxSizing: 'border-box',
     outline: 'none',
   }
@@ -822,21 +852,22 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
     fontWeight: 600,
     color: '#334155',
     marginBottom: 6,
-    fontFamily: "'Inter', system-ui, sans-serif",
+    fontFamily: "'Source Sans Pro', system-ui, sans-serif",
   }
 
   const leaseTermDisplay = (contract.cheques && contract.cheques.length > 0)
     ? `${contract.cheques.length} Cheques`
-    : (contract.lease_term || editForm.lease_term || '1 Year')
+    : normalizeLeaseTerm(contract.lease_term || editForm.lease_term)
+
+  const ownerPayments = (contract.payments || []).slice(0, 8)
+  const dewaDepositFormatted = Number(contract.dewa_deposit || editForm.dewa_deposit || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+  const securityDepositFormatted = Number(contract.security_deposit || editForm.security_deposit || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })
 
   return (
     <div
       className="gfh-portal-page"
       style={{
-        fontFamily: "'Inter', system-ui, sans-serif",
-        background: '#F6F8FA',
-        minHeight: '100vh',
-        paddingBottom: 48,
+        fontFamily: 'var(--font-sans)',
       }}
     >
       <style>{`
@@ -846,7 +877,8 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
           box-shadow: 0 0 0 3px rgba(14, 124, 91, 0.12);
         }
         @media (max-width: 960px) {
-          .gfh-overview-two-col {
+          .gfh-overview-two-col,
+          .gfh-owner-unit-layout {
             grid-template-columns: 1fr !important;
           }
           .gfh-kpi-four-col > div {
@@ -856,7 +888,215 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
         }
       `}</style>
 
-      {/* ─── 1. SPACIOUS TOP CONTRACT HEADER CARD ─── */}
+      {isOwnerStaff ? (
+        <>
+          {/* Owner Unit-Detail-style header */}
+          <div
+            style={{
+              background: '#FFFFFF',
+              borderRadius: 8,
+              border: '1px solid #E2E8F0',
+              padding: '18px 24px',
+              marginBottom: 16,
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              boxShadow: '0 1px 3px rgba(15, 23, 42, 0.02)',
+              flexWrap: 'wrap',
+              gap: 12,
+            }}
+          >
+            <div>
+              <div style={{ fontSize: 16, fontWeight: 600, color: '#1E293B', textTransform: 'uppercase', letterSpacing: '0.02em' }}>
+                {propertyName}
+              </div>
+              <div style={{ fontSize: 22, fontWeight: 600, color: '#EF4444', marginTop: 4, letterSpacing: '-0.01em' }}>
+                {contract.unit_id ? (
+                  <button
+                    type="button"
+                    onClick={() => navigate(`${effectiveBasePath}/units/${contract.unit_id}`)}
+                    style={{
+                      background: 'none',
+                      border: 'none',
+                      padding: 0,
+                      margin: 0,
+                      font: 'inherit',
+                      color: 'inherit',
+                      cursor: 'pointer',
+                      textAlign: 'left',
+                    }}
+                    title="View unit"
+                  >
+                    {unitNumber} - {contractType}
+                  </button>
+                ) : (
+                  <>{unitNumber} - {contractType}</>
+                )}
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+              <button
+                type="button"
+                onClick={downloadPdf}
+                disabled={pdfLoading}
+                style={{
+                  padding: '6px 18px',
+                  borderRadius: 9999,
+                  border: '1.5px solid #10B981',
+                  background: '#FFFFFF',
+                  color: '#059669',
+                  fontSize: 13.5,
+                  fontWeight: 600,
+                  cursor: pdfLoading ? 'not-allowed' : 'pointer',
+                }}
+              >
+                {pdfLoading ? 'Preparing...' : 'Contract PDF'}
+              </button>
+              <button
+                type="button"
+                onClick={() => navigate(`${effectiveBasePath}/contracts`)}
+                style={{
+                  padding: '6px 26px',
+                  borderRadius: 9999,
+                  border: '1.5px solid #60A5FA',
+                  background: '#FFFFFF',
+                  color: '#2563EB',
+                  fontSize: 13.5,
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                }}
+                onMouseEnter={e => { e.currentTarget.style.background = '#EFF6FF' }}
+                onMouseLeave={e => { e.currentTarget.style.background = '#FFFFFF' }}
+              >
+                Back
+              </button>
+            </div>
+          </div>
+
+          {/* Owner tenant + action buttons card (Unit Detail style — no secondary tabs) */}
+          <div
+            style={{
+              background: '#FFFFFF',
+              borderRadius: 8,
+              border: '1px solid #E2E8F0',
+              borderTop: '3.5px solid #2563EB',
+              padding: '18px 24px',
+              marginBottom: 20,
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              flexWrap: 'wrap',
+              gap: 16,
+              boxShadow: '0 1px 3px rgba(15, 23, 42, 0.02)',
+            }}
+          >
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+                <div style={{ fontSize: 18, fontWeight: 600, color: '#1E293B', letterSpacing: '-0.01em', textTransform: 'uppercase' }}>
+                  {tenantName}
+                </div>
+                <LegalCaseBadge active={contract.on_case} />
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 6, fontSize: 14, color: '#475569', fontWeight: 600 }}>
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="5" y="2" width="14" height="20" rx="2" ry="2" />
+                  <line x1="12" y1="18" x2="12.01" y2="18" />
+                </svg>
+                <span>{tenantContact}</span>
+                <span style={{ color: '#CBD5E1', margin: '0 4px' }}>|</span>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2563EB" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                  <circle cx="8.5" cy="7" r="4" />
+                  <line x1="20" y1="8" x2="20" y2="14" />
+                  <line x1="23" y1="11" x2="17" y2="11" />
+                </svg>
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+              <button
+                type="button"
+                onClick={() => openPaymentModal('rent')}
+                disabled={isCashier}
+                style={{
+                  background: '#16A34A',
+                  color: '#FFFFFF',
+                  border: 'none',
+                  borderRadius: 4,
+                  padding: '9px 18px',
+                  fontSize: 13,
+                  fontWeight: 600,
+                  cursor: isCashier ? 'not-allowed' : 'pointer',
+                  opacity: isCashier ? 0.6 : 1,
+                  boxShadow: '0 1px 2px rgba(22, 163, 74, 0.2)',
+                }}
+              >
+                Add Rent
+              </button>
+              <button
+                type="button"
+                onClick={() => openPaymentModal('dewa')}
+                disabled={isCashier}
+                style={{
+                  background: '#06B6D4',
+                  color: '#FFFFFF',
+                  border: 'none',
+                  borderRadius: 4,
+                  padding: '9px 18px',
+                  fontSize: 13,
+                  fontWeight: 600,
+                  cursor: isCashier ? 'not-allowed' : 'pointer',
+                  opacity: isCashier ? 0.6 : 1,
+                  boxShadow: '0 1px 2px rgba(6, 182, 212, 0.2)',
+                }}
+              >
+                Add Dewa
+              </button>
+              <button
+                type="button"
+                onClick={() => openPaymentModal('other')}
+                disabled={isCashier}
+                style={{
+                  background: '#475569',
+                  color: '#FFFFFF',
+                  border: 'none',
+                  borderRadius: 4,
+                  padding: '9px 18px',
+                  fontSize: 13,
+                  fontWeight: 600,
+                  cursor: isCashier ? 'not-allowed' : 'pointer',
+                  opacity: isCashier ? 0.6 : 1,
+                  boxShadow: '0 1px 2px rgba(71, 85, 105, 0.2)',
+                }}
+              >
+                Other Payments
+              </button>
+              <button
+                type="button"
+                onClick={() => setVacateModalOpen(true)}
+                disabled={contract.status === 'vacated' || isCashier}
+                style={{
+                  background: '#EF4444',
+                  color: '#FFFFFF',
+                  border: 'none',
+                  borderRadius: 4,
+                  padding: '9px 18px',
+                  fontSize: 13,
+                  fontWeight: 600,
+                  cursor: (contract.status === 'vacated' || isCashier) ? 'not-allowed' : 'pointer',
+                  opacity: (contract.status === 'vacated' || isCashier) ? 0.6 : 1,
+                  boxShadow: '0 1px 2px rgba(239, 68, 68, 0.2)',
+                }}
+              >
+                Vaccate
+              </button>
+            </div>
+          </div>
+        </>
+      ) : (
+        <>
+      {/* ─── 1. SPACIOUS TOP CONTRACT HEADER CARD (admin) ─── */}
       <div
         style={{
           background: '#FFFFFF',
@@ -867,7 +1107,6 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
           boxShadow: '0 1px 4px rgba(15, 23, 42, 0.04)',
         }}
       >
-        {/* Top Control Bar: Status Badge + Contract Ref (Left) | Back + View PDF Buttons (Right) */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 10, marginBottom: 12 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
             <span
@@ -881,7 +1120,7 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
                 border: `1px solid ${contract.status === 'active' ? '#A7F3D0' : (contract.status === 'vacated' ? '#FECACA' : '#FDE68A')}`,
                 color: contract.status === 'active' ? '#065F46' : (contract.status === 'vacated' ? '#991B1B' : '#92400E'),
                 fontSize: 11.5,
-                fontWeight: 700,
+                fontWeight: 600,
               }}
             >
               <span
@@ -935,7 +1174,7 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
                 border: 'none',
                 color: '#FFFFFF',
                 fontSize: 12,
-                fontWeight: 700,
+                fontWeight: 600,
                 cursor: 'pointer',
               }}
             >
@@ -948,9 +1187,7 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
           </div>
         </div>
 
-        {/* Separated Unit Info & Tenant Info Panels (Client Requirement: make unit info and tenant separate) */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 10 }}>
-          {/* Panel 1: Unit Info */}
           <div
             style={{
               background: '#F8FAFC',
@@ -962,12 +1199,11 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
             <div style={{ fontSize: 13, color: '#475569', fontWeight: 600 }}>
               {propertyName}
             </div>
-            <div style={{ fontSize: 18, fontWeight: 800, color: '#DC2626', marginTop: 2 }}>
+            <div style={{ fontSize: 18, fontWeight: 600, color: '#DC2626', marginTop: 2 }}>
               {unitNumber} – {contractType}
             </div>
           </div>
 
-          {/* Panel 2: Tenant Info */}
           <div
             style={{
               background: '#F8FAFC',
@@ -976,7 +1212,7 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
               padding: '12px 16px',
             }}
           >
-            <div style={{ fontSize: 15, fontWeight: 800, color: '#0F172A', textTransform: 'uppercase' }}>
+            <div style={{ fontSize: 15, fontWeight: 600, color: '#0F172A', textTransform: 'uppercase' }}>
               {tenantName}
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 12, fontSize: 12.5, color: '#475569', marginTop: 4, fontWeight: 600, flexWrap: 'wrap' }}>
@@ -1019,10 +1255,10 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
             { label: 'Next Due', value: nextDueDateStr, bg: '#FFFBEB', border: '#FDE68A', labelColor: '#92400E' },
           ].map(kpi => (
             <div key={kpi.label} style={{ background: kpi.bg, border: `1px solid ${kpi.border}`, borderRadius: 8, padding: '10px 14px' }}>
-              <div style={{ fontSize: 10.5, color: kpi.labelColor, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+              <div style={{ fontSize: 10.5, color: kpi.labelColor, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
                 {kpi.label}
               </div>
-              <div style={{ fontSize: 15, fontWeight: 800, color: kpi.valueColor || '#0F172A', marginTop: 3 }}>
+              <div style={{ fontSize: 15, fontWeight: 600, color: kpi.valueColor || '#0F172A', marginTop: 3 }}>
                 {kpi.value}
               </div>
             </div>
@@ -1030,7 +1266,7 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
         </div>
       </div>
 
-      {/* ─── 2. CLEAN 5-TAB NAVIGATION BAR ─── */}
+      {/* ─── 2. CLEAN 5-TAB NAVIGATION BAR (admin) ─── */}
       <div
         style={{
           display: 'flex',
@@ -1063,7 +1299,7 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
                 borderRadius: 8,
                 color: active ? '#FFFFFF' : '#0F172A',
                 fontSize: 13.5,
-                fontWeight: 700,
+                fontWeight: 600,
                 cursor: 'pointer',
                 whiteSpace: 'nowrap',
                 transition: 'all 0.15s ease',
@@ -1074,13 +1310,416 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
           )
         })}
       </div>
+        </>
+      )}
 
       {/* ─── TAB 1: OVERVIEW ─── */}
-      {workspaceTab === 'overview' && (
+      {workspaceTab === 'overview' && isOwnerStaff && (
+        <div className="fade-in" style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+        <div className="gfh-owner-unit-layout" style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1.6fr) minmax(0, 1fr)', gap: 20, alignItems: 'start' }}>
+          {/* Left: Recent Payments (Unit Detail style) */}
+          <div
+            style={{
+              background: '#FFFFFF',
+              borderRadius: 8,
+              border: '1px solid #E2E8F0',
+              padding: '20px 24px',
+              boxShadow: '0 1px 3px rgba(15, 23, 42, 0.02)',
+            }}
+          >
+            <div style={{ fontSize: 15, fontWeight: 600, color: '#64748B', marginBottom: 16 }}>
+              Recent Payments
+            </div>
+            <div style={{ overflowX: 'auto' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
+                <thead>
+                  <tr style={{ borderBottom: '1px solid #E2E8F0' }}>
+                    <th style={{ padding: '12px 14px', fontSize: 13, fontWeight: 600, color: '#475569' }}>Payment Date</th>
+                    <th style={{ padding: '12px 14px', fontSize: 13, fontWeight: 600, color: '#475569' }}>Description</th>
+                    <th style={{ padding: '12px 14px', fontSize: 13, fontWeight: 600, color: '#475569' }}>Amount</th>
+                    <th style={{ padding: '12px 14px', fontSize: 13, fontWeight: 600, color: '#475569' }}>Pay Mode</th>
+                    <th style={{ padding: '12px 14px', fontSize: 13, fontWeight: 600, color: '#475569' }}>Remarks</th>
+                    <th style={{ padding: '12px 14px', fontSize: 13, fontWeight: 600, color: '#475569', textAlign: 'center' }}>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {ownerPayments.length > 0 ? (
+                    ownerPayments.map((p, idx) => (
+                      <tr key={p.id || idx} style={{ borderBottom: '1px solid #F1F5F9' }}>
+                        <td style={{ padding: '14px', fontSize: 13, color: '#334155', fontWeight: 500 }}>
+                          {formatDate(p.date)}
+                        </td>
+                        <td style={{ padding: '14px', fontSize: 13, fontWeight: 600, color: '#1E293B', textTransform: 'uppercase' }}>
+                          {p.type || 'RENT'}
+                        </td>
+                        <td style={{ padding: '14px', fontSize: 13, fontWeight: 600, color: '#1E293B' }}>
+                          {Number(p.amount).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                        </td>
+                        <td style={{ padding: '14px', fontSize: 13, color: '#334155', textTransform: 'uppercase' }}>
+                          {p.mode || 'CASH'}
+                        </td>
+                        <td style={{ padding: '14px', fontSize: 13, color: '#64748B' }}>
+                          {p.remarks || ''}
+                        </td>
+                        <td style={{ padding: '14px', textAlign: 'center', position: 'relative' }}>
+                          <div className="payment-action-menu-wrap" style={{ position: 'relative', display: 'inline-block' }}>
+                            <button
+                              type="button"
+                              title="Action Options"
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                setActionMenuOpen(actionMenuOpen === p.id ? null : p.id)
+                              }}
+                              style={{
+                                width: 30,
+                                height: 30,
+                                borderRadius: '50%',
+                                background: actionMenuOpen === p.id ? '#1E293B' : '#475569',
+                                border: 'none',
+                                color: '#FFFFFF',
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                cursor: 'pointer',
+                                boxShadow: '0 1px 3px rgba(15, 23, 42, 0.25)',
+                              }}
+                            >
+                              <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
+                                <circle cx="12" cy="5" r="2.2" />
+                                <circle cx="12" cy="12" r="2.2" />
+                                <circle cx="12" cy="19" r="2.2" />
+                              </svg>
+                            </button>
+                            {actionMenuOpen === p.id && (
+                              <div
+                                style={{
+                                  position: 'absolute',
+                                  right: 0,
+                                  top: 36,
+                                  background: '#FFFFFF',
+                                  border: '1px solid #E2E8F0',
+                                  borderRadius: 8,
+                                  boxShadow: '0 12px 28px rgba(15, 23, 42, 0.15)',
+                                  zIndex: 999,
+                                  minWidth: 175,
+                                  overflow: 'hidden',
+                                  padding: '4px 0',
+                                  textAlign: 'left',
+                                }}
+                              >
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    setActionMenuOpen(null)
+                                    printPaymentReceipt({
+                                      id: p.id,
+                                      date: p.date ? p.date.split('T')[0].split('-').reverse().join('-') : '',
+                                      type: (p.type || 'RENT').toUpperCase(),
+                                      amount: Number(p.amount).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
+                                      mode: (p.mode || 'CASH').toUpperCase(),
+                                      remarks: p.remarks || '—',
+                                    })
+                                  }}
+                                  style={{
+                                    width: '100%',
+                                    padding: '9px 14px',
+                                    background: 'none',
+                                    border: 'none',
+                                    color: '#1E293B',
+                                    fontSize: 12.5,
+                                    fontWeight: 600,
+                                    cursor: 'pointer',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: 8,
+                                    textAlign: 'left',
+                                  }}
+                                  onMouseEnter={e => (e.currentTarget.style.background = '#F8FAFC')}
+                                  onMouseLeave={e => (e.currentTarget.style.background = 'none')}
+                                >
+                                  View / Print Receipt
+                                </button>
+                                {!isCashier && (
+                                  <>
+                                    <div style={{ height: 1, background: '#F1F5F9', margin: '4px 0' }} />
+                                    <button
+                                      type="button"
+                                      onClick={() => {
+                                        setActionMenuOpen(null)
+                                        handleDeletePayment(p.id)
+                                      }}
+                                      style={{
+                                        width: '100%',
+                                        padding: '9px 14px',
+                                        background: 'none',
+                                        border: 'none',
+                                        color: '#DC2626',
+                                        fontSize: 12.5,
+                                        fontWeight: 600,
+                                        cursor: 'pointer',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: 8,
+                                        textAlign: 'left',
+                                      }}
+                                      onMouseEnter={e => (e.currentTarget.style.background = '#FEF2F2')}
+                                      onMouseLeave={e => (e.currentTarget.style.background = 'none')}
+                                    >
+                                      Delete Payment
+                                    </button>
+                                  </>
+                                )}
+                              </div>
+                            )}
+                          </div>
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan={6} style={{ textAlign: 'center', padding: '30px 14px', color: '#94A3B8', fontSize: 13 }}>
+                        No recent payments recorded
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          {/* Right: Contract Details key-value (Unit Detail style) */}
+          <div
+            style={{
+              background: '#FFFFFF',
+              borderRadius: 8,
+              border: '1px solid #E2E8F0',
+              overflow: 'hidden',
+              boxShadow: '0 1px 3px rgba(15, 23, 42, 0.02)',
+            }}
+          >
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'flex-end',
+                padding: '12px 18px',
+                borderBottom: '1px solid #F1F5F9',
+              }}
+            >
+              <button
+                type="button"
+                onClick={() => handleWorkspaceTabChange('contract')}
+                disabled={isCashier}
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 6,
+                  background: 'none',
+                  border: 'none',
+                  color: '#2563EB',
+                  fontSize: 13,
+                  fontWeight: 600,
+                  cursor: isCashier ? 'not-allowed' : 'pointer',
+                  opacity: isCashier ? 0.5 : 1,
+                }}
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                  <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                </svg>
+                Edit
+              </button>
+            </div>
+            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+              <tbody>
+                {[
+                  { label: 'Lease Term', value: leaseTermDisplay },
+                  { label: 'Rent Amount', value: totalRentFormatted },
+                  { label: 'Security Deposit', value: securityDepositFormatted },
+                  { label: 'Dewa Deposit', value: dewaDepositFormatted },
+                  { label: 'Start Date', value: startDateStr },
+                  { label: 'End Date', value: endDateStr },
+                ].map((row, idx, arr) => (
+                  <tr
+                    key={row.label}
+                    style={{
+                      borderBottom: idx < arr.length - 1 ? '1px solid #E2E8F0' : 'none',
+                    }}
+                  >
+                    <td style={{ padding: '13px 18px', fontSize: 13, fontWeight: 500, color: '#475569', width: '50%' }}>
+                      {row.label}
+                    </td>
+                    <td style={{ padding: '13px 18px', fontSize: 13, fontWeight: 600, color: '#1E293B', textAlign: 'right' }}>
+                      {row.value}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        {/* Statement + Due summary (Unit-style owner page) */}
+        <div
+          className="gfh-owner-unit-layout"
+          style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1.7fr) minmax(220px, 0.7fr)', gap: 20, alignItems: 'start' }}
+        >
+          <div
+            style={{
+              background: '#FFFFFF',
+              borderRadius: 8,
+              border: '1px solid #E2E8F0',
+              padding: '18px 22px',
+              boxShadow: '0 1px 3px rgba(15, 23, 42, 0.02)',
+            }}
+          >
+            <div style={{ fontSize: 15, fontWeight: 600, color: '#64748B', marginBottom: 12 }}>Statement</div>
+            <button
+              type="button"
+              onClick={() => void handleExportExcel()}
+              disabled={exportLoading}
+              style={{
+                marginBottom: 14,
+                padding: '8px 16px',
+                borderRadius: 4,
+                border: 'none',
+                background: '#16A34A',
+                color: '#FFFFFF',
+                fontSize: 13,
+                fontWeight: 600,
+                cursor: exportLoading ? 'not-allowed' : 'pointer',
+              }}
+            >
+              {exportLoading ? 'Exporting...' : 'Export to Excel'}
+            </button>
+
+            {ledgerLoading ? (
+              <div style={{ textAlign: 'center', padding: 28, color: '#94A3B8', fontSize: 13, fontWeight: 600 }}>
+                Loading statement...
+              </div>
+            ) : ledgerEntries.length === 0 ? (
+              <div style={{ textAlign: 'center', padding: 28, color: '#94A3B8', fontSize: 13, fontWeight: 600, background: '#F8FAFC', borderRadius: 8, border: '1px dashed #E2E8F0' }}>
+                No statement entries yet
+              </div>
+            ) : (
+              <div style={{ overflowX: 'auto' }}>
+                <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
+                  <thead>
+                    <tr style={{ borderBottom: '1px solid #E2E8F0' }}>
+                      {['Date', 'Description', 'Debit', 'Credit', 'Balance'].map((h) => (
+                        <th key={h} style={{ padding: '10px 12px', fontSize: 13, fontWeight: 600, color: '#475569', textAlign: h === 'Date' || h === 'Description' ? 'left' : 'right' }}>
+                          {h}
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {ledgerEntries.map((entry, idx) => {
+                      const bal = Number(entry.running_balance ?? 0)
+                      return (
+                        <tr key={entry.id || idx} style={{ borderBottom: '1px solid #F1F5F9' }}>
+                          <td style={{ padding: '12px', fontSize: 13, color: '#334155', fontWeight: 500 }}>
+                            {formatDate(entry.date)}
+                          </td>
+                          <td style={{ padding: '12px', fontSize: 13, color: '#1E293B', fontWeight: 600 }}>
+                            {entry.description || '—'}
+                          </td>
+                          <td style={{ padding: '12px', fontSize: 13, color: '#1E293B', fontWeight: 600, textAlign: 'right' }}>
+                            {Number(entry.debit || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                          </td>
+                          <td style={{ padding: '12px', fontSize: 13, color: '#1E293B', fontWeight: 600, textAlign: 'right' }}>
+                            {Number(entry.credit || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                          </td>
+                          <td
+                            style={{
+                              padding: '12px',
+                              fontSize: 13,
+                              fontWeight: 600,
+                              textAlign: 'right',
+                              color: bal < 0 ? '#DC2626' : '#1E293B',
+                              fontStyle: bal < 0 ? 'italic' : 'normal',
+                            }}
+                          >
+                            {bal.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                          </td>
+                        </tr>
+                      )
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+
+          <div
+            style={{
+              background: '#FFFFFF',
+              borderRadius: 8,
+              border: '1px solid #E2E8F0',
+              padding: '22px 24px',
+              boxShadow: '0 1px 3px rgba(15, 23, 42, 0.02)',
+            }}
+          >
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: 12 }}>
+                <span style={{ fontSize: 14, fontWeight: 600, color: '#475569' }}>Receivable</span>
+                <span style={{ fontSize: 15, fontWeight: 600, color: '#1E293B' }}>
+                  {Number(ledgerSummary.total_debit || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                </span>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: 12 }}>
+                <span style={{ fontSize: 14, fontWeight: 600, color: '#475569' }}>Received</span>
+                <span style={{ fontSize: 15, fontWeight: 600, color: '#16A34A' }}>
+                  {Number(ledgerSummary.total_credit || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                </span>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: 12 }}>
+                <span style={{ fontSize: 14, fontWeight: 600, color: '#475569', display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+                  Other Due
+                  <span
+                    title="Non-rent charges outstanding"
+                    style={{
+                      width: 16,
+                      height: 16,
+                      borderRadius: '50%',
+                      border: '1px solid #93C5FD',
+                      color: '#2563EB',
+                      fontSize: 11,
+                      fontWeight: 700,
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      lineHeight: 1,
+                    }}
+                  >
+                    i
+                  </span>
+                </span>
+                <span style={{ fontSize: 15, fontWeight: 600, color: '#1E293B' }}>0.00</span>
+              </div>
+              <div style={{ borderTop: '1px solid #E2E8F0', paddingTop: 14, marginTop: 2 }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: 12 }}>
+                  <span style={{ fontSize: 16, fontWeight: 700, color: '#0F172A' }}>
+                    Due
+                    {isMonthlyContract && (
+                      <span style={{ display: 'block', fontSize: 11, fontWeight: 600, color: '#94A3B8', marginTop: 2 }}>
+                        Monthly outstanding
+                      </span>
+                    )}
+                  </span>
+                  <span style={{ fontSize: 28, fontWeight: 700, color: '#DC2626', letterSpacing: '-0.02em', lineHeight: 1 }}>
+                    {Number(displayDue).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        </div>
+      )}
+
+      {workspaceTab === 'overview' && !isOwnerStaff && (
         <div className="fade-in" style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-          {/* Row 1: Two Balanced Cards (Recent Payments + Contract Details) */}
           <div className="gfh-overview-two-col" style={{ display: 'grid', gridTemplateColumns: '1.6fr 1fr', gap: 14, alignItems: 'stretch' }}>
-            {/* Left Card: Recent Payments */}
             <div
               style={{
                 background: '#FFFFFF',
@@ -1094,10 +1733,9 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
             >
               <div>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10, marginBottom: 12 }}>
-                  <h3 style={{ fontSize: 14, fontWeight: 800, color: '#0F172A', margin: 0 }}>
+                  <h3 style={{ fontSize: 14, fontWeight: 600, color: '#0F172A', margin: 0 }}>
                     Recent Payments
                   </h3>
-
                   <button
                     type="button"
                     onClick={() => openPaymentModal('rent')}
@@ -1108,7 +1746,7 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
                       border: '1px solid #10B981',
                       color: '#065F46',
                       fontSize: 12.5,
-                      fontWeight: 700,
+                      fontWeight: 600,
                       cursor: 'pointer',
                     }}
                   >
@@ -1130,7 +1768,7 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
                       border: '1px dashed #CBD5E1',
                     }}
                   >
-                    <div style={{ fontSize: 14, color: '#0F172A', fontWeight: 700, marginBottom: 4 }}>
+                    <div style={{ fontSize: 14, color: '#0F172A', fontWeight: 600, marginBottom: 4 }}>
                       No payments recorded yet
                     </div>
                     <div style={{ fontSize: 12.5, color: '#475569', fontWeight: 500 }}>
@@ -1142,60 +1780,26 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
                     <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
                       <thead>
                         <tr style={{ background: '#F8FAFC', borderBottom: '1px solid #E2E8F0' }}>
-                          <th style={{ padding: '11px 14px', fontSize: 11.5, fontWeight: 700, color: '#1E293B', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Date</th>
-                          <th style={{ padding: '11px 14px', fontSize: 11.5, fontWeight: 700, color: '#1E293B', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Type</th>
-                          <th style={{ padding: '11px 14px', fontSize: 11.5, fontWeight: 700, color: '#1E293B', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Amount</th>
-                          <th style={{ padding: '11px 14px', fontSize: 11.5, fontWeight: 700, color: '#1E293B', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Mode</th>
-                          <th style={{ padding: '11px 14px', fontSize: 11.5, fontWeight: 700, color: '#1E293B', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Remarks</th>
-                          <th style={{ padding: '11px 14px', fontSize: 11.5, fontWeight: 700, color: '#1E293B', textTransform: 'uppercase', letterSpacing: '0.04em', textAlign: 'center' }}>Action</th>
+                          <th style={{ padding: '11px 14px', fontSize: 11.5, fontWeight: 600, color: '#1E293B', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Date</th>
+                          <th style={{ padding: '11px 14px', fontSize: 11.5, fontWeight: 600, color: '#1E293B', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Type</th>
+                          <th style={{ padding: '11px 14px', fontSize: 11.5, fontWeight: 600, color: '#1E293B', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Amount</th>
+                          <th style={{ padding: '11px 14px', fontSize: 11.5, fontWeight: 600, color: '#1E293B', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Mode</th>
+                          <th style={{ padding: '11px 14px', fontSize: 11.5, fontWeight: 600, color: '#1E293B', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Remarks</th>
+                          <th style={{ padding: '11px 14px', fontSize: 11.5, fontWeight: 600, color: '#1E293B', textTransform: 'uppercase', letterSpacing: '0.04em', textAlign: 'center' }}>Action</th>
                         </tr>
                       </thead>
                       <tbody>
                         {recentPaymentsList.map((p) => (
                           <tr key={p.id} style={{ borderBottom: '1px solid #E2E8F0' }}>
-                            <td style={{ padding: '12px 14px', fontWeight: 700, fontSize: 13, color: '#0F172A' }}>
-                              {p.date}
-                            </td>
+                            <td style={{ padding: '12px 14px', fontWeight: 600, fontSize: 13, color: '#0F172A' }}>{p.date}</td>
                             <td style={{ padding: '12px 14px' }}>
-                              <span
-                                style={{
-                                  display: 'inline-block',
-                                  padding: '3px 9px',
-                                  borderRadius: 6,
-                                  background: '#ECFDF5',
-                                  border: '1px solid #A7F3D0',
-                                  color: '#065F46',
-                                  fontWeight: 700,
-                                  fontSize: 11.5,
-                                  textTransform: 'uppercase',
-                                }}
-                              >
-                                {p.type}
-                              </span>
+                              <span style={{ display: 'inline-block', padding: '3px 9px', borderRadius: 6, background: '#ECFDF5', border: '1px solid #A7F3D0', color: '#065F46', fontWeight: 600, fontSize: 11.5, textTransform: 'uppercase' }}>{p.type}</span>
                             </td>
-                            <td style={{ padding: '12px 14px', fontWeight: 800, fontSize: 13.5, color: '#059669' }}>
-                              AED {p.amount}
-                            </td>
+                            <td style={{ padding: '12px 14px', fontWeight: 600, fontSize: 13.5, color: '#059669' }}>AED {p.amount}</td>
                             <td style={{ padding: '12px 14px' }}>
-                              <span
-                                style={{
-                                  display: 'inline-block',
-                                  padding: '3px 9px',
-                                  borderRadius: 6,
-                                  background: '#F1F5F9',
-                                  border: '1px solid #CBD5E1',
-                                  color: '#0F172A',
-                                  fontWeight: 700,
-                                  fontSize: 11.5,
-                                  textTransform: 'uppercase',
-                                }}
-                              >
-                                {p.mode}
-                              </span>
+                              <span style={{ display: 'inline-block', padding: '3px 9px', borderRadius: 6, background: '#F1F5F9', border: '1px solid #CBD5E1', color: '#0F172A', fontWeight: 600, fontSize: 11.5, textTransform: 'uppercase' }}>{p.mode}</span>
                             </td>
-                            <td style={{ padding: '12px 14px', color: '#0F172A', fontWeight: 600, fontSize: 13 }}>
-                              {p.remarks || '—'}
-                            </td>
+                            <td style={{ padding: '12px 14px', color: '#0F172A', fontWeight: 600, fontSize: 13 }}>{p.remarks || '—'}</td>
                             <td style={{ padding: '12px 14px', textAlign: 'center' }}>
                               <div style={{ position: 'relative', display: 'inline-block' }}>
                                 <button
@@ -1206,18 +1810,7 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
                                     setActionMenuOpen(actionMenuOpen === p.id ? null : p.id)
                                   }}
                                   title="Payment Actions"
-                                  style={{
-                                    width: 30,
-                                    height: 30,
-                                    borderRadius: 6,
-                                    border: '1px solid #CBD5E1',
-                                    background: '#F8FAFC',
-                                    color: '#0F172A',
-                                    display: 'inline-flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    cursor: 'pointer',
-                                  }}
+                                  style={{ width: 30, height: 30, borderRadius: 6, border: '1px solid #CBD5E1', background: '#F8FAFC', color: '#0F172A', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}
                                 >
                                   <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
                                     <circle cx="12" cy="5" r="2" />
@@ -1226,52 +1819,10 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
                                   </svg>
                                 </button>
                                 {actionMenuOpen === p.id && (
-                                  <div
-                                    className="gfh-action-menu-dropdown"
-                                    style={{
-                                      position: 'absolute', right: 0, top: 34, background: '#FFFFFF',
-                                      border: '1px solid #E2E8F0', borderRadius: 8, boxShadow: '0 8px 24px rgba(15,23,42,0.18)',
-                                      zIndex: 9999, minWidth: 145, overflow: 'hidden',
-                                    }}
-                                  >
-                                    <button
-                                      type="button"
-                                      onClick={(e) => {
-                                        e.stopPropagation()
-                                        setActionMenuOpen(null)
-                                        printPaymentReceipt(p)
-                                      }}
-                                      style={{
-                                        width: '100%', padding: '10px 14px', background: 'none', border: 'none',
-                                        color: '#065F46', fontSize: 13, fontWeight: 700, cursor: 'pointer',
-                                        textAlign: 'left', display: 'flex', alignItems: 'center', gap: 8,
-                                      }}
-                                      onMouseEnter={e => (e.currentTarget.style.background = '#ECFDF5')}
-                                      onMouseLeave={e => (e.currentTarget.style.background = 'none')}
-                                    >
-                                      Print Receipt
-                                    </button>
+                                  <div className="gfh-action-menu-dropdown" style={{ position: 'absolute', right: 0, top: 34, background: '#FFFFFF', border: '1px solid #E2E8F0', borderRadius: 8, boxShadow: '0 8px 24px rgba(15,23,42,0.18)', zIndex: 9999, minWidth: 145, overflow: 'hidden' }}>
+                                    <button type="button" onClick={(e) => { e.stopPropagation(); setActionMenuOpen(null); printPaymentReceipt(p) }} style={{ width: '100%', padding: '10px 14px', background: 'none', border: 'none', color: '#065F46', fontSize: 13, fontWeight: 600, cursor: 'pointer', textAlign: 'left' }}>Print Receipt</button>
                                     {!isCashier && (
-                                      <button
-                                        type="button"
-                                        onClick={(e) => {
-                                          e.stopPropagation()
-                                          handleDeletePayment(p.id)
-                                        }}
-                                        style={{
-                                          width: '100%', padding: '10px 14px', background: 'none', border: 'none',
-                                          color: '#991B1B', fontSize: 13, fontWeight: 700, cursor: 'pointer',
-                                          textAlign: 'left', display: 'flex', alignItems: 'center', gap: 8,
-                                        }}
-                                        onMouseEnter={e => (e.currentTarget.style.background = '#FEF2F2')}
-                                        onMouseLeave={e => (e.currentTarget.style.background = 'none')}
-                                      >
-                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                          <polyline points="3 6 5 6 21 6" />
-                                          <path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" />
-                                        </svg>
-                                        Delete
-                                      </button>
+                                      <button type="button" onClick={(e) => { e.stopPropagation(); handleDeletePayment(p.id) }} style={{ width: '100%', padding: '10px 14px', background: 'none', border: 'none', color: '#991B1B', fontSize: 13, fontWeight: 600, cursor: 'pointer', textAlign: 'left' }}>Delete</button>
                                     )}
                                   </div>
                                 )}
@@ -1286,413 +1837,94 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
               </div>
             </div>
 
-            {/* Right Card: Contract Details */}
-            <div
-              style={{
-                background: '#FFFFFF',
-                borderRadius: 12,
-                border: '1px solid #E2E8F0',
-                padding: '16px 18px',
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'space-between',
-              }}
-            >
+            <div style={{ background: '#FFFFFF', borderRadius: 12, border: '1px solid #E2E8F0', padding: '16px 18px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
               <div>
-                <h3 style={{ fontSize: 14, fontWeight: 800, color: '#0F172A', margin: '0 0 10px 0' }}>
-                  Contract Details
-                </h3>
-
+                <h3 style={{ fontSize: 14, fontWeight: 600, color: '#0F172A', margin: '0 0 10px 0' }}>Contract Details</h3>
                 <div style={{ border: '1px solid #E2E8F0', borderRadius: 10, overflow: 'hidden' }}>
                   {[
                     { label: 'Lease Term', value: leaseTermDisplay },
                     { label: 'Rent Amount', value: `AED ${totalRentFormatted}` },
-                    { label: 'Security Deposit', value: `AED ${Number(contract.security_deposit || editForm.security_deposit || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` },
+                    { label: 'Security Deposit', value: `AED ${securityDepositFormatted}` },
                     { label: 'Start Date', value: startDateStr },
                     { label: 'End Date', value: endDateStr },
                   ].map((row, idx, arr) => (
-                    <div
-                      key={row.label}
-                      style={{
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                        padding: '11px 16px',
-                        background: idx % 2 === 0 ? '#FFFFFF' : '#F8FAFC',
-                        borderBottom: idx < arr.length - 1 ? '1px solid #E2E8F0' : 'none',
-                        fontSize: 13.5,
-                      }}
-                    >
+                    <div key={row.label} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '11px 16px', background: idx % 2 === 0 ? '#FFFFFF' : '#F8FAFC', borderBottom: idx < arr.length - 1 ? '1px solid #E2E8F0' : 'none', fontSize: 13.5 }}>
                       <span style={{ color: '#334155', fontWeight: 600 }}>{row.label}</span>
-                      <strong style={{ color: '#0F172A', fontWeight: 800 }}>{row.value}</strong>
+                      <strong style={{ color: '#0F172A', fontWeight: 600 }}>{row.value}</strong>
                     </div>
                   ))}
                 </div>
               </div>
-
-              {/* DEWA Deposit / Due Status Box */}
-              <div
-                style={{
-                  background: '#ECFDF5',
-                  border: '1px solid #A7F3D0',
-                  borderRadius: 10,
-                  padding: '13px 16px',
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  marginTop: 16,
-                }}
-              >
-                <span style={{ color: '#065F46', fontWeight: 700, fontSize: 13 }}>DEWA Utility Status</span>
-                <span style={{ color: '#065F46', fontWeight: 800, fontSize: 13.5 }}>AED 0.00 Due (Clear)</span>
+              <div style={{ background: '#ECFDF5', border: '1px solid #A7F3D0', borderRadius: 10, padding: '13px 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 16 }}>
+                <span style={{ color: '#065F46', fontWeight: 600, fontSize: 13 }}>DEWA Utility Status</span>
+                <span style={{ color: '#065F46', fontWeight: 600, fontSize: 13.5 }}>AED 0.00 Due (Clear)</span>
               </div>
             </div>
           </div>
 
-          {/* ─── SECTION 2: CONTRACT OPERATIONS & QUICK ACTIONS ─── */}
-          <div style={{
-            background: '#FFFFFF',
-            borderRadius: 12,
-            border: '1px solid #E2E8F0',
-            padding: '16px 18px',
-          }}>
+          <div style={{ background: '#FFFFFF', borderRadius: 12, border: '1px solid #E2E8F0', padding: '16px 18px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
-              <h3 style={{ fontSize: 14, fontWeight: 800, color: '#0F172A', margin: 0 }}>
-                Contract Operations
-              </h3>
-              <button
-                type="button"
-                onClick={() => navigate(`${effectiveBasePath}/units`)}
-                style={{
-                  padding: '7px 14px', borderRadius: 8, border: '1px solid #CBD5E1',
-                  background: '#F8FAFC', color: '#64748B', fontSize: 12.5, fontWeight: 600, cursor: 'pointer',
-                }}
-              >
-                ← Back to Units
-              </button>
+              <h3 style={{ fontSize: 14, fontWeight: 600, color: '#0F172A', margin: 0 }}>Contract Operations</h3>
+              <button type="button" onClick={() => navigate(`${effectiveBasePath}/units`)} style={{ padding: '7px 14px', borderRadius: 8, border: '1px solid #CBD5E1', background: '#F8FAFC', color: '#64748B', fontSize: 12.5, fontWeight: 600, cursor: 'pointer' }}>← Back to Units</button>
             </div>
-
-            {/* Compact Info Strip */}
-            <div style={{
-              display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))',
-              gap: 1, background: '#E2E8F0', borderRadius: 10, overflow: 'hidden', marginBottom: 18,
-            }}>
-              {[
-                { label: 'Tenant Contact', value: tenantContact },
-                { label: 'Tenant Email', value: editForm.tenant_email || contract.tenant?.email || '—' },
-                { label: 'Deposit Mode', value: (contract.deposit_type || editForm.deposit_type || 'CHEQUE').toUpperCase() },
-                { label: 'DEWA Deposit', value: `AED ${Number(contract.dewa_deposit || editForm.dewa_deposit || 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}` },
-                { label: 'Total Received', value: `AED ${Number(totalReceived).toLocaleString(undefined, { minimumFractionDigits: 2 })}`, highlight: true },
-              ].map(item => (
-                <div key={item.label} style={{
-                  background: item.highlight ? '#ECFDF5' : '#FFFFFF', padding: '12px 16px',
-                }}>
-                  <div style={{ fontSize: 10.5, color: item.highlight ? '#065F46' : '#64748B', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                    {item.label}
-                  </div>
-                  <div style={{
-                    fontSize: 13.5, fontWeight: 700, color: item.highlight ? '#059669' : '#0F172A',
-                    marginTop: 3, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
-                  }}>
-                    {item.value}
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            {/* Action Buttons Row: 2 primary + More Actions dropdown */}
             <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
-              <button
-                type="button"
-                onClick={() => openPaymentModal('rent')}
-                style={{
-                  display: 'inline-flex', alignItems: 'center', gap: 7, height: 40, padding: '0 18px',
-                  borderRadius: 8, background: '#10B981', border: 'none', color: '#FFFFFF',
-                  fontSize: 13, fontWeight: 700, cursor: 'pointer', boxShadow: '0 1px 3px rgba(14,124,91,0.2)',
-                }}
-              >
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                  <line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" />
-                </svg>
-                Collect Payment
-              </button>
-
-              <button
-                type="button"
-                onClick={() => openPaymentModal('dewa')}
-                style={{
-                  display: 'inline-flex', alignItems: 'center', gap: 7, height: 40, padding: '0 18px',
-                  borderRadius: 8, background: '#0284C7', border: 'none', color: '#FFFFFF',
-                  fontSize: 13, fontWeight: 700, cursor: 'pointer',
-                }}
-              >
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.3">
-                  <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
-                </svg>
-                Add DEWA / Utility
-              </button>
-
-              {/* More Actions Dropdown */}
-              <div style={{ position: 'relative' }}>
-                <button
-                  type="button"
-                  className="gfh-actions-trigger"
-                  onClick={() => setActionsDropdownOpen(!actionsDropdownOpen)}
-                  style={{
-                    display: 'inline-flex', alignItems: 'center', gap: 7, height: 40, padding: '0 16px',
-                    borderRadius: 8, background: '#FFFFFF', border: '1px solid #CBD5E1', color: '#0F172A',
-                    fontSize: 13, fontWeight: 700, cursor: 'pointer',
-                  }}
-                >
-                  More Actions
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                    <polyline points="6 9 12 15 18 9" />
-                  </svg>
-                </button>
-                {actionsDropdownOpen && (
-                  <div
-                    className="gfh-actions-dropdown"
-                    style={{
-                      position: 'absolute', left: 0, top: 44, background: '#FFFFFF',
-                      border: '1px solid #E2E8F0', borderRadius: 10, boxShadow: '0 12px 32px rgba(15,23,42,0.16)',
-                      zIndex: 9999, minWidth: 220, overflow: 'hidden', padding: '6px 0',
-                    }}
-                  >
-                    {/* Manage Cheques */}
-                    <button
-                      type="button"
-                      onClick={() => { setActionsDropdownOpen(false); handleWorkspaceTabChange('cheques') }}
-                      style={{ width: '100%', padding: '10px 16px', background: 'none', border: 'none', color: '#0F172A', fontSize: 13, fontWeight: 600, cursor: 'pointer', textAlign: 'left', display: 'flex', alignItems: 'center', gap: 10 }}
-                      onMouseEnter={e => (e.currentTarget.style.background = '#F8FAFC')}
-                      onMouseLeave={e => (e.currentTarget.style.background = 'none')}
-                    >
-                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#64748B" strokeWidth="2">
-                        <rect x="2" y="5" width="20" height="14" rx="2" /><line x1="2" y1="10" x2="22" y2="10" />
-                      </svg>
-                      Manage Cheques ({(contract.cheques || []).length})
-                    </button>
-
-                    {/* Call Log */}
-                    <button
-                      type="button"
-                      onClick={() => { setActionsDropdownOpen(false); setCallLogModalOpen(true) }}
-                      style={{ width: '100%', padding: '10px 16px', background: 'none', border: 'none', color: '#0F172A', fontSize: 13, fontWeight: 600, cursor: 'pointer', textAlign: 'left', display: 'flex', alignItems: 'center', gap: 10 }}
-                      onMouseEnter={e => (e.currentTarget.style.background = '#F8FAFC')}
-                      onMouseLeave={e => (e.currentTarget.style.background = 'none')}
-                    >
-                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#64748B" strokeWidth="2">
-                        <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z" />
-                      </svg>
-                      Add Call Log
-                    </button>
-
-                    {/* Divider */}
-                    <div style={{ height: 1, background: '#E2E8F0', margin: '4px 0' }} />
-
-                    {/* Print SEC Receipt */}
-                    <button
-                      type="button"
-                      onClick={() => { setActionsDropdownOpen(false); printReceipt('SEC') }}
-                      style={{ width: '100%', padding: '10px 16px', background: 'none', border: 'none', color: '#0F172A', fontSize: 13, fontWeight: 600, cursor: 'pointer', textAlign: 'left', display: 'flex', alignItems: 'center', gap: 10 }}
-                      onMouseEnter={e => (e.currentTarget.style.background = '#F8FAFC')}
-                      onMouseLeave={e => (e.currentTarget.style.background = 'none')}
-                    >
-                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#64748B" strokeWidth="2">
-                        <polyline points="6 9 6 2 18 2 18 9" />
-                        <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
-                        <rect x="6" y="14" width="12" height="8" />
-                      </svg>
-                      Print SEC Receipt
-                    </button>
-
-                    {/* Print DEWA Receipt */}
-                    <button
-                      type="button"
-                      onClick={() => { setActionsDropdownOpen(false); printReceipt('DEWA') }}
-                      style={{ width: '100%', padding: '10px 16px', background: 'none', border: 'none', color: '#0F172A', fontSize: 13, fontWeight: 600, cursor: 'pointer', textAlign: 'left', display: 'flex', alignItems: 'center', gap: 10 }}
-                      onMouseEnter={e => (e.currentTarget.style.background = '#F8FAFC')}
-                      onMouseLeave={e => (e.currentTarget.style.background = 'none')}
-                    >
-                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#64748B" strokeWidth="2">
-                        <polyline points="6 9 6 2 18 2 18 9" />
-                        <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
-                        <rect x="6" y="14" width="12" height="8" />
-                      </svg>
-                      Print DEWA Receipt
-                    </button>
-
-                    {/* Divider */}
-                    <div style={{ height: 1, background: '#E2E8F0', margin: '4px 0' }} />
-
-                    {/* Renew Contract (conditional) */}
-                    {!isCashier && contract.status === 'active' && (
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setActionsDropdownOpen(false)
-                          setRenewData({ new_end_date: '', new_rent_amount: String(contract.rent_amount) })
-                          setRenewModalOpen(true)
-                        }}
-                        style={{ width: '100%', padding: '10px 16px', background: 'none', border: 'none', color: '#065F46', fontSize: 13, fontWeight: 700, cursor: 'pointer', textAlign: 'left', display: 'flex', alignItems: 'center', gap: 10 }}
-                        onMouseEnter={e => (e.currentTarget.style.background = '#ECFDF5')}
-                        onMouseLeave={e => (e.currentTarget.style.background = 'none')}
-                      >
-                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                          <polyline points="23 4 23 10 17 10" />
-                          <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" />
-                        </svg>
-                        Renew Contract
-                      </button>
-                    )}
-
-                    {/* Vacate Unit (conditional) */}
-                    {contract.status !== 'vacated' && (
-                      <button
-                        type="button"
-                        onClick={() => { setActionsDropdownOpen(false); setVacateModalOpen(true) }}
-                        style={{ width: '100%', padding: '10px 16px', background: 'none', border: 'none', color: '#DC2626', fontSize: 13, fontWeight: 700, cursor: 'pointer', textAlign: 'left', display: 'flex', alignItems: 'center', gap: 10 }}
-                        onMouseEnter={e => (e.currentTarget.style.background = '#FEF2F2')}
-                        onMouseLeave={e => (e.currentTarget.style.background = 'none')}
-                      >
-                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-                          <polyline points="16 17 21 12 16 7" />
-                          <line x1="21" y1="12" x2="9" y2="12" />
-                        </svg>
-                        Vacate Unit
-                      </button>
-                    )}
-                  </div>
-                )}
-              </div>
+              <button type="button" onClick={() => openPaymentModal('rent')} style={{ display: 'inline-flex', alignItems: 'center', gap: 7, height: 40, padding: '0 18px', borderRadius: 8, background: '#10B981', border: 'none', color: '#FFFFFF', fontSize: 13, fontWeight: 600, cursor: 'pointer' }}>Collect Payment</button>
+              <button type="button" onClick={() => openPaymentModal('dewa')} style={{ display: 'inline-flex', alignItems: 'center', gap: 7, height: 40, padding: '0 18px', borderRadius: 8, background: '#0284C7', border: 'none', color: '#FFFFFF', fontSize: 13, fontWeight: 600, cursor: 'pointer' }}>Add DEWA / Utility</button>
+              <button type="button" onClick={() => setActionsDropdownOpen(!actionsDropdownOpen)} style={{ display: 'inline-flex', alignItems: 'center', gap: 7, height: 40, padding: '0 16px', borderRadius: 8, background: '#FFFFFF', border: '1px solid #CBD5E1', color: '#0F172A', fontSize: 13, fontWeight: 600, cursor: 'pointer' }}>More Actions</button>
+              {actionsDropdownOpen && (
+                <div style={{ position: 'absolute', background: '#FFFFFF', border: '1px solid #E2E8F0', borderRadius: 10, boxShadow: '0 12px 32px rgba(15,23,42,0.16)', zIndex: 9999, minWidth: 220, padding: '6px 0' }}>
+                  <button type="button" onClick={() => { setActionsDropdownOpen(false); handleWorkspaceTabChange('cheques') }} style={{ width: '100%', padding: '10px 16px', background: 'none', border: 'none', textAlign: 'left', cursor: 'pointer', fontWeight: 600 }}>Manage Cheques</button>
+                  <button type="button" onClick={() => { setActionsDropdownOpen(false); setCallLogModalOpen(true) }} style={{ width: '100%', padding: '10px 16px', background: 'none', border: 'none', textAlign: 'left', cursor: 'pointer', fontWeight: 600 }}>Add Call Log</button>
+                  <button type="button" onClick={() => { setActionsDropdownOpen(false); printReceipt('SEC') }} style={{ width: '100%', padding: '10px 16px', background: 'none', border: 'none', textAlign: 'left', cursor: 'pointer', fontWeight: 600 }}>Print SEC Receipt</button>
+                  <button type="button" onClick={() => { setActionsDropdownOpen(false); printReceipt('DEWA') }} style={{ width: '100%', padding: '10px 16px', background: 'none', border: 'none', textAlign: 'left', cursor: 'pointer', fontWeight: 600 }}>Print DEWA Receipt</button>
+                  {!isCashier && contract.status === 'active' && (
+                    <button type="button" onClick={() => { setActionsDropdownOpen(false); setRenewData({ new_end_date: '', new_rent_amount: String(contract.rent_amount) }); setRenewModalOpen(true) }} style={{ width: '100%', padding: '10px 16px', background: 'none', border: 'none', textAlign: 'left', cursor: 'pointer', fontWeight: 600, color: '#065F46' }}>Renew Contract</button>
+                  )}
+                  {contract.status !== 'vacated' && (
+                    <button type="button" onClick={() => { setActionsDropdownOpen(false); setVacateModalOpen(true) }} style={{ width: '100%', padding: '10px 16px', background: 'none', border: 'none', textAlign: 'left', cursor: 'pointer', fontWeight: 600, color: '#DC2626' }}>Vacate Unit</button>
+                  )}
+                </div>
+              )}
             </div>
           </div>
 
-          {/* ─── SECTION 3: RENT STATEMENT & LEDGER ─── */}
-          <div
-            style={{
-              background: '#FFFFFF',
-              borderRadius: 12,
-              border: '1px solid #E2E8F0',
-              padding: '16px 18px',
-            }}
-          >
+          <div style={{ background: '#FFFFFF', borderRadius: 12, border: '1px solid #E2E8F0', padding: '16px 18px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 10, marginBottom: 12 }}>
-              <h3 style={{ fontSize: 14, fontWeight: 800, color: '#0F172A', margin: 0 }}>Rent Statement &amp; Ledger</h3>
+              <h3 style={{ fontSize: 14, fontWeight: 600, color: '#0F172A', margin: 0 }}>Rent Statement &amp; Ledger</h3>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
                 {!isCashier && (
-                  <button
-                    type="button"
-                    onClick={() => setChargeModalOpen(true)}
-                    style={{
-                      padding: '7px 12px',
-                      borderRadius: 7,
-                      border: '1px solid #CBD5E1',
-                      background: '#F8FAFC',
-                      color: '#0F172A',
-                      fontSize: 12.5,
-                      fontWeight: 600,
-                      cursor: 'pointer',
-                    }}
-                  >
-                    + Add Charge
-                  </button>
+                  <button type="button" onClick={() => setChargeModalOpen(true)} style={{ padding: '7px 12px', borderRadius: 7, border: '1px solid #CBD5E1', background: '#F8FAFC', color: '#0F172A', fontSize: 12.5, fontWeight: 600, cursor: 'pointer' }}>+ Add Charge</button>
                 )}
-                <button
-                  type="button"
-                  onClick={handleExportExcel}
-                  disabled={exportLoading}
-                  style={{
-                    padding: '7px 14px',
-                    borderRadius: 7,
-                    border: 'none',
-                    background: '#10B981',
-                    color: '#FFFFFF',
-                    fontSize: 12.5,
-                    fontWeight: 700,
-                    cursor: 'pointer',
-                  }}
-                >
-                  {exportLoading ? 'Exporting...' : 'Export to Excel'}
-                </button>
+                <button type="button" onClick={handleExportExcel} disabled={exportLoading} style={{ padding: '7px 14px', borderRadius: 7, border: 'none', background: '#10B981', color: '#FFFFFF', fontSize: 12.5, fontWeight: 600, cursor: 'pointer' }}>{exportLoading ? 'Exporting...' : 'Export to Excel'}</button>
               </div>
             </div>
-
             {ledgerLoading ? (
               <div style={{ textAlign: 'center', padding: 30, color: '#334155', fontWeight: 600 }}>Loading statement...</div>
             ) : ledgerEntries.length === 0 ? (
-              <div style={{ textAlign: 'center', padding: '32px 16px', color: '#334155', fontSize: 13.5, fontWeight: 600, background: '#F8FAFC', borderRadius: 10, border: '1px dashed #CBD5E1' }}>
-                No ledger entries recorded yet.
-              </div>
+              <div style={{ textAlign: 'center', padding: '32px 16px', color: '#334155', fontSize: 13.5, fontWeight: 600, background: '#F8FAFC', borderRadius: 10, border: '1px dashed #CBD5E1' }}>No ledger entries recorded yet.</div>
             ) : (
               <div style={{ overflowX: 'auto', border: '1px solid #E2E8F0', borderRadius: 10 }}>
                 <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
                   <thead>
                     <tr style={{ background: '#F8FAFC', borderBottom: '1px solid #E2E8F0' }}>
-                      <th style={{ padding: '12px 16px', fontSize: 12, fontWeight: 700, color: '#1E293B', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Date</th>
-                      <th style={{ padding: '12px 16px', fontSize: 12, fontWeight: 700, color: '#1E293B', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Description</th>
-                      <th style={{ padding: '12px 16px', fontSize: 12, fontWeight: 700, color: '#1E293B', textTransform: 'uppercase', letterSpacing: '0.04em', textAlign: 'right' }}>Debit (Charge)</th>
-                      <th style={{ padding: '12px 16px', fontSize: 12, fontWeight: 700, color: '#1E293B', textTransform: 'uppercase', letterSpacing: '0.04em', textAlign: 'right' }}>Credit (Paid)</th>
-                      <th style={{ padding: '12px 16px', fontSize: 12, fontWeight: 700, color: '#1E293B', textTransform: 'uppercase', letterSpacing: '0.04em', textAlign: 'right' }}>Balance</th>
-                      {!isCashier && <th style={{ padding: '12px 16px', fontSize: 12, fontWeight: 700, color: '#1E293B', textTransform: 'uppercase', letterSpacing: '0.04em', textAlign: 'center' }}>Action</th>}
+                      <th style={{ padding: '12px 16px', fontSize: 12, fontWeight: 600, color: '#1E293B', textTransform: 'uppercase' }}>Date</th>
+                      <th style={{ padding: '12px 16px', fontSize: 12, fontWeight: 600, color: '#1E293B', textTransform: 'uppercase' }}>Description</th>
+                      <th style={{ padding: '12px 16px', fontSize: 12, fontWeight: 600, color: '#1E293B', textTransform: 'uppercase', textAlign: 'right' }}>Debit</th>
+                      <th style={{ padding: '12px 16px', fontSize: 12, fontWeight: 600, color: '#1E293B', textTransform: 'uppercase', textAlign: 'right' }}>Credit</th>
+                      <th style={{ padding: '12px 16px', fontSize: 12, fontWeight: 600, color: '#1E293B', textTransform: 'uppercase', textAlign: 'right' }}>Balance</th>
                     </tr>
                   </thead>
                   <tbody>
                     {ledgerEntries.map((entry, idx) => (
                       <tr key={entry.id} style={{ borderBottom: '1px solid #E2E8F0', background: idx % 2 === 0 ? '#FFFFFF' : '#FCFDFE' }}>
-                        <td style={{ padding: '13px 16px', fontSize: 13.5, fontWeight: 700, color: '#0F172A' }}>
-                          {entry.date ? entry.date.split('T')[0] : '—'}
-                        </td>
-                        <td style={{ padding: '13px 16px', fontSize: 13.5, fontWeight: 700, color: '#0F172A' }}>
-                          {entry.description}
-                        </td>
-                        <td style={{ padding: '13px 16px', fontSize: 13.5, fontWeight: 700, color: Number(entry.debit) > 0 ? '#DC2626' : '#475569', textAlign: 'right' }}>
-                          {Number(entry.debit) > 0 ? `AED ${Number(entry.debit).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : '—'}
-                        </td>
-                        <td style={{ padding: '13px 16px', fontSize: 13.5, fontWeight: 700, color: Number(entry.credit) > 0 ? '#059669' : '#475569', textAlign: 'right' }}>
-                          {Number(entry.credit) > 0 ? `AED ${Number(entry.credit).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : '—'}
-                        </td>
-                        <td style={{ padding: '13px 16px', fontSize: 13.5, fontWeight: 800, color: '#0F172A', textAlign: 'right' }}>
-                          AED {Number(entry.running_balance ?? 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                        </td>
-                        {!isCashier && (
-                          <td style={{ padding: '13px 16px', textAlign: 'center' }}>
-                            <button
-                              type="button"
-                              onClick={() => handleDeleteLedgerEntry(entry.id)}
-                              style={{
-                                padding: '5px 12px',
-                                borderRadius: 6,
-                                border: '1px solid #FECACA',
-                                background: '#FEF2F2',
-                                color: '#DC2626',
-                                fontSize: 12,
-                                fontWeight: 700,
-                                cursor: 'pointer',
-                              }}
-                            >
-                              Delete
-                            </button>
-                          </td>
-                        )}
+                        <td style={{ padding: '13px 16px', fontSize: 13.5, fontWeight: 600 }}>{entry.date ? entry.date.split('T')[0] : '—'}</td>
+                        <td style={{ padding: '13px 16px', fontSize: 13.5, fontWeight: 600 }}>{entry.description}</td>
+                        <td style={{ padding: '13px 16px', fontSize: 13.5, fontWeight: 600, textAlign: 'right', color: Number(entry.debit) > 0 ? '#DC2626' : '#475569' }}>{Number(entry.debit) > 0 ? `AED ${Number(entry.debit).toLocaleString(undefined, { minimumFractionDigits: 2 })}` : '—'}</td>
+                        <td style={{ padding: '13px 16px', fontSize: 13.5, fontWeight: 600, textAlign: 'right', color: Number(entry.credit) > 0 ? '#059669' : '#475569' }}>{Number(entry.credit) > 0 ? `AED ${Number(entry.credit).toLocaleString(undefined, { minimumFractionDigits: 2 })}` : '—'}</td>
+                        <td style={{ padding: '13px 16px', fontSize: 13.5, fontWeight: 600, textAlign: 'right' }}>AED {Number(entry.running_balance ?? 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}</td>
                       </tr>
                     ))}
                   </tbody>
-                  <tfoot>
-                    <tr style={{ background: '#F8FAFC', borderTop: '2px solid #CBD5E1' }}>
-                      <td colSpan={2} style={{ padding: '14px 16px', fontSize: 13.5, fontWeight: 800, color: '#0F172A', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Total Summary</td>
-                      <td style={{ padding: '14px 16px', fontSize: 14, fontWeight: 800, color: '#DC2626', textAlign: 'right' }}>
-                        AED {Number(ledgerSummary.total_debit).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                      </td>
-                      <td style={{ padding: '14px 16px', fontSize: 14, fontWeight: 800, color: '#059669', textAlign: 'right' }}>
-                        AED {Number(ledgerSummary.total_credit).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                      </td>
-                      <td style={{ padding: '14px 16px', fontSize: 14, fontWeight: 800, color: '#0F172A', textAlign: 'right' }}>
-                        AED {Number(ledgerSummary.total_balance).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                      </td>
-                      {!isCashier && <td style={{ padding: '14px 16px' }} />}
-                    </tr>
-                  </tfoot>
                 </table>
               </div>
             )}
@@ -1700,8 +1932,8 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
         </div>
       )}
 
-      {/* ─── TAB 2: PAYMENTS (Clean Payments Table + Ledger — NO Duplicate Header or KPI Boxes) ─── */}
-      {workspaceTab === 'payments' && (
+      {/* ─── TAB 2: PAYMENTS (admin/full portal only) ─── */}
+      {workspaceTab === 'payments' && !isOwnerStaff && (
         <div className="fade-in" style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
           <div
             style={{
@@ -1718,7 +1950,7 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
                   <circle cx="12" cy="12" r="10" />
                   <polyline points="12 6 12 12 16 14" />
                 </svg>
-                <h3 style={{ fontSize: 16, fontWeight: 800, color: '#0F172A', margin: 0 }}>Payments History</h3>
+                <h3 style={{ fontSize: 16, fontWeight: 600, color: '#0F172A', margin: 0 }}>Payments History</h3>
               </div>
 
               <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
@@ -1736,7 +1968,7 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
                     background: '#10B981',
                     color: '#FFFFFF',
                     fontSize: 13,
-                    fontWeight: 700,
+                    fontWeight: 600,
                     cursor: exportLoading ? 'not-allowed' : 'pointer',
                     boxShadow: '0 1px 3px rgba(15, 138, 103, 0.2)',
                   }}
@@ -1763,7 +1995,7 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
                       background: '#FFFFFF',
                       color: '#0F172A',
                       fontSize: 13,
-                      fontWeight: 700,
+                      fontWeight: 600,
                       border: '1px solid #E2E8F0',
                       cursor: 'pointer',
                     }}
@@ -1784,7 +2016,7 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
                     background: '#10B981',
                     color: '#FFFFFF',
                     fontSize: 13,
-                    fontWeight: 700,
+                    fontWeight: 600,
                     border: 'none',
                     cursor: 'pointer',
                   }}
@@ -1800,7 +2032,7 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
                 <button
                   type="button"
                   onClick={() => openPaymentModal('rent')}
-                  style={{ marginTop: 10, padding: '8px 18px', background: '#10B981', color: '#fff', border: 'none', borderRadius: 8, fontWeight: 700, cursor: 'pointer' }}
+                  style={{ marginTop: 10, padding: '8px 18px', background: '#10B981', color: '#fff', border: 'none', borderRadius: 8, fontWeight: 600, cursor: 'pointer' }}
                 >
                   + Record First Payment
                 </button>
@@ -1810,21 +2042,21 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
                 <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                   <thead>
                     <tr style={{ background: '#F8FAFC', borderBottom: '1px solid #E2E8F0', textAlign: 'left' }}>
-                      <th style={{ padding: '12px 14px', fontSize: 12, fontWeight: 700, color: '#1E293B', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Payment Date</th>
-                      <th style={{ padding: '12px 14px', fontSize: 12, fontWeight: 700, color: '#1E293B', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Description</th>
-                      <th style={{ padding: '12px 14px', fontSize: 12, fontWeight: 700, color: '#1E293B', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Amount</th>
-                      <th style={{ padding: '12px 14px', fontSize: 12, fontWeight: 700, color: '#1E293B', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Pay Mode</th>
-                      <th style={{ padding: '12px 14px', fontSize: 12, fontWeight: 700, color: '#1E293B', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Remarks</th>
-                      <th style={{ padding: '12px 14px', fontSize: 12, fontWeight: 700, color: '#1E293B', textTransform: 'uppercase', letterSpacing: '0.04em', textAlign: 'center' }}>Action</th>
+                      <th style={{ padding: '12px 14px', fontSize: 12, fontWeight: 600, color: '#1E293B', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Payment Date</th>
+                      <th style={{ padding: '12px 14px', fontSize: 12, fontWeight: 600, color: '#1E293B', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Description</th>
+                      <th style={{ padding: '12px 14px', fontSize: 12, fontWeight: 600, color: '#1E293B', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Amount</th>
+                      <th style={{ padding: '12px 14px', fontSize: 12, fontWeight: 600, color: '#1E293B', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Pay Mode</th>
+                      <th style={{ padding: '12px 14px', fontSize: 12, fontWeight: 600, color: '#1E293B', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Remarks</th>
+                      <th style={{ padding: '12px 14px', fontSize: 12, fontWeight: 600, color: '#1E293B', textTransform: 'uppercase', letterSpacing: '0.04em', textAlign: 'center' }}>Action</th>
                     </tr>
                   </thead>
                   <tbody>
                     {contract.payments.map(p => (
                       <tr key={p.id} style={{ borderBottom: '1px solid #E2E8F0' }}>
-                        <td style={{ padding: '14px', color: '#0F172A', fontWeight: 700 }}>{formatDate(p.date)}</td>
-                        <td style={{ padding: '14px', fontWeight: 800, color: '#0F172A', textTransform: 'uppercase' }}>{p.type || 'RENT'}</td>
-                        <td style={{ padding: '14px', fontWeight: 800, color: '#059669' }}>AED {Number(p.amount).toLocaleString()}</td>
-                        <td style={{ padding: '14px', color: '#0F172A', textTransform: 'uppercase', fontWeight: 700 }}>{p.mode}</td>
+                        <td style={{ padding: '14px', color: '#0F172A', fontWeight: 600 }}>{formatDate(p.date)}</td>
+                        <td style={{ padding: '14px', fontWeight: 600, color: '#0F172A', textTransform: 'uppercase' }}>{p.type || 'RENT'}</td>
+                        <td style={{ padding: '14px', fontWeight: 600, color: '#059669' }}>AED {Number(p.amount).toLocaleString()}</td>
+                        <td style={{ padding: '14px', color: '#0F172A', textTransform: 'uppercase', fontWeight: 600 }}>{p.mode}</td>
                         <td style={{ padding: '14px', color: '#0F172A', fontWeight: 600 }}>{p.remarks || '—'}</td>
                         <td style={{ padding: '14px', textAlign: 'center' }}>
                           <div style={{ position: 'relative', display: 'inline-block' }}>
@@ -1873,7 +2105,7 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
                                   }}
                                   style={{
                                     width: '100%', padding: '10px 14px', background: 'none', border: 'none',
-                                    color: '#065F46', fontSize: 13, fontWeight: 700, cursor: 'pointer',
+                                    color: '#065F46', fontSize: 13, fontWeight: 600, cursor: 'pointer',
                                     textAlign: 'left', display: 'flex', alignItems: 'center', gap: 8,
                                   }}
                                   onMouseEnter={e => (e.currentTarget.style.background = '#ECFDF5')}
@@ -1890,7 +2122,7 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
                                     }}
                                     style={{
                                       width: '100%', padding: '10px 14px', background: 'none', border: 'none',
-                                      color: '#991B1B', fontSize: 13, fontWeight: 700, cursor: 'pointer',
+                                      color: '#991B1B', fontSize: 13, fontWeight: 600, cursor: 'pointer',
                                       textAlign: 'left', display: 'flex', alignItems: 'center', gap: 8,
                                     }}
                                     onMouseEnter={e => (e.currentTarget.style.background = '#FEF2F2')}
@@ -1918,7 +2150,7 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
       )}
 
       {/* ─── TAB 3: CHEQUES (PDC Cheques Schedule — NO Duplicate Header) ──────── */}
-      {workspaceTab === 'cheques' && (
+      {workspaceTab === 'cheques' && !isOwnerStaff && (
         <div
           className="fade-in"
           style={{
@@ -1931,7 +2163,7 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
         >
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
             <div>
-              <h3 style={{ fontSize: 16, fontWeight: 800, color: '#0F172A', margin: 0 }}>PDC Cheques Schedule</h3>
+              <h3 style={{ fontSize: 16, fontWeight: 600, color: '#0F172A', margin: 0 }}>PDC Cheques Schedule</h3>
               <p style={{ fontSize: 12.5, color: '#475569', fontWeight: 500, marginTop: 4 }}>
                 Post-dated cheques logged for this lease agreement.
               </p>
@@ -1939,7 +2171,7 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
             <button
               type="button"
               onClick={() => {
-                setNewCheque({ cheque_number: '', bank_name: 'Emirates NBD', amount: String(contract.rent_amount || ''), due_date: new Date().toISOString().split('T')[0] })
+                setNewCheque({ cheque_number: '', bank_name: DEFAULT_UAE_BANK, amount: String(contract.rent_amount || ''), due_date: new Date().toISOString().split('T')[0] })
                 setChequeModalOpen(true)
               }}
               style={{
@@ -1951,7 +2183,7 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
                 background: '#10B981',
                 color: '#FFFFFF',
                 fontSize: 13,
-                fontWeight: 700,
+                fontWeight: 600,
                 border: 'none',
                 cursor: 'pointer',
               }}
@@ -1966,10 +2198,10 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
               <button
                 type="button"
                 onClick={() => {
-                  setNewCheque({ cheque_number: '', bank_name: 'Emirates NBD', amount: String(contract.rent_amount || ''), due_date: new Date().toISOString().split('T')[0] })
+                  setNewCheque({ cheque_number: '', bank_name: DEFAULT_UAE_BANK, amount: String(contract.rent_amount || ''), due_date: new Date().toISOString().split('T')[0] })
                   setChequeModalOpen(true)
                 }}
-                style={{ marginTop: 10, padding: '8px 18px', background: '#10B981', color: '#fff', border: 'none', borderRadius: 8, fontWeight: 700, cursor: 'pointer' }}
+                style={{ marginTop: 10, padding: '8px 18px', background: '#10B981', color: '#fff', border: 'none', borderRadius: 8, fontWeight: 600, cursor: 'pointer' }}
               >
                 + Add First Cheque
               </button>
@@ -1979,12 +2211,12 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
               <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                 <thead>
                   <tr style={{ background: '#F8FAFC', borderBottom: '1px solid #E2E8F0', textAlign: 'left' }}>
-                    <th style={{ padding: '12px 14px', fontSize: 12, fontWeight: 700, color: '#1E293B', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Cheque #</th>
-                    <th style={{ padding: '12px 14px', fontSize: 12, fontWeight: 700, color: '#1E293B', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Bank</th>
-                    <th style={{ padding: '12px 14px', fontSize: 12, fontWeight: 700, color: '#1E293B', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Amount</th>
-                    <th style={{ padding: '12px 14px', fontSize: 12, fontWeight: 700, color: '#1E293B', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Due Date</th>
-                    <th style={{ padding: '12px 14px', fontSize: 12, fontWeight: 700, color: '#1E293B', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Status</th>
-                    {!isCashier && <th style={{ padding: '12px 14px', fontSize: 12, fontWeight: 700, color: '#1E293B', textTransform: 'uppercase', letterSpacing: '0.04em', textAlign: 'center' }}>Action</th>}
+                    <th style={{ padding: '12px 14px', fontSize: 12, fontWeight: 600, color: '#1E293B', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Cheque #</th>
+                    <th style={{ padding: '12px 14px', fontSize: 12, fontWeight: 600, color: '#1E293B', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Bank</th>
+                    <th style={{ padding: '12px 14px', fontSize: 12, fontWeight: 600, color: '#1E293B', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Amount</th>
+                    <th style={{ padding: '12px 14px', fontSize: 12, fontWeight: 600, color: '#1E293B', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Due Date</th>
+                    <th style={{ padding: '12px 14px', fontSize: 12, fontWeight: 600, color: '#1E293B', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Status</th>
+                    {!isCashier && <th style={{ padding: '12px 14px', fontSize: 12, fontWeight: 600, color: '#1E293B', textTransform: 'uppercase', letterSpacing: '0.04em', textAlign: 'center' }}>Action</th>}
                   </tr>
                 </thead>
                 <tbody>
@@ -1995,21 +2227,21 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
                     return (
                       <tr key={c.id} style={{ borderBottom: '1px solid #E2E8F0' }}>
                         <td style={{ padding: '14px' }}>
-                          <div style={{ fontSize: 14, fontWeight: 800, color: '#0F172A', letterSpacing: '0.3px', marginBottom: 4 }}>
+                          <div style={{ fontSize: 14, fontWeight: 600, color: '#0F172A', letterSpacing: '0.3px', marginBottom: 4 }}>
                             {c.cheque_number || 'Not provided'}
                           </div>
                           <ChequeDetails cheque={c} contractId={contract.id} />
                         </td>
-                        <td style={{ padding: '14px', color: '#0F172A', fontWeight: 700, fontSize: 13.5 }}>{c.bank_name}</td>
-                        <td style={{ padding: '14px', fontWeight: 800, color: '#065F46', fontSize: 14 }}>AED {Number(c.amount).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
-                        <td style={{ padding: '14px', color: '#0F172A', fontWeight: 700, fontSize: 13.5 }}>{formatDate(c.due_date)}</td>
+                        <td style={{ padding: '14px', color: '#0F172A', fontWeight: 600, fontSize: 13.5 }}>{c.bank_name}</td>
+                        <td style={{ padding: '14px', fontWeight: 600, color: '#065F46', fontSize: 14 }}>AED {Number(c.amount).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                        <td style={{ padding: '14px', color: '#0F172A', fontWeight: 600, fontSize: 13.5 }}>{formatDate(c.due_date)}</td>
                         <td style={{ padding: '14px' }}>
                           <span
                             style={{
                               padding: '3px 10px',
                               borderRadius: 999,
                               fontSize: 11,
-                              fontWeight: 700,
+                              fontWeight: 600,
                               textTransform: 'uppercase',
                               background: isCleared ? '#F0FDF4' : (isBounced ? '#FEF2F2' : '#FFFBEB'),
                               color: isCleared ? '#166534' : (isBounced ? '#991B1B' : '#B45309'),
@@ -2059,7 +2291,7 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
                                     }}
                                     style={{
                                       width: '100%', padding: '10px 14px', background: 'none', border: 'none',
-                                      color: '#991B1B', fontSize: 13, fontWeight: 700, cursor: 'pointer',
+                                      color: '#991B1B', fontSize: 13, fontWeight: 600, cursor: 'pointer',
                                       textAlign: 'left', display: 'flex', alignItems: 'center', gap: 8,
                                     }}
                                     onMouseEnter={e => (e.currentTarget.style.background = '#FEF2F2')}
@@ -2087,7 +2319,7 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
       )}
 
       {/* ─── TAB 4: DOCUMENTS ───────────────────────────────────────────────── */}
-      {workspaceTab === 'documents' && (
+      {workspaceTab === 'documents' && !isOwnerStaff && (
         <div
           className="fade-in"
           style={{
@@ -2100,7 +2332,7 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
         >
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
             <div>
-              <h3 style={{ fontSize: 16, fontWeight: 800, color: '#0F172A', margin: 0 }}>Contract Documents</h3>
+              <h3 style={{ fontSize: 16, fontWeight: 600, color: '#0F172A', margin: 0 }}>Contract Documents</h3>
               <p style={{ fontSize: 12.5, color: '#475569', fontWeight: 500, marginTop: 4 }}>
                 Official signed tenancy agreement, receipts, and identification copies for GFH-{String(contract.id).padStart(5, '0')}.
               </p>
@@ -2117,7 +2349,7 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
                 background: '#10B981',
                 color: '#FFFFFF',
                 fontSize: 13,
-                fontWeight: 700,
+                fontWeight: 600,
                 border: 'none',
                 cursor: 'pointer',
               }}
@@ -2130,43 +2362,43 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
             <table style={{ width: '100%', borderCollapse: 'collapse' }}>
               <thead>
                 <tr style={{ background: '#F8FAFC', borderBottom: '1px solid #E2E8F0', textAlign: 'left' }}>
-                  <th style={{ padding: '12px 14px', fontSize: 12, fontWeight: 700, color: '#1E293B', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Document Title</th>
-                  <th style={{ padding: '12px 14px', fontSize: 12, fontWeight: 700, color: '#1E293B', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Category</th>
-                  <th style={{ padding: '12px 14px', fontSize: 12, fontWeight: 700, color: '#1E293B', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Issue Date</th>
-                  <th style={{ padding: '12px 14px', fontSize: 12, fontWeight: 700, color: '#1E293B', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Format</th>
-                  <th style={{ padding: '12px 14px', fontSize: 12, fontWeight: 700, color: '#1E293B', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Action</th>
+                  <th style={{ padding: '12px 14px', fontSize: 12, fontWeight: 600, color: '#1E293B', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Document Title</th>
+                  <th style={{ padding: '12px 14px', fontSize: 12, fontWeight: 600, color: '#1E293B', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Category</th>
+                  <th style={{ padding: '12px 14px', fontSize: 12, fontWeight: 600, color: '#1E293B', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Issue Date</th>
+                  <th style={{ padding: '12px 14px', fontSize: 12, fontWeight: 600, color: '#1E293B', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Format</th>
+                  <th style={{ padding: '12px 14px', fontSize: 12, fontWeight: 600, color: '#1E293B', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Action</th>
                 </tr>
               </thead>
               <tbody>
                 <tr style={{ borderBottom: '1px solid #E2E8F0' }}>
-                  <td style={{ padding: '14px', fontWeight: 700, color: '#0F172A' }}>Tenancy Contract Agreement</td>
+                  <td style={{ padding: '14px', fontWeight: 600, color: '#0F172A' }}>Tenancy Contract Agreement</td>
                   <td style={{ padding: '14px', color: '#0F172A', fontWeight: 600 }}>Ejari / Lease</td>
-                  <td style={{ padding: '14px', color: '#0F172A', fontWeight: 700 }}>{formatDate(contract.start_date)}</td>
-                  <td style={{ padding: '14px' }}><span style={{ background: '#EFF6FF', color: '#1D4ED8', border: '1px solid #BFDBFE', padding: '3px 8px', borderRadius: 6, fontSize: 11, fontWeight: 700 }}>PDF</span></td>
+                  <td style={{ padding: '14px', color: '#0F172A', fontWeight: 600 }}>{formatDate(contract.start_date)}</td>
+                  <td style={{ padding: '14px' }}><span style={{ background: '#EFF6FF', color: '#1D4ED8', border: '1px solid #BFDBFE', padding: '3px 8px', borderRadius: 6, fontSize: 11, fontWeight: 600 }}>PDF</span></td>
                   <td style={{ padding: '14px' }}>
-                    <button type="button" onClick={downloadPdf} style={{ padding: '6px 14px', borderRadius: 6, background: '#ECFDF5', color: '#065F46', border: '1px solid #10B981', fontWeight: 700, fontSize: 12, cursor: 'pointer' }}>
+                    <button type="button" onClick={downloadPdf} style={{ padding: '6px 14px', borderRadius: 6, background: '#ECFDF5', color: '#065F46', border: '1px solid #10B981', fontWeight: 600, fontSize: 12, cursor: 'pointer' }}>
                       Download
                     </button>
                   </td>
                 </tr>
                 <tr style={{ borderBottom: '1px solid #E2E8F0' }}>
-                  <td style={{ padding: '14px', fontWeight: 700, color: '#0F172A' }}>Security Deposit Receipt (SEC-{contract.id})</td>
+                  <td style={{ padding: '14px', fontWeight: 600, color: '#0F172A' }}>Security Deposit Receipt (SEC-{contract.id})</td>
                   <td style={{ padding: '14px', color: '#0F172A', fontWeight: 600 }}>Receipt</td>
-                  <td style={{ padding: '14px', color: '#0F172A', fontWeight: 700 }}>{formatDate(contract.start_date)}</td>
-                  <td style={{ padding: '14px' }}><span style={{ background: '#F0F9FF', color: '#0369A1', border: '1px solid #BAE6FD', padding: '3px 8px', borderRadius: 6, fontSize: 11, fontWeight: 700 }}>Printable</span></td>
+                  <td style={{ padding: '14px', color: '#0F172A', fontWeight: 600 }}>{formatDate(contract.start_date)}</td>
+                  <td style={{ padding: '14px' }}><span style={{ background: '#F0F9FF', color: '#0369A1', border: '1px solid #BAE6FD', padding: '3px 8px', borderRadius: 6, fontSize: 11, fontWeight: 600 }}>Printable</span></td>
                   <td style={{ padding: '14px' }}>
-                    <button type="button" onClick={() => printReceipt('SEC')} style={{ padding: '6px 14px', borderRadius: 6, background: '#F0F9FF', color: '#0369A1', border: '1px solid #38BDF8', fontWeight: 700, fontSize: 12, cursor: 'pointer' }}>
+                    <button type="button" onClick={() => printReceipt('SEC')} style={{ padding: '6px 14px', borderRadius: 6, background: '#F0F9FF', color: '#0369A1', border: '1px solid #38BDF8', fontWeight: 600, fontSize: 12, cursor: 'pointer' }}>
                       Print Receipt
                     </button>
                   </td>
                 </tr>
                 <tr style={{ borderBottom: '1px solid #E2E8F0' }}>
-                  <td style={{ padding: '14px', fontWeight: 700, color: '#0F172A' }}>DEWA Deposit Receipt (DEWA-{contract.id})</td>
+                  <td style={{ padding: '14px', fontWeight: 600, color: '#0F172A' }}>DEWA Deposit Receipt (DEWA-{contract.id})</td>
                   <td style={{ padding: '14px', color: '#0F172A', fontWeight: 600 }}>Receipt</td>
-                  <td style={{ padding: '14px', color: '#0F172A', fontWeight: 700 }}>{formatDate(contract.start_date)}</td>
-                  <td style={{ padding: '14px' }}><span style={{ background: '#F0F9FF', color: '#0369A1', border: '1px solid #BAE6FD', padding: '3px 8px', borderRadius: 6, fontSize: 11, fontWeight: 700 }}>Printable</span></td>
+                  <td style={{ padding: '14px', color: '#0F172A', fontWeight: 600 }}>{formatDate(contract.start_date)}</td>
+                  <td style={{ padding: '14px' }}><span style={{ background: '#F0F9FF', color: '#0369A1', border: '1px solid #BAE6FD', padding: '3px 8px', borderRadius: 6, fontSize: 11, fontWeight: 600 }}>Printable</span></td>
                   <td style={{ padding: '14px' }}>
-                    <button type="button" onClick={() => printReceipt('DEWA')} style={{ padding: '6px 14px', borderRadius: 6, background: '#F0F9FF', color: '#0369A1', border: '1px solid #38BDF8', fontWeight: 700, fontSize: 12, cursor: 'pointer' }}>
+                    <button type="button" onClick={() => printReceipt('DEWA')} style={{ padding: '6px 14px', borderRadius: 6, background: '#F0F9FF', color: '#0369A1', border: '1px solid #38BDF8', fontWeight: 600, fontSize: 12, cursor: 'pointer' }}>
                       Print Receipt
                     </button>
                   </td>
@@ -2177,9 +2409,30 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
         </div>
       )}
 
-      {/* ─── TAB 5: CONTRACT (Edit Lease Form — NO Duplicate Action Bar at Bottom) ─── */}
+      {/* ─── TAB 5: CONTRACT (Edit Lease Form — owners open via Edit, no tab bar) ─── */}
       {workspaceTab === 'contract' && (
         <form onSubmit={handleSaveContractEdit} className="fade-in">
+          {isOwnerStaff && (
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14, gap: 12, flexWrap: 'wrap' }}>
+              <div style={{ fontSize: 15, fontWeight: 600, color: '#0F172A' }}>Edit Contract</div>
+              <button
+                type="button"
+                onClick={() => handleWorkspaceTabChange('overview')}
+                style={{
+                  padding: '6px 16px',
+                  borderRadius: 9999,
+                  border: '1.5px solid #60A5FA',
+                  background: '#FFFFFF',
+                  color: '#2563EB',
+                  fontSize: 13,
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                }}
+              >
+                Back to overview
+              </button>
+            </div>
+          )}
           <fieldset disabled={isCashier} style={{ border: 'none', padding: 0, margin: 0 }}>
             <div
               style={{
@@ -2198,7 +2451,7 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
                     <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
                     <circle cx="12" cy="7" r="4" />
                   </svg>
-                  <span style={{ fontSize: 13, fontWeight: 800, color: '#10B981', letterSpacing: '0.6px', textTransform: 'uppercase' }}>
+                  <span style={{ fontSize: 13, fontWeight: 600, color: '#10B981', letterSpacing: '0.6px', textTransform: 'uppercase' }}>
                     TENANT
                   </span>
                 </div>
@@ -2259,7 +2512,7 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
                     <line x1="8" y1="2" x2="8" y2="6" />
                     <line x1="3" y1="10" x2="21" y2="10" />
                   </svg>
-                  <span style={{ fontSize: 13, fontWeight: 800, color: '#10B981', letterSpacing: '0.6px', textTransform: 'uppercase' }}>
+                  <span style={{ fontSize: 13, fontWeight: 600, color: '#10B981', letterSpacing: '0.6px', textTransform: 'uppercase' }}>
                     LEASE &amp; RENT
                   </span>
                 </div>
@@ -2269,15 +2522,12 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
                     <label style={labelStyle}>Lease Term</label>
                     <select
                       className="gfh-input-ctrl"
-                      value={editForm.lease_term}
+                      value={normalizeLeaseTerm(editForm.lease_term)}
                       onChange={e => setEditForm({ ...editForm, lease_term: e.target.value })}
                       style={inputStyle}
                     >
                       <option value="Monthly">Monthly</option>
-                      <option value="Quarterly">Quarterly</option>
-                      <option value="Semi-Annual">Semi-Annual</option>
-                      <option value="1 Year">1 Year</option>
-                      <option value="2 Years">2 Years</option>
+                      <option value="Yearly">Yearly</option>
                     </select>
                   </div>
 
@@ -2333,7 +2583,7 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
                   <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#10B981" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
                   </svg>
-                  <span style={{ fontSize: 13, fontWeight: 800, color: '#10B981', letterSpacing: '0.6px', textTransform: 'uppercase' }}>
+                  <span style={{ fontSize: 13, fontWeight: 600, color: '#10B981', letterSpacing: '0.6px', textTransform: 'uppercase' }}>
                     DEPOSITS
                   </span>
                 </div>
@@ -2408,14 +2658,12 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
                   </div>
 
                   <div>
-                    <label style={labelStyle}>Bank</label>
-                    <input
-                      type="text"
+                    <label style={labelStyle}>Bank (UAE)</label>
+                    <UaeBankSelect
                       className="gfh-input-ctrl"
                       value={editForm.cheque_bank}
-                      onChange={e => setEditForm({ ...editForm, cheque_bank: e.target.value })}
+                      onChange={cheque_bank => setEditForm({ ...editForm, cheque_bank })}
                       style={inputStyle}
-                      placeholder="Emirates NBD"
                     />
                   </div>
                 </div>
@@ -2438,7 +2686,7 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
                   background: '#10B981',
                   color: '#FFFFFF',
                   fontSize: 13.5,
-                  fontWeight: 700,
+                  fontWeight: 600,
                   border: 'none',
                   cursor: isSaving ? 'not-allowed' : 'pointer',
                   boxShadow: '0 1px 3px rgba(14, 94, 72, 0.25)',
@@ -2461,19 +2709,19 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
       {renewModalOpen && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(15,23,42,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
           <div style={{ background: '#fff', padding: 28, width: 420, borderRadius: 16, position: 'relative', boxShadow: '0 20px 50px rgba(15,23,42,0.25)' }}>
-            <h3 style={{ margin: '0 0 14px 0', color: '#0f172a', fontSize: 17, fontWeight: 800 }}>Renew Contract</h3>
+            <h3 style={{ margin: '0 0 14px 0', color: '#0f172a', fontSize: 17, fontWeight: 600 }}>Renew Contract</h3>
             <form onSubmit={handleRenewSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
               <div>
-                <label style={{ fontSize: 12, fontWeight: 700, display: 'block', marginBottom: 6, color: '#0f172a', textTransform: 'uppercase' }}>New End Date</label>
+                <label style={{ fontSize: 12, fontWeight: 600, display: 'block', marginBottom: 6, color: '#0f172a', textTransform: 'uppercase' }}>New End Date</label>
                 <input type="date" required value={renewData.new_end_date} onChange={e => setRenewData({ ...renewData, new_end_date: e.target.value })} style={{ width: '100%', padding: '10px 12px', borderRadius: 8, border: '1px solid #94a3b8', background: '#ffffff', color: '#0f172a', fontWeight: 600, fontSize: 14, boxSizing: 'border-box' }} />
               </div>
               <div>
-                <label style={{ fontSize: 12, fontWeight: 700, display: 'block', marginBottom: 6, color: '#0f172a', textTransform: 'uppercase' }}>New Rent Amount (AED)</label>
+                <label style={{ fontSize: 12, fontWeight: 600, display: 'block', marginBottom: 6, color: '#0f172a', textTransform: 'uppercase' }}>New Rent Amount (AED)</label>
                 <input type="number" value={renewData.new_rent_amount} onChange={e => setRenewData({ ...renewData, new_rent_amount: e.target.value })} style={{ width: '100%', padding: '10px 12px', borderRadius: 8, border: '1px solid #94a3b8', background: '#ffffff', color: '#0f172a', fontWeight: 600, fontSize: 14, boxSizing: 'border-box' }} />
               </div>
               <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 12 }}>
-                <button type="button" onClick={() => setRenewModalOpen(false)} style={{ padding: '9px 16px', borderRadius: 8, border: '1px solid #cbd5e1', background: '#f1f5f9', color: '#0f172a', fontWeight: 700, fontSize: 13, cursor: 'pointer' }}>Cancel</button>
-                <button type="submit" style={{ padding: '9px 18px', borderRadius: 8, background: '#10B981', color: '#fff', border: 'none', fontWeight: 700, fontSize: 13, cursor: 'pointer' }}>Confirm Renew</button>
+                <button type="button" onClick={() => setRenewModalOpen(false)} style={{ padding: '9px 16px', borderRadius: 8, border: '1px solid #cbd5e1', background: '#f1f5f9', color: '#0f172a', fontWeight: 600, fontSize: 13, cursor: 'pointer' }}>Cancel</button>
+                <button type="submit" style={{ padding: '9px 18px', borderRadius: 8, background: '#10B981', color: '#fff', border: 'none', fontWeight: 600, fontSize: 13, cursor: 'pointer' }}>Confirm Renew</button>
               </div>
             </form>
           </div>
@@ -2493,15 +2741,15 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
       {paymentModalOpen && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(15,23,42,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
           <div style={{ background: '#fff', padding: 28, width: 460, borderRadius: 16, position: 'relative', boxShadow: '0 20px 50px rgba(15,23,42,0.25)' }}>
-            <h3 style={{ margin: '0 0 14px 0', color: '#0f172a', fontSize: 17, fontWeight: 800 }}>Collect Payment</h3>
+            <h3 style={{ margin: '0 0 14px 0', color: '#0f172a', fontSize: 17, fontWeight: 600 }}>Collect Payment</h3>
             <form onSubmit={handleAddPaymentSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
               <div>
-                <label style={{ fontSize: 12, fontWeight: 700, display: 'block', marginBottom: 6, color: '#0f172a', textTransform: 'uppercase' }}>Amount (AED)</label>
+                <label style={{ fontSize: 12, fontWeight: 600, display: 'block', marginBottom: 6, color: '#0f172a', textTransform: 'uppercase' }}>Amount (AED)</label>
                 <input type="number" required value={newPayment.amount} onChange={e => setNewPayment({ ...newPayment, amount: e.target.value })} style={{ width: '100%', padding: '10px 12px', borderRadius: 8, border: '1px solid #94a3b8', background: '#ffffff', color: '#0f172a', fontWeight: 600, fontSize: 14, boxSizing: 'border-box' }} />
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
                 <div>
-                  <label style={{ fontSize: 12, fontWeight: 700, display: 'block', marginBottom: 6, color: '#0f172a', textTransform: 'uppercase' }}>Type</label>
+                  <label style={{ fontSize: 12, fontWeight: 600, display: 'block', marginBottom: 6, color: '#0f172a', textTransform: 'uppercase' }}>Type</label>
                   <select value={newPayment.type} onChange={e => setNewPayment({ ...newPayment, type: e.target.value })} style={{ width: '100%', padding: '10px 12px', borderRadius: 8, border: '1px solid #94a3b8', background: '#ffffff', color: '#0f172a', fontWeight: 600, fontSize: 14, boxSizing: 'border-box' }}>
                     <option value="rent">Rent</option>
                     <option value="deposit">Deposit</option>
@@ -2510,7 +2758,7 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
                   </select>
                 </div>
                 <div>
-                  <label style={{ fontSize: 12, fontWeight: 700, display: 'block', marginBottom: 6, color: '#0f172a', textTransform: 'uppercase' }}>Mode</label>
+                  <label style={{ fontSize: 12, fontWeight: 600, display: 'block', marginBottom: 6, color: '#0f172a', textTransform: 'uppercase' }}>Mode</label>
                   <select value={newPayment.mode} onChange={e => setNewPayment({ ...newPayment, mode: e.target.value })} style={{ width: '100%', padding: '10px 12px', borderRadius: 8, border: '1px solid #94a3b8', background: '#ffffff', color: '#0f172a', fontWeight: 600, fontSize: 14, boxSizing: 'border-box' }}>
                     <option value="bank_transfer">Bank Transfer</option>
                     <option value="cash">Cash</option>
@@ -2520,16 +2768,16 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
                 </div>
               </div>
               <div>
-                <label style={{ fontSize: 12, fontWeight: 700, display: 'block', marginBottom: 6, color: '#0f172a', textTransform: 'uppercase' }}>Date</label>
+                <label style={{ fontSize: 12, fontWeight: 600, display: 'block', marginBottom: 6, color: '#0f172a', textTransform: 'uppercase' }}>Date</label>
                 <input type="date" required value={newPayment.date} onChange={e => setNewPayment({ ...newPayment, date: e.target.value })} style={{ width: '100%', padding: '10px 12px', borderRadius: 8, border: '1px solid #94a3b8', background: '#ffffff', color: '#0f172a', fontWeight: 600, fontSize: 14, boxSizing: 'border-box' }} />
               </div>
               <div>
-                <label style={{ fontSize: 12, fontWeight: 700, display: 'block', marginBottom: 6, color: '#0f172a', textTransform: 'uppercase' }}>Remarks</label>
+                <label style={{ fontSize: 12, fontWeight: 600, display: 'block', marginBottom: 6, color: '#0f172a', textTransform: 'uppercase' }}>Remarks</label>
                 <input type="text" placeholder="Remarks..." value={newPayment.remarks} onChange={e => setNewPayment({ ...newPayment, remarks: e.target.value })} style={{ width: '100%', padding: '10px 12px', borderRadius: 8, border: '1px solid #94a3b8', background: '#ffffff', color: '#0f172a', fontWeight: 600, fontSize: 14, boxSizing: 'border-box' }} />
               </div>
               <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 12 }}>
-                <button type="button" onClick={() => setPaymentModalOpen(false)} style={{ padding: '9px 16px', borderRadius: 8, border: '1px solid #cbd5e1', background: '#f1f5f9', color: '#0f172a', fontWeight: 700, fontSize: 13, cursor: 'pointer' }}>Cancel</button>
-                <button type="submit" style={{ padding: '9px 18px', borderRadius: 8, background: '#10B981', color: '#fff', border: 'none', fontWeight: 700, fontSize: 13, cursor: 'pointer' }}>Record Payment</button>
+                <button type="button" onClick={() => setPaymentModalOpen(false)} style={{ padding: '9px 16px', borderRadius: 8, border: '1px solid #cbd5e1', background: '#f1f5f9', color: '#0f172a', fontWeight: 600, fontSize: 13, cursor: 'pointer' }}>Cancel</button>
+                <button type="submit" style={{ padding: '9px 18px', borderRadius: 8, background: '#10B981', color: '#fff', border: 'none', fontWeight: 600, fontSize: 13, cursor: 'pointer' }}>Record Payment</button>
               </div>
             </form>
           </div>
@@ -2540,13 +2788,13 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
       {chargeModalOpen && !isCashier && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(15,23,42,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
           <div style={{ background: '#fff', padding: 28, width: 460, borderRadius: 16, position: 'relative', boxShadow: '0 20px 50px rgba(15,23,42,0.25)' }}>
-            <h3 style={{ margin: '0 0 6px 0', color: '#0f172a', fontSize: 17, fontWeight: 800 }}>Add Manual Charge / Adjustment</h3>
+            <h3 style={{ margin: '0 0 6px 0', color: '#0f172a', fontSize: 17, fontWeight: 600 }}>Add Manual Charge / Adjustment</h3>
             <p style={{ margin: '0 0 16px 0', color: '#64748b', fontSize: 12.5 }}>
               Posts a debit charge directly to the contract statement ledger.
             </p>
             <form onSubmit={handleAddChargeSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
               <div>
-                <label style={{ fontSize: 12, fontWeight: 700, display: 'block', marginBottom: 6, color: '#0f172a', textTransform: 'uppercase' }}>Charge Description *</label>
+                <label style={{ fontSize: 12, fontWeight: 600, display: 'block', marginBottom: 6, color: '#0f172a', textTransform: 'uppercase' }}>Charge Description *</label>
                 <input
                   type="text"
                   required
@@ -2558,7 +2806,7 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
                 <div>
-                  <label style={{ fontSize: 12, fontWeight: 700, display: 'block', marginBottom: 6, color: '#0f172a', textTransform: 'uppercase' }}>Amount (AED) *</label>
+                  <label style={{ fontSize: 12, fontWeight: 600, display: 'block', marginBottom: 6, color: '#0f172a', textTransform: 'uppercase' }}>Amount (AED) *</label>
                   <input
                     type="number"
                     required
@@ -2571,7 +2819,7 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
                   />
                 </div>
                 <div>
-                  <label style={{ fontSize: 12, fontWeight: 700, display: 'block', marginBottom: 6, color: '#0f172a', textTransform: 'uppercase' }}>Date *</label>
+                  <label style={{ fontSize: 12, fontWeight: 600, display: 'block', marginBottom: 6, color: '#0f172a', textTransform: 'uppercase' }}>Date *</label>
                   <input
                     type="date"
                     required
@@ -2582,8 +2830,8 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
                 </div>
               </div>
               <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 12 }}>
-                <button type="button" onClick={() => setChargeModalOpen(false)} style={{ padding: '9px 16px', borderRadius: 8, border: '1px solid #cbd5e1', background: '#f1f5f9', color: '#0f172a', fontWeight: 700, fontSize: 13, cursor: 'pointer' }}>Cancel</button>
-                <button type="submit" disabled={chargeSubmitting} style={{ padding: '9px 18px', borderRadius: 8, background: '#0369a1', color: '#fff', border: 'none', fontWeight: 700, fontSize: 13, cursor: 'pointer' }}>
+                <button type="button" onClick={() => setChargeModalOpen(false)} style={{ padding: '9px 16px', borderRadius: 8, border: '1px solid #cbd5e1', background: '#f1f5f9', color: '#0f172a', fontWeight: 600, fontSize: 13, cursor: 'pointer' }}>Cancel</button>
+                <button type="submit" disabled={chargeSubmitting} style={{ padding: '9px 18px', borderRadius: 8, background: '#0369a1', color: '#fff', border: 'none', fontWeight: 600, fontSize: 13, cursor: 'pointer' }}>
                   {chargeSubmitting ? 'Posting...' : 'Add Charge'}
                 </button>
               </div>
@@ -2596,19 +2844,19 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
       {callLogModalOpen && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(15,23,42,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
           <div style={{ background: '#fff', padding: 28, width: 440, borderRadius: 16, position: 'relative', boxShadow: '0 20px 50px rgba(15,23,42,0.25)' }}>
-            <h3 style={{ margin: '0 0 14px 0', color: '#0f172a', fontSize: 17, fontWeight: 800 }}>Add Call Log</h3>
+            <h3 style={{ margin: '0 0 14px 0', color: '#0f172a', fontSize: 17, fontWeight: 600 }}>Add Call Log</h3>
             <form onSubmit={handleCallLogSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
               <div>
-                <label style={{ fontSize: 12, fontWeight: 700, display: 'block', marginBottom: 6, color: '#0f172a', textTransform: 'uppercase' }}>Call Date</label>
+                <label style={{ fontSize: 12, fontWeight: 600, display: 'block', marginBottom: 6, color: '#0f172a', textTransform: 'uppercase' }}>Call Date</label>
                 <input type="date" required value={callLogData.call_date} onChange={e => setCallLogData({ ...callLogData, call_date: e.target.value })} style={{ width: '100%', padding: '10px 12px', borderRadius: 8, border: '1px solid #94a3b8', background: '#ffffff', color: '#0f172a', fontWeight: 600, fontSize: 14, boxSizing: 'border-box' }} />
               </div>
               <div>
-                <label style={{ fontSize: 12, fontWeight: 700, display: 'block', marginBottom: 6, color: '#0f172a', textTransform: 'uppercase' }}>Notes</label>
+                <label style={{ fontSize: 12, fontWeight: 600, display: 'block', marginBottom: 6, color: '#0f172a', textTransform: 'uppercase' }}>Notes</label>
                 <textarea required rows={3} placeholder="Discussion notes..." value={callLogData.notes} onChange={e => setCallLogData({ ...callLogData, notes: e.target.value })} style={{ width: '100%', padding: '10px 12px', borderRadius: 8, border: '1px solid #94a3b8', background: '#ffffff', color: '#0f172a', fontWeight: 600, fontSize: 14, boxSizing: 'border-box', resize: 'vertical' }} />
               </div>
               <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 12 }}>
-                <button type="button" onClick={() => setCallLogModalOpen(false)} style={{ padding: '9px 16px', borderRadius: 8, border: '1px solid #cbd5e1', background: '#f1f5f9', color: '#0f172a', fontWeight: 700, fontSize: 13, cursor: 'pointer' }}>Cancel</button>
-                <button type="submit" style={{ padding: '9px 18px', borderRadius: 8, background: '#075985', color: '#fff', border: 'none', fontWeight: 700, fontSize: 13, cursor: 'pointer' }}>Save Log</button>
+                <button type="button" onClick={() => setCallLogModalOpen(false)} style={{ padding: '9px 16px', borderRadius: 8, border: '1px solid #cbd5e1', background: '#f1f5f9', color: '#0f172a', fontWeight: 600, fontSize: 13, cursor: 'pointer' }}>Cancel</button>
+                <button type="submit" style={{ padding: '9px 18px', borderRadius: 8, background: '#075985', color: '#fff', border: 'none', fontWeight: 600, fontSize: 13, cursor: 'pointer' }}>Save Log</button>
               </div>
             </form>
           </div>
@@ -2628,7 +2876,7 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
                   </svg>
                 </div>
                 <div>
-                  <h3 style={{ margin: 0, color: '#0F172A', fontSize: 17, fontWeight: 800 }}>Add PDC Cheque</h3>
+                  <h3 style={{ margin: 0, color: '#0F172A', fontSize: 17, fontWeight: 600 }}>Add PDC Cheque</h3>
                   <p style={{ margin: 0, color: '#64748B', fontSize: 12, marginTop: 2 }}>Contract GFH-{String(contract.id).padStart(5, '0')}</p>
                 </div>
               </div>
@@ -2644,7 +2892,7 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
             <form onSubmit={handleAddChequeSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
                 <div>
-                  <label style={{ fontSize: 12, fontWeight: 700, display: 'block', marginBottom: 6, color: '#0F172A', textTransform: 'uppercase' }}>
+                  <label style={{ fontSize: 12, fontWeight: 600, display: 'block', marginBottom: 6, color: '#0F172A', textTransform: 'uppercase' }}>
                     Cheque Number <span style={{ color: '#EF4444' }}>*</span>
                   </label>
                   <input
@@ -2657,22 +2905,20 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
                   />
                 </div>
                 <div>
-                  <label style={{ fontSize: 12, fontWeight: 700, display: 'block', marginBottom: 6, color: '#0F172A', textTransform: 'uppercase' }}>
-                    Bank Name <span style={{ color: '#EF4444' }}>*</span>
+                  <label style={{ fontSize: 12, fontWeight: 600, display: 'block', marginBottom: 6, color: '#0F172A', textTransform: 'uppercase' }}>
+                    Bank (UAE) <span style={{ color: '#EF4444' }}>*</span>
                   </label>
-                  <input
-                    type="text"
+                  <UaeBankSelect
                     required
-                    placeholder="e.g. Emirates NBD"
                     value={newCheque.bank_name}
-                    onChange={e => setNewCheque({ ...newCheque, bank_name: e.target.value })}
+                    onChange={bank_name => setNewCheque({ ...newCheque, bank_name })}
                     style={{ width: '100%', padding: '10px 12px', borderRadius: 8, border: '1px solid #CBD5E1', background: '#FFFFFF', color: '#0F172A', fontWeight: 600, fontSize: 13.5, boxSizing: 'border-box' }}
                   />
                 </div>
               </div>
 
               <div>
-                <label style={{ fontSize: 12, fontWeight: 700, display: 'block', marginBottom: 6, color: '#0F172A', textTransform: 'uppercase' }}>
+                <label style={{ fontSize: 12, fontWeight: 600, display: 'block', marginBottom: 6, color: '#0F172A', textTransform: 'uppercase' }}>
                   Amount (AED) <span style={{ color: '#EF4444' }}>*</span>
                 </label>
                 <input
@@ -2686,7 +2932,7 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
               </div>
 
               <div>
-                <label style={{ fontSize: 12, fontWeight: 700, display: 'block', marginBottom: 6, color: '#0F172A', textTransform: 'uppercase' }}>
+                <label style={{ fontSize: 12, fontWeight: 600, display: 'block', marginBottom: 6, color: '#0F172A', textTransform: 'uppercase' }}>
                   Due Date <span style={{ color: '#EF4444' }}>*</span>
                 </label>
                 <input
@@ -2702,13 +2948,13 @@ export default function ContractDetailPage({ basePath }: { basePath?: string } =
                 <button
                   type="button"
                   onClick={() => setChequeModalOpen(false)}
-                  style={{ padding: '9px 16px', borderRadius: 8, border: '1px solid #CBD5E1', background: '#F1F5F9', color: '#0F172A', fontWeight: 700, fontSize: 13, cursor: 'pointer' }}
+                  style={{ padding: '9px 16px', borderRadius: 8, border: '1px solid #CBD5E1', background: '#F1F5F9', color: '#0F172A', fontWeight: 600, fontSize: 13, cursor: 'pointer' }}
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  style={{ padding: '9px 20px', borderRadius: 8, background: '#10B981', color: '#FFFFFF', border: 'none', fontWeight: 700, fontSize: 13, cursor: 'pointer', boxShadow: '0 1px 3px rgba(14, 94, 72, 0.25)' }}
+                  style={{ padding: '9px 20px', borderRadius: 8, background: '#10B981', color: '#FFFFFF', border: 'none', fontWeight: 600, fontSize: 13, cursor: 'pointer', boxShadow: '0 1px 3px rgba(14, 94, 72, 0.25)' }}
                 >
                   Add Cheque
                 </button>

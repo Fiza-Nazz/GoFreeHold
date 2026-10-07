@@ -31,8 +31,8 @@ export const CornerBrackets = ({ color = THEME.violetLight }: { color?: string }
 }
 
 export const portalPageCss = `
-  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Inter:wght@400;500;600;700;800&display=swap');
-  .gfh-portal-page * { font-family: 'Inter', 'Segoe UI', system-ui, sans-serif; }
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Source+Sans+Pro:wght@400;600;700;800&display=swap');
+  .gfh-portal-page * { font-family: 'Source Sans Pro', 'Segoe UI', system-ui, sans-serif; }
   .gfh-portal-page button { border-radius: 10px; }
   .gfh-portal-page input,
   .gfh-portal-page select,
@@ -45,7 +45,7 @@ export const portalPageCss = `
   .gfh-portal-row:hover { background: #faf7ff; }
   .gfh-portal-btn { transition: transform 0.2s cubic-bezier(.2,.8,.2,1), box-shadow 0.2s ease, background 0.2s ease; }
   .gfh-portal-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 24px -4px rgba(124,58,237,0.55); }
-  .gfh-portal-link { color: ${THEME.violetLight}; font-weight: 700; text-decoration: none; display: inline-block; transition: transform 0.18s ease; }
+  .gfh-portal-link { color: ${THEME.violetLight}; font-weight: 600; text-decoration: none; display: inline-block; transition: transform 0.18s ease; }
   .gfh-portal-link:hover { transform: translateX(3px); }
 `
 
@@ -74,7 +74,7 @@ export const panelStyle: CSSProperties = {
 
 export const thStyle: CSSProperties = {
   padding: '12px 14px',
-  fontWeight: 700,
+  fontWeight: 600,
   textAlign: 'left',
   fontSize: 11.5,
   textTransform: 'uppercase',
@@ -95,7 +95,7 @@ export const ghostBtnStyle: CSSProperties = {
   gap: 8,
   borderRadius: 8,
   fontSize: 13.5,
-  fontWeight: 700,
+  fontWeight: 600,
   padding: '10px 18px',
   background: THEME.violetLight,
   border: 'none',

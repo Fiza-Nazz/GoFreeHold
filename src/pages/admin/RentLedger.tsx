@@ -39,7 +39,7 @@ const filterInputStyle: React.CSSProperties = {
   color: '#0F172A',
   fontSize: 13,
   fontWeight: 500,
-  fontFamily: "'Inter', sans-serif",
+  fontFamily: "'Source Sans Pro', sans-serif",
 }
 
 const inputStyle: React.CSSProperties = {
@@ -57,7 +57,7 @@ const inputStyle: React.CSSProperties = {
 const labelStyle: React.CSSProperties = {
   display: 'block',
   fontSize: 12,
-  fontWeight: 700,
+  fontWeight: 600,
   color: '#10B981',
   textTransform: 'uppercase',
   letterSpacing: '0.3px',
@@ -71,8 +71,8 @@ function StatCard({ label, value, color, icon, iconBg, cardBg = '#F8FAFC', cardB
       <div style={{ width: 40, height: 40, borderRadius: 8, background: iconBg, color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 10 }}>
         <Icon path={icon} size={18} />
       </div>
-      <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 22, fontWeight: 700, color: color || THEME.ink }}>{value}</div>
-      <div style={{ fontSize: 12, color: color || THEME.textMuted, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.3px', marginTop: 2 }}>{label}</div>
+      <div style={{ fontFamily: "'Source Sans Pro', sans-serif", fontSize: 22, fontWeight: 600, color: color || THEME.ink }}>{value}</div>
+      <div style={{ fontSize: 12, color: color || THEME.textMuted, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.3px', marginTop: 2 }}>{label}</div>
     </div>
   )
 }
@@ -147,7 +147,7 @@ export default function RentLedger() {
   }
 
   return (
-    <div className="gfh-portal-page" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
+    <div className="gfh-portal-page" style={{ fontFamily: "'Source Sans Pro', system-ui, sans-serif" }}>
       <style>{portalPageCss}</style>
       <style>{`
         @keyframes gfhOverlayFade { from { opacity: 0; } to { opacity: 1; } }
@@ -159,7 +159,7 @@ export default function RentLedger() {
           color: #0F172A !important;
           font-size: 13px !important;
           font-weight: 500 !important;
-          font-family: 'Inter', system-ui, sans-serif !important;
+          font-family: 'Source Sans Pro', system-ui, sans-serif !important;
           padding: 8px 14px !important;
           transition: border-color 0.15s ease, box-shadow 0.15s ease !important;
           outline: none !important;
@@ -179,7 +179,7 @@ export default function RentLedger() {
       <div className="fade-in" style={heroStyle}>
         <CornerBrackets />
         <div>
-          <h1 style={{ fontFamily: "'Inter', sans-serif", fontSize: 28, fontWeight: 800, color: THEME.ink, margin: 0, letterSpacing: '-0.01em' }}>
+          <h1 style={{ fontFamily: "'Source Sans Pro', sans-serif", fontSize: 28, fontWeight: 600, color: THEME.ink, margin: 0, letterSpacing: '-0.01em' }}>
             Rent Ledger
           </h1>
           <p style={{ fontSize: 14, color: THEME.textMuted, marginTop: 8, marginBottom: 0, fontWeight: 500 }}>
@@ -276,13 +276,13 @@ export default function RentLedger() {
               style={{
                 padding: '8px 14px',
                 fontSize: 12.5,
-                fontWeight: 700,
+                fontWeight: 600,
                 borderRadius: 8,
                 background: '#F1F5F9',
                 color: '#64748B',
                 border: '1px solid #CBD5E1',
                 cursor: 'pointer',
-                fontFamily: "'Inter', sans-serif",
+                fontFamily: "'Source Sans Pro', sans-serif",
                 transition: 'all 0.15s ease',
               }}
               onMouseEnter={e => {
@@ -360,7 +360,7 @@ export default function RentLedger() {
                       opacity: entry.deleted_at ? 0.42 : 1,
                     }}
                   >
-                    <td style={{ ...tdStyle, fontWeight: 700 }}>GFH-{String(entry.contract_id).padStart(5, '0')}</td>
+                    <td style={{ ...tdStyle, fontWeight: 600 }}>GFH-{String(entry.contract_id).padStart(5, '0')}</td>
                     <td style={tdStyle}>
                       {entry.contract?.unit?.number}
                       <span style={{ display: 'block', fontSize: 11.5, color: THEME.textMuted, marginTop: 2 }}>
@@ -369,8 +369,8 @@ export default function RentLedger() {
                     </td>
                     <td style={{ ...tdStyle, fontWeight: 600 }}>{formatDate(entry.date)}</td>
                     <td style={tdStyle}>{entry.description || '—'}</td>
-                    <td style={{ ...tdStyle, color: '#991b1b', fontWeight: 700 }}>{Number(entry.debit).toLocaleString()}</td>
-                    <td style={{ ...tdStyle, color: '#065f46', fontWeight: 700 }}>{Number(entry.credit).toLocaleString()}</td>
+                    <td style={{ ...tdStyle, color: '#991b1b', fontWeight: 600 }}>{Number(entry.debit).toLocaleString()}</td>
+                    <td style={{ ...tdStyle, color: '#065f46', fontWeight: 600 }}>{Number(entry.credit).toLocaleString()}</td>
                     <td style={tdStyle}>
                       {!entry.deleted_at && (
                         <button
@@ -378,7 +378,7 @@ export default function RentLedger() {
                           style={{
                             display: 'inline-flex', alignItems: 'center', gap: 6, padding: '6px 12px',
                           background: '#991b1b', border: 'none', color: '#fff',
-                          borderRadius: 8, fontWeight: 700, fontSize: 11, cursor: 'pointer',
+                          borderRadius: 8, fontWeight: 600, fontSize: 11, cursor: 'pointer',
                           }}
                         >
                           <Icon path={icons.trash} size={13} />
@@ -412,7 +412,7 @@ export default function RentLedger() {
             <CornerBrackets />
             <h2 style={{
               display: 'flex', alignItems: 'center', gap: 8,
-              fontFamily: "'Inter', sans-serif", fontSize: 19, fontWeight: 700,
+              fontFamily: "'Source Sans Pro', sans-serif", fontSize: 19, fontWeight: 600,
               color: '#dc2626', margin: '0 0 8px 0',
             }}>
               <Icon path={icons.alert} size={19} />
@@ -441,7 +441,7 @@ export default function RentLedger() {
                 style={{
                   display: 'inline-flex', alignItems: 'center', gap: 8, padding: '10px 18px',
                   background: '#f1f5f9', border: `1px solid ${THEME.border}`, color: THEME.textMuted,
-                  borderRadius: 8, fontWeight: 700, fontSize: 13.5, cursor: 'pointer',
+                  borderRadius: 8, fontWeight: 600, fontSize: 13.5, cursor: 'pointer',
                 }}
               >
                 <Icon path={icons.close} size={15} />

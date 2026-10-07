@@ -30,13 +30,13 @@ export default function ReceivablesSummary() {
   }
 
   return (
-    <div className="gfh-portal-page" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
+    <div className="gfh-portal-page" style={{ fontFamily: "'Source Sans Pro', system-ui, sans-serif" }}>
       <style>{portalPageCss}</style>
 
       <div className="fade-in" style={heroStyle}>
         <CornerBrackets />
         <div>
-          <h1 style={{ fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", fontSize: 30, fontWeight: 700, color: THEME.ink, margin: 0 }}>
+          <h1 style={{ fontFamily: "'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", fontSize: 30, fontWeight: 600, color: THEME.ink, margin: 0 }}>
             Receivables &amp; Payables
           </h1>
           <p style={{ fontSize: 14, color: THEME.textMuted, marginTop: 8, marginBottom: 0 }}>
@@ -48,10 +48,10 @@ export default function ReceivablesSummary() {
       <div className="fade-in gfh-portal-stat" style={{ position: 'relative', background: '#FEF2F2', border: '1px solid #FECACA', borderRadius: 12, padding: '26px 30px', marginBottom: 24, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <CornerBrackets />
         <div>
-          <p style={{ fontSize: 12.5, fontWeight: 800, color: '#991B1B', margin: '0 0 8px', letterSpacing: '0.6px', textTransform: 'uppercase' }}>
+          <p style={{ fontSize: 12.5, fontWeight: 600, color: '#991B1B', margin: '0 0 8px', letterSpacing: '0.6px', textTransform: 'uppercase' }}>
             Total Outstanding Receivables
           </p>
-          <div style={{ fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", fontSize: 36, fontWeight: 700, color: '#dc2626' }}>
+          <div style={{ fontFamily: "'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", fontSize: 36, fontWeight: 600, color: '#dc2626' }}>
             AED {Number(grandTotal).toLocaleString()}
           </div>
         </div>
@@ -83,7 +83,7 @@ export default function ReceivablesSummary() {
               <tbody>
                 {receivables.map(r => (
                   <tr key={r.contract_id} className="gfh-portal-row" style={{ borderBottom: `1px solid ${THEME.border}` }}>
-                    <td style={{ ...tdStyle, fontWeight: 700, color: THEME.purple }}>
+                    <td style={{ ...tdStyle, fontWeight: 600, color: THEME.purple }}>
                       GFH-{String(r.contract_id).padStart(5, '0')}
                     </td>
                     <td style={tdStyle}>
@@ -93,14 +93,14 @@ export default function ReceivablesSummary() {
                       </div>
                     </td>
                     <td style={tdStyle}>{r.tenant}</td>
-                    <td style={{ ...tdStyle, fontWeight: 700, color: r.rent_outstanding > 0 ? '#991b1b' : '#065f46' }}>
+                    <td style={{ ...tdStyle, fontWeight: 600, color: r.rent_outstanding > 0 ? '#991b1b' : '#065f46' }}>
                       {Number(r.rent_outstanding).toLocaleString()}
                     </td>
-                    <td style={{ ...tdStyle, fontWeight: 700, color: r.service_outstanding > 0 ? '#b45309' : '#065f46' }}>
+                    <td style={{ ...tdStyle, fontWeight: 600, color: r.service_outstanding > 0 ? '#b45309' : '#065f46' }}>
                       {Number(r.service_outstanding).toLocaleString()}
                     </td>
                     <td style={tdStyle}>
-                      <strong style={{ fontSize: 16.5, fontWeight: 800, color: '#dc2626' }}>
+                      <strong style={{ fontSize: 16.5, fontWeight: 600, color: '#dc2626' }}>
                         AED {Number(r.total_payable).toLocaleString()}
                       </strong>
                     </td>

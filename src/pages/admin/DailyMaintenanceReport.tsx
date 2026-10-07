@@ -85,7 +85,7 @@ export default function DailyMaintenanceReport() {
   }, [report?.completed_jobs, searchTerm])
 
   return (
-    <div className="gfh-portal-page gfh-dm-page" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
+    <div className="gfh-portal-page gfh-dm-page" style={{ fontFamily: "'Source Sans Pro', system-ui, sans-serif" }}>
       <style>{`${portalPageCss}
         .gfh-dm-print-only { display: none; }
 
@@ -112,17 +112,17 @@ export default function DailyMaintenanceReport() {
             width: 32px !important; height: 32px !important; border-radius: 6px !important;
             background: #10B981 !important; color: #fff !important; display: flex !important;
             align-items: center !important; justify-content: center !important;
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important; font-weight: 800 !important; font-size: 16px !important;
+            font-family: 'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important; font-weight: 600 !important; font-size: 16px !important;
           }
-          .gfh-dm-brand-text h2 { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important; font-size: 16px !important; font-weight: 800 !important; margin: 0 !important; }
-          .gfh-dm-brand-text span { font-size: 9.5px !important; font-weight: 700 !important; color: #10B981 !important; text-transform: uppercase !important; }
-          .gfh-dm-print-only h1 { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important; font-size: 20px !important; font-weight: 800 !important; margin: 0 0 4px 0 !important; text-align: right !important; }
+          .gfh-dm-brand-text h2 { font-family: 'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important; font-size: 16px !important; font-weight: 600 !important; margin: 0 !important; }
+          .gfh-dm-brand-text span { font-size: 9.5px !important; font-weight: 600 !important; color: #10B981 !important; text-transform: uppercase !important; }
+          .gfh-dm-print-only h1 { font-family: 'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important; font-size: 20px !important; font-weight: 600 !important; margin: 0 0 4px 0 !important; text-align: right !important; }
           .gfh-dm-print-only p { font-size: 10px !important; color: #64748b !important; margin: 0 !important; text-align: right !important; }
           table { width: 100% !important; border-collapse: collapse !important; page-break-inside: auto !important; }
           thead { display: table-header-group !important; }
           tr { page-break-inside: avoid !important; page-break-after: auto !important; }
           thead tr { background: #f1f5f9 !important; }
-          th { text-align: left !important; color: #1e293b !important; font-size: 9.5px !important; font-weight: 700 !important; text-transform: uppercase !important; padding: 8px 10px !important; border-bottom: 2px solid #cbd5e1 !important; }
+          th { text-align: left !important; color: #1e293b !important; font-size: 9.5px !important; font-weight: 600 !important; text-transform: uppercase !important; padding: 8px 10px !important; border-bottom: 2px solid #cbd5e1 !important; }
           td { text-align: left !important; color: #0f172a !important; font-size: 10px !important; padding: 8px 10px !important; border-bottom: 1px solid #e2e8f0 !important; }
           tbody tr:nth-child(even) { background: #f8fafc !important; }
         }
@@ -132,7 +132,7 @@ export default function DailyMaintenanceReport() {
       <div className="fade-in gfh-dm-noprint" style={heroStyle}>
         <CornerBrackets />
         <div>
-          <h1 style={{ fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", fontSize: 30, fontWeight: 700, color: THEME.ink, margin: 0 }}>
+          <h1 style={{ fontFamily: "'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", fontSize: 30, fontWeight: 600, color: THEME.ink, margin: 0 }}>
             Daily Maintenance Report
           </h1>
           <p style={{ fontSize: 14, color: THEME.textMuted, marginTop: 8, marginBottom: 0 }}>
@@ -156,7 +156,7 @@ export default function DailyMaintenanceReport() {
                 fontSize: 13,
                 fontWeight: 600,
                 outline: 'none',
-                fontFamily: "'Inter', sans-serif",
+                fontFamily: "'Source Sans Pro', sans-serif",
                 cursor: 'pointer',
               }}
             />
@@ -171,7 +171,7 @@ export default function DailyMaintenanceReport() {
               background: '#FFFFFF',
               color: '#334155',
               fontSize: 12.5,
-              fontWeight: 700,
+              fontWeight: 600,
               cursor: 'pointer',
               transition: 'all 0.15s ease',
             }}
@@ -210,11 +210,11 @@ export default function DailyMaintenanceReport() {
               borderRadius: 8,
               padding: '9px 18px',
               fontSize: 13,
-              fontWeight: 700,
+              fontWeight: 600,
               cursor: 'pointer',
               boxShadow: '0 1px 3px rgba(14, 94, 72, 0.25)',
               transition: 'background 0.15s ease',
-              fontFamily: "'Inter', sans-serif",
+              fontFamily: "'Source Sans Pro', sans-serif",
             }}
           >
             <Icon path={icons.printer} size={15} />
@@ -255,10 +255,10 @@ export default function DailyMaintenanceReport() {
                 <div style={{ width: 38, height: 38, borderRadius: 8, background: card.iconBg, color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 10 }}>
                   <Icon path={card.icon} size={18} />
                 </div>
-                <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 26, fontWeight: 800, color: card.color }}>
+                <div style={{ fontFamily: "'Source Sans Pro', sans-serif", fontSize: 26, fontWeight: 600, color: card.color }}>
                   {card.value}
                 </div>
-                <div style={{ fontSize: 11.5, color: card.color, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.4px', marginTop: 2 }}>
+                <div style={{ fontSize: 11.5, color: card.color, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.4px', marginTop: 2 }}>
                   {card.label}
                 </div>
               </div>
@@ -271,10 +271,10 @@ export default function DailyMaintenanceReport() {
           <div className="fade-in" style={{ ...panelStyle, minHeight: 0, padding: '18px 22px', marginBottom: 22, borderRadius: 10 }}>
             <CornerBrackets />
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
-              <span style={{ fontSize: 12.5, fontWeight: 700, color: '#10B981', textTransform: 'uppercase', letterSpacing: '0.4px' }}>
+              <span style={{ fontSize: 12.5, fontWeight: 600, color: '#10B981', textTransform: 'uppercase', letterSpacing: '0.4px' }}>
                 Daily Resolution Velocity
               </span>
-              <span style={{ fontSize: 13.5, fontWeight: 800, color: '#059669' }}>
+              <span style={{ fontSize: 13.5, fontWeight: 600, color: '#059669' }}>
                 {resolvedPct}% Completed
               </span>
             </div>
@@ -292,7 +292,7 @@ export default function DailyMaintenanceReport() {
           <CornerBrackets />
 
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12, marginBottom: 18 }}>
-            <h3 style={{ fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", fontSize: 18, fontWeight: 700, color: THEME.ink, margin: 0 }}>
+            <h3 style={{ fontFamily: "'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", fontSize: 18, fontWeight: 600, color: THEME.ink, margin: 0 }}>
               Completed Jobs on {selectedDate} ({filteredJobs.length})
             </h3>
 
@@ -360,7 +360,7 @@ export default function DailyMaintenanceReport() {
                 <tbody>
                   {filteredJobs.map(job => (
                     <tr key={job.id} className="gfh-portal-row" style={{ borderBottom: `1px solid ${THEME.border}` }}>
-                      <td style={{ ...tdStyle, fontWeight: 700, color: '#10B981', whiteSpace: 'nowrap' }}>
+                      <td style={{ ...tdStyle, fontWeight: 600, color: '#10B981', whiteSpace: 'nowrap' }}>
                         #JOB-{String(job.id).padStart(4, '0')}
                       </td>
                       <td style={{ ...tdStyle, fontWeight: 600, color: THEME.ink }}>
@@ -392,7 +392,7 @@ export default function DailyMaintenanceReport() {
                           padding: '3px 9px',
                           borderRadius: 20,
                           fontSize: 11,
-                          fontWeight: 700,
+                          fontWeight: 600,
                           background: '#DCFCE7',
                           color: '#15803D',
                           border: '1px solid #BBF7D0',

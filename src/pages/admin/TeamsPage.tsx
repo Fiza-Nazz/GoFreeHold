@@ -35,7 +35,7 @@ const inputStyle: React.CSSProperties = {
 
 const labelStyle: React.CSSProperties = {
   fontSize: 12,
-  fontWeight: 700,
+  fontWeight: 600,
   color: '#0F172A',
   letterSpacing: '0.4px',
   textTransform: 'uppercase',
@@ -139,14 +139,14 @@ export default function TeamsPage() {
   }, [teams, searchTerm])
 
   return (
-    <div className="gfh-portal-page" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
+    <div className="gfh-portal-page" style={{ fontFamily: "'Source Sans Pro', system-ui, sans-serif" }}>
       <style>{portalPageCss}</style>
 
       {/* Hero Header */}
       <div className="fade-in" style={heroStyle}>
         <CornerBrackets />
         <div>
-          <h1 style={{ fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", fontSize: 30, fontWeight: 700, color: THEME.ink, margin: 0 }}>
+          <h1 style={{ fontFamily: "'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", fontSize: 30, fontWeight: 600, color: THEME.ink, margin: 0 }}>
             Maintenance Teams
           </h1>
           <p style={{ fontSize: 14, color: THEME.textMuted, marginTop: 8, marginBottom: 0 }}>
@@ -165,11 +165,11 @@ export default function TeamsPage() {
             borderRadius: 10,
             padding: '10px 20px',
             fontSize: 13.5,
-            fontWeight: 700,
+            fontWeight: 600,
             cursor: 'pointer',
             boxShadow: '0 1px 3px rgba(14, 94, 72, 0.25)',
             transition: 'background 0.15s ease, transform 0.15s ease',
-            fontFamily: "'Inter', sans-serif",
+            fontFamily: "'Source Sans Pro', sans-serif",
           }}
           onMouseEnter={e => {
             e.currentTarget.style.background = '#094535'
@@ -188,30 +188,30 @@ export default function TeamsPage() {
       {/* KPI Cards */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 16, marginBottom: 22 }}>
         <div style={{ padding: '16px 20px', background: '#F8FAFC', border: '1px solid #E2E8F0', borderRadius: 10 }}>
-          <div style={{ fontSize: 11.5, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px', color: '#64748B' }}>
+          <div style={{ fontSize: 11.5, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px', color: '#64748B' }}>
             Total Teams
           </div>
-          <div style={{ fontSize: 24, fontWeight: 800, color: '#10B981', marginTop: 4 }}>
+          <div style={{ fontSize: 24, fontWeight: 600, color: '#10B981', marginTop: 4 }}>
             {stats.total}
           </div>
           <div style={{ fontSize: 11.5, color: '#94A3B8', marginTop: 2 }}>Registered service squads</div>
         </div>
 
         <div style={{ padding: '16px 20px', background: '#F0FDF4', border: '1px solid #BBF7D0', borderRadius: 10 }}>
-          <div style={{ fontSize: 11.5, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px', color: '#15803D' }}>
+          <div style={{ fontSize: 11.5, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px', color: '#15803D' }}>
             Assigned Jobs
           </div>
-          <div style={{ fontSize: 24, fontWeight: 800, color: '#15803D', marginTop: 4 }}>
+          <div style={{ fontSize: 24, fontWeight: 600, color: '#15803D', marginTop: 4 }}>
             {stats.totalJobs}
           </div>
           <div style={{ fontSize: 11.5, color: '#16A34A', marginTop: 2 }}>Active job work orders</div>
         </div>
 
         <div style={{ padding: '16px 20px', background: '#F0F9FF', border: '1px solid #BAE6FD', borderRadius: 10 }}>
-          <div style={{ fontSize: 11.5, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px', color: '#0369A1' }}>
+          <div style={{ fontSize: 11.5, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px', color: '#0369A1' }}>
             Direct Contact Ready
           </div>
-          <div style={{ fontSize: 24, fontWeight: 800, color: '#0369A1', marginTop: 4 }}>
+          <div style={{ fontSize: 24, fontWeight: 600, color: '#0369A1', marginTop: 4 }}>
             {stats.withPhone}
           </div>
           <div style={{ fontSize: 11.5, color: '#0284C7', marginTop: 2 }}>Teams with direct phone line</div>
@@ -224,7 +224,7 @@ export default function TeamsPage() {
 
         {/* Search Bar */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12, marginBottom: 18 }}>
-          <div style={{ fontSize: 16, fontWeight: 700, color: THEME.ink }}>
+          <div style={{ fontSize: 16, fontWeight: 600, color: THEME.ink }}>
             Active Teams Directory ({filteredTeams.length})
           </div>
           <div style={{ position: 'relative', minWidth: 260, flex: '1 1 240px', maxWidth: 360 }}>
@@ -288,10 +288,10 @@ export default function TeamsPage() {
               <tbody>
                 {filteredTeams.map(t => (
                   <tr key={t.id} className="gfh-portal-row" style={{ borderBottom: `1px solid ${THEME.border}` }}>
-                    <td style={{ ...tdStyle, fontWeight: 700, color: '#64748B', whiteSpace: 'nowrap' }}>
+                    <td style={{ ...tdStyle, fontWeight: 600, color: '#64748B', whiteSpace: 'nowrap' }}>
                       #TEAM-{String(t.id).padStart(3, '0')}
                     </td>
-                    <td style={{ ...tdStyle, fontWeight: 700, color: THEME.ink }}>
+                    <td style={{ ...tdStyle, fontWeight: 600, color: THEME.ink }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                         <div style={{
                           width: 30,
@@ -302,7 +302,7 @@ export default function TeamsPage() {
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
-                          fontWeight: 800,
+                          fontWeight: 600,
                           fontSize: 12,
                         }}>
                           {t.name.charAt(0).toUpperCase()}
@@ -341,7 +341,7 @@ export default function TeamsPage() {
                         padding: '3px 9px',
                         borderRadius: 20,
                         fontSize: 11.5,
-                        fontWeight: 700,
+                        fontWeight: 600,
                         background: (t.jobs_count || 0) > 0 ? '#EFF6FF' : '#F1F5F9',
                         color: (t.jobs_count || 0) > 0 ? '#1D4ED8' : '#64748B',
                         border: `1px solid ${(t.jobs_count || 0) > 0 ? '#BFDBFE' : '#E2E8F0'}`,
@@ -363,7 +363,7 @@ export default function TeamsPage() {
                             gap: 4,
                             padding: '5px 10px',
                             fontSize: 12,
-                            fontWeight: 700,
+                            fontWeight: 600,
                             borderRadius: 6,
                             background: '#075985',
                             color: '#fff',
@@ -382,7 +382,7 @@ export default function TeamsPage() {
                             gap: 4,
                             padding: '5px 10px',
                             fontSize: 12,
-                            fontWeight: 700,
+                            fontWeight: 600,
                             borderRadius: 6,
                             background: '#991B1B',
                             color: '#fff',
@@ -419,7 +419,7 @@ export default function TeamsPage() {
             }}
           >
             <CornerBrackets />
-            <h2 style={{ fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", fontSize: 20, fontWeight: 700, marginBottom: 18, color: THEME.ink }}>
+            <h2 style={{ fontFamily: "'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", fontSize: 20, fontWeight: 600, marginBottom: 18, color: THEME.ink }}>
               {editingTeam ? 'Edit Maintenance Team' : 'Add Maintenance Team'}
             </h2>
             <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
@@ -460,7 +460,7 @@ export default function TeamsPage() {
                   onClick={() => setIsModalOpen(false)}
                   style={{
                     borderRadius: 8,
-                    fontWeight: 700,
+                    fontWeight: 600,
                     fontSize: 13,
                     padding: '9px 16px',
                     background: '#F1F5F9',
@@ -476,7 +476,7 @@ export default function TeamsPage() {
                   disabled={isSaving}
                   style={{
                     borderRadius: 8,
-                    fontWeight: 700,
+                    fontWeight: 600,
                     fontSize: 13,
                     padding: '9px 20px',
                     background: '#10B981',
