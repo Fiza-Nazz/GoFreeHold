@@ -113,7 +113,7 @@ export default function VacantPropertyReport() {
   }, [units, propertyFilter, typeFilter, searchTerm])
 
   return (
-    <div className="gfh-portal-page gfh-vp-page" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
+    <div className="gfh-portal-page gfh-vp-page" style={{ fontFamily: "'Source Sans Pro', system-ui, sans-serif" }}>
       <style>{`${portalPageCss}
         .gfh-vp-print-only { display: none; }
 
@@ -178,32 +178,32 @@ export default function VacantPropertyReport() {
             display: flex !important;
             align-items: center !important;
             justify-content: center !important;
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
-            font-weight: 800 !important;
+            font-family: 'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
+            font-weight: 600 !important;
             font-size: 16px !important;
             flex-shrink: 0 !important;
           }
 
           .gfh-vp-brand-text h2 {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
+            font-family: 'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
             font-size: 16px !important;
-            font-weight: 800 !important;
+            font-weight: 600 !important;
             color: #0f172a !important;
             margin: 0 !important;
           }
 
           .gfh-vp-brand-text span {
             font-size: 9.5px !important;
-            font-weight: 700 !important;
+            font-weight: 600 !important;
             color: #10B981 !important;
             text-transform: uppercase !important;
             letter-spacing: 1px !important;
           }
 
           .gfh-vp-print-only h1 {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
+            font-family: 'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
             font-size: 20px !important;
-            font-weight: 800 !important;
+            font-weight: 600 !important;
             color: #0f172a !important;
             margin: 0 0 4px 0 !important;
             text-align: right !important;
@@ -233,16 +233,16 @@ export default function VacantPropertyReport() {
 
           .gfh-vp-print-summary .gfh-vp-sum-label {
             font-size: 8.5px !important;
-            font-weight: 700 !important;
+            font-weight: 600 !important;
             color: #475569 !important;
             text-transform: uppercase !important;
             letter-spacing: 0.5px !important;
           }
 
           .gfh-vp-print-summary .gfh-vp-sum-value {
-            font-family: 'Inter', sans-serif !important;
+            font-family: 'Source Sans Pro', sans-serif !important;
             font-size: 13.5px !important;
-            font-weight: 800 !important;
+            font-weight: 600 !important;
             color: #10B981 !important;
           }
 
@@ -280,7 +280,7 @@ export default function VacantPropertyReport() {
             text-align: left !important;
             color: #1e293b !important;
             font-size: 9.5px !important;
-            font-weight: 700 !important;
+            font-weight: 600 !important;
             letter-spacing: 0.5px !important;
             text-transform: uppercase !important;
             padding: 8px 10px !important;
@@ -305,7 +305,7 @@ export default function VacantPropertyReport() {
       <div className="fade-in gfh-vp-noprint" style={heroStyle}>
         <CornerBrackets />
         <div>
-          <h1 style={{ fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", fontSize: 30, fontWeight: 700, color: THEME.ink, margin: 0 }}>
+          <h1 style={{ fontFamily: "'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", fontSize: 30, fontWeight: 600, color: THEME.ink, margin: 0 }}>
             Vacant Property Report
           </h1>
           <p style={{ fontSize: 14, color: THEME.textMuted, marginTop: 8, marginBottom: 0 }}>
@@ -325,11 +325,11 @@ export default function VacantPropertyReport() {
               borderRadius: 10,
               padding: '10px 20px',
               fontSize: 13.5,
-              fontWeight: 700,
+              fontWeight: 600,
               cursor: 'pointer',
               boxShadow: '0 1px 3px rgba(14, 94, 72, 0.25)',
               transition: 'background 0.15s ease, transform 0.15s ease',
-              fontFamily: "'Inter', sans-serif",
+              fontFamily: "'Source Sans Pro', sans-serif",
             }}
             onMouseEnter={e => {
               e.currentTarget.style.background = '#094535'
@@ -355,11 +355,11 @@ export default function VacantPropertyReport() {
               borderRadius: 10,
               padding: '10px 20px',
               fontSize: 13.5,
-              fontWeight: 700,
+              fontWeight: 600,
               cursor: 'pointer',
               boxShadow: '0 1px 3px rgba(14, 94, 72, 0.25)',
               transition: 'background 0.15s ease, transform 0.15s ease',
-              fontFamily: "'Inter', sans-serif",
+              fontFamily: "'Source Sans Pro', sans-serif",
             }}
             onMouseEnter={e => {
               e.currentTarget.style.background = '#094535'
@@ -420,40 +420,40 @@ export default function VacantPropertyReport() {
           {/* 4 Summary KPI Cards (Screen only) */}
           <div className="gfh-vp-noprint" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 16, marginBottom: 24 }}>
             <div style={{ padding: '16px 20px', background: '#F8FAFC', border: '1px solid #E2E8F0', borderRadius: 10 }}>
-              <div style={{ fontSize: 11.5, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px', color: '#64748B' }}>
+              <div style={{ fontSize: 11.5, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px', color: '#64748B' }}>
                 Total Vacant Units
               </div>
-              <div style={{ fontSize: 24, fontWeight: 800, color: '#10B981', marginTop: 4 }}>
+              <div style={{ fontSize: 24, fontWeight: 600, color: '#10B981', marginTop: 4 }}>
                 {summaryStats.totalUnits}
               </div>
               <div style={{ fontSize: 11.5, color: '#94A3B8', marginTop: 2 }}>Ready for immediate lease</div>
             </div>
 
             <div style={{ padding: '16px 20px', background: '#F0FDF4', border: '1px solid #BBF7D0', borderRadius: 10 }}>
-              <div style={{ fontSize: 11.5, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px', color: '#15803D' }}>
+              <div style={{ fontSize: 11.5, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px', color: '#15803D' }}>
                 Est. Potential Rent / Year
               </div>
-              <div style={{ fontSize: 24, fontWeight: 800, color: '#15803D', marginTop: 4 }}>
+              <div style={{ fontSize: 24, fontWeight: 600, color: '#15803D', marginTop: 4 }}>
                 AED {Number(summaryStats.totalPotentialRent).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
               </div>
               <div style={{ fontSize: 11.5, color: '#16A34A', marginTop: 2 }}>Total annual asking value</div>
             </div>
 
             <div style={{ padding: '16px 20px', background: '#F0F9FF', border: '1px solid #BAE6FD', borderRadius: 10 }}>
-              <div style={{ fontSize: 11.5, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px', color: '#0369A1' }}>
+              <div style={{ fontSize: 11.5, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px', color: '#0369A1' }}>
                 Properties With Vacancy
               </div>
-              <div style={{ fontSize: 24, fontWeight: 800, color: '#0369A1', marginTop: 4 }}>
+              <div style={{ fontSize: 24, fontWeight: 600, color: '#0369A1', marginTop: 4 }}>
                 {summaryStats.uniqueProperties}
               </div>
               <div style={{ fontSize: 11.5, color: '#0284C7', marginTop: 2 }}>Buildings with available units</div>
             </div>
 
             <div style={{ padding: '16px 20px', background: '#FAF5FF', border: '1px solid #E9D5FF', borderRadius: 10 }}>
-              <div style={{ fontSize: 11.5, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px', color: '#7E22CE' }}>
+              <div style={{ fontSize: 11.5, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px', color: '#7E22CE' }}>
                 Average Asking Rent
               </div>
-              <div style={{ fontSize: 24, fontWeight: 800, color: '#7E22CE', marginTop: 4 }}>
+              <div style={{ fontSize: 24, fontWeight: 600, color: '#7E22CE', marginTop: 4 }}>
                 AED {Number(summaryStats.avgPrice).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
               </div>
               <div style={{ fontSize: 11.5, color: '#9333EA', marginTop: 2 }}>Per unit per annum</div>
@@ -571,7 +571,7 @@ export default function VacantPropertyReport() {
                   {filteredUnits.map(unit => {
                     return (
                       <tr key={unit.id} className="gfh-portal-row" style={{ borderBottom: `1px solid ${THEME.border}` }}>
-                        <td style={{ ...tdStyle, fontWeight: 700 }}>
+                        <td style={{ ...tdStyle, fontWeight: 600 }}>
                           <span style={{ color: '#10B981', fontSize: 13.5 }}>Unit {unit.number}</span>
                           <span style={{ fontWeight: 500, fontSize: 12, color: THEME.textMuted, display: 'block' }}>
                             Floor {unit.floor}
@@ -590,7 +590,7 @@ export default function VacantPropertyReport() {
                               padding: '2px 8px',
                               borderRadius: 4,
                               fontSize: 11,
-                              fontWeight: 700,
+                              fontWeight: 600,
                               background: '#F1F5F9',
                               color: '#334155',
                               border: '1px solid #CBD5E1',
@@ -617,7 +617,7 @@ export default function VacantPropertyReport() {
                             )}
                           </div>
                         </td>
-                        <td style={{ ...tdStyle, fontWeight: 700, color: '#10B981', fontSize: 13.5 }}>
+                        <td style={{ ...tdStyle, fontWeight: 600, color: '#10B981', fontSize: 13.5 }}>
                           AED {Number(unit.price).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
                           <span style={{ fontSize: 11, fontWeight: 500, color: '#64748B', display: 'block' }}>/ year</span>
                         </td>
@@ -627,7 +627,7 @@ export default function VacantPropertyReport() {
                             padding: '3px 9px',
                             borderRadius: 20,
                             fontSize: 11,
-                            fontWeight: 700,
+                            fontWeight: 600,
                             background: '#DCFCE7',
                             color: '#15803D',
                             border: '1px solid #BBF7D0',

@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react'
 import api from '../../api/axios'
 import ChequeDetails from '../../components/gfh/ChequeDetails'
+import UaeBankSelect from '../../components/gfh/UaeBankSelect'
 import { formatDate } from '../../utils/formatDate'
+import { DEFAULT_UAE_BANK } from '../../utils/uaeBanks'
 import { THEME, Icon, ICONS, CornerBrackets, portalPageCss, heroStyle, panelStyle, thStyle, tdStyle, ghostBtnStyle } from '../../components/gfh/adminTheme'
 
 // Local GoFreeHold brand accents (matches sidebar/brand green — doesn't touch shared THEME file)
@@ -52,7 +54,7 @@ const inputStyle: React.CSSProperties = {
 const labelStyle: React.CSSProperties = {
   display: 'block',
   fontSize: 14.5,
-  fontWeight: 700,
+  fontWeight: 600,
   color: '#1f2937',
   marginBottom: 8,
 }
@@ -76,7 +78,7 @@ const modalCss = `
   .gfh-pdc-footer { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 18px 26px; border-top: 1px solid #e5e7eb; flex-shrink: 0; background: #fff; }
   .gfh-pdc-btn-close { padding: 11px 22px; border-radius: 8px; border: 1px solid #d1d5db; background: #f9fafb; color: #374151; cursor: pointer; font-weight: 600; font-size: 14px; transition: background .15s ease; }
   .gfh-pdc-btn-close:hover { background: #f3f4f6; }
-  .gfh-pdc-btn-submit { padding: 11px 26px; border-radius: 8px; border: none; background: ${GFH.green}; color: #fff; cursor: pointer; font-weight: 700; font-size: 14px; transition: background .15s ease, opacity .15s ease; }
+  .gfh-pdc-btn-submit { padding: 11px 26px; border-radius: 8px; border: none; background: ${GFH.green}; color: #fff; cursor: pointer; font-weight: 600; font-size: 14px; transition: background .15s ease, opacity .15s ease; }
   .gfh-pdc-btn-submit:hover:not(:disabled) { background: ${GFH.greenDark}; }
   .gfh-pdc-btn-submit:disabled { opacity: .65; cursor: not-allowed; }
   .gfh-pdc-file-btn { padding: 9px 14px; border-radius: 6px; border: 1px solid #d1d5db; background: #f3f4f6; color: #374151; font-weight: 600; font-size: 13px; cursor: pointer; }
@@ -93,7 +95,7 @@ const emptyForm = {
   payee_name: '',
   nature: 'RENT',
   type: '',
-  bank_name: '',
+  bank_name: DEFAULT_UAE_BANK,
   due_date: '',
   amount: '',
   notes: '',
@@ -182,13 +184,13 @@ export default function PdcChequeTracker({ contractId }: PdcChequeTrackerProps) 
   }
 
   return (
-    <div className="gfh-portal-page" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
+    <div className="gfh-portal-page" style={{ fontFamily: "'Source Sans Pro', system-ui, sans-serif" }}>
       <style>{portalPageCss}{modalCss}</style>
 
       <div className="fade-in" style={heroStyle}>
         <CornerBrackets />
         <div>
-          <h1 style={{ fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", fontSize: 30, fontWeight: 700, color: THEME.ink, margin: 0 }}>
+          <h1 style={{ fontFamily: "'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", fontSize: 30, fontWeight: 600, color: THEME.ink, margin: 0 }}>
             PDC Cheque Tracker
           </h1>
           <p style={{ fontSize: 14, color: THEME.textMuted, marginTop: 8, marginBottom: 0 }}>
@@ -242,13 +244,13 @@ export default function PdcChequeTracker({ contractId }: PdcChequeTrackerProps) 
                   const st = STATUS_STYLE[cheque.status]
                   return (
                     <tr key={cheque.id} className="gfh-portal-row" style={{ borderBottom: `1px solid ${THEME.border}` }}>
-                      <td style={{ ...tdStyle, fontWeight: 700, color: GFH.green }}>GFH-{String(cheque.contract_id).padStart(5,'0')}</td>
-                      <td style={{ ...tdStyle, fontWeight: 700 }}>{cheque.cheque_number || 'Not provided'}<ChequeDetails cheque={cheque} contractId={cheque.contract_id} /></td>
+                      <td style={{ ...tdStyle, fontWeight: 600, color: GFH.green }}>GFH-{String(cheque.contract_id).padStart(5,'0')}</td>
+                      <td style={{ ...tdStyle, fontWeight: 600 }}>{cheque.cheque_number || 'Not provided'}<ChequeDetails cheque={cheque} contractId={cheque.contract_id} /></td>
                       <td style={tdStyle}>{cheque.bank_name}</td>
-                      <td style={{ ...tdStyle, fontWeight: 700, color: GFH.green }}>AED {Number(cheque.amount).toLocaleString()}</td>
+                      <td style={{ ...tdStyle, fontWeight: 600, color: GFH.green }}>AED {Number(cheque.amount).toLocaleString()}</td>
                       <td style={tdStyle}>{formatDate(cheque.due_date)}</td>
                       <td style={tdStyle}>
-                        <span style={{ padding: '4px 10px', borderRadius: 8, fontSize: 11, fontWeight: 700, letterSpacing: '0.3px', backgroundColor: st.bg, color: st.color, border: `1px solid ${st.border}` }}>
+                        <span style={{ padding: '4px 10px', borderRadius: 8, fontSize: 11, fontWeight: 600, letterSpacing: '0.3px', backgroundColor: st.bg, color: st.color, border: `1px solid ${st.border}` }}>
                           {st.label}
                         </span>
                       </td>
@@ -258,7 +260,7 @@ export default function PdcChequeTracker({ contractId }: PdcChequeTrackerProps) 
                             <button
                               type="button"
                               className="gfh-portal-btn"
-                              style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '5px 10px', fontSize: 11, fontWeight: 700, borderRadius: 8, border: 'none', background: '#10B981', color: '#fff', cursor: 'pointer' }}
+                              style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '5px 10px', fontSize: 11, fontWeight: 600, borderRadius: 8, border: 'none', background: '#10B981', color: '#fff', cursor: 'pointer' }}
                               onClick={() => updateStatus(cheque, 'cleared')}
                             >
                               <Icon path={ICONS.check} size={12} />
@@ -267,7 +269,7 @@ export default function PdcChequeTracker({ contractId }: PdcChequeTrackerProps) 
                             <button
                               type="button"
                               className="gfh-portal-btn"
-                              style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '5px 10px', fontSize: 11, fontWeight: 700, borderRadius: 8, border: 'none', background: '#991b1b', color: '#fff', cursor: 'pointer' }}
+                              style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '5px 10px', fontSize: 11, fontWeight: 600, borderRadius: 8, border: 'none', background: '#991b1b', color: '#fff', cursor: 'pointer' }}
                               onClick={() => updateStatus(cheque, 'bounced')}
                             >
                               <Icon path={ICONS.alert} size={12} />
@@ -277,7 +279,7 @@ export default function PdcChequeTracker({ contractId }: PdcChequeTrackerProps) 
                           <button
                             type="button"
                             className="gfh-portal-btn"
-                            style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '5px 10px', fontSize: 11, fontWeight: 700, borderRadius: 8, border: 'none', background: '#fef2f2', color: '#991b1b', cursor: 'pointer' }}
+                            style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '5px 10px', fontSize: 11, fontWeight: 600, borderRadius: 8, border: 'none', background: '#fef2f2', color: '#991b1b', cursor: 'pointer' }}
                             onClick={() => deleteCheque(cheque)}
                           >
                             <Icon path={ICONS.trash} size={12} />
@@ -298,7 +300,7 @@ export default function PdcChequeTracker({ contractId }: PdcChequeTrackerProps) 
         <div className="gfh-pdc-overlay">
           <div className="gfh-pdc-dialog" role="dialog" aria-modal="true" aria-labelledby="pdc-dialog-title">
             <div className="gfh-pdc-header">
-              <h2 id="pdc-dialog-title" style={{ color: '#111827', margin: 0, fontSize: 22, fontWeight: 700 }}>Add Cheque</h2>
+              <h2 id="pdc-dialog-title" style={{ color: '#111827', margin: 0, fontSize: 22, fontWeight: 600 }}>Add Cheque</h2>
               <button type="button" className="gfh-pdc-close" aria-label="Close add cheque" onClick={() => setIsModalOpen(false)}>
                 <Icon path="M6 6l12 12M6 18L18 6" size={20} />
               </button>
@@ -337,8 +339,14 @@ export default function PdcChequeTracker({ contractId }: PdcChequeTrackerProps) 
                 </div>
 
                 <div>
-                  <label htmlFor="pdc-bank_name" style={labelStyle}>Bank<span style={requiredMark}>*</span></label>
-                  <input id="pdc-bank_name" type="text" style={inputStyle} placeholder="Bank" value={formData.bank_name} onChange={e => setFormData({...formData, bank_name: e.target.value})} required />
+                  <label htmlFor="pdc-bank_name" style={labelStyle}>Bank (UAE)<span style={requiredMark}>*</span></label>
+                  <UaeBankSelect
+                    id="pdc-bank_name"
+                    required
+                    style={inputStyle}
+                    value={formData.bank_name}
+                    onChange={bank_name => setFormData({ ...formData, bank_name })}
+                  />
                 </div>
                 <div>
                   <label htmlFor="pdc-due_date" style={labelStyle}>Date<span style={requiredMark}>*</span></label>

@@ -142,7 +142,7 @@ export default function SchemaCrudPage({
   const addNewLabel = `New ${singularize(title)}`
 
   return (
-    <div className="gfh-portal-page" style={{ fontFamily: "'Inter', 'Segoe UI', system-ui, sans-serif" }}>
+    <div className="gfh-portal-page" style={{ fontFamily: "'Source Sans Pro', 'Segoe UI', system-ui, sans-serif" }}>
       <style>{`
         ${portalPageCss}
         .gfh-scp-form-wrap { animation: gfhPortalPop 0.28s cubic-bezier(.2,.8,.2,1); }
@@ -170,7 +170,7 @@ export default function SchemaCrudPage({
           border: 1px solid #99f6e4;
           color: #10B981;
           font-size: 12px;
-          font-weight: 700;
+          font-weight: 600;
           border-radius: 8px;
         }
       `}</style>
@@ -179,7 +179,7 @@ export default function SchemaCrudPage({
         <CornerBrackets />
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
-            <h1 style={{ fontFamily: "'Inter', sans-serif", fontSize: 28, fontWeight: 800, color: THEME.ink, margin: 0, letterSpacing: '-0.01em' }}>
+            <h1 style={{ fontFamily: "'Source Sans Pro', sans-serif", fontSize: 28, fontWeight: 600, color: THEME.ink, margin: 0, letterSpacing: '-0.01em' }}>
               {title}
             </h1>
             {!loading && (
@@ -205,11 +205,11 @@ export default function SchemaCrudPage({
             borderRadius: 10,
             padding: '10px 20px',
             fontSize: 13.5,
-            fontWeight: 700,
+            fontWeight: 600,
             cursor: 'pointer',
             boxShadow: showForm ? 'none' : '0 1px 3px rgba(14, 94, 72, 0.25)',
             transition: 'all 0.15s ease',
-            fontFamily: "'Inter', sans-serif",
+            fontFamily: "'Source Sans Pro', sans-serif",
           }}
           onMouseEnter={e => {
             if (!showForm) e.currentTarget.style.background = '#059669'
@@ -225,7 +225,7 @@ export default function SchemaCrudPage({
       {showForm && (
         <div className="gfh-scp-form-wrap" style={{ ...panelStyle, marginBottom: 22, minHeight: 0 }}>
           <CornerBrackets />
-          <h2 style={{ fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", fontSize: 18, fontWeight: 700, color: THEME.ink, margin: '0 0 20px' }}>
+          <h2 style={{ fontFamily: "'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", fontSize: 18, fontWeight: 600, color: THEME.ink, margin: '0 0 20px' }}>
             {addNewLabel}
           </h2>
           <form onSubmit={handleSubmit}>
@@ -238,7 +238,7 @@ export default function SchemaCrudPage({
                     flexDirection: 'column',
                     gap: 7,
                     fontSize: 12,
-                    fontWeight: 800,
+                    fontWeight: 600,
                     color: THEME.purple,
                     letterSpacing: '0.4px',
                     textTransform: 'uppercase',
@@ -307,12 +307,12 @@ export default function SchemaCrudPage({
                 borderRadius: 8,
                 padding: '10px 22px',
                 fontSize: 13.5,
-                fontWeight: 700,
+                fontWeight: 600,
                 cursor: 'pointer',
                 boxShadow: '0 1px 3px rgba(14, 94, 72, 0.25)',
                 marginTop: 20,
                 opacity: saving ? 0.6 : 1,
-                fontFamily: "'Inter', sans-serif",
+                fontFamily: "'Source Sans Pro', sans-serif",
               }}
             >
               {saving ? 'Saving…' : 'Save'}
@@ -361,7 +361,7 @@ export default function SchemaCrudPage({
                       type="button"
                       className="gfh-portal-btn"
                       onClick={() => handleDelete(row.id)}
-                      style={{ background: '#fee2e2', border: '1px solid #fca5a5', color: '#991b1b', borderRadius: 8, padding: '6px 13px', cursor: 'pointer', fontSize: 12, fontWeight: 700 }}
+                      style={{ background: '#fee2e2', border: '1px solid #fca5a5', color: '#991b1b', borderRadius: 8, padding: '6px 13px', cursor: 'pointer', fontSize: 12, fontWeight: 600 }}
                     >
                       Delete
                     </button>

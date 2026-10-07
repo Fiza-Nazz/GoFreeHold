@@ -17,7 +17,7 @@ export default function Unauthorized() {
         alignItems: 'center',
         justifyContent: 'center',
         background: 'radial-gradient(ellipse at top, #ECFDF8 0%, #F8FAFC 70%)',
-        fontFamily: "'Inter', system-ui, sans-serif",
+        fontFamily: "'Source Sans Pro', system-ui, sans-serif",
         padding: 24,
       }}
     >
@@ -82,7 +82,7 @@ export default function Unauthorized() {
           <span
             style={{
               fontSize: 11,
-              fontWeight: 700,
+              fontWeight: 600,
               letterSpacing: '1px',
               textTransform: 'uppercase',
               background: '#FEF2F2',
@@ -103,7 +103,7 @@ export default function Unauthorized() {
         <h1
           style={{
             fontSize: 24,
-            fontWeight: 800,
+            fontWeight: 600,
             color: '#0F172A',
             margin: '0 0 10px',
             letterSpacing: '-0.02em',
@@ -150,7 +150,7 @@ export default function Unauthorized() {
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  fontWeight: 700,
+                  fontWeight: 600,
                   fontSize: 13,
                   flexShrink: 0,
                 }}
@@ -158,7 +158,7 @@ export default function Unauthorized() {
                 {initials}
               </div>
               <div style={{ minWidth: 0 }}>
-                <div style={{ fontSize: 13.5, fontWeight: 700, color: '#0F172A', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                <div style={{ fontSize: 13.5, fontWeight: 600, color: '#0F172A', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                   {user.name}
                 </div>
                 <div style={{ fontSize: 11.5, color: '#64748B' }}>
@@ -170,7 +170,7 @@ export default function Unauthorized() {
             <span
               style={{
                 fontSize: 11,
-                fontWeight: 700,
+                fontWeight: 600,
                 background: '#ECFDF8',
                 color: '#065F46',
                 border: '1px solid #A7F3DC',
@@ -192,7 +192,7 @@ export default function Unauthorized() {
             style={{
               flex: 1,
               fontSize: 13,
-              fontWeight: 700,
+              fontWeight: 600,
               padding: '12px 18px',
               background: '#10B981',
               color: '#FFFFFF',

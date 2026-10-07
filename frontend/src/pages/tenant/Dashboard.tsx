@@ -141,14 +141,14 @@ export default function TenantDashboard() {
     fontWeight: 500,
     padding: '10px 12px',
     width: '100%',
-    fontFamily: "'Inter', system-ui, sans-serif",
+    fontFamily: "'Source Sans Pro', system-ui, sans-serif",
     outline: 'none',
     boxSizing: 'border-box',
   }
 
   const labelStyle: React.CSSProperties = {
     fontSize: 12,
-    fontWeight: 700,
+    fontWeight: 600,
     color: '#475569',
     letterSpacing: '0.4px',
     textTransform: 'uppercase',
@@ -196,17 +196,17 @@ export default function TenantDashboard() {
   ]
 
   return (
-    <div className="gfh-portal-page" style={{ fontFamily: "'Inter', system-ui, sans-serif", background: THEME.pageBg, minHeight: '100%' }}>
+    <div className="gfh-portal-page" style={{ fontFamily: "'Source Sans Pro', system-ui, sans-serif", background: THEME.pageBg, minHeight: '100%' }}>
       <style>{portalPageCss}</style>
 
       {/* Hero Header */}
       <div className="fade-in" style={heroStyle}>
         <div>
-          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 12, fontWeight: 700, letterSpacing: '0.6px', textTransform: 'uppercase', color: '#10B981', marginBottom: 2 }}>
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 12, fontWeight: 600, letterSpacing: '0.6px', textTransform: 'uppercase', color: '#10B981', marginBottom: 2 }}>
             <span style={{ width: 7, height: 7, borderRadius: '50%', background: '#10B981', display: 'inline-block' }} />
             Resident Portal
           </div>
-          <div style={{ fontSize: 24, fontWeight: 800, color: THEME.ink, letterSpacing: '-0.02em', marginTop: 2 }}>
+          <div style={{ fontSize: 24, fontWeight: 600, color: THEME.ink, letterSpacing: '-0.02em', marginTop: 2 }}>
             Welcome back, {user?.name || 'Resident'}
           </div>
           <div style={{ fontSize: 13, color: THEME.textMuted, marginTop: 4 }}>
@@ -227,7 +227,7 @@ export default function TenantDashboard() {
             border: 'none',
             borderRadius: 10,
             fontSize: 13,
-            fontWeight: 700,
+            fontWeight: 600,
             cursor: 'pointer',
             boxShadow: '0 2px 6px rgba(14, 94, 72, 0.25)',
             transition: 'all 0.15s ease',
@@ -275,10 +275,10 @@ export default function TenantDashboard() {
               <Icon path={icons.building} size={24} />
             </div>
             <div>
-              <div style={{ fontSize: 11.5, fontWeight: 700, letterSpacing: '1px', textTransform: 'uppercase', color: '#A7F3DC' }}>
+              <div style={{ fontSize: 11.5, fontWeight: 600, letterSpacing: '1px', textTransform: 'uppercase', color: '#A7F3DC' }}>
                 Your Leased Residence
               </div>
-              <div style={{ fontSize: 20, fontWeight: 800, marginTop: 2, letterSpacing: '-0.01em' }}>
+              <div style={{ fontSize: 20, fontWeight: 600, marginTop: 2, letterSpacing: '-0.01em' }}>
                 {primaryUnit.property?.name || 'Leased Property'} — Unit {primaryUnit.number || `#${primaryUnit.id}`}
               </div>
               {primaryUnit.property?.address && (
@@ -301,7 +301,7 @@ export default function TenantDashboard() {
                 background: '#FFFFFF',
                 color: '#059669',
                 fontSize: 12.5,
-                fontWeight: 700,
+                fontWeight: 600,
                 textDecoration: 'none',
                 boxShadow: '0 2px 6px rgba(0,0,0,0.1)',
               }}
@@ -320,7 +320,7 @@ export default function TenantDashboard() {
                 background: 'rgba(255, 255, 255, 0.14)',
                 color: '#FFFFFF',
                 fontSize: 12.5,
-                fontWeight: 700,
+                fontWeight: 600,
                 textDecoration: 'none',
                 border: '1px solid rgba(255,255,255,0.25)',
               }}
@@ -368,7 +368,7 @@ export default function TenantDashboard() {
               </div>
               <span style={{
                 fontSize: 11,
-                fontWeight: 700,
+                fontWeight: 600,
                 letterSpacing: '0.4px',
                 textTransform: 'uppercase',
                 background: card.badgeBg,
@@ -381,10 +381,10 @@ export default function TenantDashboard() {
               </span>
             </div>
             <div>
-              <div style={{ fontSize: 24, fontWeight: 800, color: '#0F172A', lineHeight: 1.15, letterSpacing: '-0.02em' }}>
+              <div style={{ fontSize: 24, fontWeight: 600, color: '#0F172A', lineHeight: 1.15, letterSpacing: '-0.02em' }}>
                 {card.value}
               </div>
-              <div style={{ fontSize: 13.5, fontWeight: 700, color: '#0F172A', marginTop: 4 }}>
+              <div style={{ fontSize: 13.5, fontWeight: 600, color: '#0F172A', marginTop: 4 }}>
                 {card.label}
               </div>
               <div style={{ fontSize: 12, color: '#64748B', marginTop: 3 }}>
@@ -448,11 +448,11 @@ export default function TenantDashboard() {
                 <Icon path={action.icon} size={20} />
               </div>
               <div>
-                <div style={{ fontSize: 15, fontWeight: 800, color: '#0F172A' }}>{action.title}</div>
+                <div style={{ fontSize: 15, fontWeight: 600, color: '#0F172A' }}>{action.title}</div>
                 <div style={{ fontSize: 12, color: '#64748B', marginTop: 2, lineHeight: 1.4 }}>{action.desc}</div>
               </div>
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12.5, fontWeight: 700, color: '#10B981', marginTop: 4 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12.5, fontWeight: 600, color: '#10B981', marginTop: 4 }}>
               <span>{action.linkText}</span>
               <Icon path={icons.arrowRight} size={14} />
             </div>
@@ -464,7 +464,7 @@ export default function TenantDashboard() {
       <div className="fade-in" style={{ ...panelStyle, minHeight: 280, borderRadius: 16 }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16, flexWrap: 'wrap', gap: 10 }}>
           <div>
-            <h3 style={{ fontSize: 17, fontWeight: 800, color: THEME.ink, margin: 0 }}>
+            <h3 style={{ fontSize: 17, fontWeight: 600, color: THEME.ink, margin: 0 }}>
               Recent Maintenance Requests
             </h3>
             <div style={{ fontSize: 12, color: '#64748B', marginTop: 3 }}>
@@ -475,7 +475,7 @@ export default function TenantDashboard() {
             to="/tenant/complaints"
             style={{
               fontSize: 12.5,
-              fontWeight: 700,
+              fontWeight: 600,
               color: '#10B981',
               textDecoration: 'none',
               display: 'inline-flex',
@@ -494,7 +494,7 @@ export default function TenantDashboard() {
             <div style={{ width: 48, height: 48, borderRadius: '50%', background: '#F0FDF4', color: '#10B981', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 12px' }}>
               <Icon path={icons.wrench} size={22} />
             </div>
-            <p style={{ fontSize: 14, fontWeight: 700, color: THEME.ink, margin: 0 }}>No maintenance complaints submitted yet.</p>
+            <p style={{ fontSize: 14, fontWeight: 600, color: THEME.ink, margin: 0 }}>No maintenance complaints submitted yet.</p>
             <p style={{ fontSize: 12.5, color: THEME.textMuted, marginTop: 4 }}>Any repair requests you file will appear here with live updates.</p>
             <button
               onClick={() => setIsFormOpen(true)}
@@ -506,7 +506,7 @@ export default function TenantDashboard() {
                 color: '#fff',
                 border: 'none',
                 fontSize: 12.5,
-                fontWeight: 700,
+                fontWeight: 600,
                 cursor: 'pointer',
               }}
             >
@@ -537,15 +537,15 @@ export default function TenantDashboard() {
                 >
                   <div style={{ flex: 1, minWidth: 260 }}>
                     <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap', marginBottom: 6 }}>
-                      <span style={{ fontSize: 11.5, fontWeight: 800, background: '#F1F5F9', color: '#334155', padding: '2px 8px', borderRadius: 6 }}>
+                      <span style={{ fontSize: 11.5, fontWeight: 600, background: '#F1F5F9', color: '#334155', padding: '2px 8px', borderRadius: 6 }}>
                         #TKT-{String(item.id).padStart(4, '0')}
                       </span>
-                      <strong style={{ fontSize: 14.5, fontWeight: 700, color: THEME.ink }}>{item.title}</strong>
-                      <span style={{ background: st.bg, color: st.color, border: `1px solid ${st.border}`, padding: '2px 9px', borderRadius: 999, fontSize: 11, fontWeight: 800, textTransform: 'uppercase' }}>
+                      <strong style={{ fontSize: 14.5, fontWeight: 600, color: THEME.ink }}>{item.title}</strong>
+                      <span style={{ background: st.bg, color: st.color, border: `1px solid ${st.border}`, padding: '2px 9px', borderRadius: 999, fontSize: 11, fontWeight: 600, textTransform: 'uppercase' }}>
                         {safeUpperLabel(item.status)}
                       </span>
                       {item.priority && (
-                        <span style={{ background: pr.bg, color: pr.color, border: `1px solid ${pr.border}`, padding: '2px 8px', borderRadius: 999, fontSize: 10.5, fontWeight: 700, textTransform: 'uppercase' }}>
+                        <span style={{ background: pr.bg, color: pr.color, border: `1px solid ${pr.border}`, padding: '2px 8px', borderRadius: 999, fontSize: 10.5, fontWeight: 600, textTransform: 'uppercase' }}>
                           {safeUpper(item.priority)}
                         </span>
                       )}
@@ -566,7 +566,7 @@ export default function TenantDashboard() {
                         color: '#0284C7',
                         border: '1px solid #BAE6FD',
                         fontSize: 12,
-                        fontWeight: 700,
+                        fontWeight: 600,
                         textDecoration: 'none',
                         whiteSpace: 'nowrap',
                       }}
@@ -587,7 +587,7 @@ export default function TenantDashboard() {
           <div className="fade-in" style={{ position: 'relative', width: 500, maxWidth: '100%', padding: 28, background: '#ffffff', borderRadius: 16, border: `1px solid ${THEME.border}`, boxShadow: '0 24px 55px -18px rgba(15,23,42,0.35)' }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 18 }}>
               <div>
-                <h2 style={{ fontSize: 20, fontWeight: 800, color: THEME.ink, margin: 0 }}>
+                <h2 style={{ fontSize: 20, fontWeight: 600, color: THEME.ink, margin: 0 }}>
                   Report Maintenance Issue
                 </h2>
                 <div style={{ fontSize: 12.5, color: '#64748B', marginTop: 2 }}>
@@ -636,7 +636,7 @@ export default function TenantDashboard() {
                         <Icon path={icons.building} size={18} />
                       </div>
                       <div>
-                        <div style={{ fontWeight: 800, color: '#0F172A', fontSize: 14 }}>
+                        <div style={{ fontWeight: 600, color: '#0F172A', fontSize: 14 }}>
                           Unit {units[0].number || `#${units[0].id}`}{units[0].property?.name ? ` — ${units[0].property.name}` : ''}
                         </div>
                         <div style={{ fontSize: 11.5, color: '#065F46', fontWeight: 600 }}>
@@ -652,7 +652,7 @@ export default function TenantDashboard() {
                         padding: '3px 10px',
                         borderRadius: 999,
                         fontSize: 11,
-                        fontWeight: 700,
+                        fontWeight: 600,
                         textTransform: 'uppercase',
                         letterSpacing: '0.04em',
                       }}
@@ -714,10 +714,10 @@ export default function TenantDashboard() {
               </div>
 
               <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 8 }}>
-                <button type="button" onClick={() => setIsFormOpen(false)} style={{ display: 'inline-flex', alignItems: 'center', gap: 6, borderRadius: 8, fontWeight: 700, fontSize: 13, padding: '9px 16px', background: '#F1F5F9', color: '#475569', border: `1px solid ${THEME.border}`, cursor: 'pointer' }}>
+                <button type="button" onClick={() => setIsFormOpen(false)} style={{ display: 'inline-flex', alignItems: 'center', gap: 6, borderRadius: 8, fontWeight: 600, fontSize: 13, padding: '9px 16px', background: '#F1F5F9', color: '#475569', border: `1px solid ${THEME.border}`, cursor: 'pointer' }}>
                   Cancel
                 </button>
-                <button type="submit" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, borderRadius: 8, fontWeight: 700, fontSize: 13, padding: '9px 18px', background: '#10B981', color: '#fff', border: 'none', cursor: 'pointer', boxShadow: '0 2px 6px rgba(14, 94, 72, 0.25)' }}>
+                <button type="submit" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, borderRadius: 8, fontWeight: 600, fontSize: 13, padding: '9px 18px', background: '#10B981', color: '#fff', border: 'none', cursor: 'pointer', boxShadow: '0 2px 6px rgba(14, 94, 72, 0.25)' }}>
                   <Icon path={icons.check} size={14} />
                   Submit Complaint
                 </button>

@@ -38,7 +38,7 @@ const inputStyle: React.CSSProperties = {
 
 const labelStyle: React.CSSProperties = {
   fontSize: 12.5,
-  fontWeight: 800,
+  fontWeight: 600,
   color: THEME.purple,
   letterSpacing: '0.5px',
   textTransform: 'uppercase',
@@ -58,8 +58,8 @@ function StatCard({ label, value, color, icon, iconBg, cardBg = '#F8FAFC', cardB
       <div style={{ width: 40, height: 40, borderRadius: 8, background: iconBg, color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 10 }}>
         <Icon path={icon} size={18} />
       </div>
-      <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 22, fontWeight: 700, color: color || THEME.ink }}>{value}</div>
-      <div style={{ fontSize: 12, fontWeight: 700, color: color || THEME.textMuted, letterSpacing: '0.4px', textTransform: 'uppercase', marginTop: 6 }}>{label}</div>
+      <div style={{ fontFamily: "'Source Sans Pro', sans-serif", fontSize: 22, fontWeight: 600, color: color || THEME.ink }}>{value}</div>
+      <div style={{ fontSize: 12, fontWeight: 600, color: color || THEME.textMuted, letterSpacing: '0.4px', textTransform: 'uppercase', marginTop: 6 }}>{label}</div>
     </div>
   )
 }
@@ -116,13 +116,13 @@ export default function FinancialTracking() {
   }
 
   return (
-    <div className="gfh-portal-page" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
+    <div className="gfh-portal-page" style={{ fontFamily: "'Source Sans Pro', system-ui, sans-serif" }}>
       <style>{portalPageCss}</style>
 
       <div className="fade-in" style={heroStyle}>
         <CornerBrackets />
         <div>
-          <h1 style={{ fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", fontSize: 30, fontWeight: 700, color: THEME.ink, margin: 0 }}>
+          <h1 style={{ fontFamily: "'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", fontSize: 30, fontWeight: 600, color: THEME.ink, margin: 0 }}>
             Financial Tracking
           </h1>
           <p style={{ fontSize: 14, color: THEME.textMuted, marginTop: 8, marginBottom: 0 }}>
@@ -228,20 +228,20 @@ export default function FinancialTracking() {
                     <tr key={entry.id} className="gfh-portal-row" style={{ borderBottom: `1px solid ${THEME.border}` }}>
                       <td style={tdStyle}>{entry.entry_date}</td>
                       <td style={tdStyle}>
-                        <span style={{ backgroundColor: st.bg, color: st.color, border: `1px solid ${st.border}`, padding: '4px 11px', borderRadius: 8, fontSize: 11.5, fontWeight: 700, letterSpacing: '0.3px' }}>
+                        <span style={{ backgroundColor: st.bg, color: st.color, border: `1px solid ${st.border}`, padding: '4px 11px', borderRadius: 8, fontSize: 11.5, fontWeight: 600, letterSpacing: '0.3px' }}>
                           {(entry.type || '—').toString().toUpperCase()}
                         </span>
                       </td>
-                      <td style={{ ...tdStyle, fontWeight: 700 }}>{entry.category}</td>
+                      <td style={{ ...tdStyle, fontWeight: 600 }}>{entry.category}</td>
                       <td style={{ ...tdStyle, color: THEME.textMuted }}>{entry.description || '-'}</td>
-                      <td style={{ ...tdStyle, fontWeight: 800, color: st.color }}>
+                      <td style={{ ...tdStyle, fontWeight: 600, color: st.color }}>
                         {st.prefix} AED {Number(entry.amount).toLocaleString()}
                       </td>
                       <td style={{ ...tdStyle, color: THEME.textMuted }}>{entry.recorded_by?.name || '-'}</td>
                       <td style={tdStyle}>
                         <button
                           className="gfh-portal-btn"
-                          style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '6px 12px', fontSize: 12, fontWeight: 700, borderRadius: 8, backgroundColor: btnTint.delete.bg, color: btnTint.delete.color, border: btnTint.delete.border, cursor: 'pointer' }}
+                          style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '6px 12px', fontSize: 12, fontWeight: 600, borderRadius: 8, backgroundColor: btnTint.delete.bg, color: btnTint.delete.color, border: btnTint.delete.border, cursor: 'pointer' }}
                           onClick={() => handleDelete(entry.id)}
                         >
                           <Icon path={ICONS.trash} size={12} />
@@ -274,9 +274,9 @@ export default function FinancialTracking() {
             <CornerBrackets />
             <h2
               style={{
-                fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+                fontFamily: "'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
                 fontSize: 22,
-                fontWeight: 700,
+                fontWeight: 600,
                 marginBottom: 20,
                 color: THEME.ink,
               }}
@@ -320,7 +320,7 @@ export default function FinancialTracking() {
                   type="button"
                   className="gfh-portal-btn"
                   onClick={() => setIsModalOpen(false)}
-                  style={{ borderRadius: 8, fontWeight: 700, fontSize: 13.5, padding: '10px 18px', backgroundColor: btnTint.cancel.bg, color: btnTint.cancel.color, border: btnTint.cancel.border, cursor: 'pointer' }}
+                  style={{ borderRadius: 8, fontWeight: 600, fontSize: 13.5, padding: '10px 18px', backgroundColor: btnTint.cancel.bg, color: btnTint.cancel.color, border: btnTint.cancel.border, cursor: 'pointer' }}
                 >
                   Cancel
                 </button>

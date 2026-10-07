@@ -1,6 +1,24 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState, type CSSProperties, type ReactNode } from 'react'
 import { Link } from 'react-router-dom'
+import {
+  Bar,
+  BarChart,
+  CartesianGrid,
+  Cell,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from 'recharts'
 import api from '../../api/axios'
+import {
+  Icon,
+  ICONS,
+  THEME,
+  portalPageCss,
+} from '../../components/gfh/adminTheme'
+import { formatDate } from '../../utils/formatDate'
+import { getDefaultUnitImageUrl } from '../../utils/unitImages'
 
 interface PortfolioSummary {
   total_properties: number
@@ -10,6 +28,15 @@ interface PortfolioSummary {
   booked_units: number
 }
 
+interface PropertyItem {
+  id: number
+  name: string
+  address?: string
+  type?: string
+  image_url?: string
+  total_units?: number
+}
+
 interface PaymentItem {
   id: number
   amount: number | string
@@ -17,17 +44,20 @@ interface PaymentItem {
   date?: string
   created_at?: string
   type?: string
+  status?: string
   contract?: {
     unit?: {
       number?: string
+      property?: { name?: string }
     }
+    tenant?: { name?: string }
   }
+  tenant?: { name?: string }
 }
 
 interface ContractItem {
   id: number
   unit_id: number
-  tenant_id?: number
   rent_amount?: number | string
   start_date?: string
   end_date?: string
@@ -36,936 +66,955 @@ interface ContractItem {
   unit?: {
     id: number
     number: string
-    property?: {
-      id: number
-      name: string
-    }
+    property?: { id: number; name: string }
   }
-  tenant?: {
-    id: number
-    name: string
-  }
+  tenant?: { id: number; name: string }
 }
 
 interface UnitItem {
   id: number
   number: string
   status: string
-  price?: number | string
-  updated_at?: string
-  created_at?: string
-  property?: {
-    id: number
-    name: string
-  }
+  type?: string
+  property_id?: number
+  property?: { id: number; name: string; address?: string }
 }
 
 interface ComplaintItem {
   id: number
-  title?: string
+  title: string
+  category?: string
   status?: string
   created_at?: string
-  unit?: {
-    number?: string
-  }
+  unit?: { number?: string; property?: { name?: string } }
 }
-
-// ── SVG Icon Helper ────────────────────────────────────────────────────────
-const Icon = ({ path, size = 18, color = 'currentColor' }: { path: string; size?: number; color?: string }) => (
-  <svg
-    width={size}
-    height={size}
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke={color}
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <path d={path} />
-  </svg>
-)
 
 const icons = {
-  building: 'M3 21h18M5 21V5a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v16M13 21V9a1 1 0 0 1 1-1h5a1 1 0 0 1 1 1v12',
-  home: 'M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z',
-  door: 'M14 3h5v18h-5M14 3L6 4.5v15L14 21M9.5 12h.01',
+  ...ICONS,
   key: 'M21 2l-2 2m-1.5 1.5L14 9l-1.5-1.5L11 9l-1.5-1.5L8 9 3 14v7h7l5-5 1.5 1.5L18 15l1.5-1.5L21 15l1-1-6.5-6.5',
+  home: 'M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z',
   cash: 'M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6',
-  coins: 'M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6',
-  pencil: 'M12 20h9M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z',
-  sparkle: 'M12 2l2.4 7.2L22 12l-7.6 2.8L12 22l-2.4-7.2L2 12l7.6-2.8z',
-  chart: 'M18 20V10M12 20V4M6 20v-6',
-  trending: 'M23 6l-9.5 9.5-5-5L1 18M17 6h6v6',
-  clock: 'M12 8v4l3 3m6-3a9 9 0 1 1-18 0 9 9 0 0 1 18 0z',
-  chevron: 'M9 18l6-6-6-6',
-  document: 'M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z M14 2v6h6M16 13H8M16 17H8M10 9H8',
-  pie: 'M21.21 15.89A10 10 0 1 1 8 2.83M22 12A10 10 0 0 0 12 2v10z',
-  bolt: 'M13 2L3 14h9l-1 8 10-12h-9l1-8z',
-  user: 'M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z',
+  bulb: 'M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7V17h8v-2.3A7 7 0 0 0 12 2z',
+  chevronDown: 'M6 9l6 6 6-6',
 }
 
-function formatTimeAgo(dateString?: string) {
-  if (!dateString) return 'recently'
-  const date = new Date(dateString)
-  if (isNaN(date.getTime())) return 'recently'
-  const now = new Date()
-  const diffInSec = Math.floor((now.getTime() - date.getTime()) / 1000)
+const AVATAR_COLORS = ['#10B981', '#0284C7', '#D97706', '#7C3AED', '#DC2626', '#0891B2']
 
-  if (diffInSec < 60) return 'just now'
-  const diffInMin = Math.floor(diffInSec / 60)
-  if (diffInMin < 60) return `${diffInMin}m ago`
-  const diffInHours = Math.floor(diffInMin / 60)
-  if (diffInHours < 24) return `${diffInHours}h ago`
-  const diffInDays = Math.floor(diffInHours / 24)
-  if (diffInDays < 30) return `${diffInDays}d ago`
-  const diffInMonths = Math.floor(diffInDays / 30)
-  if (diffInMonths < 12) return `${diffInMonths}mo ago`
-  return `${Math.floor(diffInMonths / 12)}y ago`
+function aed(value: number) {
+  return `AED ${value.toLocaleString(undefined, {
+    minimumFractionDigits: value % 1 === 0 ? 0 : 2,
+    maximumFractionDigits: 2,
+  })}`
+}
+
+function initials(name?: string) {
+  if (!name?.trim()) return '?'
+  const parts = name.trim().split(/\s+/)
+  return ((parts[0]?.[0] || '') + (parts[1]?.[0] || '')).toUpperCase() || '?'
+}
+
+function TrendPill({
+  text,
+  tone = 'green',
+}: {
+  text: string
+  tone?: 'green' | 'red' | 'slate'
+}) {
+  const styles = {
+    green: { bg: '#DCFCE7', color: '#15803D' },
+    red: { bg: '#FEE2E2', color: '#B91C1C' },
+    slate: { bg: '#F1F5F9', color: '#64748B' },
+  }[tone]
+  return (
+    <span
+      style={{
+        display: 'inline-flex',
+        alignItems: 'center',
+        fontSize: 11,
+        fontWeight: 600,
+        padding: '3px 8px',
+        borderRadius: 999,
+        background: styles.bg,
+        color: styles.color,
+        whiteSpace: 'nowrap',
+      }}
+    >
+      {text}
+    </span>
+  )
+}
+
+function StatusPill({
+  label,
+  tone,
+}: {
+  label: string
+  tone: 'green' | 'amber' | 'red' | 'blue' | 'slate'
+}) {
+  const map = {
+    green: { bg: '#DCFCE7', color: '#15803D' },
+    amber: { bg: '#FEF3C7', color: '#B45309' },
+    red: { bg: '#FEE2E2', color: '#B91C1C' },
+    blue: { bg: '#DBEAFE', color: '#1D4ED8' },
+    slate: { bg: '#F1F5F9', color: '#475569' },
+  }[tone]
+  return (
+    <span
+      style={{
+        fontSize: 11,
+        fontWeight: 600,
+        padding: '3px 9px',
+        borderRadius: 999,
+        background: map.bg,
+        color: map.color,
+        whiteSpace: 'nowrap',
+      }}
+    >
+      {label}
+    </span>
+  )
+}
+
+function Panel({
+  title,
+  subtitle,
+  action,
+  children,
+  style,
+}: {
+  title: string
+  subtitle?: string
+  action?: ReactNode
+  children: ReactNode
+  style?: CSSProperties
+}) {
+  return (
+    <div className="gfh-dash-card" style={style}>
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'flex-start',
+          justifyContent: 'space-between',
+          gap: 12,
+          marginBottom: 16,
+        }}
+      >
+        <div>
+          <h2 style={{ margin: 0, fontSize: 16, fontWeight: 700, color: THEME.ink }}>{title}</h2>
+          {subtitle && (
+            <div style={{ marginTop: 3, fontSize: 12.5, color: THEME.textMuted }}>{subtitle}</div>
+          )}
+        </div>
+        {action}
+      </div>
+      {children}
+    </div>
+  )
+}
+
+function complaintVisual(status?: string, category?: string) {
+  const s = (status || '').toLowerCase()
+  const cat = (category || '').toLowerCase()
+  const icon = cat.includes('electric') || cat.includes('light') ? icons.bulb : icons.wrench
+  if (s === 'resolved' || s === 'closed') {
+    return { icon, tone: 'green' as const, label: 'Completed', iconBg: '#DCFCE7', iconColor: '#15803D' }
+  }
+  if (s === 'in_progress' || s === 'assigned') {
+    return { icon, tone: 'amber' as const, label: 'In Progress', iconBg: '#FEF3C7', iconColor: '#B45309' }
+  }
+  return { icon, tone: 'red' as const, label: 'Open', iconBg: '#FEE2E2', iconColor: '#B91C1C' }
+}
+
+function paymentTone(status?: string, type?: string) {
+  const s = `${status || ''} ${type || ''}`.toLowerCase()
+  if (s.includes('pending') || s.includes('due') || s.includes('unpaid')) {
+    return { tone: 'amber' as const, label: 'Pending' }
+  }
+  return { tone: 'green' as const, label: 'Paid' }
 }
 
 export default function OwnerDashboard() {
   const [summary, setSummary] = useState<PortfolioSummary | null>(null)
+  const [properties, setProperties] = useState<PropertyItem[]>([])
   const [payments, setPayments] = useState<PaymentItem[]>([])
   const [contracts, setContracts] = useState<ContractItem[]>([])
   const [units, setUnits] = useState<UnitItem[]>([])
   const [complaints, setComplaints] = useState<ComplaintItem[]>([])
-  const [hoveredBarIndex, setHoveredBarIndex] = useState<number | null>(null)
   const [isLoading, setIsLoading] = useState(true)
+  const [revenueRange, setRevenueRange] = useState<'ytd' | '12m'>('12m')
 
   useEffect(() => {
-    let isCancelled = false
+    let cancelled = false
 
-    const fetchDashboardData = async () => {
+    const load = async () => {
       try {
-        const [sumRes, payRes, conRes, unitRes, compRes] = await Promise.all([
+        const [sumRes, propRes, payRes, conRes, unitRes, compRes] = await Promise.all([
           api.get('/owner/dashboard/summary').catch(() => ({ data: { data: { portfolio: null } } })),
+          api.get('/owner/dashboard/properties').catch(() =>
+            api.get('/owner/properties').catch(() => ({ data: { data: { properties: [] } } })),
+          ),
           api.get('/owner/payments').catch(() => ({ data: { data: { payments: [] } } })),
           api.get('/owner/contracts').catch(() => ({ data: { data: { contracts: [] } } })),
           api.get('/owner/units').catch(() => ({ data: { data: { units: [] } } })),
           api.get('/owner/complaints').catch(() => ({ data: { data: { complaints: [] } } })),
         ])
 
-        if (!isCancelled) {
-          if (sumRes.data?.data?.portfolio) {
-            setSummary(sumRes.data.data.portfolio)
-          }
+        if (cancelled) return
 
-          setPayments(payRes.data?.data?.payments || [])
-          setContracts(conRes.data?.data?.contracts || [])
-          setUnits(unitRes.data?.data?.units || [])
-          setComplaints(compRes.data?.data?.complaints || [])
-        }
+        if (sumRes.data?.data?.portfolio) setSummary(sumRes.data.data.portfolio)
+
+        const props = propRes.data?.data?.properties || propRes.data?.data || []
+        const pays = payRes.data?.data?.payments || payRes.data?.data || []
+        const cons = conRes.data?.data?.contracts || conRes.data?.data || []
+        const uns = unitRes.data?.data?.units || unitRes.data?.data || []
+        const comps = compRes.data?.data?.complaints || compRes.data?.data || []
+
+        setProperties(Array.isArray(props) ? props : [])
+        setPayments(Array.isArray(pays) ? pays : [])
+        setContracts(Array.isArray(cons) ? cons : [])
+        setUnits(Array.isArray(uns) ? uns : [])
+        setComplaints(Array.isArray(comps) ? comps : [])
       } catch (err) {
         console.error('Failed to load dashboard data:', err)
       } finally {
-        if (!isCancelled) {
-          setIsLoading(false)
-        }
+        if (!cancelled) setIsLoading(false)
       }
     }
 
-    fetchDashboardData()
-
-    return () => {
-      isCancelled = true
-    }
+    void load()
+    return () => { cancelled = true }
   }, [])
 
-  // Derived values from real data
-  const totalProperties = summary?.total_properties ?? 0
-  const totalRented = summary?.occupied_units ?? 0
-  const vacantUnits = summary?.vacant_units ?? 0
-  const totalUnits = totalRented + vacantUnits
+  const totalProperties = summary?.total_properties ?? properties.length
+  const totalRented = summary?.occupied_units
+    ?? units.filter(u => (u.status || '').toUpperCase() === 'OCCUPIED').length
+  const vacantUnits = summary?.vacant_units
+    ?? units.filter(u => {
+      const s = (u.status || '').toUpperCase()
+      return s === 'AVAILABLE' || s === 'VACANT'
+    }).length
+  const bookedUnits = summary?.booked_units
+    ?? units.filter(u => (u.status || '').toUpperCase() === 'BOOKED').length
+  const totalUnits = summary?.total_units ?? ((totalRented + vacantUnits + bookedUnits) || units.length)
 
   const occupancyPercent = totalUnits > 0
     ? Math.round((totalRented / totalUnits) * 100)
     : (totalRented > 0 ? 100 : 0)
 
-  // Circular gauge values (radius 40, circumference 2 * pi * 40 = 251.32)
-  const circleRadius = 40
-  const circleCircumference = 2 * Math.PI * circleRadius
-  const circleOffset = circleCircumference - (circleCircumference * (occupancyPercent || 0)) / 100
+  const now = new Date()
+  const currentYear = now.getFullYear()
+  const currentMonth = now.getMonth()
 
-  // ── 12 Months Portfolio Trends Data strictly from Database ─────────────────
-  const currentYear = new Date().getFullYear()
-  const currentMonthIndex = new Date().getMonth()
-  const monthsNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-  const monthsFull = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+  const monthlyRevenue = useMemo(() => {
+    return payments
+      .filter(p => {
+        const d = new Date(p.payment_date || p.date || p.created_at || '')
+        return !Number.isNaN(d.getTime()) && d.getFullYear() === currentYear && d.getMonth() === currentMonth
+      })
+      .reduce((sum, p) => sum + (parseFloat(String(p.amount)) || 0), 0)
+  }, [payments, currentYear, currentMonth])
 
-  const monthlyTotals = new Array(12).fill(0)
-  const monthlyCounts = new Array(12).fill(0)
+  const lastMonthRevenue = useMemo(() => {
+    const d = new Date(currentYear, currentMonth - 1, 1)
+    return payments
+      .filter(p => {
+        const pd = new Date(p.payment_date || p.date || p.created_at || '')
+        return !Number.isNaN(pd.getTime()) && pd.getFullYear() === d.getFullYear() && pd.getMonth() === d.getMonth()
+      })
+      .reduce((sum, p) => sum + (parseFloat(String(p.amount)) || 0), 0)
+  }, [payments, currentYear, currentMonth])
 
-  // 1. Calculate from real payments in database
-  payments.forEach(p => {
-    const dateStr = p.payment_date || p.date || p.created_at
-    if (!dateStr) return
-    const d = new Date(dateStr)
-    if (d.getFullYear() === currentYear) {
-      const m = d.getMonth()
-      if (m >= 0 && m < 12) {
-        monthlyTotals[m] += parseFloat(String(p.amount)) || 0
-        monthlyCounts[m] += 1
+  const revenueTrendPct = lastMonthRevenue > 0
+    ? Math.round(((monthlyRevenue - lastMonthRevenue) / lastMonthRevenue) * 100)
+    : null
+
+  const monthsShort = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+
+  const revenueChartData = useMemo(() => {
+    const points: { month: string; revenue: number }[] = []
+
+    if (revenueRange === 'ytd') {
+      for (let i = 0; i <= currentMonth; i++) {
+        points.push({ month: monthsShort[i], revenue: 0 })
       }
+      payments.forEach(p => {
+        const d = new Date(p.payment_date || p.date || p.created_at || '')
+        if (Number.isNaN(d.getTime()) || d.getFullYear() !== currentYear) return
+        const m = d.getMonth()
+        if (m <= currentMonth) points[m].revenue += parseFloat(String(p.amount)) || 0
+      })
+    } else {
+      for (let i = 11; i >= 0; i--) {
+        const d = new Date(currentYear, currentMonth - i, 1)
+        points.push({ month: monthsShort[d.getMonth()], revenue: 0 })
+      }
+      payments.forEach(p => {
+        const d = new Date(p.payment_date || p.date || p.created_at || '')
+        if (Number.isNaN(d.getTime())) return
+        const idx = points.findIndex((_, i) => {
+          const pd = new Date(currentYear, currentMonth - (11 - i), 1)
+          return d.getFullYear() === pd.getFullYear() && d.getMonth() === pd.getMonth()
+        })
+        if (idx >= 0) points[idx].revenue += parseFloat(String(p.amount)) || 0
+      })
     }
-  })
 
-  // 2. If payments table has no records yet for this owner, reflect scheduled rent from active contracts
-  const hasPayments = monthlyTotals.some(v => v > 0)
-  if (!hasPayments && contracts.length > 0) {
-    contracts.forEach(c => {
-      const dateStr = c.start_date || c.created_at
-      if (!dateStr) return
-      const d = new Date(dateStr)
-      const m = d.getMonth()
-      const rent = parseFloat(String(c.rent_amount)) || 0
-      if (d.getFullYear() === currentYear && m >= 0 && m < 12) {
-        monthlyTotals[m] += rent
-        monthlyCounts[m] += 1
-      }
+    // Fallback: show scheduled rent from active contracts when no payments yet
+    if (!points.some(p => p.revenue > 0) && contracts.length > 0) {
+      const activeRent = contracts
+        .filter(c => (c.status || '').toLowerCase() === 'active')
+        .reduce((sum, c) => sum + (parseFloat(String(c.rent_amount)) || 0), 0)
+      if (points.length) points[points.length - 1].revenue = activeRent
+    }
+
+    return points
+  }, [payments, contracts, revenueRange, currentYear, currentMonth])
+
+  const propertyRows = useMemo(() => {
+    const byId = new Map<number, {
+      id: number
+      name: string
+      address: string
+      total: number
+      occupied: number
+      imageType?: string
+    }>()
+
+    properties.forEach(p => {
+      byId.set(p.id, {
+        id: p.id,
+        name: p.name,
+        address: p.address || 'Dubai, UAE',
+        total: 0,
+        occupied: 0,
+      })
     })
+
+    units.forEach(u => {
+      const propId = u.property_id || u.property?.id
+      if (!propId) return
+      if (!byId.has(propId)) {
+        byId.set(propId, {
+          id: propId,
+          name: u.property?.name || `Property #${propId}`,
+          address: u.property?.address || 'Dubai, UAE',
+          total: 0,
+          occupied: 0,
+          imageType: u.type,
+        })
+      }
+      const row = byId.get(propId)!
+      row.total += 1
+      if ((u.status || '').toUpperCase() === 'OCCUPIED') row.occupied += 1
+      if (!row.imageType && u.type) row.imageType = u.type
+    })
+
+    return Array.from(byId.values())
+      .map(r => ({
+        ...r,
+        occupancy: r.total > 0 ? Math.round((r.occupied / r.total) * 100) : 0,
+      }))
+      .sort((a, b) => b.total - a.total || a.name.localeCompare(b.name))
+      .slice(0, 4)
+  }, [properties, units])
+
+  const recentPayments = useMemo(() => {
+    return [...payments]
+      .sort((a, b) => {
+        const da = new Date(a.payment_date || a.date || a.created_at || 0).getTime()
+        const db = new Date(b.payment_date || b.date || b.created_at || 0).getTime()
+        return db - da
+      })
+      .slice(0, 4)
+  }, [payments])
+
+  const recentComplaints = useMemo(() => {
+    return [...complaints]
+      .sort((a, b) => new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime())
+      .slice(0, 4)
+  }, [complaints])
+
+  const formatAxisAmount = (value: number) => {
+    if (value >= 1_000_000) return `${(value / 1_000_000).toFixed(1)}M`
+    if (value >= 1_000) return `${Math.round(value / 1_000)}k`
+    return String(value)
   }
 
-  const maxTrendValue = Math.max(...monthlyTotals, 0)
-  const monthlyTrends = monthsNames.map((name, i) => {
-    const val = monthlyTotals[i]
-    const height = maxTrendValue > 0 ? Math.max(Math.round((val / maxTrendValue) * 125), val > 0 ? 12 : 4) : 4
-    return {
-      month: name,
-      fullName: `${monthsFull[i]} ${currentYear}`,
-      value: val,
-      height,
-      count: monthlyCounts[i],
-    }
-  })
-
-  // Current month collection for card 4
-  const rentCollectionTotal = monthlyTotals[currentMonthIndex] || 0
-
-  // ── Real Recent Activities from Database ───────────────────────────────────
-  const activities: Array<{
-    id: string
-    title: string
-    sub: string
-    date: string
-    timeAgo: string
-    link: string
-    icon: string
-    iconBg: string
-    iconColor: string
-  }> = []
-
-  // Contract events
-  contracts.forEach(c => {
-    const unitNum = c.unit?.number ? `Unit ${c.unit.number}` : 'Unit'
-    const tenantText = c.tenant?.name ? `Tenant: ${c.tenant.name}` : 'Contract Active'
-    const rentText = c.rent_amount ? `AED ${Number(c.rent_amount).toLocaleString()}` : ''
-    const dt = c.created_at || c.start_date || ''
-    activities.push({
-      id: `contract-${c.id}`,
-      title: `Contract active — ${unitNum}`,
-      sub: [tenantText, rentText].filter(Boolean).join(' • '),
-      date: dt,
-      timeAgo: formatTimeAgo(dt),
-      link: '/owner/contracts',
-      icon: icons.document,
-      iconBg: '#DBEAFE',
-      iconColor: '#2563EB',
-    })
-  })
-
-  // Payment events
-  payments.forEach(p => {
-    const unitNum = p.contract?.unit?.number ? `Unit ${p.contract.unit.number}` : 'Unit'
-    const amt = Number(p.amount || 0).toLocaleString()
-    const dt = p.payment_date || p.date || p.created_at || ''
-    activities.push({
-      id: `payment-${p.id}`,
-      title: `Rent payment received — ${unitNum}`,
-      sub: `AED ${amt}`,
-      date: dt,
-      timeAgo: formatTimeAgo(dt),
-      link: '/owner/payments',
-      icon: icons.cash,
-      iconBg: '#DCFCE7',
-      iconColor: '#16A34A',
-    })
-  })
-
-  // Unit status updates
-  units.forEach(u => {
-    const dt = u.updated_at || u.created_at || ''
-    activities.push({
-      id: `unit-${u.id}`,
-      title: `Unit ${u.number} (${u.status})`,
-      sub: `${u.property?.name || 'Property'}${u.price ? ` • AED ${Number(u.price).toLocaleString()}` : ''}`,
-      date: dt,
-      timeAgo: formatTimeAgo(dt),
-      link: `/owner/units/${u.id}`,
-      icon: icons.home,
-      iconBg: u.status === 'AVAILABLE' ? '#ECFDF8' : '#FEF3C7',
-      iconColor: u.status === 'AVAILABLE' ? '#10B981' : '#D97706',
-    })
-  })
-
-  // Maintenance complaints
-  complaints.forEach(m => {
-    const dt = m.created_at || ''
-    activities.push({
-      id: `complaint-${m.id}`,
-      title: `Maintenance: ${m.title || 'Request'}`,
-      sub: `Status: ${m.status || 'Pending'}${m.unit?.number ? ` • Unit ${m.unit.number}` : ''}`,
-      date: dt,
-      timeAgo: formatTimeAgo(dt),
-      link: '/owner/complaints',
-      icon: icons.bolt,
-      iconBg: '#FEE2E2',
-      iconColor: '#DC2626',
-    })
-  })
-
-  // Sort real activity by date descending
-  activities.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-  const recentActivities = activities.slice(0, 5)
+  const revenueAmount = monthlyRevenue || contracts
+    .filter(c => (c.status || '').toLowerCase() === 'active')
+    .reduce((s, c) => s + (parseFloat(String(c.rent_amount)) || 0), 0)
+  const revenueIsEstimated = monthlyRevenue <= 0 && revenueAmount > 0
 
   if (isLoading) {
     return (
-      <div style={{ padding: '60px 20px', textAlign: 'center', color: '#64748B' }}>
-        <div style={{
-          width: 38,
-          height: 38,
-          border: '3px solid #E2E8F0',
-          borderTopColor: '#10B981',
-          borderRadius: '50%',
-          animation: 'gfhSpin 0.75s linear infinite',
-          margin: '0 auto 16px',
-        }} />
-        <style>{`@keyframes gfhSpin { to { transform: rotate(360deg); } }`}</style>
-        <span style={{ fontSize: 14, fontWeight: 600 }}>Loading owner dashboard...</span>
+      <div className="gfh-portal-page" style={{ padding: '60px 20px', textAlign: 'center', color: THEME.textMuted }}>
+        <style>{portalPageCss}</style>
+        <div
+          style={{
+            width: 36,
+            height: 36,
+            border: `3px solid ${THEME.border}`,
+            borderTopColor: THEME.navy,
+            borderRadius: '50%',
+            animation: 'spin 0.75s linear infinite',
+            margin: '0 auto 14px',
+          }}
+        />
+        <span style={{ fontSize: 14, fontWeight: 600 }}>Loading dashboard…</span>
       </div>
     )
   }
 
+  const kpiCards = [
+    {
+      to: '/owner/portfolio',
+      label: 'Total Properties',
+      value: String(totalProperties),
+      prefix: undefined as string | undefined,
+      hint: totalUnits > 0
+        ? `${totalUnits} unit${totalUnits === 1 ? '' : 's'} across your portfolio`
+        : 'No units added yet',
+      badge: null as { text: string; tone: 'green' | 'red' | 'slate' } | null,
+      icon: icons.building,
+      iconBg: '#DCFCE7',
+      iconColor: '#15803D',
+    },
+    {
+      to: '/owner/portfolio?status=occupied',
+      label: 'Occupied Units',
+      value: String(totalRented),
+      prefix: undefined as string | undefined,
+      hint: totalUnits > 0
+        ? `${occupancyPercent}% occupancy · ${totalUnits} total units`
+        : 'No units to measure yet',
+      badge: { text: `${occupancyPercent}% filled`, tone: 'green' as const },
+      icon: icons.key,
+      iconBg: '#DCFCE7',
+      iconColor: '#059669',
+    },
+    {
+      to: '/owner/portfolio?status=vacant',
+      label: 'Vacant Units',
+      value: String(vacantUnits),
+      prefix: undefined as string | undefined,
+      hint: vacantUnits === 0
+        ? 'All units currently rented or booked'
+        : `${vacantUnits} available to rent · ${bookedUnits} booked`,
+      badge: vacantUnits === 0
+        ? { text: 'Fully leased', tone: 'green' as const }
+        : { text: 'Needs attention', tone: 'red' as const },
+      icon: icons.home,
+      iconBg: '#FEE2E2',
+      iconColor: '#DC2626',
+    },
+    {
+      to: '/owner/payments',
+      label: 'Monthly Revenue',
+      value: revenueAmount.toLocaleString(undefined, {
+        minimumFractionDigits: revenueAmount % 1 === 0 ? 0 : 2,
+        maximumFractionDigits: 2,
+      }),
+      prefix: 'AED',
+      hint: revenueIsEstimated
+        ? 'Based on active contract rent this month'
+        : revenueTrendPct === null
+          ? 'Collected from payments this month'
+          : `${revenueTrendPct >= 0 ? 'Up' : 'Down'} ${Math.abs(revenueTrendPct)}% vs last month`,
+      badge: revenueTrendPct === null
+        ? { text: 'This month', tone: 'slate' as const }
+        : {
+            text: `${revenueTrendPct >= 0 ? '+' : ''}${revenueTrendPct}%`,
+            tone: revenueTrendPct >= 0 ? 'green' as const : 'red' as const,
+          },
+      icon: icons.cash,
+      iconBg: '#FEF3C7',
+      iconColor: '#D97706',
+    },
+  ]
+
+  const vacantPct = totalUnits > 0 ? Math.round((vacantUnits / totalUnits) * 100) : 0
+  const circleR = 54
+  const circleC = 2 * Math.PI * circleR
+  const occOffset = circleC - (circleC * occupancyPercent) / 100
+
   return (
-    <div style={{ fontFamily: "'Inter', system-ui, sans-serif", width: '100%', boxSizing: 'border-box' }}>
+    <div className="gfh-portal-page" style={{ fontFamily: 'var(--font-sans)', width: '100%', boxSizing: 'border-box' }}>
       <style>{`
+        ${portalPageCss}
         .gfh-dash-card {
-          border-radius: 14px;
-          padding: 18px 20px;
-          display: flex;
-          flex-direction: column;
-          justify-content: space-between;
-          color: #ffffff;
-          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
-          transition: transform 0.2s ease, box-shadow 0.2s ease;
-          position: relative;
-          overflow: hidden;
-          cursor: pointer;
-          text-decoration: none;
-        }
-        .gfh-dash-card:hover {
-          transform: translateY(-3px);
-          box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
-          color: #ffffff;
-        }
-        .gfh-dash-panel {
           background: #ffffff;
-          border: 1px solid #E2E8F0;
-          border-radius: 12px;
-          padding: 22px 24px;
+          border: 1px solid ${THEME.border};
+          border-radius: 16px;
+          padding: 20px 22px;
           box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
           box-sizing: border-box;
         }
-        .gfh-action-row {
-          display: flex;
-          align-items: center;
-          justifyContent: space-between;
-          padding: 12px 14px;
-          background: #F8FAFC;
-          border: 1px solid #F1F5F9;
-          border-radius: 10px;
+        .gfh-kpi-grid {
+          display: grid;
+          grid-template-columns: repeat(4, minmax(0, 1fr));
+          gap: 14px;
+          margin-bottom: 16px;
+        }
+        .gfh-kpi-link {
           text-decoration: none;
           color: inherit;
-          transition: all 0.18s ease;
+          transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
         }
-        .gfh-action-row:hover {
-          background: #F1F5F9;
-          border-color: #E2E8F0;
-          transform: translateX(3px);
+        .gfh-kpi-link:hover {
+          border-color: #CBD5E1 !important;
+          box-shadow: 0 6px 18px rgba(15, 23, 42, 0.07) !important;
+          transform: translateY(-1px);
         }
-        .gfh-activity-row {
+        .gfh-kpi-label {
+          font-size: 13px;
+          font-weight: 600;
+          color: #64748B;
+          line-height: 1.3;
+        }
+        .gfh-kpi-value-row {
+          display: flex;
+          align-items: baseline;
+          gap: 6px;
+          margin-top: 8px;
+          min-width: 0;
+        }
+        .gfh-kpi-prefix {
+          font-size: 14px;
+          font-weight: 700;
+          color: #94A3B8;
+          letter-spacing: 0.02em;
+        }
+        .gfh-kpi-value {
+          font-size: 28px;
+          font-weight: 700;
+          color: #0F172A;
+          letter-spacing: -0.03em;
+          line-height: 1.1;
+          font-variant-numeric: tabular-nums;
+          word-break: break-word;
+        }
+        .gfh-kpi-hint {
+          margin-top: 8px;
+          font-size: 12.5px;
+          font-weight: 500;
+          color: #94A3B8;
+          line-height: 1.35;
+        }
+        .gfh-mid-row {
+          display: grid;
+          grid-template-columns: minmax(0, 1.65fr) minmax(280px, 1fr);
+          gap: 14px;
+          margin-bottom: 16px;
+        }
+        .gfh-lists-row {
+          display: grid;
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+          gap: 14px;
+        }
+        .gfh-list-row {
           display: flex;
           align-items: center;
-          justifyContent: space-between;
-          padding: 12px 6px;
+          gap: 12px;
+          padding: 12px 0;
           border-bottom: 1px solid #F1F5F9;
-          text-decoration: none;
-          color: inherit;
-          transition: background 0.15s ease;
         }
-        .gfh-activity-row:last-child {
+        .gfh-list-row:last-child {
           border-bottom: none;
+          padding-bottom: 0;
         }
-        .gfh-activity-row:hover .gfh-act-title {
-          color: #10B981;
+        .gfh-view-all {
+          display: inline-flex;
+          align-items: center;
+          gap: 4px;
+          font-size: 12.5;
+          font-weight: 600;
+          color: #0284C7;
+          text-decoration: none;
+          white-space: nowrap;
         }
-        .gfh-bar-col:hover .gfh-bar-rect {
-          background: #059669 !important;
+        .gfh-view-all:hover { color: #0369A1; }
+        .gfh-empty {
+          padding: 28px 8px;
+          text-align: center;
+          font-size: 13;
+          color: ${THEME.textMuted};
+        }
+        @media (max-width: 1200px) {
+          .gfh-kpi-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+          .gfh-lists-row { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 960px) {
+          .gfh-mid-row { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 640px) {
+          .gfh-kpi-grid { grid-template-columns: 1fr; }
         }
       `}</style>
 
-      {/* ── TOP ROW: 4 KPI CARDS ─────────────────────────────────────────── */}
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(230px, 1fr))',
-        gap: 16,
-        marginBottom: 20,
-      }}>
-        {/* Card 1: Total Properties */}
-        <Link
-          to="/owner/properties"
-          className="gfh-dash-card"
-          style={{ background: '#2563EB' }}
-          title="View all properties"
-        >
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <span style={{ fontSize: 13, fontWeight: 600, color: 'rgba(255, 255, 255, 0.88)' }}>
-              Total Properties
-            </span>
-            <div style={{
-              width: 34,
-              height: 34,
-              borderRadius: 8,
-              background: 'rgba(255, 255, 255, 0.2)',
+      {/* KPI row */}
+      <div className="gfh-kpi-grid">
+        {kpiCards.map(card => (
+          <Link
+            key={card.label}
+            to={card.to}
+            className="gfh-dash-card gfh-kpi-link"
+            style={{
               display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}>
-              <Icon path={icons.building} size={17} color="#FFFFFF" />
+              flexDirection: 'column',
+              minHeight: 148,
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10 }}>
+              <div
+                style={{
+                  width: 40,
+                  height: 40,
+                  borderRadius: 11,
+                  background: card.iconBg,
+                  color: card.iconColor,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  flexShrink: 0,
+                }}
+              >
+                <Icon path={card.icon} size={19} />
+              </div>
+              {card.badge ? <TrendPill text={card.badge.text} tone={card.badge.tone} /> : null}
             </div>
-          </div>
-          <div style={{ marginTop: 14 }}>
-            <div style={{ fontSize: 28, fontWeight: 800, lineHeight: 1.1, color: '#FFFFFF' }}>
-              {totalProperties}
-            </div>
-            <div style={{ fontSize: 12, color: 'rgba(255, 255, 255, 0.78)', marginTop: 4 }}>
-              Active in portfolio
-            </div>
-          </div>
-        </Link>
 
-        {/* Card 2: Total Rented */}
-        <Link
-          to="/owner/units?status=OCCUPIED"
-          className="gfh-dash-card"
-          style={{ background: '#10B981' }}
-          title="View occupied units"
-        >
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <span style={{ fontSize: 13, fontWeight: 600, color: 'rgba(255, 255, 255, 0.88)' }}>
-              Total Rented
-            </span>
-            <div style={{
-              width: 34,
-              height: 34,
-              borderRadius: 8,
-              background: 'rgba(255, 255, 255, 0.2)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}>
-              <Icon path={icons.key} size={17} color="#FFFFFF" />
+            <div style={{ marginTop: 14 }}>
+              <div className="gfh-kpi-label">{card.label}</div>
+              <div className="gfh-kpi-value-row">
+                {card.prefix ? <span className="gfh-kpi-prefix">{card.prefix}</span> : null}
+                <span
+                  className="gfh-kpi-value"
+                  style={{ fontSize: String(card.value).length > 9 ? 22 : 28 }}
+                >
+                  {card.value}
+                </span>
+              </div>
+              <div className="gfh-kpi-hint">{card.hint}</div>
             </div>
-          </div>
-          <div style={{ marginTop: 14 }}>
-            <div style={{ fontSize: 28, fontWeight: 800, lineHeight: 1.1, color: '#FFFFFF' }}>
-              {totalRented}
-            </div>
-            <div style={{ fontSize: 12, color: 'rgba(255, 255, 255, 0.78)', marginTop: 4 }}>
-              Occupied units
-            </div>
-          </div>
-        </Link>
-
-        {/* Card 3: Vacant Properties */}
-        <Link
-          to="/owner/vacant-units"
-          className="gfh-dash-card"
-          style={{ background: '#334155' }}
-          title="View vacant properties"
-        >
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <span style={{ fontSize: 13, fontWeight: 600, color: 'rgba(255, 255, 255, 0.88)' }}>
-              Vacant Properties
-            </span>
-            <div style={{
-              width: 34,
-              height: 34,
-              borderRadius: 8,
-              background: 'rgba(255, 255, 255, 0.2)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}>
-              <Icon path={icons.door} size={17} color="#FFFFFF" />
-            </div>
-          </div>
-          <div style={{ marginTop: 14 }}>
-            <div style={{ fontSize: 28, fontWeight: 800, lineHeight: 1.1, color: '#FFFFFF' }}>
-              {vacantUnits}
-            </div>
-            <div style={{ fontSize: 12, color: 'rgba(255, 255, 255, 0.78)', marginTop: 4 }}>
-              Ready for lease
-            </div>
-          </div>
-        </Link>
-
-        {/* Card 4: Rent Collection */}
-        <Link
-          to="/owner/payments"
-          className="gfh-dash-card"
-          style={{ background: '#D97706' }}
-          title="View rent collection & payments"
-        >
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <span style={{ fontSize: 13, fontWeight: 600, color: 'rgba(255, 255, 255, 0.88)' }}>
-              Rent Collection
-            </span>
-            <div style={{
-              width: 34,
-              height: 34,
-              borderRadius: 8,
-              background: 'rgba(255, 255, 255, 0.2)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}>
-              <Icon path={icons.cash} size={17} color="#FFFFFF" />
-            </div>
-          </div>
-          <div style={{ marginTop: 14 }}>
-            <div style={{ fontSize: 24, fontWeight: 800, lineHeight: 1.1, color: '#FFFFFF' }}>
-              AED {rentCollectionTotal.toLocaleString()}
-            </div>
-            <div style={{ fontSize: 12, color: 'rgba(255, 255, 255, 0.78)', marginTop: 4 }}>
-              Current month
-            </div>
-          </div>
-        </Link>
+          </Link>
+        ))}
       </div>
 
-      {/* ── MIDDLE ROW: Occupancy Overview & Quick Actions ───────────────── */}
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
-        gap: 20,
-        marginBottom: 20,
-      }}>
-        {/* OCCUPANCY OVERVIEW CARD */}
-        <div className="gfh-dash-panel">
-          <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10, marginBottom: 20 }}>
-            <div style={{ color: '#475569', marginTop: 2 }}>
-              <Icon path={icons.pie} size={17} />
+      {/* Charts */}
+      <div className="gfh-mid-row">
+        <Panel
+          title="Revenue Overview"
+          subtitle="Rental income collected"
+          action={(
+            <div
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 6,
+                border: `1px solid ${THEME.border}`,
+                borderRadius: 999,
+                padding: '6px 12px',
+                background: '#F8FAFC',
+                position: 'relative',
+              }}
+            >
+              <select
+                value={revenueRange}
+                onChange={e => setRevenueRange(e.target.value as 'ytd' | '12m')}
+                style={{
+                  appearance: 'none',
+                  border: 'none',
+                  background: 'transparent',
+                  fontSize: 12.5,
+                  fontWeight: 600,
+                  color: THEME.ink,
+                  paddingRight: 14,
+                  outline: 'none',
+                  cursor: 'pointer',
+                  fontFamily: 'var(--font-sans)',
+                }}
+              >
+                <option value="12m">Last 12 Months</option>
+                <option value="ytd">Year to Date</option>
+              </select>
+              <span style={{ position: 'absolute', right: 10, pointerEvents: 'none', color: THEME.textMuted }}>
+                <Icon path={icons.chevronDown} size={12} />
+              </span>
             </div>
-            <div>
-              <h2 style={{ fontSize: 15, fontWeight: 700, color: '#0F172A', margin: 0 }}>
-                Occupancy Overview
-              </h2>
-              <div style={{ fontSize: 12, color: '#64748B', marginTop: 2 }}>
-                Current portfolio utilization
-              </div>
-            </div>
-          </div>
-
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-around',
-            flexWrap: 'wrap',
-            gap: 24,
-            paddingTop: 6,
-          }}>
-            {/* Donut Gauge */}
-            <div style={{ position: 'relative', width: 110, height: 110, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <svg width="110" height="110" viewBox="0 0 100 100" style={{ transform: 'rotate(-90deg)' }}>
-                {/* Background Track */}
-                <circle
-                  cx="50"
-                  cy="50"
-                  r={circleRadius}
-                  fill="transparent"
-                  stroke="#E2E8F0"
-                  strokeWidth="11"
+          )}
+        >
+          <div style={{ width: '100%', height: 260 }}>
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={revenueChartData} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
+                <CartesianGrid stroke="#F1F5F9" vertical={false} />
+                <XAxis
+                  dataKey="month"
+                  tick={{ fill: THEME.textMuted, fontSize: 12, fontWeight: 500 }}
+                  tickLine={false}
+                  axisLine={false}
                 />
-                {/* Occupied Progress */}
+                <YAxis
+                  tick={{ fill: THEME.textMuted, fontSize: 11, fontWeight: 500 }}
+                  tickLine={false}
+                  axisLine={false}
+                  tickFormatter={formatAxisAmount}
+                  width={42}
+                />
+                <Tooltip
+                  formatter={(value) => [aed(Number(value ?? 0)), 'Revenue']}
+                  contentStyle={{
+                    borderRadius: 10,
+                    border: `1px solid ${THEME.border}`,
+                    boxShadow: '0 4px 12px rgba(15, 23, 42, 0.08)',
+                    fontSize: 12,
+                  }}
+                  cursor={{ fill: 'rgba(16, 185, 129, 0.06)' }}
+                />
+                <Bar dataKey="revenue" radius={[6, 6, 0, 0]} maxBarSize={36}>
+                  {revenueChartData.map((_, i) => (
+                    <Cell key={i} fill="#10B981" />
+                  ))}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </Panel>
+
+        <Panel title="Occupancy Overview" subtitle="Current portfolio utilization">
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: 28,
+              flexWrap: 'wrap',
+              minHeight: 240,
+            }}
+          >
+            <div style={{ position: 'relative', width: 150, height: 150 }}>
+              <svg width="150" height="150" viewBox="0 0 140 140">
+                <circle cx="70" cy="70" r={circleR} fill="none" stroke="#E2E8F0" strokeWidth="14" />
                 <circle
-                  cx="50"
-                  cy="50"
-                  r={circleRadius}
-                  fill="transparent"
+                  cx="70"
+                  cy="70"
+                  r={circleR}
+                  fill="none"
                   stroke="#10B981"
-                  strokeWidth="11"
-                  strokeDasharray={circleCircumference}
-                  strokeDashoffset={circleOffset}
+                  strokeWidth="14"
+                  strokeDasharray={circleC}
+                  strokeDashoffset={occOffset}
                   strokeLinecap="round"
+                  transform="rotate(-90 70 70)"
                   style={{ transition: 'stroke-dashoffset 0.6s ease' }}
                 />
               </svg>
-              {/* Centered Percentage */}
-              <div style={{ position: 'absolute', textAlign: 'center' }}>
-                <div style={{ fontSize: 20, fontWeight: 800, color: '#0F172A', lineHeight: 1 }}>
+              <div
+                style={{
+                  position: 'absolute',
+                  inset: 0,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                <div style={{ fontSize: 28, fontWeight: 700, color: THEME.ink, letterSpacing: '-0.03em', lineHeight: 1 }}>
                   {occupancyPercent}%
                 </div>
-                <div style={{ fontSize: 10, fontWeight: 600, color: '#64748B', textTransform: 'uppercase', marginTop: 2 }}>
+                <div style={{ fontSize: 12, fontWeight: 600, color: THEME.textMuted, marginTop: 4 }}>
                   Occupied
                 </div>
               </div>
             </div>
 
-            {/* Metrics Breakdown */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: 14, minWidth: 150 }}>
-              {/* Occupied Item */}
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16 }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                  <span style={{ width: 10, height: 10, borderRadius: '50%', background: '#10B981' }} />
-                  <span style={{ fontSize: 13, color: '#475569', fontWeight: 500 }}>Occupied</span>
+              {[
+                { label: 'Occupied Units', value: totalRented, pct: occupancyPercent, color: '#10B981' },
+                { label: 'Vacant Units', value: vacantUnits, pct: vacantPct, color: '#CBD5E1' },
+                { label: 'Total Units', value: totalUnits, pct: null, color: '#94A3B8' },
+              ].map(row => (
+                <div key={row.label}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                      <span style={{ width: 9, height: 9, borderRadius: '50%', background: row.color }} />
+                      <span style={{ fontSize: 13, fontWeight: 500, color: '#475569' }}>{row.label}</span>
+                    </div>
+                    <span style={{ fontSize: 14, fontWeight: 700, color: THEME.ink, fontVariantNumeric: 'tabular-nums' }}>
+                      {row.value}
+                      {row.pct !== null ? (
+                        <span style={{ fontWeight: 600, color: THEME.textMuted, fontSize: 12, marginLeft: 6 }}>
+                          ({row.pct}%)
+                        </span>
+                      ) : null}
+                    </span>
+                  </div>
                 </div>
-                <span style={{ fontSize: 14, fontWeight: 700, color: '#0F172A' }}>
-                  {totalRented} units
-                </span>
-              </div>
-
-              {/* Vacant Item */}
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16 }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                  <span style={{ width: 10, height: 10, borderRadius: '50%', background: '#CBD5E1' }} />
-                  <span style={{ fontSize: 13, color: '#475569', fontWeight: 500 }}>Vacant</span>
-                </div>
-                <span style={{ fontSize: 14, fontWeight: 700, color: '#0F172A' }}>
-                  {vacantUnits} units
-                </span>
-              </div>
-
-              {/* Total Units Item */}
-              <div style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                gap: 16,
-                paddingTop: 8,
-                borderTop: '1px solid #F1F5F9',
-              }}>
-                <span style={{ fontSize: 13, color: '#64748B', fontWeight: 600 }}>Total Portfolio</span>
-                <span style={{ fontSize: 14, fontWeight: 800, color: '#0F172A' }}>
-                  {totalUnits} units
-                </span>
-              </div>
+              ))}
             </div>
           </div>
-        </div>
-
-        {/* QUICK ACTIONS CARD */}
-        <div className="gfh-dash-panel">
-          <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10, marginBottom: 16 }}>
-            <div style={{ color: '#475569', marginTop: 2 }}>
-              <Icon path={icons.bolt} size={17} />
-            </div>
-            <div>
-              <h2 style={{ fontSize: 15, fontWeight: 700, color: '#0F172A', margin: 0 }}>
-                Quick Actions
-              </h2>
-              <div style={{ fontSize: 12, color: '#64748B', marginTop: 2 }}>
-                Common portfolio tasks
-              </div>
-            </div>
-          </div>
-
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-            {/* Action 1: Add New Property */}
-            <Link to="/owner/properties/add" className="gfh-action-row">
-              <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                <div style={{
-                  width: 32,
-                  height: 32,
-                  borderRadius: 8,
-                  background: '#ECFDF8',
-                  color: '#10B981',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}>
-                  <Icon path={icons.building} size={16} />
-                </div>
-                <div>
-                  <div style={{ fontSize: 13, fontWeight: 600, color: '#0F172A' }}>
-                    Add New Property
-                  </div>
-                  <div style={{ fontSize: 11.5, color: '#64748B' }}>
-                    Register a new building to portfolio
-                  </div>
-                </div>
-              </div>
-              <div style={{ color: '#94A3B8' }}>
-                <Icon path={icons.chevron} size={15} />
-              </div>
-            </Link>
-
-            {/* Action 2: View Vacant Units */}
-            <Link to="/owner/vacant-units" className="gfh-action-row">
-              <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                <div style={{
-                  width: 32,
-                  height: 32,
-                  borderRadius: 8,
-                  background: '#F0F9FF',
-                  color: '#0284C7',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}>
-                  <Icon path={icons.door} size={16} />
-                </div>
-                <div>
-                  <div style={{ fontSize: 13, fontWeight: 600, color: '#0F172A' }}>
-                    View Vacant Units
-                  </div>
-                  <div style={{ fontSize: 11.5, color: '#64748B' }}>
-                    Check availability across properties
-                  </div>
-                </div>
-              </div>
-              <div style={{ color: '#94A3B8' }}>
-                <Icon path={icons.chevron} size={15} />
-              </div>
-            </Link>
-
-            {/* Action 3: Review Rent Payments */}
-            <Link to="/owner/payments" className="gfh-action-row">
-              <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                <div style={{
-                  width: 32,
-                  height: 32,
-                  borderRadius: 8,
-                  background: '#FFFBEB',
-                  color: '#D97706',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}>
-                  <Icon path={icons.cash} size={16} />
-                </div>
-                <div>
-                  <div style={{ fontSize: 13, fontWeight: 600, color: '#0F172A' }}>
-                    Review Rent Payments
-                  </div>
-                  <div style={{ fontSize: 11.5, color: '#64748B' }}>
-                    Monitor collections and pending dues
-                  </div>
-                </div>
-              </div>
-              <div style={{ color: '#94A3B8' }}>
-                <Icon path={icons.chevron} size={15} />
-              </div>
-            </Link>
-          </div>
-        </div>
+        </Panel>
       </div>
 
-      {/* ── BOTTOM ROW: Portfolio Trends & Recent Activity ──────────────────── */}
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
-        gap: 20,
-      }}>
-        {/* PORTFOLIO TRENDS CARD (Real Database Monthly Collection) */}
-        <div className="gfh-dash-panel" style={{ position: 'relative' }}>
-          <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 16 }}>
-            <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10 }}>
-              <div style={{ color: '#475569', marginTop: 2 }}>
-                <Icon path={icons.trending} size={17} />
-              </div>
-              <div>
-                <h2 style={{ fontSize: 15, fontWeight: 700, color: '#0F172A', margin: 0 }}>
-                  Portfolio Trends
-                </h2>
-                <div style={{ fontSize: 12, color: '#64748B', marginTop: 2 }}>
-                  Monthly rent collection ({currentYear})
-                </div>
-              </div>
-            </div>
-            <div style={{ fontSize: 12, fontWeight: 700, color: '#059669', background: '#ECFDF5', border: '1px solid #A7F3D0', padding: '3px 8px', borderRadius: 6 }}>
-              Total: AED {monthlyTotals.reduce((a, b) => a + b, 0).toLocaleString()}
-            </div>
-          </div>
-
-          {/* Monthly Bar Chart with Real Data & Tooltips */}
-          <div style={{ width: '100%', height: 180, display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', paddingTop: 10, position: 'relative' }}>
-            {/* Floating Tooltip when hovering over a bar */}
-            {hoveredBarIndex !== null && (
-              <div
-                style={{
-                  position: 'absolute',
-                  top: 0,
-                  left: '50%',
-                  transform: 'translateX(-50%)',
-                  background: '#0F172A',
-                  color: '#FFFFFF',
-                  padding: '6px 12px',
-                  borderRadius: 8,
-                  fontSize: 12,
-                  fontWeight: 600,
-                  boxShadow: '0 4px 12px rgba(15, 23, 42, 0.15)',
-                  zIndex: 10,
-                  pointerEvents: 'none',
-                  whiteSpace: 'nowrap',
-                }}
+      {/* Bottom lists */}
+      <div className="gfh-lists-row">
+        <Panel
+          title="My Properties"
+          subtitle="Portfolio snapshot"
+          action={<Link to="/owner/portfolio" className="gfh-view-all">View All <Icon path={icons.arrowRight} size={12} /></Link>}
+        >
+          {propertyRows.length === 0 ? (
+            <div className="gfh-empty">No properties yet</div>
+          ) : (
+            propertyRows.map(prop => (
+              <Link
+                key={prop.id}
+                to={`/owner/properties/${prop.id}`}
+                className="gfh-list-row"
+                style={{ textDecoration: 'none', color: 'inherit' }}
               >
-                {monthlyTrends[hoveredBarIndex].fullName}:{' '}
-                <span style={{ color: '#34D399', fontWeight: 700 }}>
-                  AED {monthlyTrends[hoveredBarIndex].value.toLocaleString()}
-                </span>
-                {monthlyTrends[hoveredBarIndex].count > 0 && (
-                  <span style={{ color: '#94A3B8', fontSize: 11, marginLeft: 6 }}>
-                    ({monthlyTrends[hoveredBarIndex].count} {monthlyTrends[hoveredBarIndex].count === 1 ? 'record' : 'records'})
-                  </span>
-                )}
-              </div>
-            )}
-
-            {/* Bars container */}
-            <div style={{
-              display: 'flex',
-              alignItems: 'flex-end',
-              justifyContent: 'space-between',
-              height: 140,
-              borderBottom: '1px solid #E2E8F0',
-              paddingBottom: 6,
-            }}>
-              {monthlyTrends.map((item, idx) => (
-                <div
-                  key={item.month}
-                  className="gfh-bar-col"
-                  onMouseEnter={() => setHoveredBarIndex(idx)}
-                  onMouseLeave={() => setHoveredBarIndex(null)}
+                <img
+                  src={getDefaultUnitImageUrl(prop.imageType)}
+                  alt={prop.name}
                   style={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    flex: 1,
-                    height: '100%',
-                    justifyContent: 'flex-end',
-                    cursor: 'pointer',
-                    position: 'relative',
+                    width: 44,
+                    height: 44,
+                    borderRadius: 10,
+                    objectFit: 'cover',
+                    background: '#F1F5F9',
+                    border: `1px solid ${THEME.border}`,
+                    flexShrink: 0,
                   }}
-                  title={`${item.month}: AED ${item.value.toLocaleString()}`}
-                >
-                  <div
-                    className="gfh-bar-rect"
-                    style={{
-                      width: '55%',
-                      maxWidth: 16,
-                      minWidth: 8,
-                      height: `${item.height}px`,
-                      background: item.value > 0 ? (idx === currentMonthIndex ? '#059669' : '#10B981') : '#E2E8F0',
-                      borderRadius: '3px 3px 0 0',
-                      transition: 'background 0.2s ease, height 0.3s ease',
-                    }}
+                />
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ fontSize: 13.5, fontWeight: 700, color: THEME.ink, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                    {prop.name}
+                  </div>
+                  <div style={{ fontSize: 12, color: THEME.textMuted, marginTop: 2, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                    {prop.address}
+                  </div>
+                </div>
+                <div style={{ textAlign: 'right', flexShrink: 0 }}>
+                  <div style={{ fontSize: 12, fontWeight: 600, color: '#475569', marginBottom: 4 }}>
+                    {prop.total} units
+                  </div>
+                  <StatusPill
+                    label={`${prop.occupancy}%`}
+                    tone={prop.occupancy >= 90 ? 'green' : prop.occupancy >= 50 ? 'amber' : 'red'}
                   />
                 </div>
-              ))}
-            </div>
+              </Link>
+            ))
+          )}
+        </Panel>
 
-            {/* X-Axis Month Labels */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 8 }}>
-              {monthlyTrends.map((item, idx) => (
-                <span
-                  key={item.month}
-                  style={{
-                    flex: 1,
-                    textAlign: 'center',
-                    fontSize: 11,
-                    fontWeight: idx === currentMonthIndex ? 700 : 600,
-                    color: idx === currentMonthIndex ? '#10B981' : '#94A3B8',
-                  }}
-                >
-                  {item.month}
-                </span>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* RECENT ACTIVITY CARD (Strictly from Database) */}
-        <div className="gfh-dash-panel">
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 9 }}>
-              <div style={{ color: '#475569' }}>
-                <Icon path={icons.clock} size={16} />
-              </div>
-              <h2 style={{ fontSize: 15, fontWeight: 700, color: '#0F172A', margin: 0 }}>
-                Recent Activity
-              </h2>
-            </div>
-            <Link
-              to="/owner/contracts"
-              style={{
-                fontSize: 12.5,
-                fontWeight: 600,
-                color: '#10B981',
-                textDecoration: 'none',
-                display: 'flex',
-                alignItems: 'center',
-                gap: 2,
-              }}
-            >
-              View all &gt;
-            </Link>
-          </div>
-
-          <div style={{ display: 'flex', flexDirection: 'column' }}>
-            {recentActivities.length === 0 ? (
-              <div style={{ textAlign: 'center', padding: '36px 12px', color: '#64748B' }}>
-                <div style={{ fontSize: 13, fontWeight: 600, color: '#0F172A', marginBottom: 4 }}>
-                  No recent activity recorded
-                </div>
-                <div style={{ fontSize: 12, color: '#94A3B8' }}>
-                  Portfolio contracts, collections, and updates will appear here in real time.
-                </div>
-              </div>
-            ) : (
-              recentActivities.map(item => (
-                <Link key={item.id} to={item.link} className="gfh-activity-row">
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                    <div style={{
-                      width: 32,
-                      height: 32,
+        <Panel
+          title="Recent Payments"
+          subtitle="Latest collections"
+          action={<Link to="/owner/payments" className="gfh-view-all">View All <Icon path={icons.arrowRight} size={12} /></Link>}
+        >
+          {recentPayments.length === 0 ? (
+            <div className="gfh-empty">No payments recorded</div>
+          ) : (
+            recentPayments.map((p, i) => {
+              const name = p.tenant?.name || p.contract?.tenant?.name || 'Tenant'
+              const unitLabel = [
+                p.contract?.unit?.property?.name,
+                p.contract?.unit?.number ? `Unit ${p.contract.unit.number}` : null,
+              ].filter(Boolean).join(' · ') || '—'
+              const status = paymentTone(p.status, p.type)
+              const color = AVATAR_COLORS[i % AVATAR_COLORS.length]
+              return (
+                <div key={p.id} className="gfh-list-row">
+                  <div
+                    style={{
+                      width: 40,
+                      height: 40,
                       borderRadius: '50%',
-                      background: item.iconBg,
-                      color: item.iconColor,
+                      background: `${color}18`,
+                      color,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: 12,
+                      fontWeight: 700,
+                      flexShrink: 0,
+                    }}
+                  >
+                    {initials(name)}
+                  </div>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ fontSize: 13.5, fontWeight: 700, color: THEME.ink }}>{name}</div>
+                    <div style={{ fontSize: 12, color: THEME.textMuted, marginTop: 2, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                      {unitLabel}
+                    </div>
+                  </div>
+                  <div style={{ textAlign: 'right', flexShrink: 0 }}>
+                    <div style={{ fontSize: 13, fontWeight: 700, color: THEME.ink, fontVariantNumeric: 'tabular-nums' }}>
+                      {aed(parseFloat(String(p.amount)) || 0)}
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 6, marginTop: 4 }}>
+                      <span style={{ fontSize: 11, color: THEME.textMuted }}>
+                        {formatDate(p.payment_date || p.date || p.created_at)}
+                      </span>
+                      <StatusPill label={status.label} tone={status.tone} />
+                    </div>
+                  </div>
+                </div>
+              )
+            })
+          )}
+        </Panel>
+
+        <Panel
+          title="Maintenance Requests"
+          subtitle="Open tickets & updates"
+          action={<Link to="/owner/complaints" className="gfh-view-all">View All <Icon path={icons.arrowRight} size={12} /></Link>}
+        >
+          {recentComplaints.length === 0 ? (
+            <div className="gfh-empty">No maintenance requests</div>
+          ) : (
+            recentComplaints.map(c => {
+              const visual = complaintVisual(c.status, c.category)
+              const place = [
+                c.unit?.property?.name,
+                c.unit?.number ? `Unit ${c.unit.number}` : null,
+              ].filter(Boolean).join(' · ') || '—'
+              return (
+                <div key={c.id} className="gfh-list-row">
+                  <div
+                    style={{
+                      width: 40,
+                      height: 40,
+                      borderRadius: 10,
+                      background: visual.iconBg,
+                      color: visual.iconColor,
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
                       flexShrink: 0,
-                    }}>
-                      <Icon path={item.icon} size={15} />
+                    }}
+                  >
+                    <Icon path={visual.icon} size={18} />
+                  </div>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ fontSize: 13.5, fontWeight: 700, color: THEME.ink, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                      {c.title || 'Maintenance request'}
                     </div>
-                    <div>
-                      <div className="gfh-act-title" style={{ fontSize: 13, fontWeight: 600, color: '#0F172A', transition: 'color 0.15s ease' }}>
-                        {item.title}
-                      </div>
-                      <div style={{ fontSize: 11.5, color: '#64748B', marginTop: 1 }}>
-                        {item.sub} {item.timeAgo ? `• ${item.timeAgo}` : ''}
-                      </div>
+                    <div style={{ fontSize: 12, color: THEME.textMuted, marginTop: 2 }}>
+                      {place}
                     </div>
                   </div>
-                  <div style={{ color: '#94A3B8', display: 'flex', alignItems: 'center' }}>
-                    <Icon path={icons.chevron} size={15} />
+                  <div style={{ textAlign: 'right', flexShrink: 0 }}>
+                    <div style={{ fontSize: 11, color: THEME.textMuted, marginBottom: 4 }}>
+                      {formatDate(c.created_at)}
+                    </div>
+                    <StatusPill label={visual.label} tone={visual.tone} />
                   </div>
-                </Link>
-              ))
-            )}
-          </div>
-        </div>
+                </div>
+              )
+            })
+          )}
+        </Panel>
       </div>
     </div>
   )

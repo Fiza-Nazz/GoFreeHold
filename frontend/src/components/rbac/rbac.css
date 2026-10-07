@@ -1,123 +1,21 @@
 /* ============================================================
-   RBAC Staff Portal (Cashier / Accountant / Staff) — Enterprise SaaS UI
+   RBAC Staff page helpers — layout width matches PortalLayout
    ============================================================ */
-.rbac-shell {
-  display: flex;
-  min-height: 100vh;
-  background: #F6F8FA;
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  color: #0F172A;
-}
-
-.rbac-sidebar {
-  width: 256px;
-  background: #FFFFFF;
-  color: #0F172A;
-  padding: 24px 16px;
-  box-sizing: border-box;
-  flex-shrink: 0;
-  border-right: 1px solid #E2E8F0;
-}
-
-.rbac-sidebar strong {
-  font-size: 19px;
-  font-weight: 800;
-  letter-spacing: -0.015em;
-  display: block;
-  color: #10B981;
-}
-
-.rbac-sidebar small {
-  display: block;
-  text-transform: uppercase;
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  margin: 4px 0 24px;
-  color: #64748B;
-}
-
-.rbac-sidebar a {
-  display: block;
-  color: #334155;
-  text-decoration: none;
-  padding: 10px 14px;
-  border-radius: 8px;
-  margin: 3px 0;
-  font-size: 14px;
-  font-weight: 500;
-  line-height: 1.45;
-  transition: background 0.15s ease, color 0.15s ease;
-}
-
-.rbac-sidebar a:hover {
-  background: #ECFDF5;
-  color: #059669;
-}
-
-.rbac-sidebar a.active {
-  background: #10B981;
-  color: #FFFFFF;
-  font-weight: 600;
-  box-shadow: 0 2px 6px rgba(16, 185, 129, 0.25);
-}
-
-.rbac-main {
-  flex: 1;
-  min-width: 0;
-  background: #F6F8FA;
-  display: flex;
-  flex-direction: column;
-}
-
-/* Spacious outer padding when shared Admin/Owner pages (.gfh-portal-page) render inside StaffLayout */
-.rbac-main > .gfh-portal-page {
-  padding: 28px 32px !important;
-  max-width: 1480px;
-  width: 100%;
-  margin: 0 auto;
-  box-sizing: border-box;
-}
-
-.rbac-header {
-  background: #FFFFFF;
-  border-bottom: 1px solid #E2E8F0;
-  padding: 16px 32px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 16px;
-  flex-wrap: wrap;
-  color: #0F172A;
-  font-size: 14px;
-}
-
-.rbac-header button {
-  padding: 8px 16px;
-  background: #10B981;
-  color: #FFFFFF;
-  border: none;
-  border-radius: 8px;
-  font-size: 13px;
-  font-weight: 600;
-  cursor: pointer;
-  box-shadow: 0 1px 2px rgba(16, 185, 129, 0.2);
-}
 
 .rbac-page {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family: var(--font-sans);
   color: #0F172A;
-  max-width: 1440px;
   width: 100%;
-  margin: 0 auto;
-  padding: 28px 32px;
+  max-width: none;
+  margin: 0;
+  padding: 0;
   min-width: 0;
   box-sizing: border-box;
 }
 
 .rbac-page h1 {
   font-size: 26px;
-  font-weight: 700;
+  font-weight: 600;
   color: #0F172A;
   letter-spacing: -0.02em;
   margin: 0 0 8px;
@@ -286,7 +184,7 @@
 .rbac-stat strong {
   display: block;
   font-size: 24px;
-  font-weight: 700;
+  font-weight: 600;
   color: #0F172A;
   margin-top: 8px;
   overflow-wrap: anywhere;
@@ -304,30 +202,6 @@
 }
 
 @media (max-width: 760px) {
-  .rbac-shell {
-    display: block;
-  }
-  .rbac-sidebar {
-    width: 100%;
-    padding: 16px;
-  }
-  .rbac-sidebar nav {
-    display: flex;
-    flex-wrap: wrap;
-  }
-  .rbac-sidebar small {
-    margin: 5px 0;
-  }
-  .rbac-sidebar a {
-    padding: 8px 10px;
-  }
-  .rbac-page,
-  .rbac-main > .gfh-portal-page {
-    padding: 16px !important;
-  }
-  .rbac-panel {
-    padding: 16px;
-  }
   .rbac-form {
     grid-template-columns: 1fr;
   }

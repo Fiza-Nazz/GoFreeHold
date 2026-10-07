@@ -65,7 +65,7 @@ export default function ContractCallLogPage() {
 
   const labelStyle: React.CSSProperties = {
     fontSize: 10.5,
-    fontWeight: 700,
+    fontWeight: 600,
     color: THEME.purpleMid,
     textTransform: 'uppercase',
     letterSpacing: '0.3px',
@@ -74,13 +74,13 @@ export default function ContractCallLogPage() {
   }
 
   return (
-    <div className="gfh-portal-page" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
+    <div className="gfh-portal-page" style={{ fontFamily: "'Source Sans Pro', system-ui, sans-serif" }}>
       <style>{portalPageCss}</style>
 
       <div className="fade-in" style={heroStyle}>
         <CornerBrackets />
         <div>
-          <h1 style={{ fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", fontSize: 30, fontWeight: 700, color: THEME.ink, margin: 0 }}>
+          <h1 style={{ fontFamily: "'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", fontSize: 30, fontWeight: 600, color: THEME.ink, margin: 0 }}>
             Contract Call Logs
           </h1>
           <p style={{ fontSize: 14, color: THEME.textMuted, marginTop: 8, marginBottom: 0 }}>
@@ -135,9 +135,9 @@ export default function ContractCallLogPage() {
               >
                 <div style={{ flex: 1 }}>
                   <div style={{ display: 'flex', gap: 14, alignItems: 'center', marginBottom: 6, flexWrap: 'wrap' }}>
-                    <span style={{ fontSize: 11.5, color: THEME.textMuted, fontWeight: 700 }}>Contract: GFH-{String(log.contract_id).padStart(5,'0')}</span>
-                    <span style={{ fontSize: 11.5, color: THEME.textMuted, fontWeight: 700 }}>{formatDate(log.date)}</span>
-                    {log.logged_by && <span style={{ fontSize: 11.5, color: THEME.textMuted, fontWeight: 700 }}>By: {log.logged_by.name}</span>}
+                    <span style={{ fontSize: 11.5, color: THEME.textMuted, fontWeight: 600 }}>Contract: GFH-{String(log.contract_id).padStart(5,'0')}</span>
+                    <span style={{ fontSize: 11.5, color: THEME.textMuted, fontWeight: 600 }}>{formatDate(log.date)}</span>
+                    {log.logged_by && <span style={{ fontSize: 11.5, color: THEME.textMuted, fontWeight: 600 }}>By: {log.logged_by.name}</span>}
                   </div>
                   <p style={{ fontSize: 13, color: THEME.ink, margin: 0, fontWeight: 500 }}>{log.remark}</p>
                 </div>
@@ -150,7 +150,7 @@ export default function ContractCallLogPage() {
                     gap: 4,
                     padding: '4px 10px',
                     fontSize: 11.5,
-                    fontWeight: 700,
+                    fontWeight: 600,
                     alignSelf: 'flex-start',
                     borderRadius: 8,
                     border: 'none',
@@ -172,7 +172,7 @@ export default function ContractCallLogPage() {
         <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(20,5,40,0.55)', backdropFilter: 'blur(2px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
           <div style={{ position: 'relative', width: 420, padding: 24, background: '#fff', borderRadius: 8, border: `1px solid ${THEME.border}` }}>
             <CornerBrackets />
-            <h2 style={{ fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", color: THEME.purple, fontSize: 19, fontWeight: 700, marginBottom: 16 }}>Log a Call</h2>
+            <h2 style={{ fontFamily: "'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", color: THEME.purple, fontSize: 19, fontWeight: 600, marginBottom: 16 }}>Log a Call</h2>
             <form onSubmit={handleCreate} style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
                 <div>
@@ -193,7 +193,7 @@ export default function ContractCallLogPage() {
                   type="button"
                   className="gfh-portal-btn"
                   onClick={() => setIsFormOpen(false)}
-                  style={{ padding: '8px 15px', borderRadius: 8, border: `1px solid ${THEME.border}`, background: '#fff', color: THEME.textMuted, cursor: 'pointer', fontWeight: 700, fontSize: 12.5 }}
+                  style={{ padding: '8px 15px', borderRadius: 8, border: `1px solid ${THEME.border}`, background: '#fff', color: THEME.textMuted, cursor: 'pointer', fontWeight: 600, fontSize: 12.5 }}
                 >
                   Cancel
                 </button>

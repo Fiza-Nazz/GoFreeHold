@@ -26,13 +26,13 @@ export default function MaintenanceProfile() {
   ]
 
   return (
-    <div className="gfh-portal-page" style={{ fontFamily: "'Inter', system-ui, sans-serif", background: THEME.pageBg }}>
+    <div className="gfh-portal-page" style={{ fontFamily: "'Source Sans Pro', system-ui, sans-serif", background: THEME.pageBg }}>
       <style>{portalPageCss}</style>
 
       <div className="fade-in" style={heroStyle}>
         <div>
           <div style={{ fontSize: 13, color: THEME.textMuted, fontWeight: 600 }}>My Profile</div>
-          <div style={{ fontSize: 22, fontWeight: 800, color: THEME.ink, marginTop: 4 }}>Account details</div>
+          <div style={{ fontSize: 22, fontWeight: 600, color: THEME.ink, marginTop: 4 }}>Account details</div>
           <div style={{ fontSize: 12, color: '#9ca3af', marginTop: 4 }}>Your maintenance account information</div>
         </div>
       </div>
@@ -62,14 +62,14 @@ export default function MaintenanceProfile() {
               justifyContent: 'center',
               color: '#fff',
               fontSize: 22,
-              fontWeight: 800,
+              fontWeight: 600,
               boxShadow: '0 2px 8px rgba(14, 94, 72, 0.25)',
             }}
           >
             {initials}
           </div>
           <div>
-            <div style={{ fontSize: 20, fontWeight: 800, color: THEME.ink }}>
+            <div style={{ fontSize: 20, fontWeight: 600, color: THEME.ink }}>
               {user?.name || '—'}
             </div>
             <div style={{ fontSize: 13.5, color: THEME.textMuted, marginTop: 4 }}>{user?.email || '—'}</div>
@@ -83,7 +83,7 @@ export default function MaintenanceProfile() {
                 color: '#065f46',
                 border: '1px solid #bbf7d0',
                 fontSize: 11,
-                fontWeight: 700,
+                fontWeight: 600,
                 letterSpacing: '0.4px',
                 textTransform: 'uppercase',
               }}
@@ -113,11 +113,11 @@ export default function MaintenanceProfile() {
                 <div style={{ width: 38, height: 38, borderRadius: 8, background: '#ECFDF8', color: '#10B981', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <Icon path={row.icon} size={18} />
                 </div>
-                <div style={{ fontSize: 12, color: THEME.textMuted, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.3px' }}>
+                <div style={{ fontSize: 12, color: THEME.textMuted, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.3px' }}>
                   {row.label}
                 </div>
               </div>
-              <div style={{ fontSize: 14, fontWeight: 700, color: THEME.ink, textAlign: 'right' }}>{row.value}</div>
+              <div style={{ fontSize: 14, fontWeight: 600, color: THEME.ink, textAlign: 'right' }}>{row.value}</div>
             </div>
           ))}
         </div>

@@ -110,7 +110,7 @@ const panelInputStyle: React.CSSProperties = {
 
 const labelStyle: React.CSSProperties = {
   fontSize: 12.5,
-  fontWeight: 800,
+  fontWeight: 600,
   color: THEME.purple,
   letterSpacing: '0.5px',
   textTransform: 'uppercase',
@@ -440,13 +440,13 @@ export default function SettlementWizard() {
   const selectedContract = activeContracts.find(c => String(c.id) === formData.contract_id)
 
   return (
-    <div className="gfh-portal-page" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
+    <div className="gfh-portal-page" style={{ fontFamily: "'Source Sans Pro', system-ui, sans-serif" }}>
       <style>{portalPageCss}</style>
 
       <div className="fade-in" style={heroStyle}>
         <CornerBrackets />
         <div>
-          <h1 style={{ fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", fontSize: 30, fontWeight: 700, color: THEME.ink, margin: 0 }}>
+          <h1 style={{ fontFamily: "'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", fontSize: 30, fontWeight: 600, color: THEME.ink, margin: 0 }}>
             Owner Settlements
           </h1>
           <p style={{ fontSize: 14, color: THEME.textMuted, marginTop: 8, marginBottom: 0 }}>
@@ -484,13 +484,13 @@ export default function SettlementWizard() {
               <tbody>
                 {settlements.map(s => (
                   <tr key={s.id} className="gfh-portal-row" style={{ borderBottom: `1px solid ${THEME.border}` }}>
-                    <td style={{ ...tdStyle, fontWeight: 700, whiteSpace: 'nowrap' }}>
+                    <td style={{ ...tdStyle, fontWeight: 600, whiteSpace: 'nowrap' }}>
                       {s.owner?.name || (s.owner_id ? `Owner #${s.owner_id}` : 'General Settlement')}
                     </td>
                     <td style={{ ...tdStyle, fontSize: 13, fontWeight: 600 }}>
                       {s.contract_id ? (
                         <>
-                          <span style={{ color: THEME.ink, fontWeight: 700 }}>GFH-{String(s.contract_id).padStart(5, '0')}</span>
+                          <span style={{ color: THEME.ink, fontWeight: 600 }}>GFH-{String(s.contract_id).padStart(5, '0')}</span>
                           <br />
                           <span style={{ color: THEME.textMuted, fontWeight: 500, fontSize: 12 }}>
                             {s.contract?.unit?.number || '—'} {s.contract?.unit?.property?.name ? `(${s.contract.unit.property.name})` : ''}
@@ -500,11 +500,11 @@ export default function SettlementWizard() {
                       ) : '—'}
                     </td>
                     <td style={{ ...tdStyle, fontWeight: 600, whiteSpace: 'nowrap' }}>{formatDate(s.vacant_date)}</td>
-                    <td style={{ ...tdStyle, color: '#991b1b', fontWeight: 700, whiteSpace: 'nowrap' }}>AED {Number(s.dues).toLocaleString()}</td>
-                    <td style={{ ...tdStyle, color: '#065f46', fontWeight: 800, whiteSpace: 'nowrap' }}>AED {Number(s.receivable).toLocaleString()}</td>
+                    <td style={{ ...tdStyle, color: '#991b1b', fontWeight: 600, whiteSpace: 'nowrap' }}>AED {Number(s.dues).toLocaleString()}</td>
+                    <td style={{ ...tdStyle, color: '#065f46', fontWeight: 600, whiteSpace: 'nowrap' }}>AED {Number(s.receivable).toLocaleString()}</td>
                     <td style={{ ...tdStyle, whiteSpace: 'nowrap' }}>
                       {s.on_case ? (
-                        <span style={{ backgroundColor: '#fee2e2', color: '#991b1b', border: '1px solid #fecaca', padding: '4px 10px', fontSize: 11, fontWeight: 700, borderRadius: 6, whiteSpace: 'nowrap', display: 'inline-block' }}>
+                        <span style={{ backgroundColor: '#fee2e2', color: '#991b1b', border: '1px solid #fecaca', padding: '4px 10px', fontSize: 11, fontWeight: 600, borderRadius: 6, whiteSpace: 'nowrap', display: 'inline-block' }}>
                           LEGAL CASE ACTIVE
                         </span>
                       ) : (
@@ -512,7 +512,7 @@ export default function SettlementWizard() {
                       )}
                     </td>
                     <td style={{ ...tdStyle, whiteSpace: 'nowrap' }}>
-                      <span style={{ backgroundColor: s.status === 'completed' ? '#f0fdf4' : '#fffbeb', color: s.status === 'completed' ? '#065f46' : '#b45309', border: `1px solid ${s.status === 'completed' ? '#bbf7d0' : '#fde68a'}`, padding: '4px 11px', borderRadius: 8, fontSize: 11.5, fontWeight: 700, letterSpacing: '0.3px', whiteSpace: 'nowrap', display: 'inline-block' }}>
+                      <span style={{ backgroundColor: s.status === 'completed' ? '#f0fdf4' : '#fffbeb', color: s.status === 'completed' ? '#065f46' : '#b45309', border: `1px solid ${s.status === 'completed' ? '#bbf7d0' : '#fde68a'}`, padding: '4px 11px', borderRadius: 8, fontSize: 11.5, fontWeight: 600, letterSpacing: '0.3px', whiteSpace: 'nowrap', display: 'inline-block' }}>
                         {(s.status || '—').toString().toUpperCase()}
                       </span>
                     </td>
@@ -528,7 +528,7 @@ export default function SettlementWizard() {
                             gap: 5,
                             padding: '7px 14px',
                             fontSize: 12,
-                            fontWeight: 700,
+                            fontWeight: 600,
                             borderRadius: 6,
                             border: '1px solid #0284c7',
                             background: '#0284c7',
@@ -552,7 +552,7 @@ export default function SettlementWizard() {
                               gap: 5,
                               padding: '7px 14px',
                               fontSize: 12,
-                              fontWeight: 700,
+                              fontWeight: 600,
                               borderRadius: 6,
                               border: 'none',
                               background: '#10B981',
@@ -585,7 +585,7 @@ export default function SettlementWizard() {
             <div style={{ padding: '20px 26px', borderBottom: '1px solid #e2e8f0', background: '#f8fafc', borderTopLeftRadius: 12, borderTopRightRadius: 12, display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
               <div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
-                  <h2 style={{ fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", fontSize: 21, fontWeight: 800, margin: 0, color: THEME.ink }}>
+                  <h2 style={{ fontFamily: "'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", fontSize: 21, fontWeight: 600, margin: 0, color: THEME.ink }}>
                     {createdSettlement ? `Settlement Management — GFH-${String(createdSettlement.contract_id || createdSettlement.id).padStart(5, '0')}` : 'New Settlement'}
                   </h2>
                   {createdSettlement && (
@@ -596,7 +596,7 @@ export default function SettlementWizard() {
                       padding: '3px 12px',
                       borderRadius: 999,
                       fontSize: 11,
-                      fontWeight: 700,
+                      fontWeight: 600,
                       letterSpacing: '0.4px',
                       whiteSpace: 'nowrap',
                     }}>
@@ -705,7 +705,7 @@ export default function SettlementWizard() {
                   </label>
 
                   <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 10 }}>
-                    <button type="button" className="gfh-portal-btn" onClick={closeModal} style={{ display: 'inline-flex', alignItems: 'center', gap: 7, borderRadius: 8, fontWeight: 700, fontSize: 13.5, padding: '10px 18px', backgroundColor: '#f0fdfa', color: THEME.purple, border: `1px solid ${THEME.border}`, cursor: 'pointer' }}>
+                    <button type="button" className="gfh-portal-btn" onClick={closeModal} style={{ display: 'inline-flex', alignItems: 'center', gap: 7, borderRadius: 8, fontWeight: 600, fontSize: 13.5, padding: '10px 18px', backgroundColor: '#f0fdfa', color: THEME.purple, border: `1px solid ${THEME.border}`, cursor: 'pointer' }}>
                       Cancel
                     </button>
                     <button type="submit" disabled={busy} className="gfh-portal-btn" style={ghostBtnStyle}>
@@ -746,7 +746,7 @@ export default function SettlementWizard() {
 
                       {/* Uploaded Documents List */}
                       <div style={{ marginTop: 16 }}>
-                        <div style={{ fontSize: 12, fontWeight: 700, color: '#64748b', marginBottom: 8 }}>
+                        <div style={{ fontSize: 12, fontWeight: 600, color: '#64748b', marginBottom: 8 }}>
                           Attached Documents:
                         </div>
                         {(!createdSettlement.docs || createdSettlement.docs.length === 0) ? (
@@ -890,10 +890,10 @@ export default function SettlementWizard() {
                           <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12.5 }}>
                             <thead>
                               <tr style={{ borderBottom: '1px solid #e2e8f0', background: '#f8fafc' }}>
-                                <th style={{ padding: '8px 10px', textAlign: 'left', fontWeight: 700, color: '#475569' }}>Date</th>
-                                <th style={{ padding: '8px 10px', textAlign: 'left', fontWeight: 700, color: '#475569' }}>Amount</th>
-                                <th style={{ padding: '8px 10px', textAlign: 'left', fontWeight: 700, color: '#475569' }}>Paymode</th>
-                                <th style={{ padding: '8px 10px', textAlign: 'right', fontWeight: 700, color: '#475569' }}>Action</th>
+                                <th style={{ padding: '8px 10px', textAlign: 'left', fontWeight: 600, color: '#475569' }}>Date</th>
+                                <th style={{ padding: '8px 10px', textAlign: 'left', fontWeight: 600, color: '#475569' }}>Amount</th>
+                                <th style={{ padding: '8px 10px', textAlign: 'left', fontWeight: 600, color: '#475569' }}>Paymode</th>
+                                <th style={{ padding: '8px 10px', textAlign: 'right', fontWeight: 600, color: '#475569' }}>Action</th>
                               </tr>
                             </thead>
                             <tbody>
@@ -902,7 +902,7 @@ export default function SettlementWizard() {
                                   <td style={{ padding: '8px 10px', color: '#1e293b' }}>
                                     {formatDate(p.payment_date)}
                                   </td>
-                                  <td style={{ padding: '8px 10px', fontWeight: 700, color: '#065f46' }}>
+                                  <td style={{ padding: '8px 10px', fontWeight: 600, color: '#065f46' }}>
                                     AED {Number(p.amount).toFixed(2)}
                                   </td>
                                   <td style={{ padding: '8px 10px', color: '#475569', textTransform: 'capitalize' }}>
@@ -934,15 +934,15 @@ export default function SettlementWizard() {
                     <div style={{ background: '#f59e0b', padding: '10px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#0f172a' }}>
                         <Icon path={icons.gavel} size={18} />
-                        <span style={{ fontSize: 14, fontWeight: 800, color: '#0f172a', letterSpacing: '0.2px' }}>Case Details</span>
+                        <span style={{ fontSize: 14, fontWeight: 600, color: '#0f172a', letterSpacing: '0.2px' }}>Case Details</span>
                       </div>
                       <div>
                         {caseStatus === 'active' || createdSettlement.on_case ? (
-                          <span style={{ background: '#dc2626', color: '#ffffff', padding: '4px 12px', borderRadius: 4, fontSize: 11.5, fontWeight: 700, whiteSpace: 'nowrap' }}>
+                          <span style={{ background: '#dc2626', color: '#ffffff', padding: '4px 12px', borderRadius: 4, fontSize: 11.5, fontWeight: 600, whiteSpace: 'nowrap' }}>
                             Active Case
                           </span>
                         ) : (
-                          <span style={{ background: '#475569', color: '#ffffff', padding: '4px 12px', borderRadius: 4, fontSize: 11.5, fontWeight: 700, whiteSpace: 'nowrap' }}>
+                          <span style={{ background: '#475569', color: '#ffffff', padding: '4px 12px', borderRadius: 4, fontSize: 11.5, fontWeight: 600, whiteSpace: 'nowrap' }}>
                             No Active Case
                           </span>
                         )}
@@ -988,7 +988,7 @@ export default function SettlementWizard() {
                             border: '1px solid #d97706',
                             borderRadius: 6,
                             padding: '8px 22px',
-                            fontWeight: 800,
+                            fontWeight: 600,
                             fontSize: 13,
                             cursor: 'pointer',
                             boxShadow: '0 1px 2px rgba(217, 119, 6, 0.3)',
@@ -1011,7 +1011,7 @@ export default function SettlementWizard() {
                   type="button"
                   disabled={busy}
                   onClick={() => markCompleted(createdSettlement.id)}
-                  style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '9px 20px', fontWeight: 700, fontSize: 13, borderRadius: 6, border: 'none', background: '#10B981', color: '#fff', cursor: 'pointer', boxShadow: '0 1px 3px rgba(6, 95, 70, 0.3)' }}
+                  style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '9px 20px', fontWeight: 600, fontSize: 13, borderRadius: 6, border: 'none', background: '#10B981', color: '#fff', cursor: 'pointer', boxShadow: '0 1px 3px rgba(6, 95, 70, 0.3)' }}
                 >
                   <Icon path={ICONS.check} size={14} />
                   Mark as Completed (Free Unit)
@@ -1020,7 +1020,7 @@ export default function SettlementWizard() {
               <button
                 type="button"
                 onClick={closeModal}
-                style={{ padding: '9px 22px', fontWeight: 700, fontSize: 13, borderRadius: 6, backgroundColor: '#ffffff', color: '#475569', border: '1px solid #cbd5e1', cursor: 'pointer' }}
+                style={{ padding: '9px 22px', fontWeight: 600, fontSize: 13, borderRadius: 6, backgroundColor: '#ffffff', color: '#475569', border: '1px solid #cbd5e1', cursor: 'pointer' }}
               >
                 Close
               </button>

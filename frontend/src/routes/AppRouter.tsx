@@ -7,8 +7,10 @@ import RegisterPage from '../pages/auth/RegisterPage'
 import ForgotPasswordPage from '../pages/auth/ForgotPasswordPage'
 import ResetPasswordPage from '../pages/auth/ResetPasswordPage'
 
+// ─── Shared portal shell ──────────────────────────────────────────────────────
+import PortalLayout from '../components/layout/PortalLayout'
+
 // ─── Admin Pages ──────────────────────────────────────────────────────────────
-import AdminLayout from '../components/layout/AdminLayout'
 import AdminDashboard from '../pages/admin/Dashboard'
 import BuildingManagement from '../pages/admin/BuildingManagement'
 import AddPropertyPage from '../pages/admin/AddPropertyPage'
@@ -45,9 +47,9 @@ import TermsPage from '../pages/admin/TermsPage'
 import TenancyResPage from '../pages/admin/TenancyResPage'
 
 // ─── Owner Pages ──────────────────────────────────────────────────────────────
-import OwnerLayout from '../components/layout/OwnerLayout'
 import OwnerDashboard from '../pages/owner/Dashboard'
 import PropertyDrillDown from '../pages/owner/PropertyDrillDown'
+import OwnerPropertyBoard from '../pages/owner/OwnerPropertyBoard'
 import VacantUnits from '../pages/owner/VacantUnits'
 import UnitDetailPage from '../pages/owner/UnitDetail'
 import OwnerUnits from '../pages/owner/OwnerUnits'
@@ -56,14 +58,11 @@ import OwnerFinancePage from '../pages/owner/OwnerFinancePage'
 import OwnerComplaints from '../pages/owner/OwnerComplaints'
 
 // ─── Maintenance Pages ────────────────────────────────────────────────────────
-import MaintenanceLayout from '../components/layout/MaintenanceLayout'
-import MaintenanceDashboard from '../pages/maintenance/Dashboard'
 import MaintenanceComplaints from '../pages/maintenance/Complaints'
 import MaintenanceDailyReport from '../pages/maintenance/DailyReport'
 import MaintenanceProfile from '../pages/maintenance/Profile'
 
 // ─── Tenant Pages ─────────────────────────────────────────────────────────────
-import TenantLayout from '../components/layout/TenantLayout'
 import TenantDashboard from '../pages/tenant/Dashboard'
 import TenantDues from '../pages/tenant/Dues'
 import TenantPayments from '../pages/tenant/Payments'
@@ -73,8 +72,8 @@ import TenantProfile from '../pages/tenant/Profile'
 
 // ─── Other ───────────────────────────────────────────────────────────────────
 import NotFound from '../pages/NotFound'
-import StaffLayout from '../components/rbac/StaffLayout'
 import FinancePage from '../pages/staff/FinancePage'
+import PropertyUnitsBoard from '../pages/shared/PropertyUnitsBoard'
 import StaffManagement from '../pages/owner/StaffManagement'
 import StaffActivation from '../pages/auth/StaffActivation'
 import AssignedJobs from '../pages/maintenance/AssignedJobs'
@@ -86,11 +85,12 @@ export default function AppRouter() {
       <Routes>
         <Route path="/staff/activate" element={<StaffActivation />} />
         {(['cashier','accountant'] as const).map(role => <Route key={role} element={<ProtectedRoute allowedRoles={[role]} />}>
-          <Route path={'/'+role} element={<StaffLayout />}>
+          <Route path={'/'+role} element={<PortalLayout />}>
             <Route index element={<Navigate to="dashboard" replace />} />
+            <Route path="portfolio" element={<OwnerPropertyBoard />} />
             <Route path="units" element={<OwnerUnits />} />
-            <Route path="portfolio" element={<OwnerUnits />} />
             <Route path="units/:unitId" element={<UnitDetailPage />} />
+            <Route path="properties/:propertyId" element={<PropertyUnitsBoard />} />
             <Route path="contracts" element={<ContractManagement basePath={'/' + role} />} />
             <Route path="contracts/:id" element={<ContractDetailPage basePath={'/' + role} />} />
             {['dashboard','payments','payments/new','receivables','profile',...(role==='accountant'?['ledger']:[])].map(path=><Route key={path} path={path} element={<FinancePage key={role+'/'+path} />} />)}
@@ -109,7 +109,7 @@ export default function AppRouter() {
 
         {/* ── Admin Routes ──────────────────────────────────────────────── */}
         <Route element={<ProtectedRoute allowedRoles={['admin']} />}>
-          <Route path="/admin" element={<AdminLayout />}>
+          <Route path="/admin" element={<PortalLayout />}>
             <Route index element={<Navigate to="dashboard" replace />} />
             <Route path="dashboard" element={<AdminDashboard />} />
             {/* Stage 3: Property & Unit Management */}
@@ -159,14 +159,15 @@ export default function AppRouter() {
 
         {/* ── Owner Routes ──────────────────────────────────────────────── */}
         <Route element={<ProtectedRoute allowedRoles={['owner']} />}>
-          <Route path="/owner" element={<OwnerLayout />}>
+          <Route path="/owner" element={<PortalLayout />}>
             <Route index element={<Navigate to="dashboard" replace />} />
             <Route path="dashboard" element={<OwnerDashboard />} />
             {/* Stage 3: Property & Unit Management */}
             <Route path="properties" element={<BuildingManagement />} />
             <Route path="properties/add" element={<AddPropertyPage />} />
+            <Route path="properties/:propertyId" element={<PropertyUnitsBoard />} />
             <Route path="buildings" element={<Navigate to="/owner/properties" replace />} />
-            <Route path="portfolio" element={<OwnerUnits />} />
+            <Route path="portfolio" element={<OwnerPropertyBoard />} />
             <Route path="units" element={<OwnerUnits />} />
             <Route path="units/:unitId" element={<UnitDetailPage />} />
             <Route path="vacant-units" element={<VacantUnits />} />
@@ -216,7 +217,7 @@ export default function AppRouter() {
 
         {/* ── Maintenance Routes ────────────────────────────────────────── */}
         <Route element={<ProtectedRoute allowedRoles={['maintenance']} />}>
-          <Route path="/maintenance" element={<MaintenanceLayout />}>
+          <Route path="/maintenance" element={<PortalLayout />}>
             <Route index element={<Navigate to="dashboard" replace />} />
             <Route path="dashboard" element={<AssignedJobs />} />
             <Route path="jobs" element={<AssignedJobs />} />
@@ -228,7 +229,7 @@ export default function AppRouter() {
 
         {/* ── Tenant Routes ─────────────────────────────────────────────── */}
         <Route element={<ProtectedRoute allowedRoles={['tenant']} />}>
-          <Route path="/tenant" element={<TenantLayout />}>
+          <Route path="/tenant" element={<PortalLayout />}>
             <Route index element={<Navigate to="dashboard" replace />} />
             <Route path="dashboard" element={<TenantDashboard />} />
             <Route path="dues" element={<TenantDues />} />

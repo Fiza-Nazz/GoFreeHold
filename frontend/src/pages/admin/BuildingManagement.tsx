@@ -54,7 +54,7 @@ const inputStyle: React.CSSProperties = {
 
 const labelStyle: React.CSSProperties = {
   fontSize: 12,
-  fontWeight: 700,
+  fontWeight: 600,
   color: '#334155',
   letterSpacing: '0.3px',
   textTransform: 'uppercase',
@@ -237,10 +237,10 @@ export default function BuildingManagement() {
   const renderUnitSection = (title: string, units: Unit[]) => (
     <section className="gfh-property-unit-section" aria-labelledby={`${title.toLowerCase()}-units-heading`}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
-        <h3 id={`${title.toLowerCase()}-units-heading`} style={{ margin: 0, color: THEME.ink, fontSize: 16, fontWeight: 800 }}>
+        <h3 id={`${title.toLowerCase()}-units-heading`} style={{ margin: 0, color: THEME.ink, fontSize: 16, fontWeight: 600 }}>
           {title}
         </h3>
-        <span style={{ background: '#ECFDF5', color: '#065F46', borderRadius: 999, padding: '3px 9px', fontSize: 11, fontWeight: 800 }}>
+        <span style={{ background: '#ECFDF5', color: '#065F46', borderRadius: 999, padding: '3px 9px', fontSize: 11, fontWeight: 600 }}>
           {units.length}
         </span>
       </div>
@@ -281,7 +281,7 @@ export default function BuildingManagement() {
 
   if (selectedProperty) {
     return (
-      <div className="gfh-portal-page gfh-property-detail" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
+      <div className="gfh-portal-page gfh-property-detail" style={{ fontFamily: "'Source Sans Pro', system-ui, sans-serif" }}>
         <style>{portalPageCss}</style>
         <style>{`
           .gfh-property-detail { padding: 0; }
@@ -311,7 +311,7 @@ export default function BuildingManagement() {
           }
           .gfh-property-unit-card-heading { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
           .gfh-property-unit-card-heading strong { min-width: 0; flex: 1 1 90px; font-size: 14px; line-height: 1.4; overflow-wrap: anywhere; }
-          .gfh-property-unit-status { flex: 0 0 auto; color: #FFFFFF; border-radius: 6px; padding: 3px 7px; font-size: 9px; font-weight: 800; line-height: 1.5; }
+          .gfh-property-unit-status { flex: 0 0 auto; color: #FFFFFF; border-radius: 6px; padding: 3px 7px; font-size: 9px; font-weight: 600; line-height: 1.5; }
           .gfh-property-unit-card-footer { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; border-top: 1px solid #DCE8EC; margin-top: auto; padding-top: 16px; font-size: 10.5px; }
           .gfh-property-unit-rented { display: inline-flex; align-items: center; gap: 5px; white-space: nowrap; }
           .gfh-property-unit-rent { overflow-wrap: anywhere; }
@@ -322,16 +322,16 @@ export default function BuildingManagement() {
         <div className="gfh-property-detail-panel">
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 16, flexWrap: 'wrap', paddingBottom: 18, borderBottom: '2px solid #10B981' }}>
             <div style={{ minWidth: 0, overflowWrap: 'anywhere' }}>
-              <span style={{ display: 'block', color: '#10B981', fontSize: 11, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.7px' }}>
+              <span style={{ display: 'block', color: '#10B981', fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.7px' }}>
                 Selected Property
               </span>
-              <h2 style={{ margin: '3px 0 4px', color: '#0F172A', fontSize: 22, fontWeight: 800 }}>{selectedProperty.name}</h2>
+              <h2 style={{ margin: '3px 0 4px', color: '#0F172A', fontSize: 22, fontWeight: 600 }}>{selectedProperty.name}</h2>
               <p style={{ margin: 0, color: '#64748B', fontSize: 13 }}>{selectedProperty.address} · {selectedProperty.city}</p>
             </div>
             <button
               type="button"
               onClick={() => { setSelectedProperty(null); setPropertyUnits([]); setStatusMsg('') }}
-              style={{ display: 'inline-flex', alignItems: 'center', gap: 7, padding: '8px 14px', color: '#10B981', background: '#ECFDF5', border: '1px solid #A7F3D0', fontWeight: 800, cursor: 'pointer' }}
+              style={{ display: 'inline-flex', alignItems: 'center', gap: 7, padding: '8px 14px', color: '#10B981', background: '#ECFDF5', border: '1px solid #A7F3D0', fontWeight: 600, cursor: 'pointer' }}
             >
               ← Back to Properties
             </button>
@@ -353,13 +353,13 @@ export default function BuildingManagement() {
   }
 
   return (
-    <div className="gfh-portal-page" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
+    <div className="gfh-portal-page" style={{ fontFamily: "'Source Sans Pro', system-ui, sans-serif" }}>
       <style>{portalPageCss}</style>
       <style>{`
         @keyframes gfhOverlayFade { from { opacity: 0; } to { opacity: 1; } }
         @keyframes gfhModalPop { from { opacity: 0; transform: scale(0.95) translateY(10px); } to { opacity: 1; transform: scale(1) translateY(0); } }
         .gfh-prop-input {
-          font-family: 'Inter', system-ui, sans-serif !important;
+          font-family: 'Source Sans Pro', system-ui, sans-serif !important;
           font-size: 14px !important;
           border: 1px solid #E2E8F0 !important;
           border-radius: 8px !important;
@@ -384,7 +384,7 @@ export default function BuildingManagement() {
           cursor: pointer !important;
           box-shadow: 0 1px 2px rgba(13, 92, 70, 0.18) !important;
           transition: background 0.15s ease, transform 0.15s ease !important;
-          font-family: 'Inter', sans-serif !important;
+          font-family: 'Source Sans Pro', sans-serif !important;
         }
         .gfh-add-prop-btn:hover {
           background: #094635 !important;
@@ -421,7 +421,7 @@ export default function BuildingManagement() {
         }
         .gfh-property-name-cell {
           color: #10B981;
-          font-weight: 700;
+          font-weight: 600;
           cursor: pointer;
           text-decoration: none;
         }
@@ -501,7 +501,7 @@ export default function BuildingManagement() {
           marginBottom: 24,
         }}>
           <div>
-            <h2 style={{ fontSize: 20, fontWeight: 700, color: '#0F172A', margin: 0 }}>Property List</h2>
+            <h2 style={{ fontSize: 20, fontWeight: 600, color: '#0F172A', margin: 0 }}>Property List</h2>
             <p style={{ fontSize: 13, color: '#64748B', margin: '4px 0 0' }}>List Of Entries</p>
           </div>
           <button type="button" className="gfh-add-prop-btn" onClick={() => { setEditingProperty(null); setFormData({ owner_id: '', name: '', address: '', city: '', type: 'residential' }); setIsModalOpen(true); }}>
@@ -680,7 +680,7 @@ export default function BuildingManagement() {
             boxShadow: '0 20px 50px rgba(15, 23, 42, 0.25)',
             animation: 'gfhModalPop 0.25s cubic-bezier(.2,.8,.2,1)',
           }}>
-            <h2 style={{ fontSize: 18, fontWeight: 800, color: '#0F172A', margin: '0 0 20px 0' }}>
+            <h2 style={{ fontSize: 18, fontWeight: 600, color: '#0F172A', margin: '0 0 20px 0' }}>
               {editingProperty ? 'Edit Property' : 'Add New Property'}
             </h2>
             <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 15 }}>
@@ -728,7 +728,7 @@ export default function BuildingManagement() {
                     border: '1px solid #CBD5E1',
                     color: '#334155',
                     borderRadius: 8,
-                    fontWeight: 700,
+                    fontWeight: 600,
                     fontSize: 13,
                     cursor: 'pointer',
                     transition: 'background 0.15s ease',
@@ -751,7 +751,7 @@ export default function BuildingManagement() {
                     border: 'none',
                     color: '#ffffff',
                     borderRadius: 10,
-                    fontWeight: 700,
+                    fontWeight: 600,
                     fontSize: 13.5,
                     cursor: 'pointer',
                     boxShadow: '0 1px 3px rgba(15, 138, 103, 0.25)',

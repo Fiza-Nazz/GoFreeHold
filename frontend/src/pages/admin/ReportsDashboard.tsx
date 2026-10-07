@@ -110,7 +110,7 @@ export default function ReportsDashboard() {
   }, [reportData?.payments])
 
   return (
-    <div className="gfh-portal-page gfh-rp-page" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
+    <div className="gfh-portal-page gfh-rp-page" style={{ fontFamily: "'Source Sans Pro', system-ui, sans-serif" }}>
       <style>{`${portalPageCss}
         .gfh-rp-print-only { display: none; }
 
@@ -175,32 +175,32 @@ export default function ReportsDashboard() {
             display: flex !important;
             align-items: center !important;
             justify-content: center !important;
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
-            font-weight: 800 !important;
+            font-family: 'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
+            font-weight: 600 !important;
             font-size: 16px !important;
             flex-shrink: 0 !important;
           }
 
           .gfh-rp-brand-text h2 {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
+            font-family: 'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
             font-size: 16px !important;
-            font-weight: 800 !important;
+            font-weight: 600 !important;
             color: #0f172a !important;
             margin: 0 !important;
           }
 
           .gfh-rp-brand-text span {
             font-size: 9.5px !important;
-            font-weight: 700 !important;
+            font-weight: 600 !important;
             color: #10B981 !important;
             text-transform: uppercase !important;
             letter-spacing: 1px !important;
           }
 
           .gfh-rp-print-only h1 {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
+            font-family: 'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
             font-size: 20px !important;
-            font-weight: 800 !important;
+            font-weight: 600 !important;
             color: #0f172a !important;
             margin: 0 0 4px 0 !important;
             text-align: right !important;
@@ -247,7 +247,7 @@ export default function ReportsDashboard() {
             text-align: left !important;
             color: #1e293b !important;
             font-size: 9.5px !important;
-            font-weight: 700 !important;
+            font-weight: 600 !important;
             letter-spacing: 0.5px !important;
             text-transform: uppercase !important;
             padding: 8px 10px !important;
@@ -272,7 +272,7 @@ export default function ReportsDashboard() {
       <div className="fade-in gfh-rp-noprint" style={heroStyle}>
         <CornerBrackets />
         <div>
-          <h1 style={{ fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", fontSize: 30, fontWeight: 700, color: THEME.ink, margin: 0 }}>
+          <h1 style={{ fontFamily: "'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", fontSize: 30, fontWeight: 600, color: THEME.ink, margin: 0 }}>
             System Reports
           </h1>
           <p style={{ fontSize: 14, color: THEME.textMuted, marginTop: 8, marginBottom: 0 }}>
@@ -292,11 +292,11 @@ export default function ReportsDashboard() {
               borderRadius: 10,
               padding: '10px 20px',
               fontSize: 13.5,
-              fontWeight: 700,
+              fontWeight: 600,
               cursor: 'pointer',
               boxShadow: '0 1px 3px rgba(14, 94, 72, 0.25)',
               transition: 'background 0.15s ease, transform 0.15s ease',
-              fontFamily: "'Inter', sans-serif",
+              fontFamily: "'Source Sans Pro', sans-serif",
             }}
             onMouseEnter={e => {
               e.currentTarget.style.background = '#094535'
@@ -322,11 +322,11 @@ export default function ReportsDashboard() {
               borderRadius: 10,
               padding: '10px 20px',
               fontSize: 13.5,
-              fontWeight: 700,
+              fontWeight: 600,
               cursor: 'pointer',
               boxShadow: '0 1px 3px rgba(14, 94, 72, 0.25)',
               transition: 'background 0.15s ease, transform 0.15s ease',
-              fontFamily: "'Inter', sans-serif",
+              fontFamily: "'Source Sans Pro', sans-serif",
             }}
             onMouseEnter={e => {
               e.currentTarget.style.background = '#094535'
@@ -357,7 +357,7 @@ export default function ReportsDashboard() {
             onClick={() => setActiveTab(t.key as ReportType)}
             style={{
               fontSize: 13,
-              fontWeight: 700,
+              fontWeight: 600,
               padding: '9px 18px',
               borderRadius: 10,
               border: activeTab === t.key ? 'none' : '1px solid #CBD5E1',
@@ -366,7 +366,7 @@ export default function ReportsDashboard() {
               cursor: 'pointer',
               transition: 'all 0.15s ease',
               boxShadow: activeTab === t.key ? '0 1px 3px rgba(14, 94, 72, 0.25)' : 'none',
-              fontFamily: "'Inter', sans-serif",
+              fontFamily: "'Source Sans Pro', sans-serif",
             }}
             onMouseEnter={e => {
               if (activeTab !== t.key) {
@@ -419,40 +419,40 @@ export default function ReportsDashboard() {
                   {/* KPI Summary Cards */}
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 16, marginBottom: 24 }}>
                     <div style={{ padding: '16px 20px', background: '#F8FAFC', border: '1px solid #E2E8F0', borderRadius: 10 }}>
-                      <div style={{ fontSize: 11.5, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px', color: '#64748B' }}>
+                      <div style={{ fontSize: 11.5, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px', color: '#64748B' }}>
                         Total Revenue ({reportData.year})
                       </div>
-                      <div style={{ fontSize: 24, fontWeight: 800, color: '#10B981', marginTop: 4 }}>
+                      <div style={{ fontSize: 24, fontWeight: 600, color: '#10B981', marginTop: 4 }}>
                         AED {Number(reportData.total_revenue || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                       </div>
                       <div style={{ fontSize: 11.5, color: '#94A3B8', marginTop: 2 }}>All verified inflows</div>
                     </div>
 
                     <div style={{ padding: '16px 20px', background: '#F0FDF4', border: '1px solid #BBF7D0', borderRadius: 10 }}>
-                      <div style={{ fontSize: 11.5, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px', color: '#15803D' }}>
+                      <div style={{ fontSize: 11.5, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px', color: '#15803D' }}>
                         Rent Collected
                       </div>
-                      <div style={{ fontSize: 24, fontWeight: 800, color: '#15803D', marginTop: 4 }}>
+                      <div style={{ fontSize: 24, fontWeight: 600, color: '#15803D', marginTop: 4 }}>
                         AED {Number(reportData.total_rent || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                       </div>
                       <div style={{ fontSize: 11.5, color: '#16A34A', marginTop: 2 }}>Contractual rent payments</div>
                     </div>
 
                     <div style={{ padding: '16px 20px', background: '#F0F9FF', border: '1px solid #BAE6FD', borderRadius: 10 }}>
-                      <div style={{ fontSize: 11.5, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px', color: '#0369A1' }}>
+                      <div style={{ fontSize: 11.5, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px', color: '#0369A1' }}>
                         DEWA Utilities Collected
                       </div>
-                      <div style={{ fontSize: 24, fontWeight: 800, color: '#0369A1', marginTop: 4 }}>
+                      <div style={{ fontSize: 24, fontWeight: 600, color: '#0369A1', marginTop: 4 }}>
                         AED {Number(reportData.total_dewa || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                       </div>
                       <div style={{ fontSize: 11.5, color: '#0284C7', marginTop: 2 }}>Water & electricity collections</div>
                     </div>
 
                     <div style={{ padding: '16px 20px', background: '#FAF5FF', border: '1px solid #E9D5FF', borderRadius: 10 }}>
-                      <div style={{ fontSize: 11.5, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px', color: '#7E22CE' }}>
+                      <div style={{ fontSize: 11.5, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px', color: '#7E22CE' }}>
                         Security Deposits
                       </div>
-                      <div style={{ fontSize: 24, fontWeight: 800, color: '#7E22CE', marginTop: 4 }}>
+                      <div style={{ fontSize: 24, fontWeight: 600, color: '#7E22CE', marginTop: 4 }}>
                         AED {Number(reportData.total_deposit || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                       </div>
                       <div style={{ fontSize: 11.5, color: '#9333EA', marginTop: 2 }}>Refundable security deposits</div>
@@ -468,7 +468,7 @@ export default function ReportsDashboard() {
                         style={{
                           padding: '6px 14px',
                           fontSize: 12.5,
-                          fontWeight: 700,
+                          fontWeight: 600,
                           borderRadius: 6,
                           border: 'none',
                           cursor: 'pointer',
@@ -484,7 +484,7 @@ export default function ReportsDashboard() {
                         style={{
                           padding: '6px 14px',
                           fontSize: 12.5,
-                          fontWeight: 700,
+                          fontWeight: 600,
                           borderRadius: 6,
                           border: 'none',
                           cursor: 'pointer',
@@ -513,7 +513,7 @@ export default function ReportsDashboard() {
                             style={{
                               padding: '5px 12px',
                               fontSize: 12,
-                              fontWeight: 700,
+                              fontWeight: 600,
                               borderRadius: 20,
                               border: categoryFilter === pill.key ? '1px solid #10B981' : '1px solid #CBD5E1',
                               background: categoryFilter === pill.key ? '#10B981' : '#FFFFFF',
@@ -634,7 +634,7 @@ export default function ReportsDashboard() {
                                       padding: '3px 8px',
                                       borderRadius: 4,
                                       fontSize: 11,
-                                      fontWeight: 700,
+                                      fontWeight: 600,
                                       background: badgeBg,
                                       color: badgeColor,
                                       border: `1px solid ${badgeBorder}`,
@@ -668,7 +668,7 @@ export default function ReportsDashboard() {
                                   </td>
                                   <td style={{
                                     ...tdStyle,
-                                    fontWeight: 700,
+                                    fontWeight: 600,
                                     fontSize: 13,
                                     whiteSpace: 'nowrap',
                                     color: isDewa ? '#0369A1' : isRent ? '#065F46' : '#1E293B',
@@ -708,7 +708,7 @@ export default function ReportsDashboard() {
                                     padding: '3px 8px',
                                     borderRadius: 4,
                                     fontSize: 11,
-                                    fontWeight: 700,
+                                    fontWeight: 600,
                                     background: isDewa ? '#E0F2FE' : isRent ? '#DCFCE7' : '#F1F5F9',
                                     color: isDewa ? '#0369A1' : isRent ? '#15803D' : '#475569',
                                     border: `1px solid ${isDewa ? '#BAE6FD' : isRent ? '#BBF7D0' : '#CBD5E1'}`,
@@ -716,7 +716,7 @@ export default function ReportsDashboard() {
                                     {String(b.type ?? b.category ?? '—').toUpperCase()}
                                   </span>
                                 </td>
-                                <td style={{ ...tdStyle, fontWeight: 700, color: '#10B981', textAlign: 'right' }}>
+                                <td style={{ ...tdStyle, fontWeight: 600, color: '#10B981', textAlign: 'right' }}>
                                   AED {Number(b.total).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                                 </td>
                               </tr>
@@ -732,7 +732,7 @@ export default function ReportsDashboard() {
               {/* Receivables Tab */}
               {activeTab === 'receivables' && (
                 <div>
-                  <h3 style={{ fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", fontSize: 18, fontWeight: 700, color: THEME.ink, marginBottom: 20, marginTop: 0 }}>
+                  <h3 style={{ fontFamily: "'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", fontSize: 18, fontWeight: 600, color: THEME.ink, marginBottom: 20, marginTop: 0 }}>
                     Total outstanding: <span style={{ color: '#ef4444' }}>AED {Number(reportData.total_outstanding ?? 0).toLocaleString()}</span>
                   </h3>
                   <table style={{ width: '100%', borderCollapse: 'collapse' }}>
@@ -746,10 +746,10 @@ export default function ReportsDashboard() {
                     <tbody>
                       {reportData.entries?.map((e: any) => (
                         <tr key={e.id} className="gfh-portal-row" style={{ borderBottom: `1px solid ${THEME.border}` }}>
-                          <td style={{ ...tdStyle, fontWeight: 700 }}>GFH-{String(e.contract_id).padStart(5,'0')}</td>
+                          <td style={{ ...tdStyle, fontWeight: 600 }}>GFH-{String(e.contract_id).padStart(5,'0')}</td>
                           <td style={tdStyle}>{e.contract?.unit?.number} ({e.contract?.unit?.property?.name})</td>
                           <td style={tdStyle}>{e.contract?.tenant?.name}</td>
-                          <td style={{ ...tdStyle, color: '#ef4444', fontWeight: 700 }}>AED {Number(e.balance).toLocaleString()}</td>
+                          <td style={{ ...tdStyle, color: '#ef4444', fontWeight: 600 }}>AED {Number(e.balance).toLocaleString()}</td>
                         </tr>
                       ))}
                     </tbody>
@@ -760,7 +760,7 @@ export default function ReportsDashboard() {
               {/* Expiring Contracts Tab */}
               {activeTab === 'expired-contracts' && (
                 <div>
-                  <h3 style={{ fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", fontSize: 18, fontWeight: 700, color: THEME.ink, marginBottom: 20, marginTop: 0 }}>
+                  <h3 style={{ fontFamily: "'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", fontSize: 18, fontWeight: 600, color: THEME.ink, marginBottom: 20, marginTop: 0 }}>
                     Contracts expiring within ~100 days ({reportData.total_count} found)
                   </h3>
                   <table style={{ width: '100%', borderCollapse: 'collapse' }}>
@@ -774,10 +774,10 @@ export default function ReportsDashboard() {
                     <tbody>
                       {reportData.contracts?.map((c: any) => (
                         <tr key={c.id} className="gfh-portal-row" style={{ borderBottom: `1px solid ${THEME.border}` }}>
-                          <td style={{ ...tdStyle, fontWeight: 700 }}>GFH-{String(c.id).padStart(5,'0')}</td>
+                          <td style={{ ...tdStyle, fontWeight: 600 }}>GFH-{String(c.id).padStart(5,'0')}</td>
                           <td style={tdStyle}>{c.tenant?.name}</td>
                           <td style={tdStyle}>{c.unit?.number} ({c.unit?.property?.name})</td>
-                          <td style={{ ...tdStyle, color: '#f59e0b', fontWeight: 700 }}>{formatDate(c.end_date)}</td>
+                          <td style={{ ...tdStyle, color: '#f59e0b', fontWeight: 600 }}>{formatDate(c.end_date)}</td>
                           <td style={tdStyle}>AED {Number(c.rent_amount).toLocaleString()}</td>
                         </tr>
                       ))}
@@ -797,13 +797,13 @@ export default function ReportsDashboard() {
                     ].map(card => (
                       <div key={card.label} className="gfh-portal-stat" style={{ position: 'relative', padding: 18, background: card.bg, border: `1px solid ${card.border}`, borderRadius: 10, textAlign: 'center' }}>
                         <span className="gfh-rp-noprint"><CornerBrackets /></span>
-                        <div style={{ fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", fontSize: 24, fontWeight: 700, color: card.color }}>{card.value}</div>
-                        <div style={{ fontSize: 12, color: card.color, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.3px', marginTop: 4 }}>{card.label}</div>
+                        <div style={{ fontFamily: "'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", fontSize: 24, fontWeight: 600, color: card.color }}>{card.value}</div>
+                        <div style={{ fontSize: 12, color: card.color, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.3px', marginTop: 4 }}>{card.label}</div>
                       </div>
                     ))}
                   </div>
 
-                  <h3 style={{ fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", fontSize: 17, fontWeight: 700, color: THEME.ink }}>Low stock warning items</h3>
+                  <h3 style={{ fontFamily: "'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", fontSize: 17, fontWeight: 600, color: THEME.ink }}>Low stock warning items</h3>
                   <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: 10 }}>
                     <thead>
                       <tr style={{ borderBottom: `2px solid ${THEME.border}` }}>
@@ -815,9 +815,9 @@ export default function ReportsDashboard() {
                     <tbody>
                       {reportData.low_stock_items?.map((item: any) => (
                         <tr key={item.id} className="gfh-portal-row" style={{ borderBottom: `1px solid ${THEME.border}` }}>
-                          <td style={{ ...tdStyle, fontWeight: 700 }}>{item.name}</td>
+                          <td style={{ ...tdStyle, fontWeight: 600 }}>{item.name}</td>
                           <td style={tdStyle}>{item.category}</td>
-                          <td style={{ ...tdStyle, color: '#ef4444', fontWeight: 700 }}>{item.quantity}</td>
+                          <td style={{ ...tdStyle, color: '#ef4444', fontWeight: 600 }}>{item.quantity}</td>
                           <td style={tdStyle}>{item.min_stock_alert}</td>
                         </tr>
                       ))}
@@ -829,7 +829,7 @@ export default function ReportsDashboard() {
               {/* Historical Ledgers Tab */}
               {activeTab === 'historical-ledgers' && (
                 <div>
-                  <h3 style={{ fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", fontSize: 18, fontWeight: 700, color: THEME.ink, marginBottom: 20, marginTop: 0 }}>
+                  <h3 style={{ fontFamily: "'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", fontSize: 18, fontWeight: 600, color: THEME.ink, marginBottom: 20, marginTop: 0 }}>
                     Historical ledger entries
                   </h3>
                   <table style={{ width: '100%', borderCollapse: 'collapse' }}>
@@ -843,11 +843,11 @@ export default function ReportsDashboard() {
                     <tbody>
                       {reportData.ledgers?.map((l: any) => (
                         <tr key={l.id} className="gfh-portal-row" style={{ borderBottom: `1px solid ${THEME.border}`, opacity: l.deleted_at ? 0.5 : 1 }}>
-                          <td style={{ ...tdStyle, fontWeight: 700 }}>GFH-{String(l.contract_id).padStart(5,'0')}</td>
+                          <td style={{ ...tdStyle, fontWeight: 600 }}>GFH-{String(l.contract_id).padStart(5,'0')}</td>
                           <td style={tdStyle}>{formatDate(l.date)}</td>
                           <td style={tdStyle}>{l.description || '—'}</td>
                           <td style={tdStyle}>{Number(l.debit).toLocaleString()}</td>
-                          <td style={{ ...tdStyle, color: '#10b981', fontWeight: 700 }}>{Number(l.credit).toLocaleString()}</td>
+                          <td style={{ ...tdStyle, color: '#10b981', fontWeight: 600 }}>{Number(l.credit).toLocaleString()}</td>
                         </tr>
                       ))}
                     </tbody>

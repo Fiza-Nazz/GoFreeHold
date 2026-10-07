@@ -59,7 +59,7 @@ const inputStyle: React.CSSProperties = {
 
 const labelStyle: React.CSSProperties = {
   fontSize: 12.5,
-  fontWeight: 700,
+  fontWeight: 600,
   color: '#10B981',
   letterSpacing: '0.4px',
   textTransform: 'uppercase',
@@ -144,7 +144,7 @@ export default function OwnerComplaints() {
   const resolvedCount = complaints.filter(c => c.status === 'resolved' || c.status === 'closed').length
 
   return (
-    <div className="gfh-portal-page" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
+    <div className="gfh-portal-page" style={{ fontFamily: "'Source Sans Pro', system-ui, sans-serif" }}>
       <style>{portalPageCss}</style>
 
       {/* Hero Header */}
@@ -152,11 +152,11 @@ export default function OwnerComplaints() {
         <CornerBrackets color="#10B981" />
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 14 }}>
           <div>
-            <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 11.5, fontWeight: 700, letterSpacing: '0.6px', textTransform: 'uppercase', color: '#10B981', marginBottom: 4 }}>
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 11.5, fontWeight: 600, letterSpacing: '0.6px', textTransform: 'uppercase', color: '#10B981', marginBottom: 4 }}>
               <span style={{ width: 7, height: 7, borderRadius: '50%', background: '#10B981', display: 'inline-block' }} />
               Property Maintenance
             </div>
-            <h1 style={{ fontSize: 26, fontWeight: 800, color: THEME.ink, margin: 0, letterSpacing: '-0.02em' }}>
+            <h1 style={{ fontSize: 26, fontWeight: 600, color: THEME.ink, margin: 0, letterSpacing: '-0.02em' }}>
               Maintenance & Complaints
             </h1>
             <p style={{ fontSize: 13.5, color: THEME.textMuted, marginTop: 4, marginBottom: 0 }}>
@@ -176,7 +176,7 @@ export default function OwnerComplaints() {
               color: '#065F46',
               border: '1px solid #A7F3DC',
               fontSize: 13,
-              fontWeight: 700,
+              fontWeight: 600,
               textDecoration: 'none',
               boxShadow: '0 1px 3px rgba(16,24,40,0.04)',
             }}
@@ -204,7 +204,7 @@ export default function OwnerComplaints() {
           <div style={{ fontSize: 12, fontWeight: 600, color: '#64748B', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
             Total Complaints
           </div>
-          <div style={{ fontSize: 26, fontWeight: 800, color: '#0F172A', marginTop: 4 }}>{complaints.length}</div>
+          <div style={{ fontSize: 26, fontWeight: 600, color: '#0F172A', marginTop: 4 }}>{complaints.length}</div>
         </div>
 
         <div
@@ -222,7 +222,7 @@ export default function OwnerComplaints() {
           <div style={{ fontSize: 12, fontWeight: 600, color: '#DC2626', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
             Open / Pending
           </div>
-          <div style={{ fontSize: 26, fontWeight: 800, color: '#DC2626', marginTop: 4 }}>{openCount}</div>
+          <div style={{ fontSize: 26, fontWeight: 600, color: '#DC2626', marginTop: 4 }}>{openCount}</div>
         </div>
 
         <div
@@ -240,7 +240,7 @@ export default function OwnerComplaints() {
           <div style={{ fontSize: 12, fontWeight: 600, color: '#B45309', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
             Assigned to Tech
           </div>
-          <div style={{ fontSize: 26, fontWeight: 800, color: '#B45309', marginTop: 4 }}>{assignedCount}</div>
+          <div style={{ fontSize: 26, fontWeight: 600, color: '#B45309', marginTop: 4 }}>{assignedCount}</div>
         </div>
 
         <div
@@ -258,7 +258,7 @@ export default function OwnerComplaints() {
           <div style={{ fontSize: 12, fontWeight: 600, color: '#075985', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
             In Progress
           </div>
-          <div style={{ fontSize: 26, fontWeight: 800, color: '#075985', marginTop: 4 }}>{inProgressCount}</div>
+          <div style={{ fontSize: 26, fontWeight: 600, color: '#075985', marginTop: 4 }}>{inProgressCount}</div>
         </div>
 
         <div
@@ -276,7 +276,7 @@ export default function OwnerComplaints() {
           <div style={{ fontSize: 12, fontWeight: 600, color: '#065F46', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
             Resolved
           </div>
-          <div style={{ fontSize: 26, fontWeight: 800, color: '#065F46', marginTop: 4 }}>{resolvedCount}</div>
+          <div style={{ fontSize: 26, fontWeight: 600, color: '#065F46', marginTop: 4 }}>{resolvedCount}</div>
         </div>
       </div>
 
@@ -306,7 +306,7 @@ export default function OwnerComplaints() {
             >
               <Icon path={ICONS.wrench} size={24} />
             </div>
-            <h3 style={{ fontSize: 16, fontWeight: 700, color: '#0F172A', margin: 0 }}>
+            <h3 style={{ fontSize: 16, fontWeight: 600, color: '#0F172A', margin: 0 }}>
               No Complaints Found
             </h3>
             <p style={{ fontSize: 13, color: THEME.textMuted, marginTop: 4, maxWidth: 380, margin: '6px auto 0' }}>
@@ -337,7 +337,7 @@ export default function OwnerComplaints() {
               >
                 <div style={{ flex: 1, minWidth: 260 }}>
                   <div style={{ display: 'flex', gap: 10, alignItems: 'center', marginBottom: 8, flexWrap: 'wrap' }}>
-                    <strong style={{ fontSize: 16, fontWeight: 800, color: THEME.ink }}>
+                    <strong style={{ fontSize: 16, fontWeight: 600, color: THEME.ink }}>
                       #{item.id} — {item.title}
                     </strong>
                     <span
@@ -348,7 +348,7 @@ export default function OwnerComplaints() {
                         padding: '3px 10px',
                         borderRadius: 8,
                         fontSize: 11,
-                        fontWeight: 700,
+                        fontWeight: 600,
                         letterSpacing: '0.3px',
                       }}
                     >
@@ -362,7 +362,7 @@ export default function OwnerComplaints() {
                         padding: '3px 10px',
                         borderRadius: 8,
                         fontSize: 11,
-                        fontWeight: 700,
+                        fontWeight: 600,
                         letterSpacing: '0.3px',
                       }}
                     >
@@ -405,7 +405,7 @@ export default function OwnerComplaints() {
                       gap: 6,
                       padding: '8px 14px',
                       fontSize: 12.5,
-                      fontWeight: 700,
+                      fontWeight: 600,
                       borderRadius: 8,
                       backgroundColor: '#075985',
                       color: '#FFFFFF',
@@ -430,7 +430,7 @@ export default function OwnerComplaints() {
                       gap: 6,
                       padding: '8px 14px',
                       fontSize: 12.5,
-                      fontWeight: 700,
+                      fontWeight: 600,
                       borderRadius: 8,
                       backgroundColor: '#B45309',
                       color: '#FFFFFF',
@@ -473,7 +473,7 @@ export default function OwnerComplaints() {
 
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 8 }}>
               <div>
-                <h2 style={{ fontSize: 20, fontWeight: 800, margin: 0, color: '#0F172A' }}>
+                <h2 style={{ fontSize: 20, fontWeight: 600, margin: 0, color: '#0F172A' }}>
                   Assign Maintenance Job
                 </h2>
                 <div style={{ fontSize: 12, color: '#10B981', fontWeight: 600, marginTop: 2 }}>
@@ -502,7 +502,7 @@ export default function OwnerComplaints() {
                 {technicians.length === 0 ? (
                   <div style={{ padding: '12px 14px', background: '#FFFBEB', border: '1px solid #FDE68A', borderRadius: 8, fontSize: 12.5, color: '#B45309' }}>
                     No maintenance technicians found under your account.{' '}
-                    <Link to="/owner/staff" style={{ color: '#10B981', fontWeight: 700 }}>
+                    <Link to="/owner/staff" style={{ color: '#10B981', fontWeight: 600 }}>
                       Invite Maintenance Staff
                     </Link>
                   </div>
@@ -529,7 +529,7 @@ export default function OwnerComplaints() {
                   onClick={() => setAssignModal(null)}
                   style={{
                     borderRadius: 8,
-                    fontWeight: 700,
+                    fontWeight: 600,
                     fontSize: 13,
                     padding: '9px 16px',
                     backgroundColor: '#f1f5f9',
@@ -545,7 +545,7 @@ export default function OwnerComplaints() {
                   disabled={assignBusy || !selectedTech || technicians.length === 0}
                   style={{
                     borderRadius: 8,
-                    fontWeight: 700,
+                    fontWeight: 600,
                     fontSize: 13,
                     padding: '9px 18px',
                     backgroundColor: '#10B981',
@@ -583,7 +583,7 @@ export default function OwnerComplaints() {
 
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 14 }}>
               <div>
-                <h2 style={{ fontSize: 20, fontWeight: 800, margin: 0, color: '#0F172A' }}>
+                <h2 style={{ fontSize: 20, fontWeight: 600, margin: 0, color: '#0F172A' }}>
                   Update Complaint Status
                 </h2>
                 <div style={{ fontSize: 12.5, color: '#64748B', marginTop: 2 }}>
@@ -633,7 +633,7 @@ export default function OwnerComplaints() {
                   onClick={() => setStatusModal(null)}
                   style={{
                     borderRadius: 8,
-                    fontWeight: 700,
+                    fontWeight: 600,
                     fontSize: 13,
                     padding: '9px 16px',
                     backgroundColor: '#f1f5f9',
@@ -649,7 +649,7 @@ export default function OwnerComplaints() {
                   disabled={statusBusy}
                   style={{
                     borderRadius: 8,
-                    fontWeight: 700,
+                    fontWeight: 600,
                     fontSize: 13,
                     padding: '9px 18px',
                     backgroundColor: '#10B981',

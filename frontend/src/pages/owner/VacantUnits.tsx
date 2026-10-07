@@ -1,7 +1,8 @@
-import { useEffect, useState, useMemo } from 'react'
-import { Link, useSearchParams, useNavigate } from 'react-router-dom'
+import { useEffect, useMemo, useState } from 'react'
+import { Link, useSearchParams } from 'react-router-dom'
 import api from '../../api/axios'
-import { THEME, portalPageCss } from '../../components/gfh/adminTheme'
+import { UNIT_TYPE_OPTIONS } from '../../utils/unitTypes'
+import { getDefaultUnitImageUrl } from '../../utils/unitImages'
 
 interface Unit {
   id: number
@@ -21,86 +22,36 @@ interface Unit {
   propertyName?: string
 }
 
-// 5 Soft Functional Pastel Themes for Vacant Unit Cards
-const PASTEL_THEMES = [
-  {
-    bg: '#F0FDFA', // Mint / Teal
-    border: '#CCFBF1',
-    hoverBorder: '#99F6E4',
-    iconBg: '#CCFBF1',
-    iconColor: '#10B981',
-    locColor: '#10B981',
-  },
-  {
-    bg: '#F0FDF4', // Emerald / Green
-    border: '#DCFCE7',
-    hoverBorder: '#BBF7D0',
-    iconBg: '#DCFCE7',
-    iconColor: '#16A34A',
-    locColor: '#15803D',
-  },
-  {
-    bg: '#FAF5FF', // Lavender / Purple
-    border: '#F3E8FF',
-    hoverBorder: '#E9D5FF',
-    iconBg: '#F3E8FF',
-    iconColor: '#9333EA',
-    locColor: '#7E22CE',
-  },
-  {
-    bg: '#FFFBEB', // Warm Peach / Amber
-    border: '#FEF3C7',
-    hoverBorder: '#FDE68A',
-    iconBg: '#FEF3C7',
-    iconColor: '#D97706',
-    locColor: '#B45309',
-  },
-  {
-    bg: '#F0F9FF', // Sky Blue / Cyan
-    border: '#E0F2FE',
-    hoverBorder: '#BAE6FD',
-    iconBg: '#E0F2FE',
-    iconColor: '#0284C7',
-    locColor: '#0369A1',
-  },
-]
-
-function getUnitDisplayInfo(type?: string, category?: string) {
+function getUnitTag(type?: string, category?: string): string {
   const t = (type || '').toLowerCase()
   const c = (category || '').toLowerCase()
+  if (t.includes('studio') || c.includes('studio')) return 'STUDIO'
+  if (t.includes('shop') || c.includes('shop') || t.includes('commercial')) return 'SHOP'
+  if (t.includes('office') || c.includes('office')) return 'OFFICE'
+  if (t.includes('penthouse') || c.includes('penthouse')) return 'PENTHOUSE'
+  if (t.includes('villa') || c.includes('villa')) return 'VILLA'
+  if (/\b1\b|one|1-?br|1bed/.test(t) || /\b1\b|1-?br/.test(c)) return '1-BR'
+  if (/\b2\b|two|2-?br|2bed/.test(t) || /\b2\b|2-?br/.test(c)) return '2-BR'
+  if (/\b3\b|three|3-?br|3bed/.test(t) || /\b3\b|3-?br/.test(c)) return '3-BR'
+  if (type) return type.toUpperCase().slice(0, 10)
+  return 'UNIT'
+}
 
-  if (t.includes('studio') || c.includes('studio')) {
-    return { tag: 'STUDIO', label: 'Studio Apartment', isShop: false }
-  }
-  if (t.includes('shop') || c.includes('shop') || t.includes('commercial')) {
-    return { tag: 'SHOP', label: 'Shop Unit', isShop: true }
-  }
-  if (t.includes('office') || c.includes('office')) {
-    return { tag: 'OFFICE', label: 'Office Space', isShop: false }
-  }
-  if (t.includes('penthouse') || c.includes('penthouse')) {
-    return { tag: 'PENTHOUSE', label: 'Penthouse Apartment', isShop: false }
-  }
-  if (t.includes('villa') || c.includes('villa')) {
-    return { tag: 'VILLA', label: 'Luxury Villa', isShop: false }
-  }
-  if (t.includes('1') || t.includes('one')) {
-    return { tag: '1 BR', label: '1 Bed Apartment', isShop: false }
-  }
-  if (t.includes('2') || t.includes('two')) {
-    return { tag: '2 BR', label: '2 Bed Apartment', isShop: false }
-  }
-  if (t.includes('3') || t.includes('three')) {
-    return { tag: '3 BR', label: '3 Bed Apartment', isShop: false }
-  }
+function isVacantStatus(status?: string) {
+  const s = (status || '').toUpperCase()
+  return s === 'AVAILABLE' || s === 'VACANT' || s === ''
+}
 
-  const raw = type ? type.toUpperCase() : 'UNIT'
-  const pretty = type ? type.charAt(0).toUpperCase() + type.slice(1) : 'Residential'
-  return { tag: raw, label: `${pretty} Apartment`, isShop: false }
+function isBookedStatus(status?: string) {
+  return (status || '').toUpperCase() === 'BOOKED'
+}
+
+function normalizeUnits(payload: unknown): Unit[] {
+  if (Array.isArray(payload)) return payload
+  return []
 }
 
 export default function VacantUnits() {
-  const navigate = useNavigate()
   const [searchParams, setSearchParams] = useSearchParams()
   const [units, setUnits] = useState<Unit[]>([])
   const [typeFilter, setTypeFilter] = useState<string>('ALL')
@@ -109,61 +60,79 @@ export default function VacantUnits() {
   const searchQuery = searchParams.get('q') || ''
 
   useEffect(() => {
-    fetchVacantUnits()
+    let cancelled = false
+    const load = async () => {
+      setIsLoading(true)
+      try {
+        const [vacantRes, bookedRes, allRes] = await Promise.all([
+          api.get('/owner/dashboard/vacant-units').catch(() => null),
+          api.get('/owner/units?status=BOOKED').catch(() => null),
+          api.get('/owner/units').catch(() => null),
+        ])
+
+        if (cancelled) return
+
+        const fromVacant = normalizeUnits(
+          vacantRes?.data?.data?.units || vacantRes?.data?.data || [],
+        )
+        const fromBooked = normalizeUnits(
+          bookedRes?.data?.data?.units || bookedRes?.data?.data || [],
+        )
+        const fromAll = normalizeUnits(
+          allRes?.data?.data?.units || allRes?.data?.data || [],
+        )
+
+        const byId = new Map<number, Unit>()
+
+        // Prefer full units list so status is reliable, then fill gaps
+        ;[...fromAll, ...fromVacant, ...fromBooked].forEach((u) => {
+          if (!u?.id) return
+          if (!byId.has(u.id)) byId.set(u.id, u)
+        })
+
+        const merged = [...byId.values()].filter(
+          (u) => isVacantStatus(u.status) || isBookedStatus(u.status),
+        )
+
+        // If vacant endpoint returned units without status, treat them as vacant
+        if (merged.length === 0 && fromVacant.length > 0) {
+          setUnits(fromVacant.map((u) => ({ ...u, status: u.status || 'AVAILABLE' })))
+        } else {
+          setUnits(merged)
+        }
+      } catch (err) {
+        console.error(err)
+        if (!cancelled) setUnits([])
+      } finally {
+        if (!cancelled) setIsLoading(false)
+      }
+    }
+    void load()
+    return () => {
+      cancelled = true
+    }
   }, [])
 
-  const fetchVacantUnits = async () => {
-    setIsLoading(true)
-    try {
-      // Primary: owner dashboard vacant units endpoint
-      const res = await api.get('/owner/dashboard/vacant-units')
-      const list = res.data?.data?.units || res.data?.data || []
-      if (Array.isArray(list) && list.length > 0) {
-        setUnits(list)
-      } else {
-        // Fallback: try owner units with status=AVAILABLE
-        const res2 = await api.get('/owner/units?status=AVAILABLE')
-        const list2 = res2.data?.data?.units || res2.data?.data || []
-        setUnits(Array.isArray(list2) ? list2 : [])
-      }
-    } catch (err) {
-      console.error(err)
-      try {
-        const res2 = await api.get('/owner/units?status=AVAILABLE')
-        const list2 = res2.data?.data?.units || res2.data?.data || []
-        setUnits(Array.isArray(list2) ? list2 : [])
-      } catch (err2) {
-        console.error(err2)
-        setUnits([])
-      }
-    } finally {
-      setIsLoading(false)
-    }
-  }
-
-  // Filter units by search query and type filter
   const filteredUnits = useMemo(() => {
-    return units.filter(u => {
-      const info = getUnitDisplayInfo(u.type, u.category)
+    return units.filter((u) => {
+      const tag = getUnitTag(u.type, u.category)
       const propName = u.property?.name || u.propertyName || ''
       const num = u.number || ''
 
       if (searchQuery.trim()) {
         const q = searchQuery.toLowerCase().trim()
-        const matchNum = num.toLowerCase().includes(q)
-        const matchProp = propName.toLowerCase().includes(q)
-        const matchType = (u.type || '').toLowerCase().includes(q)
-        const matchTag = info.tag.toLowerCase().includes(q)
-        const matchLabel = info.label.toLowerCase().includes(q)
-        if (!matchNum && !matchProp && !matchType && !matchTag && !matchLabel) {
-          return false
-        }
+        const match =
+          num.toLowerCase().includes(q) ||
+          propName.toLowerCase().includes(q) ||
+          (u.type || '').toLowerCase().includes(q) ||
+          tag.toLowerCase().includes(q)
+        if (!match) return false
       }
 
       if (typeFilter !== 'ALL') {
         const filterLower = typeFilter.toLowerCase()
         const matchType = (u.type || '').toLowerCase().includes(filterLower)
-        const matchTag = info.tag.toLowerCase().includes(filterLower)
+        const matchTag = tag.toLowerCase().includes(filterLower)
         if (!matchType && !matchTag) return false
       }
 
@@ -171,492 +140,314 @@ export default function VacantUnits() {
     })
   }, [units, searchQuery, typeFilter])
 
+  const vacantUnits = useMemo(
+    () => filteredUnits.filter((u) => isVacantStatus(u.status)),
+    [filteredUnits],
+  )
+  const bookedUnits = useMemo(
+    () => filteredUnits.filter((u) => isBookedStatus(u.status)),
+    [filteredUnits],
+  )
+
+  // From dashboard "Total Booked" KPI → scroll to booked section
+  useEffect(() => {
+    if (isLoading || bookedUnits.length === 0) return
+    if (window.location.hash !== '#booked') return
+    const el = document.getElementById('booked')
+    if (el) {
+      requestAnimationFrame(() => {
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      })
+    }
+  }, [isLoading, bookedUnits.length])
+
+  const renderCard = (unit: Unit, tone: 'vacant' | 'booked') => {
+    const tag = getUnitTag(unit.type, unit.category)
+    const propName = unit.property?.name || unit.propertyName || 'Property'
+    const bg = tone === 'vacant' ? '#17a2b8' : '#6c757d'
+
+    return (
+      <Link
+        key={unit.id}
+        to={`/owner/units/${unit.id}`}
+        className="gfh-vu-card"
+        style={{ background: bg }}
+        title={`Unit ${unit.number} · ${propName}`}
+      >
+        <img
+          className="gfh-vu-card-photo"
+          src={getDefaultUnitImageUrl(unit.type)}
+          alt={`Unit ${unit.number}`}
+          loading="lazy"
+        />
+        <div className="gfh-vu-card-tag">{tag}</div>
+        <div className="gfh-vu-card-number">{unit.number}</div>
+        <div className="gfh-vu-card-building">{propName}</div>
+      </Link>
+    )
+  }
+
   return (
-    <div
-      className="gfh-portal-page"
-      style={{
-        fontFamily: "'Inter', system-ui, sans-serif",
-      }}
-    >
-      <style>{portalPageCss}</style>
+    <div className="gfh-portal-page" style={{ fontFamily: 'var(--font-sans)' }}>
       <style>{`
-        .gfh-vacant-card {
-          border-radius: 12px;
-          padding: 18px 20px;
+        .gfh-vu-toolbar {
           display: flex;
-          flex-direction: column;
           justify-content: space-between;
-          box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
-          transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
-          cursor: pointer;
-          text-decoration: none;
-          min-height: 165px;
-          box-sizing: border-box;
+          align-items: center;
+          flex-wrap: wrap;
+          gap: 14px;
+          margin-bottom: 22px;
         }
-        .gfh-vacant-card:hover {
-          transform: translateY(-2px);
-          box-shadow: 0 6px 16px rgba(15, 23, 42, 0.06);
+        .gfh-vu-title {
+          font-size: 22px;
+          font-weight: 600;
+          color: #0F172A;
+          margin: 0;
+          letter-spacing: -0.01em;
         }
-        .gfh-vacant-input {
-          font-family: 'Inter', system-ui, sans-serif;
+        .gfh-vu-sub {
+          font-size: 13px;
+          color: #64748B;
+          margin: 4px 0 0;
+          font-weight: 500;
+        }
+        .gfh-vu-controls {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          flex-wrap: wrap;
+        }
+        .gfh-vu-input {
+          font-family: var(--font-sans);
           font-size: 13.5px;
           border: 1px solid #E2E8F0;
-          border-radius: 10px;
+          border-radius: 8px;
           outline: none;
+          background: #FFFFFF;
+          color: #0F172A;
           transition: border-color 0.15s ease, box-shadow 0.15s ease;
         }
-        .gfh-vacant-input:focus {
-          border-color: #10B981;
-          box-shadow: 0 0 0 3px rgba(15, 138, 103, 0.12);
+        .gfh-vu-input:focus {
+          border-color: #17a2b8;
+          box-shadow: 0 0 0 3px rgba(23, 162, 184, 0.15);
+        }
+        .gfh-vu-section-title {
+          font-size: 18px;
+          font-weight: 600;
+          color: #475569;
+          margin: 28px 0 14px;
+        }
+        .gfh-vu-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fill, minmax(168px, 1fr));
+          gap: 14px;
+        }
+        .gfh-vu-card {
+          position: relative;
+          display: block;
+          min-height: 168px;
+          border-radius: 6px;
+          padding: 10px 12px 12px;
+          text-decoration: none;
+          color: #FFFFFF;
+          box-shadow: 0 1px 3px rgba(15, 23, 42, 0.12);
+          transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
+          overflow: hidden;
+        }
+        .gfh-vu-card:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 6px 16px rgba(15, 23, 42, 0.16);
+          filter: brightness(1.04);
+          color: #FFFFFF;
+        }
+        .gfh-vu-card-photo {
+          width: 100%;
+          height: 78px;
+          border-radius: 6px;
+          object-fit: cover;
+          display: block;
+          background: rgba(255,255,255,0.18);
+          border: 1px solid rgba(255,255,255,0.22);
+        }
+        .gfh-vu-card-tag {
+          position: absolute;
+          top: 16px;
+          right: 18px;
+          font-size: 11px;
+          font-weight: 700;
+          letter-spacing: 0.04em;
+          text-transform: uppercase;
+          opacity: 0.95;
+          background: rgba(15, 23, 42, 0.35);
+          padding: 2px 6px;
+          border-radius: 4px;
+        }
+        .gfh-vu-card-number {
+          margin-top: 12px;
+          font-size: 1.85rem;
+          font-weight: 700;
+          line-height: 1;
+          letter-spacing: -0.02em;
+          text-align: right;
+        }
+        .gfh-vu-card-building {
+          margin-top: 12px;
+          font-size: 11px;
+          font-weight: 600;
+          letter-spacing: 0.02em;
+          text-transform: uppercase;
+          opacity: 0.95;
+          line-height: 1.25;
+          max-width: 85%;
+          overflow: hidden;
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          -webkit-box-orient: vertical;
+        }
+        .gfh-vu-empty {
+          background: #FFFFFF;
+          border: 1px solid #E2E8F0;
+          border-radius: 12px;
+          padding: 48px 24px;
+          text-align: center;
+          color: #64748B;
+        }
+        @media (max-width: 640px) {
+          .gfh-vu-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+          }
+          .gfh-vu-card-number {
+            font-size: 1.65rem;
+          }
         }
       `}</style>
 
-      {/* Top Header Row with Title, Back Button, Search and Filter */}
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          flexWrap: 'wrap',
-          gap: 16,
-          marginBottom: 24,
-        }}
-      >
-        {/* Left: Back button, Title & Subtitle */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+      <div className="gfh-vu-toolbar">
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
           <Link
             to="/owner/dashboard"
             style={{
-              width: 38,
-              height: 38,
-              borderRadius: 10,
-              background: '#10B981',
+              width: 36,
+              height: 36,
+              borderRadius: 8,
+              background: '#17a2b8',
               color: '#FFFFFF',
-              display: 'flex',
+              display: 'inline-flex',
               alignItems: 'center',
               justifyContent: 'center',
               textDecoration: 'none',
-              transition: 'background 0.15s ease',
               flexShrink: 0,
-              boxShadow: '0 1px 3px rgba(15, 138, 103, 0.25)',
             }}
-            onMouseEnter={e => (e.currentTarget.style.background = '#0B6E52')}
-            onMouseLeave={e => (e.currentTarget.style.background = '#10B981')}
             title="Back to dashboard"
           >
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <polyline points="15 18 9 12 15 6" />
             </svg>
           </Link>
           <div>
-            <h1
-              style={{
-                fontSize: 22,
-                fontWeight: 800,
-                color: '#0F172A',
-                margin: 0,
-                letterSpacing: '-0.01em',
-                lineHeight: 1.2,
-              }}
-            >
-              Vacant Properties
-            </h1>
-            <p style={{ fontSize: 13, color: '#64748B', margin: '4px 0 0', fontWeight: 500 }}>
-              View all currently vacant properties in your portfolio
+            <h1 className="gfh-vu-title">Vacant Properties</h1>
+            <p className="gfh-vu-sub">
+              {vacantUnits.length} available · {bookedUnits.length} booked
             </p>
           </div>
         </div>
 
-        {/* Right: Search and Filter controls matching client image */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
-          {/* Search Vacant Properties */}
-          <div style={{ position: 'relative', width: 250 }}>
+        <div className="gfh-vu-controls">
+          <div style={{ position: 'relative', width: 240, maxWidth: '100%' }}>
             <svg
-              style={{
-                position: 'absolute',
-                left: 14,
-                top: '50%',
-                transform: 'translateY(-50%)',
-                color: '#94A3B8',
-                pointerEvents: 'none',
-              }}
-              width="15"
-              height="15"
+              style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: '#94A3B8', pointerEvents: 'none' }}
+              width="14"
+              height="14"
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
               strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
             >
               <circle cx="11" cy="11" r="8" />
               <line x1="21" y1="21" x2="16.65" y2="16.65" />
             </svg>
             <input
               type="text"
+              className="gfh-vu-input"
               value={searchQuery}
-              onChange={e => {
+              onChange={(e) => {
                 const val = e.target.value
                 setSearchParams(val ? { q: val } : {}, { replace: true })
               }}
-              placeholder="Search Vacant Properties..."
-              className="gfh-vacant-input"
-              style={{
-                width: '100%',
-                padding: searchQuery ? '9px 32px 9px 38px' : '9px 14px 9px 38px',
-                background: '#FFFFFF',
-                color: '#0F172A',
-                boxSizing: 'border-box',
-              }}
+              placeholder="Search units, buildings..."
+              style={{ width: '100%', padding: '8px 12px 8px 34px', boxSizing: 'border-box' }}
             />
-            {searchQuery && (
-              <button
-                type="button"
-                onClick={() => setSearchParams({}, { replace: true })}
-                style={{
-                  position: 'absolute',
-                  right: 10,
-                  top: '50%',
-                  transform: 'translateY(-50%)',
-                  background: 'transparent',
-                  border: 'none',
-                  color: '#94A3B8',
-                  cursor: 'pointer',
-                  fontSize: 13,
-                  padding: 2,
-                }}
-              >
-                ✕
-              </button>
-            )}
           </div>
-
-          {/* All Types Dropdown */}
-          <div style={{ position: 'relative' }}>
-            <select
-              value={typeFilter}
-              onChange={e => setTypeFilter(e.target.value)}
-              className="gfh-vacant-input"
-              style={{
-                padding: '9px 34px 9px 14px',
-                background: '#FFFFFF',
-                color: '#334155',
-                fontWeight: 600,
-                cursor: 'pointer',
-                appearance: 'none',
-              }}
-            >
-              <option value="ALL">All Types</option>
-              <option value="studio">Studio</option>
-              <option value="apartment">Apartment</option>
-              <option value="shop">Shop</option>
-              <option value="office">Office</option>
-              <option value="penthouse">Penthouse</option>
-              <option value="villa">Villa</option>
-            </select>
-            <svg
-              style={{
-                position: 'absolute',
-                right: 12,
-                top: '50%',
-                transform: 'translateY(-50%)',
-                color: '#64748B',
-                pointerEvents: 'none',
-              }}
-              width="14"
-              height="14"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <polyline points="6 9 12 15 18 9" />
-            </svg>
-          </div>
+          <select
+            className="gfh-vu-input"
+            value={typeFilter}
+            onChange={(e) => setTypeFilter(e.target.value)}
+            style={{ padding: '8px 12px', fontWeight: 600, color: '#334155', cursor: 'pointer' }}
+          >
+            <option value="ALL">All Types</option>
+            {UNIT_TYPE_OPTIONS.map((opt) => (
+              <option key={opt.value} value={opt.value}>{opt.label}</option>
+            ))}
+          </select>
         </div>
       </div>
 
-      {/* Main Content Area */}
       {isLoading ? (
-        <div
-          style={{
-            background: '#FFFFFF',
-            borderRadius: 16,
-            border: '1px solid #E2E8F0',
-            padding: '80px 20px',
-            textAlign: 'center',
-            color: '#64748B',
-            fontWeight: 600,
-          }}
-        >
-          <div style={{ fontSize: 15, color: '#0F172A', fontWeight: 700, marginBottom: 6 }}>
+        <div className="gfh-vu-empty">
+          <div style={{ fontSize: 15, fontWeight: 600, color: '#0F172A', marginBottom: 6 }}>
             Loading vacant properties…
           </div>
-          <div style={{ fontSize: 13, color: '#94A3B8' }}>
-            Fetching available units across your portfolio
-          </div>
+          <div style={{ fontSize: 13 }}>Fetching available and booked units</div>
         </div>
-      ) : filteredUnits.length === 0 ? (
-        <div
-          style={{
-            background: '#FFFFFF',
-            borderRadius: 16,
-            border: '1px solid #E2E8F0',
-            padding: '70px 24px',
-            textAlign: 'center',
-            boxShadow: '0 1px 3px rgba(0,0,0,0.02)',
-          }}
-        >
-          <div
-            style={{
-              width: 56,
-              height: 56,
-              borderRadius: 16,
-              background: '#ECFDF8',
-              color: '#10B981',
-              display: 'inline-flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              marginBottom: 16,
-            }}
-          >
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
-              <polyline points="9 22 9 12 15 12 15 22" />
-            </svg>
-          </div>
-          <h3 style={{ fontSize: 18, fontWeight: 800, color: '#0F172A', margin: '0 0 6px 0' }}>
-            {searchQuery || typeFilter !== 'ALL'
-              ? 'No matching vacant units found'
-              : 'No Vacant Properties at the Moment'}
+      ) : vacantUnits.length === 0 && bookedUnits.length === 0 ? (
+        <div className="gfh-vu-empty">
+          <h3 style={{ fontSize: 17, fontWeight: 600, color: '#0F172A', margin: '0 0 6px' }}>
+            {searchQuery || typeFilter !== 'ALL' ? 'No matching units found' : 'No vacant or booked units'}
           </h3>
-          <p style={{ fontSize: 13.5, color: '#64748B', margin: '0 0 20px 0', maxWidth: 440, marginLeft: 'auto', marginRight: 'auto' }}>
+          <p style={{ fontSize: 13.5, margin: '0 0 16px' }}>
             {searchQuery || typeFilter !== 'ALL'
-              ? 'Try adjusting your search terms or clearing the type filter to see other units.'
-              : 'All units in your portfolio are currently rented or occupied. When a unit becomes available, it will show up here.'}
+              ? 'Try adjusting your search or type filter.'
+              : 'When a unit becomes available or booked, it will appear here.'}
           </p>
-          {(searchQuery || typeFilter !== 'ALL') ? (
+          {(searchQuery || typeFilter !== 'ALL') && (
             <button
+              type="button"
               onClick={() => {
                 setSearchParams({}, { replace: true })
                 setTypeFilter('ALL')
               }}
               style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: 6,
-                background: '#10B981',
+                background: '#17a2b8',
                 color: '#FFFFFF',
                 border: 'none',
-                borderRadius: 10,
-                padding: '9px 18px',
+                borderRadius: 8,
+                padding: '8px 16px',
                 fontSize: 13,
-                fontWeight: 700,
+                fontWeight: 600,
                 cursor: 'pointer',
               }}
             >
               Reset Filters
             </button>
-          ) : (
-            <Link
-              to="/owner/units"
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: 6,
-                background: '#10B981',
-                color: '#FFFFFF',
-                border: 'none',
-                borderRadius: 10,
-                padding: '9px 20px',
-                fontSize: 13,
-                fontWeight: 700,
-                textDecoration: 'none',
-              }}
-            >
-              <span>View All Portfolio Units</span>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <polyline points="9 18 15 12 9 6" />
-              </svg>
-            </Link>
           )}
         </div>
       ) : (
-        /* 5-Column Colorful Card Grid matching client mockup */
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(210px, 1fr))',
-            gap: 16,
-          }}
-        >
-          {filteredUnits.map((unit, idx) => {
-            const theme = PASTEL_THEMES[idx % PASTEL_THEMES.length]
-            const info = getUnitDisplayInfo(unit.type, unit.category)
-            const propName = unit.property?.name || unit.propertyName || 'Property'
+        <>
+          {vacantUnits.length > 0 && (
+            <div className="gfh-vu-grid">
+              {vacantUnits.map((unit) => renderCard(unit, 'vacant'))}
+            </div>
+          )}
 
-            return (
-              <Link
-                key={unit.id}
-                to={`/owner/units/${unit.id}`}
-                className="gfh-vacant-card"
-                style={{
-                  background: theme.bg,
-                  border: `1px solid ${theme.border}`,
-                }}
-                onMouseEnter={e => {
-                  e.currentTarget.style.borderColor = theme.hoverBorder
-                }}
-                onMouseLeave={e => {
-                  e.currentTarget.style.borderColor = theme.border
-                }}
-              >
-                {/* Top Row: Icon + VACANT badge */}
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
-                  <div
-                    style={{
-                      width: 32,
-                      height: 32,
-                      borderRadius: 9,
-                      background: theme.iconBg,
-                      color: theme.iconColor,
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      flexShrink: 0,
-                    }}
-                  >
-                    {info.isShop ? (
-                      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" />
-                        <line x1="3" y1="6" x2="21" y2="6" />
-                        <path d="M16 10a4 4 0 0 1-8 0" />
-                      </svg>
-                    ) : (
-                      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
-                        <polyline points="9 22 9 12 15 12 15 22" />
-                      </svg>
-                    )}
-                  </div>
-
-                  {/* Red / Coral VACANT pill badge */}
-                  <span
-                    style={{
-                      background: '#FEF2F2',
-                      color: '#EF4444',
-                      border: '1px solid #FEE2E2',
-                      fontSize: 10,
-                      fontWeight: 800,
-                      letterSpacing: '0.5px',
-                      textTransform: 'uppercase',
-                      padding: '3px 10px',
-                      borderRadius: 999,
-                    }}
-                  >
-                    VACANT
-                  </span>
-                </div>
-
-                {/* Middle Content: Tag + Big Unit Number + Type Label */}
-                <div style={{ marginBottom: 14 }}>
-                  <div
-                    style={{
-                      fontSize: 11,
-                      fontWeight: 700,
-                      color: '#64748B',
-                      letterSpacing: '0.4px',
-                      textTransform: 'uppercase',
-                    }}
-                  >
-                    {info.tag}
-                  </div>
-                  <div
-                    style={{
-                      fontSize: 26,
-                      fontWeight: 800,
-                      color: '#0F172A',
-                      lineHeight: 1.15,
-                      margin: '3px 0 2px 0',
-                      letterSpacing: '-0.02em',
-                    }}
-                  >
-                    {unit.number}
-                  </div>
-                  <div
-                    style={{
-                      fontSize: 12,
-                      color: '#64748B',
-                      fontWeight: 500,
-                    }}
-                  >
-                    {info.label}
-                  </div>
-                </div>
-
-                {/* Bottom Row: Location Pin + Property / Building Name + Create Contract Action */}
-                <div
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    gap: 8,
-                    paddingTop: 10,
-                    borderTop: `1px solid ${theme.border}`,
-                  }}
-                >
-                  <div
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: 6,
-                      color: theme.locColor,
-                      fontSize: 12,
-                      fontWeight: 600,
-                      minWidth: 0,
-                    }}
-                  >
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
-                      <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
-                      <circle cx="12" cy="10" r="3" />
-                    </svg>
-                    <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                      {propName}
-                    </span>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={e => {
-                      e.preventDefault()
-                      e.stopPropagation()
-                      navigate(`/owner/contracts?create=1&unit_id=${unit.id}&property_id=${unit.property?.id || unit.property_id || ''}`)
-                    }}
-                    style={{
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      gap: 4,
-                      background: '#10B981',
-                      color: '#FFFFFF',
-                      border: 'none',
-                      padding: '4px 9px',
-                      borderRadius: 6,
-                      fontSize: 11,
-                      fontWeight: 700,
-                      cursor: 'pointer',
-                      whiteSpace: 'nowrap',
-                      flexShrink: 0,
-                      fontFamily: "'Inter', sans-serif",
-                    }}
-                  >
-                    + Create Contract
-                  </button>
-                </div>
-              </Link>
-            )
-          })}
-        </div>
+          {bookedUnits.length > 0 && (
+            <div id="booked">
+              <h2 className="gfh-vu-section-title">Booked</h2>
+              <div className="gfh-vu-grid">
+                {bookedUnits.map((unit) => renderCard(unit, 'booked'))}
+              </div>
+            </div>
+          )}
+        </>
       )}
     </div>
   )

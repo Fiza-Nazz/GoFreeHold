@@ -152,13 +152,13 @@ export default function MaintenanceComplaints() {
   ]
 
   return (
-    <div className="gfh-portal-page" style={{ fontFamily: "'Inter', system-ui, sans-serif", background: THEME.pageBg }}>
+    <div className="gfh-portal-page" style={{ fontFamily: "'Source Sans Pro', system-ui, sans-serif", background: THEME.pageBg }}>
       <style>{portalPageCss}</style>
 
       <div className="fade-in" style={heroStyle}>
         <div>
           <div style={{ fontSize: 13, color: THEME.textMuted, fontWeight: 600 }}>Assigned complaints</div>
-          <div style={{ fontSize: 22, fontWeight: 800, color: THEME.ink, marginTop: 4 }}>Live work queue</div>
+          <div style={{ fontSize: 22, fontWeight: 600, color: THEME.ink, marginTop: 4 }}>Live work queue</div>
           <div style={{ fontSize: 12, color: '#9ca3af', marginTop: 4 }}>From your maintenance assignments</div>
         </div>
         <button
@@ -226,7 +226,7 @@ export default function MaintenanceComplaints() {
                 </div>
                 <span style={{
                   fontSize: 11,
-                  fontWeight: 700,
+                  fontWeight: 600,
                   letterSpacing: '0.4px',
                   textTransform: 'uppercase',
                   background: card.badgeBg,
@@ -239,7 +239,7 @@ export default function MaintenanceComplaints() {
                 </span>
               </div>
               <div>
-                <div style={{ fontSize: 28, fontWeight: 800, color: '#0F172A', lineHeight: 1.15, letterSpacing: '-0.02em' }}>
+                <div style={{ fontSize: 28, fontWeight: 600, color: '#0F172A', lineHeight: 1.15, letterSpacing: '-0.02em' }}>
                   {card.value}
                 </div>
                 <div style={{ fontSize: 13, fontWeight: 600, color: '#64748B', marginTop: 4 }}>
@@ -289,7 +289,7 @@ export default function MaintenanceComplaints() {
                   padding: '8px 14px',
                   borderRadius: 8,
                   fontSize: 13,
-                  fontWeight: 700,
+                  fontWeight: 600,
                   border: isActive ? '1px solid #10B981' : '1px solid #E2E8F0',
                   background: isActive ? '#10B981' : '#FFFFFF',
                   color: isActive ? '#FFFFFF' : '#475569',
@@ -301,7 +301,7 @@ export default function MaintenanceComplaints() {
                 <span
                   style={{
                     fontSize: 11,
-                    fontWeight: 800,
+                    fontWeight: 600,
                     padding: '2px 7px',
                     borderRadius: 999,
                     background: isActive ? 'rgba(255,255,255,0.22)' : '#F1F5F9',
@@ -338,7 +338,7 @@ export default function MaintenanceComplaints() {
                 fontSize: 13,
                 color: '#0F172A',
                 outline: 'none',
-                fontFamily: "'Inter', system-ui, sans-serif",
+                fontFamily: "'Source Sans Pro', system-ui, sans-serif",
                 boxSizing: 'border-box',
               }}
             />
@@ -412,7 +412,7 @@ export default function MaintenanceComplaints() {
                   color: '#fff',
                   border: 'none',
                   fontSize: 12.5,
-                  fontWeight: 700,
+                  fontWeight: 600,
                   cursor: 'pointer',
                 }}
               >
@@ -436,9 +436,9 @@ export default function MaintenanceComplaints() {
                   const st = STATUS_STYLE[c.status] || STATUS_STYLE.open
                   return (
                     <tr key={c.id} className="gfh-portal-row" style={{ borderBottom: `1px solid ${THEME.border}` }}>
-                      <td style={{ ...tdStyle, fontWeight: 700 }}>#{c.id}</td>
+                      <td style={{ ...tdStyle, fontWeight: 600 }}>#{c.id}</td>
                       <td style={tdStyle}>
-                        <strong style={{ fontWeight: 700, color: THEME.ink }}>{c.title}</strong>
+                        <strong style={{ fontWeight: 600, color: THEME.ink }}>{c.title}</strong>
                         <div style={{ fontSize: 12, color: THEME.textMuted, marginTop: 2 }}>{c.description}</div>
                       </td>
                       <td style={{ ...tdStyle, fontWeight: 600 }}>
@@ -456,12 +456,12 @@ export default function MaintenanceComplaints() {
                         {formatDubaiDateTime(c.created_at)}
                       </td>
                       <td style={tdStyle}>
-                        <span style={{ backgroundColor: pr.bg, color: pr.color, border: `1px solid ${pr.border}`, padding: '3px 10px', borderRadius: 999, fontSize: 11.5, fontWeight: 700, display: 'inline-block' }}>
+                        <span style={{ backgroundColor: pr.bg, color: pr.color, border: `1px solid ${pr.border}`, padding: '3px 10px', borderRadius: 999, fontSize: 11.5, fontWeight: 600, display: 'inline-block' }}>
                           {safeUpper(c.priority)}
                         </span>
                       </td>
                       <td style={tdStyle}>
-                        <span style={{ backgroundColor: st.bg, color: st.color, border: `1px solid ${st.border}`, padding: '3px 10px', borderRadius: 999, fontSize: 11.5, fontWeight: 700, display: 'inline-block' }}>
+                        <span style={{ backgroundColor: st.bg, color: st.color, border: `1px solid ${st.border}`, padding: '3px 10px', borderRadius: 999, fontSize: 11.5, fontWeight: 600, display: 'inline-block' }}>
                           {safeUpperLabel(c.status)}
                         </span>
                       </td>
@@ -471,7 +471,7 @@ export default function MaintenanceComplaints() {
                             <button
                               className="gfh-portal-btn"
                               onClick={() => handleStatusUpdate(c.id, 'in_progress')}
-                              style={{ display: 'inline-flex', alignItems: 'center', gap: 5, padding: '6px 12px', fontSize: 12, fontWeight: 700, borderRadius: 8, background: '#0284C7', color: '#fff', border: 'none', cursor: 'pointer', boxShadow: '0 1px 2px rgba(2, 132, 199, 0.2)' }}
+                              style={{ display: 'inline-flex', alignItems: 'center', gap: 5, padding: '6px 12px', fontSize: 12, fontWeight: 600, borderRadius: 8, background: '#0284C7', color: '#fff', border: 'none', cursor: 'pointer', boxShadow: '0 1px 2px rgba(2, 132, 199, 0.2)' }}
                             >
                               <Icon path={icons.play} size={12} />
                               Start
@@ -481,7 +481,7 @@ export default function MaintenanceComplaints() {
                             <button
                               className="gfh-portal-btn"
                               onClick={() => handleStatusUpdate(c.id, 'resolved')}
-                              style={{ display: 'inline-flex', alignItems: 'center', gap: 5, padding: '6px 12px', fontSize: 12, fontWeight: 700, borderRadius: 8, background: '#10B981', color: '#fff', border: 'none', cursor: 'pointer', boxShadow: '0 1px 2px rgba(14, 94, 72, 0.2)' }}
+                              style={{ display: 'inline-flex', alignItems: 'center', gap: 5, padding: '6px 12px', fontSize: 12, fontWeight: 600, borderRadius: 8, background: '#10B981', color: '#fff', border: 'none', cursor: 'pointer', boxShadow: '0 1px 2px rgba(14, 94, 72, 0.2)' }}
                             >
                               <Icon path={icons.check} size={12} />
                               Resolve

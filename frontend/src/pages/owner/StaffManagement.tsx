@@ -116,12 +116,12 @@ export default function StaffManagement() {
   const pendingCount = rows.filter((r) => r.account_status === 'pending').length
 
   return (
-    <div style={{ padding: '4px 0 32px', fontFamily: "'Inter', system-ui, sans-serif" }}>
+    <div style={{ padding: '4px 0 32px', fontFamily: "'Source Sans Pro', system-ui, sans-serif" }}>
       {/* Top Header */}
       <div style={{ marginBottom: 24 }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
           <div>
-            <h1 style={{ fontSize: 24, fontWeight: 800, color: '#0F172A', margin: 0, letterSpacing: '-0.02em' }}>
+            <h1 style={{ fontSize: 24, fontWeight: 600, color: '#0F172A', margin: 0, letterSpacing: '-0.02em' }}>
               Staff Management
             </h1>
             <p style={{ fontSize: 13.5, color: '#64748B', margin: '4px 0 0' }}>
@@ -142,10 +142,10 @@ export default function StaffManagement() {
             boxShadow: '0 1px 3px rgba(16,24,40,0.04)',
           }}
         >
-          <div style={{ fontSize: 12, fontWeight: 700, color: '#0369A1', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+          <div style={{ fontSize: 12, fontWeight: 600, color: '#0369A1', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
             Total Staff
           </div>
-          <div style={{ fontSize: 26, fontWeight: 800, color: '#0369A1', marginTop: 4 }}>{rows.length}</div>
+          <div style={{ fontSize: 26, fontWeight: 600, color: '#0369A1', marginTop: 4 }}>{rows.length}</div>
         </div>
 
         <div
@@ -157,10 +157,10 @@ export default function StaffManagement() {
             boxShadow: '0 1px 3px rgba(16,24,40,0.04)',
           }}
         >
-          <div style={{ fontSize: 12, fontWeight: 700, color: '#15803D', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+          <div style={{ fontSize: 12, fontWeight: 600, color: '#15803D', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
             Active Accounts
           </div>
-          <div style={{ fontSize: 26, fontWeight: 800, color: '#15803D', marginTop: 4 }}>{activeCount}</div>
+          <div style={{ fontSize: 26, fontWeight: 600, color: '#15803D', marginTop: 4 }}>{activeCount}</div>
         </div>
 
         <div
@@ -172,10 +172,10 @@ export default function StaffManagement() {
             boxShadow: '0 1px 3px rgba(16,24,40,0.04)',
           }}
         >
-          <div style={{ fontSize: 12, fontWeight: 700, color: '#B45309', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+          <div style={{ fontSize: 12, fontWeight: 600, color: '#B45309', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
             Pending Invitations
           </div>
-          <div style={{ fontSize: 26, fontWeight: 800, color: '#B45309', marginTop: 4 }}>{pendingCount}</div>
+          <div style={{ fontSize: 26, fontWeight: 600, color: '#B45309', marginTop: 4 }}>{pendingCount}</div>
         </div>
       </div>
 
@@ -238,20 +238,20 @@ export default function StaffManagement() {
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              fontWeight: 800,
+              fontWeight: 600,
               fontSize: 14,
             }}
           >
             +
           </div>
-          <h2 style={{ fontSize: 17, fontWeight: 800, color: '#0F172A', margin: 0 }}>
+          <h2 style={{ fontSize: 17, fontWeight: 600, color: '#0F172A', margin: 0 }}>
             {edit ? 'Edit Staff Member' : 'Add New Staff Member'}
           </h2>
         </div>
 
         <form onSubmit={save} style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 16, alignItems: 'end' }}>
           <div>
-            <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: '#10B981', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: 6 }}>
+            <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#10B981', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: 6 }}>
               Full Name
             </label>
             <input
@@ -275,7 +275,7 @@ export default function StaffManagement() {
           </div>
 
           <div>
-            <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: '#10B981', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: 6 }}>
+            <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#10B981', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: 6 }}>
               Email Address
             </label>
             <input
@@ -302,7 +302,7 @@ export default function StaffManagement() {
           </div>
 
           <div>
-            <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: '#10B981', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: 6 }}>
+            <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#10B981', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: 6 }}>
               Role Designation
             </label>
             <select
@@ -329,7 +329,7 @@ export default function StaffManagement() {
           </div>
 
           <div>
-            <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: '#10B981', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: 6 }}>
+            <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#10B981', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: 6 }}>
               {edit ? 'New Password (Optional)' : 'Password'}
             </label>
             <input
@@ -366,7 +366,7 @@ export default function StaffManagement() {
                 borderRadius: 8,
                 padding: '11px 20px',
                 fontSize: 13.5,
-                fontWeight: 700,
+                fontWeight: 600,
                 cursor: busy ? 'not-allowed' : 'pointer',
                 boxShadow: '0 2px 6px rgba(14, 94, 72, 0.25)',
                 whiteSpace: 'nowrap',
@@ -411,7 +411,7 @@ export default function StaffManagement() {
       >
         {/* Table Controls */}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 18, gap: 14, flexWrap: 'wrap' }}>
-          <div style={{ fontSize: 16, fontWeight: 800, color: '#0F172A' }}>
+          <div style={{ fontSize: 16, fontWeight: 600, color: '#0F172A' }}>
             Current Staff Directory
           </div>
           <div style={{ width: '100%', maxWidth: 280 }}>
@@ -449,19 +449,19 @@ export default function StaffManagement() {
             <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13.5, textAlign: 'left' }}>
               <thead>
                 <tr style={{ background: '#F8FAFC', borderBottom: '1px solid #E2E8F0' }}>
-                  <th style={{ padding: '12px 14px', fontWeight: 700, color: '#475569', fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                  <th style={{ padding: '12px 14px', fontWeight: 600, color: '#475569', fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
                     Staff Member
                   </th>
-                  <th style={{ padding: '12px 14px', fontWeight: 700, color: '#475569', fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                  <th style={{ padding: '12px 14px', fontWeight: 600, color: '#475569', fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
                     Role
                   </th>
-                  <th style={{ padding: '12px 14px', fontWeight: 700, color: '#475569', fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                  <th style={{ padding: '12px 14px', fontWeight: 600, color: '#475569', fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
                     Account Status
                   </th>
-                  <th style={{ padding: '12px 14px', fontWeight: 700, color: '#475569', fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                  <th style={{ padding: '12px 14px', fontWeight: 600, color: '#475569', fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
                     Invitation
                   </th>
-                  <th style={{ padding: '12px 14px', fontWeight: 700, color: '#475569', fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.04em', textAlign: 'right' }}>
+                  <th style={{ padding: '12px 14px', fontWeight: 600, color: '#475569', fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.04em', textAlign: 'right' }}>
                     Actions
                   </th>
                 </tr>
@@ -504,7 +504,7 @@ export default function StaffManagement() {
                               display: 'flex',
                               alignItems: 'center',
                               justifyContent: 'center',
-                              fontWeight: 700,
+                              fontWeight: 600,
                               fontSize: 13,
                               flexShrink: 0,
                             }}
@@ -519,7 +519,7 @@ export default function StaffManagement() {
                               : 'ST'}
                           </div>
                           <div>
-                            <div style={{ fontWeight: 700, color: '#0F172A', fontSize: 14 }}>{row.name}</div>
+                            <div style={{ fontWeight: 600, color: '#0F172A', fontSize: 14 }}>{row.name}</div>
                             <div style={{ color: '#64748B', fontSize: 12.5 }}>{row.email}</div>
                           </div>
                         </div>
@@ -535,7 +535,7 @@ export default function StaffManagement() {
                             padding: '3px 10px',
                             borderRadius: 999,
                             fontSize: 11.5,
-                            fontWeight: 700,
+                            fontWeight: 600,
                             textTransform: 'uppercase',
                             letterSpacing: '0.04em',
                           }}
@@ -556,7 +556,7 @@ export default function StaffManagement() {
                             padding: '3px 10px',
                             borderRadius: 999,
                             fontSize: 11.5,
-                            fontWeight: 700,
+                            fontWeight: 600,
                             textTransform: 'uppercase',
                             letterSpacing: '0.04em',
                           }}
@@ -612,7 +612,7 @@ export default function StaffManagement() {
                               padding: '6px 12px',
                               borderRadius: 6,
                               fontSize: 12,
-                              fontWeight: 700,
+                              fontWeight: 600,
                               cursor: 'pointer',
                             }}
                           >
@@ -629,7 +629,7 @@ export default function StaffManagement() {
                               padding: '6px 12px',
                               borderRadius: 6,
                               fontSize: 12,
-                              fontWeight: 700,
+                              fontWeight: 600,
                               cursor: 'pointer',
                             }}
                           >
@@ -646,7 +646,7 @@ export default function StaffManagement() {
                               padding: '6px 12px',
                               borderRadius: 6,
                               fontSize: 12,
-                              fontWeight: 700,
+                              fontWeight: 600,
                               cursor: 'pointer',
                             }}
                           >
@@ -664,7 +664,7 @@ export default function StaffManagement() {
                                 padding: '6px 12px',
                                 borderRadius: 6,
                                 fontSize: 12,
-                                fontWeight: 700,
+                                fontWeight: 600,
                                 cursor: 'pointer',
                               }}
                             >

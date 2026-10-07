@@ -82,13 +82,13 @@ export default function MaintenanceDailyReport() {
   ]
 
   return (
-    <div className="gfh-portal-page" style={{ fontFamily: "'Inter', system-ui, sans-serif", background: THEME.pageBg }}>
+    <div className="gfh-portal-page" style={{ fontFamily: "'Source Sans Pro', system-ui, sans-serif", background: THEME.pageBg }}>
       <style>{portalPageCss}</style>
 
       <div className="fade-in" style={heroStyle}>
         <div>
           <div style={{ fontSize: 13, color: THEME.textMuted, fontWeight: 600 }}>Daily report</div>
-          <div style={{ fontSize: 22, fontWeight: 800, color: THEME.ink, marginTop: 4 }}>Today&apos;s completion stats</div>
+          <div style={{ fontSize: 22, fontWeight: 600, color: THEME.ink, marginTop: 4 }}>Today&apos;s completion stats</div>
           <div style={{ fontSize: 12, color: '#9ca3af', marginTop: 4 }}>Live maintenance metrics for today</div>
         </div>
       </div>
@@ -134,7 +134,7 @@ export default function MaintenanceDailyReport() {
                 </div>
                 <span style={{
                   fontSize: 11,
-                  fontWeight: 700,
+                  fontWeight: 600,
                   letterSpacing: '0.4px',
                   textTransform: 'uppercase',
                   background: card.badgeBg,
@@ -147,7 +147,7 @@ export default function MaintenanceDailyReport() {
                 </span>
               </div>
               <div>
-                <div style={{ fontSize: 28, fontWeight: 800, color: '#0F172A', lineHeight: 1.15, letterSpacing: '-0.02em' }}>
+                <div style={{ fontSize: 28, fontWeight: 600, color: '#0F172A', lineHeight: 1.15, letterSpacing: '-0.02em' }}>
                   {card.value}
                 </div>
                 <div style={{ fontSize: 13, fontWeight: 600, color: '#64748B', marginTop: 4 }}>

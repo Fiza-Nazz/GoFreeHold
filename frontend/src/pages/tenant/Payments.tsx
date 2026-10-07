@@ -73,17 +73,17 @@ export default function TenantPayments() {
   }, [payments, searchQuery])
 
   return (
-    <div className="gfh-portal-page" style={{ fontFamily: "'Inter', system-ui, sans-serif", background: THEME.pageBg, minHeight: '100%' }}>
+    <div className="gfh-portal-page" style={{ fontFamily: "'Source Sans Pro', system-ui, sans-serif", background: THEME.pageBg, minHeight: '100%' }}>
       <style>{portalPageCss}</style>
 
       {/* Hero Header */}
       <div className="fade-in" style={heroStyle}>
         <div>
-          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 12, fontWeight: 700, letterSpacing: '0.6px', textTransform: 'uppercase', color: '#10B981', marginBottom: 2 }}>
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 12, fontWeight: 600, letterSpacing: '0.6px', textTransform: 'uppercase', color: '#10B981', marginBottom: 2 }}>
             <span style={{ width: 7, height: 7, borderRadius: '50%', background: '#10B981', display: 'inline-block' }} />
             Payment Records
           </div>
-          <div style={{ fontSize: 24, fontWeight: 800, color: THEME.ink, letterSpacing: '-0.02em', marginTop: 2 }}>
+          <div style={{ fontSize: 24, fontWeight: 600, color: THEME.ink, letterSpacing: '-0.02em', marginTop: 2 }}>
             Past Payments &amp; Receipts
           </div>
           <div style={{ fontSize: 13, color: THEME.textMuted, marginTop: 4 }}>
@@ -127,7 +127,7 @@ export default function TenantPayments() {
               </div>
               <span style={{
                 fontSize: 11,
-                fontWeight: 700,
+                fontWeight: 600,
                 letterSpacing: '0.4px',
                 textTransform: 'uppercase',
                 background: '#FFFFFF',
@@ -140,7 +140,7 @@ export default function TenantPayments() {
               </span>
             </div>
             <div>
-              <div style={{ fontSize: 24, fontWeight: 800, color: '#065F46', lineHeight: 1.15, letterSpacing: '-0.02em' }}>
+              <div style={{ fontSize: 24, fontWeight: 600, color: '#065F46', lineHeight: 1.15, letterSpacing: '-0.02em' }}>
                 AED {totalAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
               </div>
               <div style={{ fontSize: 13, fontWeight: 600, color: '#15803D', marginTop: 4 }}>
@@ -182,7 +182,7 @@ export default function TenantPayments() {
               </div>
               <span style={{
                 fontSize: 11,
-                fontWeight: 700,
+                fontWeight: 600,
                 letterSpacing: '0.4px',
                 textTransform: 'uppercase',
                 background: '#FFFFFF',
@@ -195,7 +195,7 @@ export default function TenantPayments() {
               </span>
             </div>
             <div>
-              <div style={{ fontSize: 24, fontWeight: 800, color: '#0F172A', lineHeight: 1.15, letterSpacing: '-0.02em' }}>
+              <div style={{ fontSize: 24, fontWeight: 600, color: '#0F172A', lineHeight: 1.15, letterSpacing: '-0.02em' }}>
                 {payments.length}
               </div>
               <div style={{ fontSize: 13, fontWeight: 600, color: '#64748B', marginTop: 4 }}>
@@ -210,7 +210,7 @@ export default function TenantPayments() {
       <div className="fade-in" style={{ ...panelStyle, minHeight: 280, borderRadius: 16 }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16, flexWrap: 'wrap', gap: 12 }}>
           <div>
-            <h3 style={{ fontSize: 17, fontWeight: 800, color: THEME.ink, margin: 0 }}>
+            <h3 style={{ fontSize: 17, fontWeight: 600, color: THEME.ink, margin: 0 }}>
               Payment Transactions
             </h3>
             <div style={{ fontSize: 12, color: '#64748B', marginTop: 2 }}>
@@ -253,7 +253,7 @@ export default function TenantPayments() {
             <div style={{ width: 48, height: 48, borderRadius: '50%', background: '#F8FAFC', color: '#94A3B8', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 12px' }}>
               <Icon path={icons.receipt} size={22} />
             </div>
-            <p style={{ fontSize: 14, fontWeight: 700, color: THEME.ink, margin: 0 }}>
+            <p style={{ fontSize: 14, fontWeight: 600, color: THEME.ink, margin: 0 }}>
               {searchQuery ? 'No payment records match your search.' : 'No payment records found.'}
             </p>
             <p style={{ fontSize: 12.5, color: THEME.textMuted, marginTop: 4 }}>
@@ -280,7 +280,7 @@ export default function TenantPayments() {
                       <span
                         style={{
                           fontSize: 12,
-                          fontWeight: 800,
+                          fontWeight: 600,
                           background: '#F1F5F9',
                           color: '#0F172A',
                           padding: '3px 8px',
@@ -292,7 +292,7 @@ export default function TenantPayments() {
                       </span>
                     </td>
                     <td style={tdStyle}>
-                      <div style={{ fontWeight: 700, color: THEME.ink }}>
+                      <div style={{ fontWeight: 600, color: THEME.ink }}>
                         Unit {p.contract?.unit?.number || '—'}
                       </div>
                       <div style={{ fontSize: 12, color: '#64748B', marginTop: 2 }}>
@@ -306,7 +306,7 @@ export default function TenantPayments() {
                           padding: '3px 9px',
                           borderRadius: 999,
                           fontSize: 11,
-                          fontWeight: 700,
+                          fontWeight: 600,
                           textTransform: 'uppercase',
                           background: '#F0F9FF',
                           color: '#0284C7',
@@ -319,7 +319,7 @@ export default function TenantPayments() {
                     <td style={{ ...tdStyle, fontSize: 12.5, color: '#334155', whiteSpace: 'nowrap', fontWeight: 600 }}>
                       {formatDate(p.payment_date || p.date)}
                     </td>
-                    <td style={{ ...tdStyle, textAlign: 'right', fontWeight: 800, color: '#065F46', fontSize: 14 }}>
+                    <td style={{ ...tdStyle, textAlign: 'right', fontWeight: 600, color: '#065F46', fontSize: 14 }}>
                       AED {Number(p.amount).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                     </td>
                     <td style={{ ...tdStyle, textAlign: 'center' }}>
@@ -331,7 +331,7 @@ export default function TenantPayments() {
                           padding: '3px 10px',
                           borderRadius: 999,
                           fontSize: 11,
-                          fontWeight: 700,
+                          fontWeight: 600,
                           background: '#ECFDF8',
                           color: '#065F46',
                           border: '1px solid #A7F3DC',

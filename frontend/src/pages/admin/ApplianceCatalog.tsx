@@ -52,7 +52,7 @@ const inputStyle: React.CSSProperties = {
 
 const labelStyle: React.CSSProperties = {
   fontSize: 12,
-  fontWeight: 700,
+  fontWeight: 600,
   color: '#334155',
   letterSpacing: '0.3px',
   textTransform: 'uppercase',
@@ -220,13 +220,13 @@ export default function ApplianceCatalog() {
   }, [searchTerm, unitFilter, entriesPerPage])
 
   return (
-    <div className="gfh-portal-page" style={{ fontFamily: "'Inter', system-ui, sans-serif", padding: '20px 24px' }}>
+    <div className="gfh-portal-page" style={{ fontFamily: 'var(--font-sans)' }}>
       <style>{portalPageCss}</style>
       <style>{`
         @keyframes gfhOverlayFade { from { opacity: 0; } to { opacity: 1; } }
         @keyframes gfhModalPop { from { opacity: 0; transform: scale(0.95) translateY(10px); } to { opacity: 1; transform: scale(1) translateY(0); } }
         .gfh-prop-input {
-          font-family: 'Inter', system-ui, sans-serif !important;
+          font-family: 'Source Sans Pro', system-ui, sans-serif !important;
           font-size: 13.5px !important;
           border: 1px solid #E2E8F0 !important;
           border-radius: 6px !important;
@@ -249,11 +249,11 @@ export default function ApplianceCatalog() {
           border-radius: 6px !important;
           padding: 9px 18px !important;
           font-size: 13.5px !important;
-          font-weight: 700 !important;
+          font-weight: 600 !important;
           cursor: pointer !important;
           box-shadow: 0 1px 3px rgba(15, 138, 103, 0.25) !important;
           transition: background 0.15s ease, transform 0.15s ease !important;
-          font-family: 'Inter', sans-serif !important;
+          font-family: 'Source Sans Pro', sans-serif !important;
         }
         .gfh-add-prop-btn:hover {
           background: #0B6E52 !important;
@@ -267,7 +267,7 @@ export default function ApplianceCatalog() {
         .gfh-table th {
           background: #F8FAFC;
           color: #334155;
-          font-weight: 700;
+          font-weight: 600;
           font-size: 13px;
           text-align: left;
           padding: 12px 16px;
@@ -292,7 +292,7 @@ export default function ApplianceCatalog() {
         }
         .gfh-property-name-cell {
           color: #10B981;
-          font-weight: 700;
+          font-weight: 600;
         }
         .gfh-action-btn {
           display: inline-flex;
@@ -366,7 +366,7 @@ export default function ApplianceCatalog() {
           marginBottom: 24,
         }}>
           <div>
-            <h2 style={{ fontSize: 20, fontWeight: 700, color: '#0F172A', margin: 0 }}>Appliance List</h2>
+            <h2 style={{ fontSize: 20, fontWeight: 600, color: '#0F172A', margin: 0 }}>Appliance List</h2>
             <p style={{ fontSize: 13, color: '#64748B', margin: '4px 0 0' }}>List Of Entries</p>
           </div>
           <button type="button" className="gfh-add-prop-btn" onClick={openCreate}>
@@ -486,7 +486,7 @@ export default function ApplianceCatalog() {
                             padding: '3px 9px', borderRadius: 999,
                             background: cond.bg, color: cond.color,
                             border: `1px solid ${cond.border}`,
-                            fontSize: 11, fontWeight: 700, letterSpacing: '0.3px',
+                            fontSize: 11, fontWeight: 600, letterSpacing: '0.3px',
                             display: 'inline-flex', alignItems: 'center', gap: 5,
                             whiteSpace: 'nowrap',
                           }}>
@@ -576,7 +576,7 @@ export default function ApplianceCatalog() {
             animation: 'gfhModalPop 0.25s cubic-bezier(.2,.8,.2,1)',
           }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
-              <h2 style={{ fontSize: 18, fontWeight: 800, color: '#0F172A', margin: 0 }}>
+              <h2 style={{ fontSize: 18, fontWeight: 600, color: '#0F172A', margin: 0 }}>
                 {editingAppliance ? 'Edit Appliance' : 'Add New Appliance'}
               </h2>
               <button
@@ -691,7 +691,7 @@ export default function ApplianceCatalog() {
                   style={{
                     display: 'inline-flex', alignItems: 'center', gap: 6,
                     padding: '9px 18px', background: '#F1F5F9', border: '1px solid #CBD5E1',
-                    color: '#334155', borderRadius: 8, fontWeight: 700, fontSize: 13,
+                    color: '#334155', borderRadius: 8, fontWeight: 600, fontSize: 13,
                     cursor: 'pointer',
                   }}
                 >

@@ -49,7 +49,7 @@ const inputStyle: React.CSSProperties = {
 
 const labelStyle: React.CSSProperties = {
   fontSize: 12.5,
-  fontWeight: 700,
+  fontWeight: 600,
   color: THEME.violetLight,
   letterSpacing: '0.4px',
   textTransform: 'uppercase',
@@ -143,13 +143,13 @@ export default function PurchaseOrderTracker() {
   const pendingCount = orders.filter(po => po.status === 'pending').length
 
   return (
-    <div className="gfh-portal-page" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
+    <div className="gfh-portal-page" style={{ fontFamily: "'Source Sans Pro', system-ui, sans-serif" }}>
       <style>{portalPageCss}</style>
 
       <div className="fade-in" style={heroStyle}>
         <CornerBrackets />
         <div>
-          <h1 style={{ fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", fontSize: 30, fontWeight: 700, color: THEME.ink, margin: 0 }}>
+          <h1 style={{ fontFamily: "'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", fontSize: 30, fontWeight: 600, color: THEME.ink, margin: 0 }}>
             Purchases
           </h1>
           <p style={{ fontSize: 14, color: THEME.textMuted, marginTop: 8, marginBottom: 0 }}>
@@ -174,8 +174,8 @@ export default function PurchaseOrderTracker() {
           <div style={{ width: 40, height: 40, borderRadius: 8, background: '#0284C7', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 10 }}>
             <Icon path={icons.cart} size={18} />
           </div>
-          <div style={{ fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", fontSize: 24, fontWeight: 700, color: '#0369A1' }}>{orders.length}</div>
-          <div style={{ fontSize: 12, color: '#0369A1', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.3px', marginTop: 2 }}>Total Purchases</div>
+          <div style={{ fontFamily: "'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", fontSize: 24, fontWeight: 600, color: '#0369A1' }}>{orders.length}</div>
+          <div style={{ fontSize: 12, color: '#0369A1', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.3px', marginTop: 2 }}>Total Purchases</div>
         </div>
 
         <div className="gfh-portal-stat" style={{ position: 'relative', background: '#F0FDF4', border: '1px solid #BBF7D0', borderRadius: 12, padding: 20, animationDelay: '0.06s' }}>
@@ -183,8 +183,8 @@ export default function PurchaseOrderTracker() {
           <div style={{ width: 40, height: 40, borderRadius: 8, background: '#16A34A', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 10 }}>
             <Icon path={icons.wallet} size={18} />
           </div>
-          <div style={{ fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", fontSize: 24, fontWeight: 700, color: '#15803D' }}>AED {totalSpend.toLocaleString()}</div>
-          <div style={{ fontSize: 12, color: '#15803D', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.3px', marginTop: 2 }}>Total Spend</div>
+          <div style={{ fontFamily: "'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", fontSize: 24, fontWeight: 600, color: '#15803D' }}>AED {totalSpend.toLocaleString()}</div>
+          <div style={{ fontSize: 12, color: '#15803D', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.3px', marginTop: 2 }}>Total Spend</div>
         </div>
 
         <div className="gfh-portal-stat" style={{ position: 'relative', background: '#FFFBEB', border: '1px solid #FDE68A', borderRadius: 12, padding: 20, animationDelay: '0.12s' }}>
@@ -192,8 +192,8 @@ export default function PurchaseOrderTracker() {
           <div style={{ width: 40, height: 40, borderRadius: 8, background: 'linear-gradient(135deg, #f59e0b, #b45309)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 10 }}>
             <Icon path={icons.clock} size={18} />
           </div>
-          <div style={{ fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", fontSize: 24, fontWeight: 700, color: '#b45309' }}>{pendingCount}</div>
-          <div style={{ fontSize: 12, color: '#B45309', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.3px', marginTop: 2 }}>Pending Orders</div>
+          <div style={{ fontFamily: "'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", fontSize: 24, fontWeight: 600, color: '#b45309' }}>{pendingCount}</div>
+          <div style={{ fontSize: 12, color: '#B45309', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.3px', marginTop: 2 }}>Pending Orders</div>
         </div>
       </div>
 
@@ -220,14 +220,14 @@ export default function PurchaseOrderTracker() {
                   const st = STATUS_STYLE[po.status] || { bg: '#e5e7eb', color: '#374151' }
                   return (
                     <tr key={po.id} className="gfh-portal-row" style={{ borderBottom: `1px solid ${THEME.border}` }}>
-                      <td style={{ ...tdStyle, fontWeight: 700 }}>#{po.id}</td>
+                      <td style={{ ...tdStyle, fontWeight: 600 }}>#{po.id}</td>
                       <td style={{ ...tdStyle, fontWeight: 600 }}>{po.supplier_name}</td>
                       <td style={tdStyle}>{firstItemName(po)}</td>
                       <td style={tdStyle}>{firstItemQty(po)}</td>
-                      <td style={{ ...tdStyle, fontWeight: 700, color: THEME.violetLight }}>{Number(po.total_amount || 0).toLocaleString()}</td>
+                      <td style={{ ...tdStyle, fontWeight: 600, color: THEME.violetLight }}>{Number(po.total_amount || 0).toLocaleString()}</td>
                       <td style={tdStyle}>{String(po.purchase_date || '').slice(0, 10)}</td>
                       <td style={tdStyle}>
-                        <span style={{ backgroundColor: st.bg, color: st.color, padding: '4px 10px', borderRadius: 8, fontSize: 12, fontWeight: 700 }}>
+                        <span style={{ backgroundColor: st.bg, color: st.color, padding: '4px 10px', borderRadius: 8, fontSize: 12, fontWeight: 600 }}>
                           {safeUpper(po.status)}
                         </span>
                       </td>
@@ -237,7 +237,7 @@ export default function PurchaseOrderTracker() {
                             <button
                               type="button"
                               className="gfh-portal-btn"
-                              style={{ display: 'inline-flex', alignItems: 'center', gap: 5, padding: '5px 10px', fontSize: 12, fontWeight: 700, borderRadius: 8, background: 'linear-gradient(135deg, #22c55e, #15803d)', color: '#fff', border: 'none', cursor: 'pointer' }}
+                              style={{ display: 'inline-flex', alignItems: 'center', gap: 5, padding: '5px 10px', fontSize: 12, fontWeight: 600, borderRadius: 8, background: 'linear-gradient(135deg, #22c55e, #15803d)', color: '#fff', border: 'none', cursor: 'pointer' }}
                               onClick={() => updateStatus(po.id, 'received')}
                             >
                               <Icon path={icons.check} size={12} />
@@ -247,7 +247,7 @@ export default function PurchaseOrderTracker() {
                           <button
                             type="button"
                             className="gfh-portal-btn"
-                            style={{ display: 'inline-flex', alignItems: 'center', gap: 5, padding: '5px 10px', fontSize: 12, fontWeight: 700, borderRadius: 8, background: '#991b1b', color: '#fff', border: 'none', cursor: 'pointer' }}
+                            style={{ display: 'inline-flex', alignItems: 'center', gap: 5, padding: '5px 10px', fontSize: 12, fontWeight: 600, borderRadius: 8, background: '#991b1b', color: '#fff', border: 'none', cursor: 'pointer' }}
                             onClick={() => handleDelete(po.id)}
                           >
                             <Icon path={icons.trash} size={12} />
@@ -268,7 +268,7 @@ export default function PurchaseOrderTracker() {
         <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(27,14,51,0.55)', backdropFilter: 'blur(3px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
           <div className="fade-in" style={{ position: 'relative', width: 480, padding: 30, background: '#ffffff', borderRadius: 8, border: `1px solid ${THEME.border}`, boxShadow: '0 24px 55px -18px rgba(27,14,51,0.35)' }}>
             <CornerBrackets />
-            <h2 style={{ fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", fontSize: 22, fontWeight: 700, marginBottom: 20, color: THEME.violetLight }}>
+            <h2 style={{ fontFamily: "'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", fontSize: 22, fontWeight: 600, marginBottom: 20, color: THEME.violetLight }}>
               Create Purchase
             </h2>
             <form onSubmit={handleCreate} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
