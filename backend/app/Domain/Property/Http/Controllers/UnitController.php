@@ -8,6 +8,7 @@ use App\Domain\Property\Services\PropertyService;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class UnitController extends Controller
 {
@@ -48,6 +49,10 @@ class UnitController extends Controller
     {
         $validated = $request->validated();
 
+        if ($request->hasFile('image')) {
+            $validated['image'] = $request->file('image')->store('units', 'public');
+        }
+
         $unit = $this->propertyService->createUnit($validated);
 
         return response()->json([
@@ -81,7 +86,17 @@ class UnitController extends Controller
             'price'                  => 'numeric|min:0',
             'monthly_service_charge' => 'nullable|numeric|min:0',
             'status'                 => 'in:AVAILABLE,BOOKED,OCCUPIED,SOLD',
+            'image'                  => 'nullable',
         ]);
+
+        if ($request->hasFile('image')) {
+            if ($unit->image && !str_starts_with($unit->image, 'http') && Storage::disk('public')->exists($unit->image)) {
+                Storage::disk('public')->delete($unit->image);
+            }
+            $validated['image'] = $request->file('image')->store('units', 'public');
+        } elseif ($request->exists('image')) {
+            $validated['image'] = $request->input('image');
+        }
 
         $unit->update($validated);
 
@@ -118,11 +133,16 @@ class UnitController extends Controller
             'price'                  => 'required|numeric|min:0',
             'monthly_service_charge' => 'nullable|numeric|min:0',
             'status'                 => 'nullable|in:AVAILABLE,BOOKED,OCCUPIED,SOLD',
+            'image'                  => 'nullable',
         ]);
 
         $property = \App\Domain\Property\Models\Property::findOrFail($validated['property_id']);
         if ((int) $property->owner_id !== (int) $ownerId) {
             abort(403, 'You do not own this property.');
+        }
+
+        if ($request->hasFile('image')) {
+            $validated['image'] = $request->file('image')->store('units', 'public');
         }
 
         $validated['owner_id'] = $ownerId;
@@ -159,6 +179,7 @@ class UnitController extends Controller
             'price'                  => 'sometimes|required|numeric|min:0',
             'monthly_service_charge' => 'nullable|numeric|min:0',
             'status'                 => 'nullable|in:AVAILABLE,BOOKED,OCCUPIED,SOLD',
+            'image'                  => 'nullable',
         ]);
 
         if (isset($validated['property_id'])) {
@@ -166,6 +187,15 @@ class UnitController extends Controller
             if ((int) $targetProperty->owner_id !== (int) $ownerId) {
                 abort(403, 'You do not own the selected property.');
             }
+        }
+
+        if ($request->hasFile('image')) {
+            if ($unit->image && !str_starts_with($unit->image, 'http') && Storage::disk('public')->exists($unit->image)) {
+                Storage::disk('public')->delete($unit->image);
+            }
+            $validated['image'] = $request->file('image')->store('units', 'public');
+        } elseif ($request->exists('image')) {
+            $validated['image'] = $request->input('image');
         }
 
         $unit->update($validated);
@@ -194,6 +224,80 @@ class UnitController extends Controller
         return response()->json([
             'status'  => 'success',
             'message' => 'Unit deleted successfully',
+        ]);
+    }
+
+    public function getImages(Unit $unit): JsonResponse
+    {
+        $images = [];
+        if ($unit->image) {
+            $images[] = [
+                'id'        => 1,
+                'unit_id'   => $unit->id,
+                'file_name' => basename($unit->image),
+                'file_path' => $unit->image,
+                'url'       => $unit->image_url,
+                'image_url' => $unit->image_url,
+            ];
+        }
+
+        return response()->json([
+            'status' => 'success',
+            'data'   => ['images' => $images],
+        ]);
+    }
+
+    public function uploadImage(Request $request, Unit $unit): JsonResponse
+    {
+        $request->validate([
+            'image'    => 'nullable|file|image|max:10240',
+            'images'   => 'nullable',
+            'images.*' => 'nullable|file|image|max:10240',
+        ]);
+
+        $file = $request->file('image')
+            ?? ($request->file('images') ? (is_array($request->file('images')) ? $request->file('images')[0] : $request->file('images')) : null);
+
+        if ($file) {
+            if ($unit->image && !str_starts_with($unit->image, 'http') && Storage::disk('public')->exists($unit->image)) {
+                Storage::disk('public')->delete($unit->image);
+            }
+            $path = $file->store('units', 'public');
+            $unit->update(['image' => $path]);
+        } elseif ($request->filled('image')) {
+            $unit->update(['image' => $request->input('image')]);
+        }
+
+        return response()->json([
+            'status'  => 'success',
+            'message' => 'Unit image uploaded successfully',
+            'data'    => [
+                'unit'      => $unit,
+                'image'     => $unit->image,
+                'image_url' => $unit->image_url,
+                'images'    => $unit->image ? [[
+                    'id'        => 1,
+                    'unit_id'   => $unit->id,
+                    'file_name' => basename($unit->image),
+                    'file_path' => $unit->image,
+                    'url'       => $unit->image_url,
+                    'image_url' => $unit->image_url,
+                ]] : [],
+            ],
+        ]);
+    }
+
+    public function deleteImage(Unit $unit): JsonResponse
+    {
+        if ($unit->image && !str_starts_with($unit->image, 'http') && Storage::disk('public')->exists($unit->image)) {
+            Storage::disk('public')->delete($unit->image);
+        }
+        $unit->update(['image' => null]);
+
+        return response()->json([
+            'status'  => 'success',
+            'message' => 'Unit image removed successfully',
+            'data'    => ['unit' => $unit],
         ]);
     }
 }

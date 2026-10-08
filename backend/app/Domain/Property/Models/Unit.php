@@ -28,6 +28,7 @@ class Unit extends Model
         'price',
         'monthly_service_charge',
         'status',
+        'image',
     ];
 
     protected $casts = [
@@ -38,7 +39,19 @@ class Unit extends Model
     protected $appends = [
         'quarterly_service_charge',
         'yearly_service_charge',
+        'image_url',
     ];
+
+    public function getImageUrlAttribute(): ?string
+    {
+        if (!$this->image) {
+            return null;
+        }
+        if (str_starts_with($this->image, 'http://') || str_starts_with($this->image, 'https://') || str_starts_with($this->image, 'data:')) {
+            return $this->image;
+        }
+        return url('storage/' . ltrim($this->image, '/'));
+    }
 
     public function getQuarterlyServiceChargeAttribute(): float
     {

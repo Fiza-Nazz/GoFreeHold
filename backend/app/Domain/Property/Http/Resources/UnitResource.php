@@ -18,10 +18,13 @@ class UnitResource extends JsonResource
             'floor'         => $this->floor,
             'type'          => $this->type,
             'size'          => $this->size,
-            'furnished'     => $this->furnished,
-            'price'         => $this->price,
-            'status'        => $this->status,
-            'property_name' => $this->whenLoaded('property', fn () => $this->property->name),
+            'furnished'              => $this->furnished,
+            'price'                  => $this->price,
+            'monthly_service_charge' => $this->monthly_service_charge,
+            'status'                 => $this->status,
+            'image'                  => $this->image,
+            'image_url'              => $this->image_url,
+            'property_name'          => $this->whenLoaded('property', fn () => $this->property->name),
         ];
     }
 }

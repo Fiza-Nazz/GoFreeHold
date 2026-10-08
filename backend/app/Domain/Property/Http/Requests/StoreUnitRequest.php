@@ -25,6 +25,7 @@ class StoreUnitRequest extends FormRequest
             'price'                  => 'required|numeric|min:0',
             'monthly_service_charge' => 'nullable|numeric|min:0',
             'status'                 => 'nullable|in:AVAILABLE,BOOKED,OCCUPIED,SOLD',
+            'image'                  => 'nullable',
         ];
     }
 }

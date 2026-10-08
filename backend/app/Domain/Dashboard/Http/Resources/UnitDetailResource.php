@@ -23,8 +23,11 @@ class UnitDetailResource extends JsonResource
             'floor'       => $this->floor,
             'size'        => $this->size,
             'furnished'   => (bool) $this->furnished,
-            'price'       => $this->price,
-            'status'      => $this->status,
+            'price'                  => $this->price,
+            'monthly_service_charge' => $this->monthly_service_charge,
+            'status'                 => $this->status,
+            'image'                  => $this->image,
+            'image_url'              => $this->image_url,
             'property'    => $this->whenLoaded('property', function () {
                 return [
                     'id'      => $this->property->id,

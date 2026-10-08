@@ -119,6 +119,9 @@ export interface Unit {
   furnished?: boolean
   status: UnitStatus
   price: number
+  monthly_service_charge?: number
+  image?: string | null
+  image_url?: string | null
   images?: UnitImage[]
   property?: Property
   current_tenant?: Tenant

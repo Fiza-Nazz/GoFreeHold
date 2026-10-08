@@ -24,6 +24,9 @@ Route::middleware(['auth:sanctum', 'role:admin'])->prefix('admin')->group(functi
     Route::post('/units/book', [BookingController::class, 'bookUnit']);
     Route::get('/booking-receipts', [BookingController::class, 'indexReceipts']);
     Route::get('/booking-receipts/{bookingCashReceipt}', [BookingController::class, 'showReceipt']);
+    Route::get('/units/{unit}/images', [UnitController::class, 'getImages']);
+    Route::post('/units/{unit}/images', [UnitController::class, 'uploadImage']);
+    Route::delete('/units/{unit}/images/{image?}', [UnitController::class, 'deleteImage']);
     Route::apiResource('units', UnitController::class);
 
     // Module 3 vacant property report (same URL as before for FE compatibility)
@@ -38,6 +41,9 @@ Route::middleware(['auth:sanctum', 'role:owner,cashier,accountant'])->prefix('ow
     Route::delete('/properties/{property}', [PropertyController::class, 'destroyForOwner']);
     Route::get('/units', [UnitController::class, 'index']);
     Route::post('/units', [UnitController::class, 'storeForOwner']);
+    Route::get('/units/{unit}/images', [UnitController::class, 'getImages']);
+    Route::post('/units/{unit}/images', [UnitController::class, 'uploadImage']);
+    Route::delete('/units/{unit}/images/{image?}', [UnitController::class, 'deleteImage']);
     Route::put('/units/{unit}', [UnitController::class, 'updateForOwner']);
     Route::delete('/units/{unit}', [UnitController::class, 'destroyForOwner']);
     Route::get('/tenants', [TenantController::class, 'index']);
