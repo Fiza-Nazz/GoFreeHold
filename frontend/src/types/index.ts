@@ -1,8 +1,24 @@
-// ============================================================
-// GoFreeHold — Global TypeScript Types (real schema aligned)
+﻿// ============================================================
+// GoFreeHold ΓÇö Global TypeScript Types (real schema aligned)
 // ============================================================
 
 export type UserRole = 'admin' | 'maintenance' | 'owner' | 'tenant' | 'cashier' | 'accountant'
+
+export interface UserOrganizationSummary {
+  id: number
+  name: string
+  status?: 'trial' | 'active' | 'suspended' | 'cancelled'
+  slug?: string
+}
+
+export interface UserImpersonationSummary {
+  active: boolean
+  actor_id: number
+  actor_name: string
+  target_user_id: number
+  started_at: string
+  expires_at?: string | null
+}
 
 export interface User {
   id: number
@@ -10,10 +26,15 @@ export interface User {
   email: string
   role: UserRole
   account_status?: 'pending' | 'active' | 'disabled'
+  /** SaaS organization scope for owner/staff/tenant users */
+  organization_id?: number | null
+  organization?: UserOrganizationSummary | null
   owner_scope_id?: number | null
   permissions?: string[]
   phone?: string
   avatar?: string
+  /** Present when a platform admin is viewing as another user */
+  impersonation?: UserImpersonationSummary | null
   created_at: string
 }
 
@@ -44,7 +65,7 @@ export interface ValidationErrors {
   [field: string]: string[]
 }
 
-// ─── Owner / Tenant profiles ──────────────────────────────────────────────────
+// ΓöÇΓöÇΓöÇ Owner / Tenant profiles ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
 export interface Owner {
   id: number
   user_id?: number | null
@@ -71,8 +92,8 @@ export interface Tenant {
   created_at?: string
 }
 
-// ─── Property (was Building) ──────────────────────────────────────────────────
-/** @deprecated Use Property — kept as alias for gradual migration */
+// ΓöÇΓöÇΓöÇ Property (was Building) ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+/** @deprecated Use Property ΓÇö kept as alias for gradual migration */
 export type Building = Property
 
 export interface Property {
@@ -82,9 +103,9 @@ export interface Property {
   address: string
   city: string
   description?: string
-  /** FLAG: draft extra — pending client confirmation */
+  /** FLAG: draft extra ΓÇö pending client confirmation */
   type?: 'residential' | 'commercial' | 'mixed'
-  /** FLAG: draft extra — pending client confirmation */
+  /** FLAG: draft extra ΓÇö pending client confirmation */
   total_units?: number
   occupied_units?: number
   owner?: User | Owner
@@ -92,7 +113,7 @@ export interface Property {
   updated_at: string
 }
 
-// ─── Unit ─────────────────────────────────────────────────────────────────────
+// ΓöÇΓöÇΓöÇ Unit ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
 export type UnitStatus = 'AVAILABLE' | 'BOOKED' | 'OCCUPIED' | 'SOLD'
 
 export interface UnitImage {
@@ -119,8 +140,9 @@ export interface Unit {
   furnished?: boolean
   status: UnitStatus
   price: number
-  monthly_service_charge?: number
+  /** Storage path returned by the API, e.g. units/sample.jpg */
   image?: string | null
+  /** Full public URL for the unit photo */
   image_url?: string | null
   images?: UnitImage[]
   property?: Property
@@ -129,7 +151,7 @@ export interface Unit {
   updated_at: string
 }
 
-// ─── Contract ────────────────────────────────────────────────────────────────
+// ΓöÇΓöÇΓöÇ Contract ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
 export type ContractStatus = 'active' | 'expired' | 'vacated' | 'settled'
 
 export interface Contract {
@@ -157,7 +179,7 @@ export interface Contract {
   updated_at: string
 }
 
-// ─── Payment ─────────────────────────────────────────────────────────────────
+// ΓöÇΓöÇΓöÇ Payment ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
 export type PaymentType = 'rent' | 'dewa' | 'deposit' | 'settlement' | 'service_charge' | 'other'
 export type PaymentMode = 'cash' | 'card' | 'cheque' | 'bank_transfer' | 'online'
 
@@ -177,7 +199,7 @@ export interface Payment {
   created_at: string
 }
 
-// ─── Contract Cheque (was PDC) ────────────────────────────────────────────────
+// ΓöÇΓöÇΓöÇ Contract Cheque (was PDC) ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
 export type ChequeStatus = 'pending' | 'cleared' | 'bounced'
 
 export interface ContractCheque {
@@ -196,7 +218,7 @@ export interface ContractCheque {
 /** @deprecated Use ContractCheque */
 export type PdcCheque = ContractCheque
 
-// ─── Call Log ─────────────────────────────────────────────────────────────────
+// ΓöÇΓöÇΓöÇ Call Log ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
 export interface CallLog {
   id: number
   contract_id: number
@@ -207,7 +229,7 @@ export interface CallLog {
   created_at?: string
 }
 
-// ─── Settlements (owner-centric) ──────────────────────────────────────────────
+// ΓöÇΓöÇΓöÇ Settlements (owner-centric) ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
 export interface Settlement {
   id: number
   owner_id: number
@@ -237,7 +259,7 @@ export interface SettlementPayment {
   payment_date: string
 }
 
-// ─── Rent Transactions ────────────────────────────────────────────────────────
+// ΓöÇΓöÇΓöÇ Rent Transactions ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
 export interface RentTransaction {
   id: number
   contract_id: number
@@ -252,7 +274,7 @@ export interface RentTransaction {
 /** @deprecated Use RentTransaction */
 export type RentLedgerEntry = RentTransaction
 
-// ─── Contract case docs / payables ────────────────────────────────────────────
+// ΓöÇΓöÇΓöÇ Contract case docs / payables ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
 export interface ContractCaseDoc {
   id: number
   contract_id: number
@@ -271,7 +293,7 @@ export interface ContractPayable {
   contract?: Contract
 }
 
-// ─── Inventory / items ────────────────────────────────────────────────────────
+// ΓöÇΓöÇΓöÇ Inventory / items ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
 export interface Item {
   id: number
   name: string
@@ -314,7 +336,7 @@ export interface InventoryItem {
   created_at: string
 }
 
-// ─── Teams / Jobs / Maintenances ──────────────────────────────────────────────
+// ΓöÇΓöÇΓöÇ Teams / Jobs / Maintenances ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
 export interface Team {
   id: number
   name: string
@@ -346,7 +368,7 @@ export interface MaintenanceRecord {
   unit?: Unit
 }
 
-// ─── Bank accounts ────────────────────────────────────────────────────────────
+// ΓöÇΓöÇΓöÇ Bank accounts ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
 export interface Bank {
   id: number
   name: string
@@ -362,7 +384,7 @@ export interface BankAccount {
   bank?: Bank
 }
 
-// ─── Tenancy paperwork ────────────────────────────────────────────────────────
+// ΓöÇΓöÇΓöÇ Tenancy paperwork ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
 export interface TenancyRes {
   id: number
   contract_id: number
@@ -397,7 +419,7 @@ export interface Term {
   terms: string
 }
 
-// ─── Complaint ────────────────────────────────────────────────────────────────
+// ΓöÇΓöÇΓöÇ Complaint ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
 export type ComplaintStatus = 'open' | 'assigned' | 'in_progress' | 'resolved'
 
 export interface Complaint {
@@ -416,7 +438,7 @@ export interface Complaint {
   updated_at: string
 }
 
-// ─── Service charges (dual FK — client confirmation pending) ──────────────────
+// ΓöÇΓöÇΓöÇ Service charges (dual FK ΓÇö client confirmation pending) ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
 export interface ServiceCharge {
   id: number
   contract_id: number
@@ -430,7 +452,7 @@ export interface ServiceCharge {
   unit?: Unit
 }
 
-// ─── Dashboard Stats ─────────────────────────────────────────────────────────
+// ΓöÇΓöÇΓöÇ Dashboard Stats ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
 export interface DashboardStats {
   total_properties: number
   total_units: number

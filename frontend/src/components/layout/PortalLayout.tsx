@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+﻿import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link, NavLink, Outlet, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import { useAuthStore } from '../../store/authStore'
 import type { UserRole } from '../../types'
@@ -86,7 +86,7 @@ function resolveBreadcrumbParent(pathname: string, config: ReturnType<typeof get
 }
 
 export default function PortalLayout() {
-  const { user, logout } = useAuthStore()
+  const { user, logout, impersonator, exitImpersonation, isLoading } = useAuthStore()
   const navigate = useNavigate()
   const location = useLocation()
   const [searchParams, setSearchParams] = useSearchParams()
@@ -98,6 +98,7 @@ export default function PortalLayout() {
   const role = (user?.role || 'owner') as UserRole
   const config = useMemo(() => getPortalNavConfig(role), [role])
   const groups = config.groups || []
+  const isImpersonating = Boolean(user?.impersonation?.active || impersonator)
 
   const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({})
 
@@ -193,6 +194,15 @@ export default function PortalLayout() {
     navigate('/login')
   }
 
+  const handleExitImpersonation = async () => {
+    try {
+      await exitImpersonation()
+      navigate('/admin/dashboard')
+    } catch (err: any) {
+      alert(err?.message || 'Failed to exit impersonation.')
+    }
+  }
+
   const closeMobileSidebar = () => setSidebarOpen(false)
 
   const renderGroups = () =>
@@ -238,7 +248,48 @@ export default function PortalLayout() {
 
   return (
     <div className="gfh-app-layout">
-      <aside className={`gfh-sidebar${sidebarOpen ? ' open' : ''}${collapsed ? ' collapsed' : ''}`}>
+      {isImpersonating && (
+        <div
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            zIndex: 1200,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: 12,
+            padding: '8px 16px',
+            background: '#1E3A8A',
+            color: '#FFFFFF',
+            fontSize: 13,
+            fontWeight: 600,
+          }}
+        >
+          <span>
+            Support mode: viewing as <strong>{user?.name}</strong>
+            {user?.impersonation?.actor_name ? ` (started by ${user.impersonation.actor_name})` : impersonator ? ` (started by ${impersonator.name})` : ''}
+          </span>
+          <button
+            type="button"
+            disabled={isLoading}
+            onClick={() => void handleExitImpersonation()}
+            style={{
+              padding: '6px 12px',
+              borderRadius: 6,
+              border: '1px solid rgba(255,255,255,0.45)',
+              background: 'rgba(255,255,255,0.12)',
+              color: '#fff',
+              fontWeight: 700,
+              cursor: 'pointer',
+            }}
+          >
+            Exit impersonation
+          </button>
+        </div>
+      )}
+      <aside className={`gfh-sidebar${sidebarOpen ? ' open' : ''}${collapsed ? ' collapsed' : ''}`} style={isImpersonating ? { top: 40 } : undefined}>
         <div className="gfh-sidebar-logo">
           <div className="gfh-logo-icon" title="GoFreeHold">
             <Icon path={config.logoIcon} size={20} />
@@ -325,7 +376,7 @@ export default function PortalLayout() {
         </div>
       </aside>
 
-      <div className="gfh-main-content">
+      <div className="gfh-main-content" style={isImpersonating ? { paddingTop: 40 } : undefined}>
         <header className="gfh-topbar">
           <div className="gfh-topbar-left">
             <button

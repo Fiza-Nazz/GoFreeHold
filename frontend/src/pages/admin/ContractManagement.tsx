@@ -1,6 +1,5 @@
-import React, { useEffect, useState, useMemo } from 'react'
+﻿import React, { useEffect, useState, useMemo, useRef } from 'react'
 import { Link, useNavigate, useSearchParams, useLocation } from 'react-router-dom'
-import ReactDOM from 'react-dom/client'
 import api from '../../api/axios'
 import { formatDate } from '../../utils/formatDate'
 import { THEME, Icon, ICONS, CornerBrackets, portalPageCss, heroStyle, panelStyle, thStyle, tdStyle, ghostBtnStyle } from '../../components/gfh/adminTheme'
@@ -35,9 +34,12 @@ interface Unit {
   number: string
   status?: string
   price?: number
+  type?: string
+  size?: number | string
+  dhewa_no?: string
   owner_id?: number | null
   property_id?: number
-  property?: { id: number; name: string; owner_id?: number | null }
+  property?: { id: number; name: string; address?: string; owner_id?: number | null }
 }
 interface Tenant {
   id: number
@@ -50,7 +52,7 @@ interface Tenant {
   nationality?: string
   address?: string
 }
-interface Owner { id: number; name: string }
+interface Owner { id: number; name: string; email?: string; phone?: string }
 
 function computeOneYearLater(startStr: string): string {
   if (!startStr) return ''
@@ -73,7 +75,7 @@ function addMonthsKeepDay(dateStr: string, months: number): string {
   if (isNaN(d.getTime())) return dateStr
   const day = d.getDate()
   d.setMonth(d.getMonth() + months)
-  // Keep calendar day when possible (e.g. avoid 31 Jan + 1m → 2/3 Mar)
+  // Keep calendar day when possible (e.g. avoid 31 Jan + 1m ΓåÆ 2/3 Mar)
   if (d.getDate() < day) d.setDate(0)
   return d.toISOString().split('T')[0]
 }
@@ -107,7 +109,13 @@ function buildPdcSchedule(opts: {
   })
 }
 
-export default function ContractManagement({ basePath }: { basePath?: string } = {}) {
+export default function ContractManagement({
+  basePath,
+  preparationOnly = false,
+}: {
+  basePath?: string
+  preparationOnly?: boolean
+} = {}) {
   const navigate = useNavigate()
   const location = useLocation()
 
@@ -120,12 +128,20 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
   const isOwnerStaff = effectiveBasePath !== '/admin'
   const isCashier = effectiveBasePath === '/cashier'
   const apiPrefix = isOwnerStaff ? '/owner' : '/admin'
+  const collectionPath = `${apiPrefix}/${preparationOnly ? 'prepared-contracts' : 'contracts'}`
+
+  const contractDetailPath = (c: Contract) => {
+    const unitId = c.unit_id || c.unit?.id
+    if (isOwnerStaff && unitId) return `${effectiveBasePath}/units/${unitId}`
+    return `${effectiveBasePath}/contracts/${c.id}`
+  }
   const [contracts, setContracts] = useState<Contract[]>([])
   const [units, setUnits] = useState<Unit[]>([])
   const [tenants, setTenants] = useState<Tenant[]>([])
   const [owners, setOwners] = useState<Owner[]>([])
   const [properties, setProperties] = useState<{ id: number; name: string; owner_id?: number | null }[]>([])
   const [isLoading, setIsLoading] = useState(true)
+  const [loadError, setLoadError] = useState('')
   const [pdfLoading, setPdfLoading] = useState<number | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [renewModal, setRenewModal] = useState<Contract | null>(null)
@@ -138,8 +154,11 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
   const [tenantSearch, setTenantSearch] = useState('')
   const [showMoreDetails, setShowMoreDetails] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isGeneratingSigningPdf, setIsGeneratingSigningPdf] = useState(false)
   const [createdContract, setCreatedContract] = useState<Contract | null>(null)
   const [pdcCheques, setPdcCheques] = useState<PdcChequeDraft[]>([])
+  const [addendumTerms, setAddendumTerms] = useState<string[]>(() => Array(8).fill(''))
+  const signingPdfRef = useRef<HTMLDivElement>(null)
 
   // Filters
   const [selectedPropertyId, setSelectedPropertyId] = useState<string>('')
@@ -244,6 +263,60 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
     return ownerScopedTenants.find(t => String(t.id) === String(formData.tenant_id)) || null
   }, [ownerScopedTenants, formData.tenant_id])
 
+  const signingContractData = useMemo<ContractData>(() => {
+    const selectedOwner = owners.find(owner => Number(owner.id) === Number(activeWizardOwnerId))
+    const tenant = tenantMode === 'existing'
+      ? selectedTenantObj
+      : {
+          name: formData.tenant_name,
+          email: formData.tenant_email,
+          phone: formData.tenant_phone,
+        }
+
+    return {
+      id: 0,
+      contract_no: 'INFORMATION ONLY',
+      start_date: formData.start_date,
+      end_date: formData.end_date,
+      rent_amount: formData.rent_amount,
+      contract_value: formData.contract_value || formData.rent_amount,
+      security_deposit: formData.security_deposit,
+      mode_of_payment: formData.mode_of_payment,
+      type: formData.type,
+      unit: selectedUnitObj ? {
+        number: selectedUnitObj.number,
+        type: selectedUnitObj.type || formData.type,
+        size: selectedUnitObj.size,
+        dhewa_no: selectedUnitObj.dhewa_no,
+        property: {
+          name: selectedUnitObj.property?.name,
+          address: selectedUnitObj.property?.address,
+        },
+      } : undefined,
+      tenant: tenant ? {
+        name: tenant.name,
+        email: tenant.email,
+        phone: tenant.phone || ('contact' in tenant ? tenant.contact : undefined),
+      } : undefined,
+      owner: selectedOwner ? {
+        name: selectedOwner.name,
+        email: selectedOwner.email,
+        phone: selectedOwner.phone,
+      } : undefined,
+      tenancyContracts: [{
+        addendum_no: '1',
+        c1: addendumTerms[0] || undefined,
+        c2: addendumTerms[1] || undefined,
+        c3: addendumTerms[2] || undefined,
+        c4: addendumTerms[3] || undefined,
+        c5: addendumTerms[4] || undefined,
+        c6: addendumTerms[5] || undefined,
+        c7: addendumTerms[6] || undefined,
+        c8: addendumTerms[7] || undefined,
+      }],
+    }
+  }, [activeWizardOwnerId, addendumTerms, formData, owners, selectedTenantObj, selectedUnitObj, tenantMode])
+
   const duplicateTenantMatch = useMemo(() => {
     if (tenantMode !== 'new') return null
     const phone = formData.tenant_phone.trim().toLowerCase()
@@ -268,6 +341,7 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
     setTenantSearch('')
     setShowMoreDetails(false)
     setCreatedContract(null)
+    setAddendumTerms(Array(8).fill(''))
     setFormData({
       unit_id: preUnitId,
       tenant_id: '',
@@ -369,20 +443,31 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
 
   const fetchAll = async () => {
     setIsLoading(true)
+    setLoadError('')
     try {
       const [cRes, uRes, oRes, tRes, pRes] = await Promise.all([
-        api.get(`${apiPrefix}/contracts`),
+        api.get(collectionPath),
         api.get(`${apiPrefix}/units`),
         api.get(`${apiPrefix}/properties/owners`).catch(() => ({ data: { data: { owners: [] } } })),
         api.get(`${apiPrefix}/tenants`),
         api.get(`${apiPrefix}/properties`),
       ])
-      setContracts(cRes.data?.data?.contracts || [])
+      setContracts(
+        preparationOnly
+          ? (cRes.data?.data?.prepared_contracts || cRes.data?.data?.preparedContracts || [])
+          : (cRes.data?.data?.contracts || []),
+      )
       setUnits(uRes.data?.data?.units || [])
       setOwners(oRes.data?.data?.owners || [])
       setTenants(tRes.data?.data?.tenants || [])
       setProperties(pRes.data?.data?.properties || [])
-    } catch (err) { console.error(err) }
+    } catch (err: any) {
+      console.error(err)
+      setLoadError(
+        err.response?.data?.message ||
+        `Unable to load ${preparationOnly ? 'prepared tenancy contracts' : 'contracts'}.`,
+      )
+    }
     finally { setIsLoading(false) }
   }
 
@@ -409,13 +494,20 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
       if (!data.has('contract_value') && formData.rent_amount) {
         data.append('contract_value', formData.rent_amount)
       }
-      const res = await api.post(`${apiPrefix}/contracts`, data, {
+      if (preparationOnly) {
+        data.append('status', 'draft')
+        data.append('addendum_terms', JSON.stringify(addendumTerms.filter(term => term.trim())))
+        data.append('pdc_cheques', JSON.stringify(pdcCheques))
+      }
+      const res = await api.post(collectionPath, data, {
         headers: { 'Content-Type': 'multipart/form-data' }
       })
-      const created = res.data?.data?.contract || null
+      const created = preparationOnly
+        ? (res.data?.data?.prepared_contract || res.data?.data?.preparedContract || null)
+        : (res.data?.data?.contract || null)
 
-      // Attach PDC cheques after contract create (cheque payment mode only)
-      if (created?.id && isChequePayment && pdcCheques.length > 0) {
+      // Attach PDC cheques after contract create (owner / cashier / accountant only)
+      if (!preparationOnly && isOwnerStaff && created?.id && isChequePayment && pdcCheques.length > 0) {
         const chequeErrors: string[] = []
         for (const [idx, ch] of pdcCheques.entries()) {
           if (!ch.amount || Number(ch.amount) <= 0 || !ch.due_date) continue
@@ -440,9 +532,26 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
       setWizardStep('success')
       fetchAll()
     } catch (err: any) {
-      alert(err.response?.data?.message || 'Error creating contract')
+      alert(err.response?.data?.message || `Error saving ${preparationOnly ? 'prepared tenancy contract' : 'contract'}`)
     } finally {
       setIsSubmitting(false)
+    }
+  }
+
+  const handleGenerateSigningPdf = async () => {
+    if (isGeneratingSigningPdf || !signingPdfRef.current) return
+    setIsGeneratingSigningPdf(true)
+    try {
+      const unitNumber = (selectedUnitObj?.number || 'Unit').replace(/[^a-zA-Z0-9_-]+/g, '_')
+      await generateContractPDF(
+        signingPdfRef.current,
+        `Tenancy_Contract_For_Signature_${unitNumber}.pdf`,
+      )
+    } catch (err) {
+      console.error('Signing PDF generation error:', err)
+      alert('Failed to generate the signing PDF. Please try again.')
+    } finally {
+      setIsGeneratingSigningPdf(false)
     }
   }
 
@@ -738,10 +847,12 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
         }}>
           <div>
             <h2 style={{ fontSize: 24, fontWeight: 600, color: '#0F172A', margin: 0, letterSpacing: '-0.015em', lineHeight: 1.25 }}>
-              Contract Management
+              {preparationOnly ? 'Prepared Tenancy Contracts' : 'Contract Management'}
             </h2>
             <p style={{ fontSize: 14, color: '#64748B', margin: '4px 0 0', fontWeight: 400, lineHeight: 1.5 }}>
-              Full contract lifecycle: create, renew, vacate, settle
+              {preparationOnly
+                ? 'Prepare and store tenancy documents separately before activating a contract'
+                : 'Full contract lifecycle: create, renew, vacate, settle'}
             </p>
           </div>
 
@@ -777,7 +888,7 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
               <line x1="12" y1="5" x2="12" y2="19" />
               <line x1="5" y1="12" x2="19" y2="12" />
             </svg>
-            <span>Create Contract</span>
+            <span>{preparationOnly ? 'New Preparation' : 'Create Contract'}</span>
           </button>
         </div>
 
@@ -821,10 +932,20 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
               style={{ minWidth: 145 }}
             >
               <option value="">All Statuses</option>
-              <option value="active">Active</option>
-              <option value="vacated">Vacated</option>
-              <option value="settled">Settled</option>
-              <option value="expired">Expired</option>
+              {preparationOnly ? (
+                <>
+                  <option value="draft">Draft</option>
+                  <option value="ready">Ready for Signature</option>
+                  <option value="signed">Signed</option>
+                </>
+              ) : (
+                <>
+                  <option value="active">Active</option>
+                  <option value="vacated">Vacated</option>
+                  <option value="settled">Settled</option>
+                  <option value="expired">Expired</option>
+                </>
+              )}
             </select>
 
             {/* Date Filter */}
@@ -907,13 +1028,31 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
         </div>
 
         {/* Contracts Table */}
-        {isLoading ? (
+        {loadError ? (
+          <div style={{
+            padding: '18px 20px',
+            border: '1px solid #FECACA',
+            borderRadius: 10,
+            background: '#FEF2F2',
+            color: '#991B1B',
+            fontSize: 13.5,
+            lineHeight: 1.5,
+          }}>
+            <strong>Unable to load this section.</strong>
+            <div>{loadError}</div>
+            {preparationOnly && (
+              <div style={{ marginTop: 6 }}>
+                The backend must provide <code>GET {collectionPath}</code> and <code>POST {collectionPath}</code>.
+              </div>
+            )}
+          </div>
+        ) : isLoading ? (
           <div style={{ textAlign: 'center', padding: '60px 20px', color: '#64748B', fontWeight: 500, fontSize: 14 }}>
-            Loading contracts…
+            Loading {preparationOnly ? 'prepared contracts' : 'contracts'}ΓÇª
           </div>
         ) : filteredContracts.length === 0 ? (
           <div style={{ textAlign: 'center', padding: '60px 20px', color: '#64748B', fontWeight: 500, fontSize: 14 }}>
-            No contracts found matching your filters.
+            No {preparationOnly ? 'prepared contracts' : 'contracts'} found matching your filters.
           </div>
         ) : (
           <div style={{ overflow: 'visible', width: '100%' }}>
@@ -921,7 +1060,7 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
               <thead>
                 <tr style={{ borderBottom: '1px solid #E2E8F0', background: '#F8FAFC' }}>
                   <th style={{ padding: '13px 16px', fontSize: 12, fontWeight: 600, color: '#64748B', textTransform: 'uppercase', letterSpacing: '0.04em' }}>REF #</th>
-                  <th style={{ padding: '13px 16px', fontSize: 12, fontWeight: 600, color: '#64748B', textTransform: 'uppercase', letterSpacing: '0.04em' }}>UNIT ⇅</th>
+                  <th style={{ padding: '13px 16px', fontSize: 12, fontWeight: 600, color: '#64748B', textTransform: 'uppercase', letterSpacing: '0.04em' }}>UNIT Γçà</th>
                   <th style={{ padding: '13px 16px', fontSize: 12, fontWeight: 600, color: '#64748B', textTransform: 'uppercase', letterSpacing: '0.04em' }}>TENANT</th>
                   <th style={{ padding: '13px 16px', fontSize: 12, fontWeight: 600, color: '#64748B', textTransform: 'uppercase', letterSpacing: '0.04em' }}>DURATION</th>
                   <th style={{ padding: '13px 16px', fontSize: 12, fontWeight: 600, color: '#64748B', textTransform: 'uppercase', letterSpacing: '0.04em' }}>RENT (AED)</th>
@@ -936,17 +1075,23 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
                     <tr key={c.id} className="gfh-contract-row" style={{ borderBottom: '1px solid #E2E8F0' }}>
                       {/* REF # Link */}
                       <td style={{ padding: '16px 16px' }}>
-                        <Link to={`${effectiveBasePath}/contracts/${c.id}`} style={{ textDecoration: 'none' }}>
+                        {preparationOnly ? (
                           <span style={{ color: '#10B981', fontWeight: 600, fontSize: 14, textDecoration: 'none' }}>
-                            GFH-{String(c.id).padStart(5, '0')}
+                            PREP-{String(c.id).padStart(5, '0')}
                           </span>
-                        </Link>
+                        ) : (
+                          <Link to={contractDetailPath(c)} style={{ textDecoration: 'none' }}>
+                            <span style={{ color: '#10B981', fontWeight: 600, fontSize: 14, textDecoration: 'none' }}>
+                              GFH-{String(c.id).padStart(5, '0')}
+                            </span>
+                          </Link>
+                        )}
                       </td>
 
                       {/* UNIT */}
                       <td style={{ padding: '16px 16px' }}>
                         <div style={{ fontWeight: 600, fontSize: 14.5, color: '#0F172A', lineHeight: 1.35 }}>
-                          {c.unit?.number || '—'}
+                          {c.unit?.number || 'ΓÇö'}
                         </div>
                         {c.unit?.property?.name && (
                           <div style={{ fontSize: 13, color: '#64748B', display: 'flex', alignItems: 'center', gap: 5, marginTop: 3, fontWeight: 400 }}>
@@ -961,7 +1106,7 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
 
                       {/* TENANT */}
                       <td style={{ padding: '16px 16px', fontWeight: 600, fontSize: 14.5, color: '#0F172A', lineHeight: 1.4 }}>
-                        {c.tenant?.name || '—'}
+                        {c.tenant?.name || 'ΓÇö'}
                       </td>
 
                       {/* DURATION */}
@@ -976,11 +1121,11 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
                           <span>{formatDate(c.start_date)}</span>
                         </div>
                         <div style={{ fontSize: 13, color: '#64748B', marginLeft: 19, marginTop: 2, fontWeight: 400 }}>
-                          – {formatDate(c.end_date)}
+                          ΓÇô {formatDate(c.end_date)}
                         </div>
                       </td>
 
-                      {/* RENT (AED) — Financial values: 16–20px, bold */}
+                      {/* RENT (AED) ΓÇö Financial values: 16ΓÇô20px, bold */}
                       <td style={{ padding: '16px 16px' }}>
                         <div style={{ fontSize: 12, color: '#64748B', fontWeight: 500 }}>AED</div>
                         <div style={{ fontSize: 16, fontWeight: 600, color: '#0F172A', letterSpacing: '-0.01em' }}>
@@ -1013,15 +1158,18 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
                           )}
                           {c.on_case && (
                             <span style={{ fontSize: 10.5, color: '#DC2626', fontWeight: 600 }}>
-                              ● Legal Case Active
+                              ΓùÅ Legal Case Active
                             </span>
                           )}
                         </div>
                       </td>
 
-                      {/* ACTIONS — single ⋮ menu */}
+                      {/* ACTIONS ΓÇö single Γï« menu */}
                       <td style={{ padding: '14px 14px', textAlign: 'right' }}>
-                        <div className="gfh-contract-actions-menu" style={{ position: 'relative', display: 'inline-block' }}>
+                        {preparationOnly ? (
+                          <span style={{ color: '#64748B', fontSize: 12, fontWeight: 600 }}>Stored separately</span>
+                        ) : (
+                          <div className="gfh-contract-actions-menu" style={{ position: 'relative', display: 'inline-block' }}>
                           <button
                             type="button"
                             title="Actions"
@@ -1071,7 +1219,7 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
                                 type="button"
                                 onClick={() => {
                                   setActionMenuOpen(null)
-                                  navigate(`${effectiveBasePath}/contracts/${c.id}`)
+                                  navigate(contractDetailPath(c))
                                 }}
                                 style={{ width: '100%', padding: '11px 14px', background: 'none', border: 'none', color: '#0F172A', fontSize: 13, fontWeight: 600, cursor: 'pointer', textAlign: 'left' }}
                               >
@@ -1086,7 +1234,7 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
                                 }}
                                 style={{ width: '100%', padding: '11px 14px', background: 'none', border: 'none', color: '#0F172A', fontSize: 13, fontWeight: 600, cursor: pdfLoading === c.id ? 'wait' : 'pointer', textAlign: 'left', opacity: pdfLoading === c.id ? 0.6 : 1 }}
                               >
-                                {pdfLoading === c.id ? 'Downloading PDF…' : 'Download PDF'}
+                                {pdfLoading === c.id ? 'Downloading PDFΓÇª' : 'Download PDF'}
                               </button>
                               {!isCashier && c.status?.toLowerCase() === 'active' && (
                                 <>
@@ -1116,7 +1264,8 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
                               )}
                             </div>
                           )}
-                        </div>
+                          </div>
+                        )}
                       </td>
                     </tr>
                   )
@@ -1139,7 +1288,7 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
         }}>
           {/* Showing X to Y of Z contracts */}
           <div style={{ fontSize: 13, color: '#64748B', fontWeight: 500 }}>
-            Showing {totalContracts === 0 ? 0 : (currentPage - 1) * pageSize + 1} to {Math.min(currentPage * pageSize, totalContracts)} of {totalContracts} contracts
+            Showing {totalContracts === 0 ? 0 : (currentPage - 1) * pageSize + 1} to {Math.min(currentPage * pageSize, totalContracts)} of {totalContracts} {preparationOnly ? 'prepared contracts' : 'contracts'}
           </div>
 
           {/* Page Buttons & Page Size Selector */}
@@ -1221,17 +1370,19 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
               <div>
                 <h2 style={{ fontSize: 20, fontWeight: 600, color: '#0F172A', margin: 0 }}>
                   {wizardStep === 'success'
-                    ? 'Contract Created'
+                    ? (preparationOnly ? 'Preparation Saved' : 'Contract Created')
                     : wizardStep === 1
-                      ? 'Create Contract – Step 1: Tenant'
+                      ? `${preparationOnly ? 'Prepare Tenancy Contract' : 'Create Contract'} ΓÇô Step 1: Tenant`
                       : wizardStep === 2
-                        ? 'Create Contract – Step 2: Contract Details'
-                        : 'Create Contract – Step 3: Review'}
+                        ? `${preparationOnly ? 'Prepare Tenancy Contract' : 'Create Contract'} ΓÇô Step 2: Contract Details`
+                        : `${preparationOnly ? 'Prepare Tenancy Contract' : 'Create Contract'} ΓÇô Step 3: Review`}
                 </h2>
                 <p style={{ fontSize: 13, color: '#64748B', margin: '4px 0 0' }}>
                   {wizardStep === 'success'
-                    ? 'System automatically updated unit occupancy, default addendum, and rent ledger'
-                    : 'Simple, guided contract creation'}
+                    ? (preparationOnly
+                      ? 'Saved separately without activating the unit contract'
+                      : 'System automatically updated unit occupancy, default addendum, and rent ledger')
+                    : (preparationOnly ? 'Prepare a draft without changing unit occupancy' : 'Simple, guided contract creation')}
                 </p>
               </div>
               <button
@@ -1239,7 +1390,7 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
                 onClick={() => setIsModalOpen(false)}
                 style={{ background: 'transparent', border: 'none', color: '#64748B', cursor: 'pointer', fontSize: 18 }}
               >
-                ✕
+                Γ£ò
               </button>
             </div>
 
@@ -1294,7 +1445,7 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
                         fontWeight: 600,
                         flexShrink: 0,
                       }}>
-                        {isDone ? '✓' : st.num}
+                        {isDone ? 'Γ£ô' : st.num}
                       </span>
                       <span style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                         {st.label}
@@ -1305,7 +1456,7 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
               </div>
             )}
 
-            {/* ── STEP 1: TENANT ───────────────────────────────────────────────── */}
+            {/* ΓöÇΓöÇ STEP 1: TENANT ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */}
             {wizardStep === 1 && (
               <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
                 {/* Pre-selected Unit Banner if launched from [ Create Contract ] on a unit */}
@@ -1405,8 +1556,8 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
                         {filteredExistingTenants.map(t => (
                           <option key={t.id} value={t.id}>
                             {t.name}
-                            {t.phone || t.contact ? ` • ${t.phone || t.contact}` : ''}
-                            {t.emirates_id ? ` • EID: ${t.emirates_id}` : ''}
+                            {t.phone || t.contact ? ` ΓÇó ${t.phone || t.contact}` : ''}
+                            {t.emirates_id ? ` ΓÇó EID: ${t.emirates_id}` : ''}
                           </option>
                         ))}
                       </select>
@@ -1422,13 +1573,13 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
                         padding: '14px 16px',
                       }}>
                         <div style={{ fontSize: 11.5, fontWeight: 600, color: '#10B981', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: 8 }}>
-                          ✓ Selected Tenant Confirmation
+                          Γ£ô Selected Tenant Confirmation
                         </div>
                         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, fontSize: 13, color: '#1E293B' }}>
                           <div><strong>Name:</strong> {selectedTenantObj.name}</div>
-                          <div><strong>Mobile:</strong> {selectedTenantObj.phone || selectedTenantObj.contact || '—'}</div>
-                          <div><strong>Emirates ID:</strong> {selectedTenantObj.emirates_id || '—'}</div>
-                          <div><strong>Email:</strong> {selectedTenantObj.email || '—'}</div>
+                          <div><strong>Mobile:</strong> {selectedTenantObj.phone || selectedTenantObj.contact || 'ΓÇö'}</div>
+                          <div><strong>Emirates ID:</strong> {selectedTenantObj.emirates_id || 'ΓÇö'}</div>
+                          <div><strong>Email:</strong> {selectedTenantObj.email || 'ΓÇö'}</div>
                         </div>
                       </div>
                     )}
@@ -1449,7 +1600,7 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
                         flexWrap: 'wrap',
                       }}>
                         <div style={{ fontSize: 12.5, color: '#92400E', fontWeight: 600 }}>
-                          ⚠️ Matching tenant already exists: <strong>{duplicateTenantMatch.name}</strong> ({duplicateTenantMatch.phone || duplicateTenantMatch.contact || duplicateTenantMatch.emirates_id || duplicateTenantMatch.email})
+                          ΓÜá∩╕Å Matching tenant already exists: <strong>{duplicateTenantMatch.name}</strong> ({duplicateTenantMatch.phone || duplicateTenantMatch.contact || duplicateTenantMatch.emirates_id || duplicateTenantMatch.email})
                         </div>
                         <button
                           type="button"
@@ -1601,13 +1752,13 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
                       cursor: 'pointer',
                     }}
                   >
-                    Next: Contract Details →
+                    Next: Contract Details ΓåÆ
                   </button>
                 </div>
               </div>
             )}
 
-            {/* ── STEP 2: CONTRACT DETAILS ─────────────────────────────────────── */}
+            {/* ΓöÇΓöÇ STEP 2: CONTRACT DETAILS ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */}
             {wizardStep === 2 && (
               <div style={{ display: 'flex', flexDirection: 'column', gap: 15 }}>
                 {/* Unit Section: Building & Unit number */}
@@ -1661,7 +1812,7 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
                           <optgroup key={propName} label={propName}>
                             {pUnits.map(u => (
                               <option key={u.id} value={u.id}>
-                                {u.number} ({propName}){u.price ? ` — AED ${Number(u.price).toLocaleString()}` : ''}
+                                {u.number} ({propName}){u.price ? ` ΓÇö AED ${Number(u.price).toLocaleString()}` : ''}
                               </option>
                             ))}
                           </optgroup>
@@ -1865,8 +2016,8 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
                     </div>
                   </div>
 
-                  {/* PDC Cheques — only when paying by cheque */}
-                  {isChequePayment && (
+                  {/* PDC Cheques ΓÇö owner / cashier / accountant only */}
+                  {isOwnerStaff && isChequePayment && (
                     <div style={{
                       marginTop: 14,
                       padding: '14px 16px',
@@ -1878,7 +2029,7 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
                         <div>
                           <div style={{ fontSize: 13, fontWeight: 700, color: '#0F766E' }}>PDC Cheques</div>
                           <div style={{ fontSize: 12, color: '#64748B', marginTop: 2 }}>
-                            Enter post-dated cheques for this lease. Amounts default to annual rent ÷ {formData.number_of_cheques}.
+                            Enter post-dated cheques for this lease. Amounts default to annual rent ├╖ {formData.number_of_cheques}.
                           </div>
                         </div>
                         <button
@@ -2019,7 +2170,7 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
                       cursor: 'pointer',
                     }}
                   >
-                    <span>{showMoreDetails ? '▾ Hide More Contract Details' : '▸ More Contract Details'}</span>
+                    <span>{showMoreDetails ? 'Γû╛ Hide More Contract Details' : 'Γû╕ More Contract Details'}</span>
                   </button>
 
                   {showMoreDetails && (
@@ -2096,7 +2247,7 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
                       cursor: 'pointer',
                     }}
                   >
-                    ← Back: Tenant
+                    ΓåÉ Back: Tenant
                   </button>
                   <button
                     type="button"
@@ -2113,7 +2264,7 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
                         alert('Please enter a valid rent amount.')
                         return
                       }
-                      if (isChequePayment) {
+                      if (isOwnerStaff && isChequePayment) {
                         if (pdcCheques.length === 0) {
                           alert('Please add PDC cheques for this cheque payment contract.')
                           return
@@ -2136,13 +2287,13 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
                       cursor: 'pointer',
                     }}
                   >
-                    Next: Review Contract →
+                    Next: Review Contract ΓåÆ
                   </button>
                 </div>
               </div>
             )}
 
-            {/* ── STEP 3: REVIEW ───────────────────────────────────────────────── */}
+            {/* ΓöÇΓöÇ STEP 3: REVIEW ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */}
             {wizardStep === 3 && (
               <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
                 <div style={{
@@ -2160,20 +2311,20 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
                     <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid #E2E8F0', paddingBottom: 8 }}>
                       <span style={{ color: '#64748B', fontWeight: 600 }}>Tenant:</span>
                       <span style={{ fontWeight: 600 }}>
-                        {tenantMode === 'existing' ? (selectedTenantObj?.name || '—') : (formData.tenant_name || '—')}
+                        {tenantMode === 'existing' ? (selectedTenantObj?.name || 'ΓÇö') : (formData.tenant_name || 'ΓÇö')}
                       </span>
                     </div>
                     <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid #E2E8F0', paddingBottom: 8 }}>
                       <span style={{ color: '#64748B', fontWeight: 600 }}>Unit:</span>
                       <span style={{ fontWeight: 600 }}>
-                        {selectedUnitObj?.number || '—'}
+                        {selectedUnitObj?.number || 'ΓÇö'}
                         {selectedUnitObj?.property?.name ? ` (${selectedUnitObj.property.name})` : ''}
                       </span>
                     </div>
                     <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid #E2E8F0', paddingBottom: 8 }}>
                       <span style={{ color: '#64748B', fontWeight: 600 }}>Contract:</span>
                       <span style={{ fontWeight: 600 }}>
-                        {formatDate(formData.start_date)} – {formatDate(formData.end_date)}
+                        {formatDate(formData.start_date)} ΓÇô {formatDate(formData.end_date)}
                       </span>
                     </div>
                     <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid #E2E8F0', paddingBottom: 8 }}>
@@ -2209,7 +2360,7 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
                     </div>
                   </div>
 
-                  {isChequePayment && pdcCheques.length > 0 && (
+                  {isOwnerStaff && isChequePayment && pdcCheques.length > 0 && (
                     <div style={{ marginTop: 16, borderTop: '1px solid #E2E8F0', paddingTop: 14 }}>
                       <div style={{ fontSize: 12, fontWeight: 700, color: '#0F766E', marginBottom: 8 }}>
                         PDC Cheques ({pdcCheques.length})
@@ -2218,10 +2369,10 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
                         {pdcCheques.map((ch, idx) => (
                           <div key={idx} style={{ display: 'flex', justifyContent: 'space-between', gap: 10, fontSize: 13, color: '#0F172A' }}>
                             <span style={{ color: '#64748B', fontWeight: 600 }}>
-                              #{idx + 1} {ch.cheque_number || '—'} · {ch.bank_name || '—'}
+                              #{idx + 1} {ch.cheque_number || 'ΓÇö'} ┬╖ {ch.bank_name || 'ΓÇö'}
                             </span>
                             <span style={{ fontWeight: 600 }}>
-                              AED {Number(ch.amount || 0).toLocaleString()} · {formatDate(ch.due_date)}
+                              AED {Number(ch.amount || 0).toLocaleString()} ┬╖ {formatDate(ch.due_date)}
                             </span>
                           </div>
                         ))}
@@ -2230,26 +2381,120 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
                   )}
                 </div>
 
-                {/* Automatic system transitions note */}
-                <div style={{
-                  background: '#ECFDF5',
-                  border: '1px solid #A7F3DC',
+                {preparationOnly && <details style={{
+                  border: '1px solid #CBD5E1',
                   borderRadius: 10,
-                  padding: '12px 16px',
-                  fontSize: 12.5,
-                  color: '#065F46',
-                  lineHeight: 1.6,
+                  background: '#FFFFFF',
+                  overflow: 'hidden',
                 }}>
-                  <strong>Upon Save, the system will automatically:</strong>
-                  <div>• Set contract status to <strong>Active (Current)</strong> & change unit status from <strong>Available → Occupied</strong></div>
-                  <div>• Create the default Ejari addendum, post the first rent due, and prepare the contract PDF</div>
-                  {isChequePayment && (
-                    <div>• Save {pdcCheques.length} PDC cheque{pdcCheques.length === 1 ? '' : 's'} on this contract</div>
-                  )}
-                </div>
+                  <summary style={{
+                    padding: '12px 16px',
+                    cursor: 'pointer',
+                    color: '#0F766E',
+                    fontSize: 13,
+                    fontWeight: 700,
+                    background: '#F0FDFA',
+                    userSelect: 'none',
+                  }}>
+                    Edit Addendum Terms ({addendumTerms.filter(term => term.trim()).length}/8)
+                  </summary>
+                  <div style={{ padding: '14px 16px 16px' }}>
+                    <p style={{ margin: '0 0 12px', color: '#64748B', fontSize: 12.5, lineHeight: 1.5 }}>
+                      These clauses appear in the Additional Terms section of the signing PDF.
+                      Leave a clause empty to omit it.
+                    </p>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: 10 }}>
+                      {addendumTerms.map((term, index) => (
+                        <label key={index} style={{ display: 'block' }}>
+                          <span style={{ display: 'block', marginBottom: 4, color: '#334155', fontSize: 12, fontWeight: 700 }}>
+                            Clause {index + 1}
+                          </span>
+                          <textarea
+                            value={term}
+                            rows={3}
+                            placeholder={`Enter additional term ${index + 1}`}
+                            onChange={event => {
+                              const value = event.target.value
+                              setAddendumTerms(current => current.map((item, itemIndex) => (
+                                itemIndex === index ? value : item
+                              )))
+                            }}
+                            className="gfh-contract-filter"
+                            style={{ width: '100%', resize: 'vertical', lineHeight: 1.4 }}
+                          />
+                        </label>
+                      ))}
+                    </div>
+                    {addendumTerms.some(term => term) && (
+                      <button
+                        type="button"
+                        onClick={() => setAddendumTerms(Array(8).fill(''))}
+                        style={{
+                          marginTop: 10,
+                          padding: 0,
+                          border: 'none',
+                          background: 'transparent',
+                          color: '#DC2626',
+                          fontSize: 12,
+                          fontWeight: 600,
+                          cursor: 'pointer',
+                        }}
+                      >
+                        Clear all addendum terms
+                      </button>
+                    )}
+                  </div>
+                </details>}
 
-                {/* Actions: [ Edit ] | [ Save Contract ] */}
-                <div style={{ display: 'flex', justifyContent: 'space-between', gap: 12 }}>
+                {preparationOnly ? (
+                  <div style={{
+                    background: '#EFF6FF',
+                    border: '1px solid #BFDBFE',
+                    borderRadius: 10,
+                    padding: '12px 16px',
+                    fontSize: 12.5,
+                    color: '#1E40AF',
+                    lineHeight: 1.6,
+                  }}>
+                    <strong>Upon Save Preparation:</strong>
+                    <div>ΓÇó Store this record only in the separate prepared contracts table</div>
+                    <div>ΓÇó Keep the unit status unchanged and do not post rent or PDC entries</div>
+                    <div>ΓÇó Do not add this record to Current Contracts</div>
+                  </div>
+                ) : (
+                  <div style={{
+                    background: '#ECFDF5',
+                    border: '1px solid #A7F3DC',
+                    borderRadius: 10,
+                    padding: '12px 16px',
+                    fontSize: 12.5,
+                    color: '#065F46',
+                    lineHeight: 1.6,
+                  }}>
+                    <strong>Upon Save, the system will automatically:</strong>
+                    <div>ΓÇó Set contract status to <strong>Active (Current)</strong> & change unit status from <strong>Available ΓåÆ Occupied</strong></div>
+                    <div>ΓÇó Create the default Ejari addendum, post the first rent due, and prepare the contract PDF</div>
+                    {isOwnerStaff && isChequePayment && (
+                      <div>ΓÇó Save {pdcCheques.length} PDC cheque{pdcCheques.length === 1 ? '' : 's'} on this contract</div>
+                    )}
+                  </div>
+                )}
+
+                {preparationOnly && <div style={{
+                  background: '#EFF6FF',
+                  border: '1px solid #BFDBFE',
+                  borderRadius: 10,
+                  padding: '11px 16px',
+                  fontSize: 12.5,
+                  color: '#1E40AF',
+                  lineHeight: 1.5,
+                }}>
+                  <strong>Need the tenant's signature first?</strong> Generate an information-only PDF.
+                  This does not create a contract, post charges, or change the unit status.
+                </div>}
+
+                {/* Actions: [ Edit ] | [ Generate PDF ] [ Save Contract ] */}
+                <div style={{ display: 'flex', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap' }}>
                   <button
                     type="button"
                     onClick={() => setWizardStep(2)}
@@ -2265,29 +2510,54 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
                   >
                     Edit
                   </button>
-                  <button
-                    type="button"
-                    disabled={isSubmitting}
-                    onClick={() => handleCreate()}
-                    style={{
-                      padding: '10px 26px',
-                      borderRadius: 8,
-                      border: 'none',
-                      background: '#10B981',
-                      color: '#FFFFFF',
-                      fontWeight: 600,
-                      fontSize: 14,
-                      cursor: isSubmitting ? 'wait' : 'pointer',
-                      boxShadow: '0 2px 6px rgba(14, 94, 72, 0.25)',
-                    }}
-                  >
-                    {isSubmitting ? 'Saving Contract...' : 'Save Contract'}
-                  </button>
+                  <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+                    {preparationOnly && (
+                      <button
+                        type="button"
+                        disabled={isGeneratingSigningPdf || isSubmitting}
+                        onClick={() => void handleGenerateSigningPdf()}
+                        style={{
+                          padding: '10px 18px',
+                          borderRadius: 8,
+                          border: '1px solid #2563EB',
+                          background: '#FFFFFF',
+                          color: '#1D4ED8',
+                          fontWeight: 600,
+                          fontSize: 14,
+                          cursor: isGeneratingSigningPdf ? 'wait' : 'pointer',
+                          opacity: isGeneratingSigningPdf || isSubmitting ? 0.65 : 1,
+                        }}
+                      >
+                        {isGeneratingSigningPdf ? 'Generating PDF...' : 'Generate PDF for Signature'}
+                      </button>
+                    )}
+                    <button
+                      type="button"
+                      disabled={isSubmitting || isGeneratingSigningPdf}
+                      onClick={() => handleCreate()}
+                      style={{
+                        padding: '10px 26px',
+                        borderRadius: 8,
+                        border: 'none',
+                        background: '#10B981',
+                        color: '#FFFFFF',
+                        fontWeight: 600,
+                        fontSize: 14,
+                        cursor: isSubmitting ? 'wait' : 'pointer',
+                        opacity: isSubmitting || isGeneratingSigningPdf ? 0.65 : 1,
+                        boxShadow: '0 2px 6px rgba(14, 94, 72, 0.25)',
+                      }}
+                    >
+                      {isSubmitting
+                        ? `Saving ${preparationOnly ? 'Preparation' : 'Contract'}...`
+                        : `Save ${preparationOnly ? 'Preparation' : 'Contract'}`}
+                    </button>
+                  </div>
                 </div>
               </div>
             )}
 
-            {/* ── STEP 4 (AFTER SAVE): CONFIRMATION ────────────────────────────── */}
+            {/* ΓöÇΓöÇ STEP 4 (AFTER SAVE): CONFIRMATION ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */}
             {wizardStep === 'success' && createdContract && (
               <div style={{ textAlign: 'center', padding: '16px 8px' }}>
                 <div style={{
@@ -2304,17 +2574,27 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
                   fontWeight: 600,
                   marginBottom: 14,
                 }}>
-                  ✓
+                  Γ£ô
                 </div>
 
                 <h3 style={{ fontSize: 20, fontWeight: 600, color: '#065F46', margin: '0 0 8px' }}>
-                  ✓ Contract Created Successfully
+                  Γ£ô {preparationOnly ? 'Preparation Saved Successfully' : 'Contract Created Successfully'}
                 </h3>
                 <p style={{ fontSize: 13.5, color: '#475569', margin: '0 0 18px' }}>
-                  Contract <strong>GFH-{String(createdContract.id).padStart(5, '0')}</strong> for Unit{' '}
-                  <strong>{createdContract.unit?.number || selectedUnitObj?.number}</strong> is now{' '}
-                  <strong style={{ color: '#059669' }}>Active</strong> and the unit is marked{' '}
-                  <strong style={{ color: '#2563EB' }}>Occupied</strong>.
+                  {preparationOnly ? (
+                    <>
+                      Preparation <strong>PREP-{String(createdContract.id).padStart(5, '0')}</strong> for Unit{' '}
+                      <strong>{createdContract.unit?.number || selectedUnitObj?.number}</strong> was saved separately.
+                      The unit and Current Contracts remain unchanged.
+                    </>
+                  ) : (
+                    <>
+                      Contract <strong>GFH-{String(createdContract.id).padStart(5, '0')}</strong> for Unit{' '}
+                      <strong>{createdContract.unit?.number || selectedUnitObj?.number}</strong> is now{' '}
+                      <strong style={{ color: '#059669' }}>Active</strong> and the unit is marked{' '}
+                      <strong style={{ color: '#2563EB' }}>Occupied</strong>.
+                    </>
+                  )}
                 </p>
 
                 <div style={{
@@ -2330,18 +2610,29 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
                   gridTemplateColumns: '1fr 1fr',
                   gap: 8,
                 }}>
-                  <div>✓ Contract Status: <strong>Active</strong></div>
-                  <div>✓ Unit Status: <strong>Available → Occupied</strong></div>
-                  <div>✓ Default Addendum: <strong>Created</strong></div>
-                  <div>✓ First Rent Due: <strong>Posted</strong></div>
+                  {preparationOnly ? (
+                    <>
+                      <div>Γ£ô Preparation Status: <strong>Draft</strong></div>
+                      <div>Γ£ô Storage: <strong>Prepared Contracts Only</strong></div>
+                      <div>Γ£ô Unit Status: <strong>Unchanged</strong></div>
+                      <div>Γ£ô Rent Ledger: <strong>No Entry Posted</strong></div>
+                    </>
+                  ) : (
+                    <>
+                      <div>Γ£ô Contract Status: <strong>Active</strong></div>
+                      <div>Γ£ô Unit Status: <strong>Available ΓåÆ Occupied</strong></div>
+                      <div>Γ£ô Default Addendum: <strong>Created</strong></div>
+                      <div>Γ£ô First Rent Due: <strong>Posted</strong></div>
+                    </>
+                  )}
                 </div>
 
                 {/* [ Print Contract ] | [ View Contract ] | [ Done ] */}
                 <div style={{ display: 'flex', justifyContent: 'center', gap: 12, flexWrap: 'wrap' }}>
                   <button
                     type="button"
-                    onClick={() => downloadPdf(createdContract.id)}
-                    disabled={pdfLoading === createdContract.id}
+                    onClick={() => preparationOnly ? void handleGenerateSigningPdf() : downloadPdf(createdContract.id)}
+                    disabled={preparationOnly ? isGeneratingSigningPdf : pdfLoading === createdContract.id}
                     style={{
                       padding: '10px 20px',
                       borderRadius: 8,
@@ -2353,28 +2644,30 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
                       cursor: 'pointer',
                     }}
                   >
-                    {pdfLoading === createdContract.id ? 'Generating PDF...' : 'Print Contract'}
+                    {(preparationOnly ? isGeneratingSigningPdf : pdfLoading === createdContract.id) ? 'Generating PDF...' : 'Print Contract'}
                   </button>
 
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setIsModalOpen(false)
-                      navigate(`${effectiveBasePath}/contracts/${createdContract.id}`)
-                    }}
-                    style={{
-                      padding: '10px 22px',
-                      borderRadius: 8,
-                      border: 'none',
-                      background: '#10B981',
-                      color: '#FFFFFF',
-                      fontWeight: 600,
-                      fontSize: 13.5,
-                      cursor: 'pointer',
-                    }}
-                  >
-                    View Contract
-                  </button>
+                  {!preparationOnly && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIsModalOpen(false)
+                        navigate(contractDetailPath(createdContract))
+                      }}
+                      style={{
+                        padding: '10px 22px',
+                        borderRadius: 8,
+                        border: 'none',
+                        background: '#10B981',
+                        color: '#FFFFFF',
+                        fontWeight: 600,
+                        fontSize: 13.5,
+                        cursor: 'pointer',
+                      }}
+                    >
+                      View Contract
+                    </button>
+                  )}
 
                   <button
                     type="button"
@@ -2397,6 +2690,14 @@ export default function ContractManagement({ basePath }: { basePath?: string } =
             )}
           </div>
         </div>
+      )}
+
+      {isModalOpen && preparationOnly && (
+        <TenancyContractTemplate
+          data={signingContractData}
+          containerRef={signingPdfRef}
+          documentStatus="FOR TENANT REVIEW & SIGNATURE ΓÇö INFORMATION ONLY ΓÇö NOT YET REGISTERED IN GOFREEHOLD"
+        />
       )}
 
       {/* Modern Rounded Modal: Renew Contract */}

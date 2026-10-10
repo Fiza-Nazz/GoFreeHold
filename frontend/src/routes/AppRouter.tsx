@@ -1,34 +1,38 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+﻿import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { ProtectedRoute, GuestRoute } from './guards'
 
-// ─── Auth Pages ───────────────────────────────────────────────────────────────
+// ΓöÇΓöÇΓöÇ Auth Pages ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
 import LoginPage from '../pages/auth/LoginPage'
 import RegisterPage from '../pages/auth/RegisterPage'
 import ForgotPasswordPage from '../pages/auth/ForgotPasswordPage'
 import ResetPasswordPage from '../pages/auth/ResetPasswordPage'
 
-// ─── Shared portal shell ──────────────────────────────────────────────────────
+// ΓöÇΓöÇΓöÇ Shared portal shell ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
 import PortalLayout from '../components/layout/PortalLayout'
 
-// ─── Admin Pages ──────────────────────────────────────────────────────────────
-import AdminDashboard from '../pages/admin/Dashboard'
+// ΓöÇΓöÇΓöÇ Platform Admin Pages ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
+import PlatformDashboard from '../pages/admin/PlatformDashboard'
+import OrganizationsPage from '../pages/admin/OrganizationsPage'
+import OrganizationDetailPage from '../pages/admin/OrganizationDetailPage'
+import PlatformUsersPage from '../pages/admin/PlatformUsersPage'
+import PlansPage from '../pages/admin/PlansPage'
+import AuditLogsPage from '../pages/admin/AuditLogsPage'
+import PlatformSettingsPage from '../pages/admin/PlatformSettingsPage'
+
+// ΓöÇΓöÇΓöÇ Shared operational pages (owner/staff) ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
 import BuildingManagement from '../pages/admin/BuildingManagement'
 import AddPropertyPage from '../pages/admin/AddPropertyPage'
 import UnitManagement from '../pages/admin/UnitManagement'
 import TenantManagement from '../pages/admin/TenantManagement'
 import ContractManagement from '../pages/admin/ContractManagement'
-import ContractDetailPage from '../pages/admin/ContractDetailPage'
+import ContractToUnitRedirect from '../pages/shared/ContractToUnitRedirect'
 import PdcChequeTracker from '../pages/admin/PdcChequeTracker'
 import ContractCallLogPage from '../pages/admin/ContractCallLog'
 import LegalCases from '../pages/admin/LegalCases'
-import PaymentForm from '../pages/admin/PaymentForm'
-import RentLedger from '../pages/admin/RentLedger'
-import ReceivablesSummary from '../pages/admin/ReceivablesSummary'
 import ServiceCharges from '../pages/admin/ServiceCharges'
 import SettlementWizard from '../pages/admin/SettlementWizard'
 import OutstandingReceivables from '../pages/admin/OutstandingReceivables'
 import FinancialTracking from '../pages/admin/FinancialTracking'
-import ComplaintDashboard from '../pages/admin/ComplaintDashboard'
 import DailyMaintenanceReport from '../pages/admin/DailyMaintenanceReport'
 import ApplianceCatalog from '../pages/admin/ApplianceCatalog'
 import InventoryManagement from '../pages/admin/InventoryManagement'
@@ -43,12 +47,9 @@ import ItemStorePage from '../pages/admin/ItemStorePage'
 import ContractPayablesPage from '../pages/admin/ContractPayablesPage'
 import BankAccountsPage from '../pages/admin/BankAccountsPage'
 import SettlementPaymentsPage from '../pages/admin/SettlementPaymentsPage'
-import TermsPage from '../pages/admin/TermsPage'
-import TenancyResPage from '../pages/admin/TenancyResPage'
 
-// ─── Owner Pages ──────────────────────────────────────────────────────────────
+// ΓöÇΓöÇΓöÇ Owner Pages ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
 import OwnerDashboard from '../pages/owner/Dashboard'
-import PropertyDrillDown from '../pages/owner/PropertyDrillDown'
 import OwnerPropertyBoard from '../pages/owner/OwnerPropertyBoard'
 import VacantUnits from '../pages/owner/VacantUnits'
 import UnitDetailPage from '../pages/owner/UnitDetail'
@@ -57,12 +58,12 @@ import OwnerProfile from '../pages/owner/OwnerProfile'
 import OwnerFinancePage from '../pages/owner/OwnerFinancePage'
 import OwnerComplaints from '../pages/owner/OwnerComplaints'
 
-// ─── Maintenance Pages ────────────────────────────────────────────────────────
+// ΓöÇΓöÇΓöÇ Maintenance Pages ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
 import MaintenanceComplaints from '../pages/maintenance/Complaints'
 import MaintenanceDailyReport from '../pages/maintenance/DailyReport'
 import MaintenanceProfile from '../pages/maintenance/Profile'
 
-// ─── Tenant Pages ─────────────────────────────────────────────────────────────
+// ΓöÇΓöÇΓöÇ Tenant Pages ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
 import TenantDashboard from '../pages/tenant/Dashboard'
 import TenantDues from '../pages/tenant/Dues'
 import TenantPayments from '../pages/tenant/Payments'
@@ -70,7 +71,7 @@ import TenantComplaints from '../pages/tenant/Complaints'
 import TenantComplaintDetail from '../pages/tenant/ComplaintDetail'
 import TenantProfile from '../pages/tenant/Profile'
 
-// ─── Other ───────────────────────────────────────────────────────────────────
+// ΓöÇΓöÇΓöÇ Other ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
 import NotFound from '../pages/NotFound'
 import FinancePage from '../pages/staff/FinancePage'
 import PropertyUnitsBoard from '../pages/shared/PropertyUnitsBoard'
@@ -84,22 +85,34 @@ export default function AppRouter() {
     <BrowserRouter>
       <Routes>
         <Route path="/staff/activate" element={<StaffActivation />} />
-        {(['cashier','accountant'] as const).map(role => <Route key={role} element={<ProtectedRoute allowedRoles={[role]} />}>
-          <Route path={'/'+role} element={<PortalLayout />}>
-            <Route index element={<Navigate to="dashboard" replace />} />
-            <Route path="portfolio" element={<OwnerPropertyBoard />} />
-            <Route path="units" element={<OwnerUnits />} />
-            <Route path="units/:unitId" element={<UnitDetailPage />} />
-            <Route path="properties/:propertyId" element={<PropertyUnitsBoard />} />
-            <Route path="contracts" element={<ContractManagement basePath={'/' + role} />} />
-            <Route path="contracts/:id" element={<ContractDetailPage basePath={'/' + role} />} />
-            {['dashboard','payments','payments/new','receivables','profile',...(role==='accountant'?['ledger']:[])].map(path=><Route key={path} path={path} element={<FinancePage key={role+'/'+path} />} />)}
+        {(['cashier', 'accountant'] as const).map((role) => (
+          <Route key={role} element={<ProtectedRoute allowedRoles={[role]} />}>
+            <Route path={'/' + role} element={<PortalLayout />}>
+              <Route index element={<Navigate to="dashboard" replace />} />
+              <Route path="portfolio" element={<OwnerPropertyBoard />} />
+              <Route path="units" element={<OwnerUnits />} />
+              <Route path="units/:unitId" element={<UnitDetailPage />} />
+              <Route path="properties/:propertyId" element={<PropertyUnitsBoard />} />
+              <Route path="contracts" element={<ContractManagement basePath={'/' + role} />} />
+              <Route path="prepared-contracts" element={<ContractManagement basePath={'/' + role} preparationOnly />} />
+              <Route path="contracts/:id" element={<ContractToUnitRedirect basePath={'/' + role} />} />
+              <Route path="pdc" element={<Navigate to="/pdc" replace />} />
+              {['dashboard', 'payments', 'payments/new', 'receivables', 'profile', ...(role === 'accountant' ? ['ledger'] : [])].map((path) => (
+                <Route key={path} path={path} element={<FinancePage key={role + '/' + path} />} />
+              ))}
+            </Route>
           </Route>
-        </Route>)}
-        {/* Default redirect */}
+        ))}
+
+        {/* Shared PDC tracker ΓÇö owner / cashier / accountant */}
+        <Route element={<ProtectedRoute allowedRoles={['owner', 'cashier', 'accountant']} />}>
+          <Route element={<PortalLayout />}>
+            <Route path="/pdc" element={<PdcChequeTracker />} />
+          </Route>
+        </Route>
+
         <Route path="/" element={<Navigate to="/login" replace />} />
 
-        {/* ── Guest Routes (auth pages) ─────────────────────────────────── */}
         <Route element={<GuestRoute />}>
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
@@ -107,97 +120,61 @@ export default function AppRouter() {
           <Route path="/reset-password" element={<ResetPasswordPage />} />
         </Route>
 
-        {/* ── Admin Routes ──────────────────────────────────────────────── */}
-        <Route element={<ProtectedRoute allowedRoles={['admin']} />}>
+        {/* Platform Admin ΓÇö SaaS operator only (no property operations) */}
+        <Route element={<ProtectedRoute allowedRoles={['admin']} requiredPermissions={['platform.manage']} />}>
           <Route path="/admin" element={<PortalLayout />}>
             <Route index element={<Navigate to="dashboard" replace />} />
-            <Route path="dashboard" element={<AdminDashboard />} />
-            {/* Stage 3: Property & Unit Management */}
-            <Route path="properties" element={<BuildingManagement />} />
-            <Route path="properties/add" element={<AddPropertyPage />} />
-            <Route path="buildings" element={<Navigate to="/admin/properties" replace />} />
-            <Route path="units" element={<UnitManagement />} />
-            <Route path="tenants" element={<TenantManagement />} />
-            <Route path="tenants/add" element={<TenantManagement mode="add" />} />
-            <Route path="tenants/previous" element={<TenantManagement mode="previous" />} />
-            {/* Stage 4: Contracts, Leasing & Legal */}
-            <Route path="contracts" element={<ContractManagement />} />
-            <Route path="contracts/:id" element={<ContractDetailPage />} />
-            <Route path="pdc" element={<PdcChequeTracker />} />
-            <Route path="call-logs" element={<ContractCallLogPage />} />
-            <Route path="legal" element={<LegalCases />} />
-            {/* Stage 5: Payments, Receivables & Payables */}
-            <Route path="payments" element={<PaymentForm />} />
-            <Route path="ledger" element={<RentLedger />} />
-            <Route path="receivables" element={<ReceivablesSummary />} />
-            <Route path="service-charges" element={<ServiceCharges />} />
-            {/* Stage 6: Move-out Settlements & Financial Tracking */}
-            <Route path="settlements" element={<SettlementWizard />} />
-            <Route path="receivables-categorized" element={<OutstandingReceivables />} />
-            <Route path="financial-tracking" element={<FinancialTracking />} />
-            {/* Stage 7: Maintenance & Inventory Management */}
-            <Route path="complaints" element={<ComplaintDashboard />} />
-            <Route path="daily-maintenance" element={<DailyMaintenanceReport />} />
-            <Route path="appliances" element={<ApplianceCatalog />} />
-            <Route path="inventory" element={<InventoryManagement />} />
-            <Route path="purchase-orders" element={<PurchaseOrderTracker />} />
-            <Route path="teams" element={<TeamsPage />} />
-            <Route path="jobs" element={<JobsPage />} />
-            <Route path="maintenances" element={<MaintenancesPage />} />
-            <Route path="item-store" element={<ItemStorePage />} />
-            <Route path="contract-payables" element={<ContractPayablesPage />} />
-            <Route path="bank-accounts" element={<BankAccountsPage />} />
-            <Route path="settlement-payments" element={<SettlementPaymentsPage />} />
-            <Route path="tenancy-res" element={<TenancyResPage />} />
-            <Route path="terms" element={<TermsPage />} />
-            {/* Stage 8: System Reports & Automated Notifications */}
-            <Route path="reports" element={<ReportsDashboard />} />
-            <Route path="reports/vacant" element={<VacantPropertyReport />} />
-            <Route path="settings" element={<AdminSettings />} />
+            <Route path="dashboard" element={<PlatformDashboard />} />
+            <Route path="organizations" element={<OrganizationsPage />} />
+            <Route path="organizations/:id" element={<OrganizationDetailPage />} />
+            <Route path="users" element={<PlatformUsersPage />} />
+            <Route path="plans" element={<PlansPage />} />
+            <Route path="audit-logs" element={<AuditLogsPage />} />
+            <Route path="settings" element={<PlatformSettingsPage />} />
+            {/* Legacy operational URLs redirect into owner portal guidance */}
+            <Route path="properties/*" element={<Navigate to="/unauthorized" replace />} />
+            <Route path="units/*" element={<Navigate to="/unauthorized" replace />} />
+            <Route path="contracts/*" element={<Navigate to="/unauthorized" replace />} />
+            <Route path="tenants/*" element={<Navigate to="/unauthorized" replace />} />
+            <Route path="payments/*" element={<Navigate to="/unauthorized" replace />} />
+            <Route path="*" element={<Navigate to="dashboard" replace />} />
           </Route>
         </Route>
 
-        {/* ── Owner Routes ──────────────────────────────────────────────── */}
+        {/* Owner ΓÇö customer organization property operations */}
         <Route element={<ProtectedRoute allowedRoles={['owner']} />}>
           <Route path="/owner" element={<PortalLayout />}>
             <Route index element={<Navigate to="dashboard" replace />} />
             <Route path="dashboard" element={<OwnerDashboard />} />
-            {/* Stage 3: Property & Unit Management */}
             <Route path="properties" element={<BuildingManagement />} />
             <Route path="properties/add" element={<AddPropertyPage />} />
-            <Route path="properties/:propertyId" element={<PropertyUnitsBoard />} />
             <Route path="buildings" element={<Navigate to="/owner/properties" replace />} />
+            <Route path="properties/:propertyId" element={<PropertyUnitsBoard />} />
             <Route path="portfolio" element={<OwnerPropertyBoard />} />
             <Route path="units" element={<OwnerUnits />} />
             <Route path="units/:unitId" element={<UnitDetailPage />} />
             <Route path="vacant-units" element={<VacantUnits />} />
             <Route path="vacant" element={<Navigate to="/owner/vacant-units" replace />} />
             <Route path="appliances" element={<ApplianceCatalog />} />
-            {/* Stage 4: Contracts, Leasing & Legal */}
             <Route path="tenants" element={<TenantManagement />} />
             <Route path="tenants/add" element={<TenantManagement mode="add" />} />
             <Route path="tenants/previous" element={<TenantManagement mode="previous" />} />
             <Route path="contracts" element={<ContractManagement basePath="/owner" />} />
-            <Route path="contracts/:id" element={<ContractDetailPage basePath="/owner" />} />
-            <Route path="pdc" element={<PdcChequeTracker />} />
+            <Route path="prepared-contracts" element={<ContractManagement basePath="/owner" preparationOnly />} />
+            <Route path="contracts/:id" element={<ContractToUnitRedirect basePath="/owner" />} />
+            <Route path="pdc" element={<Navigate to="/pdc" replace />} />
             <Route path="call-logs" element={<ContractCallLogPage />} />
             <Route path="legal" element={<LegalCases />} />
-            {/* Stage 5: Payments, Receivables & Payables */}
             <Route path="payments" element={<OwnerFinancePage kind="payments" />} />
             <Route path="ledger" element={<OwnerFinancePage kind="ledger" />} />
             <Route path="receivables" element={<OwnerFinancePage kind="receivables" />} />
             <Route path="service-charges" element={<ServiceCharges />} />
-            {/* Stage 6: Move-out Settlements & Financial Tracking */}
             <Route path="settlements" element={<SettlementWizard />} />
             <Route path="receivables-categorized" element={<OutstandingReceivables />} />
             <Route path="financial-tracking" element={<FinancialTracking />} />
-            {/* Accounts */}
             <Route path="contract-payables" element={<ContractPayablesPage />} />
             <Route path="bank-accounts" element={<BankAccountsPage />} />
             <Route path="settlement-payments" element={<SettlementPaymentsPage />} />
-            <Route path="tenancy-res" element={<TenancyResPage />} />
-            <Route path="terms" element={<TermsPage />} />
-            {/* Stage 7: Maintenance & Operations */}
             <Route path="complaints" element={<OwnerComplaints />} />
             <Route path="jobs" element={<JobsPage />} />
             <Route path="teams" element={<TeamsPage />} />
@@ -206,7 +183,6 @@ export default function AppRouter() {
             <Route path="inventory" element={<InventoryManagement />} />
             <Route path="item-store" element={<ItemStorePage />} />
             <Route path="purchase-orders" element={<PurchaseOrderTracker />} />
-            {/* Stage 8: Reports & Settings */}
             <Route path="reports" element={<ReportsDashboard />} />
             <Route path="reports/vacant" element={<VacantPropertyReport />} />
             <Route path="settings" element={<AdminSettings />} />
@@ -215,19 +191,16 @@ export default function AppRouter() {
           </Route>
         </Route>
 
-        {/* ── Maintenance Routes ────────────────────────────────────────── */}
         <Route element={<ProtectedRoute allowedRoles={['maintenance']} />}>
           <Route path="/maintenance" element={<PortalLayout />}>
             <Route index element={<Navigate to="dashboard" replace />} />
             <Route path="dashboard" element={<AssignedJobs />} />
-            <Route path="jobs" element={<AssignedJobs />} />
             <Route path="complaints" element={<MaintenanceComplaints />} />
             <Route path="daily-report" element={<MaintenanceDailyReport />} />
             <Route path="profile" element={<MaintenanceProfile />} />
           </Route>
         </Route>
 
-        {/* ── Tenant Routes ─────────────────────────────────────────────── */}
         <Route element={<ProtectedRoute allowedRoles={['tenant']} />}>
           <Route path="/tenant" element={<PortalLayout />}>
             <Route index element={<Navigate to="dashboard" replace />} />
@@ -240,7 +213,6 @@ export default function AppRouter() {
           </Route>
         </Route>
 
-        {/* ── Misc ─────────────────────────────────────────────────────── */}
         <Route path="/unauthorized" element={<Unauthorized />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
