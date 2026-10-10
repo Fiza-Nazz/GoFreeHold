@@ -1,11 +1,11 @@
-/**
+﻿/**
  * TenancyContractTemplate.tsx
  * Pixel-perfect match with Dubai Land Department official tenancy contract.
  * Uses Amiri font for Arabic, html2canvas-compatible inline styles.
  */
 import React from 'react'
 
-// ── Types ─────────────────────────────────────────────────────────────────────
+// ΓöÇΓöÇ Types ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
 export interface ContractData {
   id: number
   contract_no?: string
@@ -38,7 +38,7 @@ export interface ContractData {
   unit_items?: Array<{ name: string; quantity?: number }>
 }
 
-// ── Helpers ───────────────────────────────────────────────────────────────────
+// ΓöÇΓöÇ Helpers ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
 function pick(...vals: (string|number|null|undefined)[]): string {
   for (const v of vals) if (v !== null && v !== undefined && String(v).trim() !== '' && String(v) !== 'undefined') return String(v)
   return ''
@@ -69,13 +69,13 @@ function n2w(n: number): string {
   return n.toLocaleString()
 }
 
-// ── Style constants ────────────────────────────────────────────────────────────
+// ΓöÇΓöÇ Style constants ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
 const NAVY  = '#1a2b6d'
 const RED   = '#c8102e'
 const ARFNT = "'Amiri', 'Times New Roman', serif"  // Arabic font
 const ENFNT = "'Arial', 'Helvetica', sans-serif"   // English font
 
-// ── Arabic text wrapper ────────────────────────────────────────────────────────
+// ΓöÇΓöÇ Arabic text wrapper ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
 const Ar = ({ children, size=10, bold=false, style={} }: {
   children: React.ReactNode; size?: number; bold?: boolean; style?: React.CSSProperties
 }) => (
@@ -85,7 +85,7 @@ const Ar = ({ children, size=10, bold=false, style={} }: {
   </span>
 )
 
-// ── Circle checkbox ────────────────────────────────────────────────────────────
+// ΓöÇΓöÇ Circle checkbox ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
 const Circle = ({ checked }: { checked: boolean }) => (
   <span style={{
     display:'inline-block', width:13, height:13,
@@ -94,11 +94,11 @@ const Circle = ({ checked }: { checked: boolean }) => (
     fontSize:9, fontWeight: 600, color:checked?NAVY:'transparent',
     verticalAlign:'middle',
   }}>
-    {checked ? '⊗' : ''}
+    {checked ? 'Γèù' : ''}
   </span>
 )
 
-// ── Field row — full width dashed underline ────────────────────────────────────
+// ΓöÇΓöÇ Field row ΓÇö full width dashed underline ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
 const FR = ({ en, val, ar }: { en:string; val:string; ar:string }) => (
   <tr>
     <td style={{ fontFamily:ENFNT, fontSize:8, color:'#666', whiteSpace:'nowrap',
@@ -117,7 +117,7 @@ const FR = ({ en, val, ar }: { en:string; val:string; ar:string }) => (
   </tr>
 )
 
-// ── Two-column field row ───────────────────────────────────────────────────────
+// ΓöÇΓöÇ Two-column field row ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
 const FR2 = ({en1,val1,ar1,en2,val2,ar2}:{
   en1:string;val1:string;ar1:string;
   en2:string;val2:string;ar2:string;
@@ -133,7 +133,7 @@ const FR2 = ({en1,val1,ar1,en2,val2,ar2}:{
   </tr>
 )
 
-// ── Section bar ───────────────────────────────────────────────────────────────
+// ΓöÇΓöÇ Section bar ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
 const SecBar = ({ en, ar }: { en:string; ar:string }) => (
   <tr>
     <td colSpan={99}>
@@ -147,7 +147,7 @@ const SecBar = ({ en, ar }: { en:string; ar:string }) => (
   </tr>
 )
 
-// ── Clause row ────────────────────────────────────────────────────────────────
+// ΓöÇΓöÇ Clause row ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
 const Clause = ({ n, en, ar }: { n:number|string; en:string; ar:string }) => (
   <tr style={{ borderBottom:'1px solid #eef2f7' }}>
     <td style={{ width:18, verticalAlign:'top', paddingTop:4 }}>
@@ -166,12 +166,12 @@ const Clause = ({ n, en, ar }: { n:number|string; en:string; ar:string }) => (
   </tr>
 )
 
-// ── Signatures ────────────────────────────────────────────────────────────────
+// ΓöÇΓöÇ Signatures ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
 const Sigs = () => (
   <table style={{ width:'100%', borderCollapse:'collapse', marginTop:16 }}>
     <tbody>
       <tr>
-        {[['إمضاء المستأجر','Tenant Signature'],['إمضاء المؤجر','Landlord Signature']].map(([ar,en])=>(
+        {[['╪Ñ┘à╪╢╪º╪í ╪º┘ä┘à╪│╪¬╪ú╪¼╪▒','Tenant Signature'],['╪Ñ┘à╪╢╪º╪í ╪º┘ä┘à╪ñ╪¼╪▒','Landlord Signature']].map(([ar,en])=>(
           <td key={en} style={{ width:'50%', textAlign:'center', padding:'0 16px' }}>
             <div style={{ fontFamily:ARFNT, fontSize:11, fontWeight: 600, color:NAVY,
               direction:'rtl', unicodeBidi:'embed' }}>{ar}</div>
@@ -179,7 +179,7 @@ const Sigs = () => (
             <div style={{ borderBottom:'1px dashed #777', marginTop:22 }}/>
             <div style={{ fontFamily:ENFNT, fontSize:7, color:'#777', marginTop:3 }}>
               Date: ................. &nbsp;
-              <span style={{ fontFamily:ARFNT, fontSize:8.5, direction:'rtl', unicodeBidi:'embed' }}>التاريخ</span>
+              <span style={{ fontFamily:ARFNT, fontSize:8.5, direction:'rtl', unicodeBidi:'embed' }}>╪º┘ä╪¬╪º╪▒┘è╪«</span>
             </div>
           </td>
         ))}
@@ -188,7 +188,7 @@ const Sigs = () => (
   </table>
 )
 
-// ── Footer ────────────────────────────────────────────────────────────────────
+// ΓöÇΓöÇ Footer ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
 const Footer = () => (
   <div style={{ borderTop:`1.5px solid ${NAVY}`, marginTop:10, paddingTop:4,
     fontFamily:ENFNT, fontSize:6.5, color:'#555', textAlign:'center', lineHeight:1.6 }}>
@@ -196,12 +196,12 @@ const Footer = () => (
     Website: www.dubailand.gov.ae &nbsp;|&nbsp; Email: info@dubailand.gov.ae
     <br/>
     <span style={{ fontFamily:ARFNT, fontSize:7.5, direction:'rtl', unicodeBidi:'embed' }}>
-      هاتف: 8004488 &nbsp;|&nbsp; فاكس: 4 222 2251 971+ &nbsp;|&nbsp; ص.ب 1166، دبي، الإمارات العربية المتحدة
+      ┘ç╪º╪¬┘ü: 8004488 &nbsp;|&nbsp; ┘ü╪º┘â╪│: 4 222 2251 971+ &nbsp;|&nbsp; ╪╡.╪¿ 1166╪î ╪»╪¿┘è╪î ╪º┘ä╪Ñ┘à╪º╪▒╪º╪¬ ╪º┘ä╪╣╪▒╪¿┘è╪⌐ ╪º┘ä┘à╪¬╪¡╪»╪⌐
     </span>
   </div>
 )
 
-// ── Land Department SVG Logo ───────────────────────────────────────────────────
+// ΓöÇΓöÇ Land Department SVG Logo ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
 const LandLogo = ({ size=56 }: { size?: number }) => (
   <svg width={size} height={size} viewBox="0 0 56 56" xmlns="http://www.w3.org/2000/svg">
     <circle cx="28" cy="28" r="26" fill="#e8f5e9" stroke="#2e7d32" strokeWidth="2"/>
@@ -224,7 +224,7 @@ const LandLogo = ({ size=56 }: { size?: number }) => (
   </svg>
 )
 
-// ── Gov Dubai styled logo (red Arabic calligraphy style) ──────────────────────
+// ΓöÇΓöÇ Gov Dubai styled logo (red Arabic calligraphy style) ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
 const GovDubaiLogo = () => (
   <div>
     <div style={{
@@ -232,7 +232,7 @@ const GovDubaiLogo = () => (
       color: RED, direction: 'rtl', unicodeBidi: 'embed',
       lineHeight: 1.1, letterSpacing: 2,
     }}>
-      حكومة دبي
+      ╪¡┘â┘ê┘à╪⌐ ╪»╪¿┘è
     </div>
     <div style={{ fontFamily: ENFNT, fontSize: 7.5, fontWeight: 600,
       color: RED, letterSpacing: 0.8, marginTop: 2 }}>
@@ -241,22 +241,23 @@ const GovDubaiLogo = () => (
   </div>
 )
 
-// ═══════════════════════════════════════════════════════════════════════════════
+// ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
 // Main Template
-// ═══════════════════════════════════════════════════════════════════════════════
+// ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
 interface Props {
   data: ContractData
-  containerRef: React.RefObject<HTMLDivElement>
+  containerRef: React.RefObject<HTMLDivElement | null>
+  documentStatus?: string
 }
 
-export default function TenancyContractTemplate({ data, containerRef }: Props) {
+export default function TenancyContractTemplate({ data, containerRef, documentStatus }: Props) {
   const res  = data.tenancyRes
   const unit = data.unit
   const ten  = data.tenant
   const own  = data.owner
   const add  = data.tenancyContracts?.[0]
 
-  // ── Derived values ───────────────────────────────────────────────────────
+  // ΓöÇΓöÇ Derived values ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
   const usage  = pick(res?.property_usage, data.type, 'residential').toLowerCase()
   const isRes  = usage.includes('resid') || usage === 'r'
   const isCom  = usage.includes('comm')  || usage === 'c'
@@ -291,7 +292,7 @@ export default function TenancyContractTemplate({ data, containerRef }: Props) {
   const mm = String(t.getMonth()+1).padStart(2,'0')
   const yy = String(t.getFullYear())
 
-  // ── Page base style ─────────────────────────────────────────────────────
+  // ΓöÇΓöÇ Page base style ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
   const P: React.CSSProperties = {
     width: 794, minHeight: 1123, background: '#fff',
     padding: '24px 30px 44px 30px', fontFamily: ENFNT,
@@ -299,11 +300,23 @@ export default function TenancyContractTemplate({ data, containerRef }: Props) {
     position: 'relative', overflow: 'hidden',
   }
 
+  const StatusBanner = () => documentStatus ? (
+    <div style={{
+      position: 'absolute', top: 5, left: 30, right: 30, zIndex: 10,
+      border: `1px solid ${RED}`, borderRadius: 3, background: '#fff',
+      color: RED, fontFamily: ENFNT, fontSize: 7, fontWeight: 700,
+      letterSpacing: 0.7, textAlign: 'center', padding: '2px 6px',
+    }}>
+      {documentStatus}
+    </div>
+  ) : null
+
   return (
     <div ref={containerRef} style={{ position:'absolute', left:-9999, top:0, zIndex:-1 }}>
 
-      {/* ═══════════════════════ PAGE 1 ═══════════════════════ */}
+      {/* ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ PAGE 1 ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ */}
       <div style={P} id="contract-page-1">
+        <StatusBanner/>
 
         {/* Watermark */}
         <div style={{
@@ -314,7 +327,7 @@ export default function TenancyContractTemplate({ data, containerRef }: Props) {
           <LandLogo size={340}/>
         </div>
 
-        {/* ── HEADER ── */}
+        {/* ΓöÇΓöÇ HEADER ΓöÇΓöÇ */}
         <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-start', marginBottom:10, position:'relative', zIndex:1 }}>
           {/* Left: Gov Dubai */}
           <GovDubaiLogo/>
@@ -323,7 +336,7 @@ export default function TenancyContractTemplate({ data, containerRef }: Props) {
           <div style={{ textAlign:'right', display:'flex', flexDirection:'column', alignItems:'flex-end', gap:2 }}>
             <div style={{ fontFamily:ARFNT, fontSize:14, fontWeight: 600, color:NAVY,
               direction:'rtl', unicodeBidi:'embed', letterSpacing:0.5 }}>
-              دائرة الأراضي والأملاك
+              ╪»╪º╪ª╪▒╪⌐ ╪º┘ä╪ú╪▒╪º╪╢┘è ┘ê╪º┘ä╪ú┘à┘ä╪º┘â
             </div>
             <div style={{ fontFamily:ENFNT, fontSize:8.5, fontWeight: 600, color:NAVY }}>
               Land Department
@@ -332,7 +345,7 @@ export default function TenancyContractTemplate({ data, containerRef }: Props) {
           </div>
         </div>
 
-        {/* ── TITLE BOX ── */}
+        {/* ΓöÇΓöÇ TITLE BOX ΓöÇΓöÇ */}
         <div style={{
           border:`1.8px solid #4a6fa5`, borderRadius:6,
           display:'flex', marginBottom:10, position:'relative', zIndex:1,
@@ -348,14 +361,14 @@ export default function TenancyContractTemplate({ data, containerRef }: Props) {
               <span style={{ fontFamily:ENFNT, fontSize:9.5, fontWeight: 600 }}>/</span>
               <span style={{ fontFamily:ENFNT, fontSize:9.5, fontWeight: 600, borderBottom:'1.2px solid #333', minWidth:34, textAlign:'center', padding:'0 2px' }}>{yy}</span>
               <span style={{ fontFamily:ARFNT, fontSize:10, color:NAVY, marginLeft:6,
-                direction:'rtl', unicodeBidi:'embed' }}>التاريخ</span>
+                direction:'rtl', unicodeBidi:'embed' }}>╪º┘ä╪¬╪º╪▒┘è╪«</span>
             </div>
             {/* No */}
             <div style={{ display:'flex', alignItems:'center', gap:3 }}>
               <span style={{ fontFamily:ENFNT, fontSize:7.5, color:'#444', marginRight:3 }}>No.</span>
               <span style={{ fontFamily:ENFNT, fontSize:9.5, fontWeight: 600, borderBottom:'1.2px solid #333', minWidth:90, padding:'0 4px' }}>{cNo}</span>
               <span style={{ fontFamily:ARFNT, fontSize:10, color:NAVY, marginLeft:6,
-                direction:'rtl', unicodeBidi:'embed' }}>الرقم</span>
+                direction:'rtl', unicodeBidi:'embed' }}>╪º┘ä╪▒┘é┘à</span>
             </div>
           </div>
 
@@ -363,7 +376,7 @@ export default function TenancyContractTemplate({ data, containerRef }: Props) {
           <div style={{ flex:1, textAlign:'center', padding:'6px 12px', display:'flex', flexDirection:'column', justifyContent:'center' }}>
             <div style={{ fontFamily:ARFNT, fontSize:28, fontWeight: 600, color:NAVY,
               letterSpacing:6, direction:'rtl', unicodeBidi:'embed', lineHeight:1.1 }}>
-              عـقـد إيـجـار
+              ╪╣┘Ç┘é┘Ç╪» ╪Ñ┘è┘Ç╪¼┘Ç╪º╪▒
             </div>
             <div style={{ fontFamily:ENFNT, fontSize:13, fontWeight: 600, color:NAVY, letterSpacing:3, marginTop:3 }}>
               TENANCY CONTRACT
@@ -371,14 +384,14 @@ export default function TenancyContractTemplate({ data, containerRef }: Props) {
           </div>
         </div>
 
-        {/* ── PROPERTY USAGE ── */}
+        {/* ΓöÇΓöÇ PROPERTY USAGE ΓöÇΓöÇ */}
         <div style={{ display:'flex', alignItems:'flex-end', gap:0, marginBottom:8, position:'relative', zIndex:1 }}>
           <span style={{ fontFamily:ENFNT, fontSize:8, color:'#666', marginRight:16, whiteSpace:'nowrap' }}>Property Usage</span>
 
           {[
-            { arLabel:'صناعي', enLabel:'Industrial', checked: isInd },
-            { arLabel:'تجاري', enLabel:'Commercial',  checked: isCom },
-            { arLabel:'سكني',  enLabel:'Residential', checked: isRes || defRes },
+            { arLabel:'╪╡┘å╪º╪╣┘è', enLabel:'Industrial', checked: isInd },
+            { arLabel:'╪¬╪¼╪º╪▒┘è', enLabel:'Commercial',  checked: isCom },
+            { arLabel:'╪│┘â┘å┘è',  enLabel:'Residential', checked: isRes || defRes },
           ].map(({ arLabel, enLabel, checked }) => (
             <div key={enLabel} style={{ textAlign:'center', marginRight:22 }}>
               <div style={{ fontFamily:ARFNT, fontSize:10, color:'#444',
@@ -390,45 +403,45 @@ export default function TenancyContractTemplate({ data, containerRef }: Props) {
 
           <div style={{ flex:1, textAlign:'right' }}>
             <span style={{ fontFamily:ARFNT, fontSize:10, color:'#666',
-              direction:'rtl', unicodeBidi:'embed' }}>استخدام الوحدة</span>
+              direction:'rtl', unicodeBidi:'embed' }}>╪º╪│╪¬╪«╪»╪º┘à ╪º┘ä┘ê╪¡╪»╪⌐</span>
           </div>
         </div>
 
-        {/* ── DATA FIELDS ── */}
+        {/* ΓöÇΓöÇ DATA FIELDS ΓöÇΓöÇ */}
         <div style={{ position:'relative', zIndex:1 }}>
           <table style={{ width:'100%', borderCollapse:'collapse' }}>
             <tbody>
-              <FR en="Owner Name"    val={ownerN}  ar="اسم المالك"/>
-              <FR en="Landlord Name" val={ownerN}  ar="اسم المؤجر"/>
-              <FR en="Tenant Name"   val={tenN}    ar="اسم المستأجر"/>
-              <FR2 en1="Tenant Email"  val1={tenEm}  ar1="البريد الالكتروني للمستأجر"
-                   en2="Landlord Email" val2={lanEm}  ar2="البريد الالكتروني للمؤجر"/>
-              <FR2 en1="Tenant Phone"  val1={tenPh}  ar1="هاتف المستأجر"
-                   en2="Landlord Phone" val2={lanPh}  ar2="هاتف المؤجر"/>
-              <FR2 en1="Building Name" val1={bld}    ar1="إسم المبنى"
-                   en2="Location"       val2={loc}    ar2="المنطقة"/>
+              <FR en="Owner Name"    val={ownerN}  ar="╪º╪│┘à ╪º┘ä┘à╪º┘ä┘â"/>
+              <FR en="Landlord Name" val={ownerN}  ar="╪º╪│┘à ╪º┘ä┘à╪ñ╪¼╪▒"/>
+              <FR en="Tenant Name"   val={tenN}    ar="╪º╪│┘à ╪º┘ä┘à╪│╪¬╪ú╪¼╪▒"/>
+              <FR2 en1="Tenant Email"  val1={tenEm}  ar1="╪º┘ä╪¿╪▒┘è╪» ╪º┘ä╪º┘ä┘â╪¬╪▒┘ê┘å┘è ┘ä┘ä┘à╪│╪¬╪ú╪¼╪▒"
+                   en2="Landlord Email" val2={lanEm}  ar2="╪º┘ä╪¿╪▒┘è╪» ╪º┘ä╪º┘ä┘â╪¬╪▒┘ê┘å┘è ┘ä┘ä┘à╪ñ╪¼╪▒"/>
+              <FR2 en1="Tenant Phone"  val1={tenPh}  ar1="┘ç╪º╪¬┘ü ╪º┘ä┘à╪│╪¬╪ú╪¼╪▒"
+                   en2="Landlord Phone" val2={lanPh}  ar2="┘ç╪º╪¬┘ü ╪º┘ä┘à╪ñ╪¼╪▒"/>
+              <FR2 en1="Building Name" val1={bld}    ar1="╪Ñ╪│┘à ╪º┘ä┘à╪¿┘å┘ë"
+                   en2="Location"       val2={loc}    ar2="╪º┘ä┘à┘å╪╖┘é╪⌐"/>
 
               {/* 3-column: Size | Type | No */}
               <tr>
                 <td style={{fontFamily:ENFNT,fontSize:8,color:'#666',whiteSpace:'nowrap',paddingTop:3,paddingBottom:3,width:100}}>Property Size (S.M)</td>
                 <td style={{fontFamily:ENFNT,fontSize:9,fontWeight: 600,color:'#000',borderBottom:'1px dashed #bbb',padding:'1px 4px',width:55}}>{pSz}</td>
-                <td style={{fontFamily:ARFNT,fontSize:9.5,color:'#666',textAlign:'right',direction:'rtl',unicodeBidi:'embed',paddingLeft:4,width:120}}>مساحة الوحدة (متر مربع)</td>
+                <td style={{fontFamily:ARFNT,fontSize:9.5,color:'#666',textAlign:'right',direction:'rtl',unicodeBidi:'embed',paddingLeft:4,width:120}}>┘à╪│╪º╪¡╪⌐ ╪º┘ä┘ê╪¡╪»╪⌐ (┘à╪¬╪▒ ┘à╪▒╪¿╪╣)</td>
                 <td style={{fontFamily:ENFNT,fontSize:8,color:'#666',paddingLeft:6,whiteSpace:'nowrap',width:80}}>Property Type</td>
                 <td style={{fontFamily:ENFNT,fontSize:9,fontWeight: 600,color:'#000',borderBottom:'1px dashed #bbb',padding:'1px 4px',width:65}}>{pTp}</td>
-                <td style={{fontFamily:ARFNT,fontSize:9.5,color:'#666',textAlign:'right',direction:'rtl',unicodeBidi:'embed',paddingLeft:4,width:70}}>نوع الوحدة</td>
+                <td style={{fontFamily:ARFNT,fontSize:9.5,color:'#666',textAlign:'right',direction:'rtl',unicodeBidi:'embed',paddingLeft:4,width:70}}>┘å┘ê╪╣ ╪º┘ä┘ê╪¡╪»╪⌐</td>
                 <td style={{fontFamily:ENFNT,fontSize:8,color:'#666',paddingLeft:6,whiteSpace:'nowrap',width:70}}>Property No.</td>
                 <td style={{fontFamily:ENFNT,fontSize:9,fontWeight: 600,color:'#000',borderBottom:'1px dashed #bbb',padding:'1px 4px'}}>{pNo}</td>
-                <td style={{fontFamily:ARFNT,fontSize:9.5,color:'#666',textAlign:'right',direction:'rtl',unicodeBidi:'embed',paddingLeft:4,width:65}}>رقم الوحدة</td>
+                <td style={{fontFamily:ARFNT,fontSize:9.5,color:'#666',textAlign:'right',direction:'rtl',unicodeBidi:'embed',paddingLeft:4,width:65}}>╪▒┘é┘à ╪º┘ä┘ê╪¡╪»╪⌐</td>
               </tr>
 
               {/* DEWA / Plot */}
               <tr>
                 <td style={{fontFamily:ENFNT,fontSize:8,color:'#666',whiteSpace:'nowrap',paddingTop:3,paddingBottom:3}}>Premises No (DEWA)</td>
                 <td colSpan={2} style={{fontFamily:ENFNT,fontSize:9,fontWeight: 600,color:'#000',borderBottom:'1px dashed #bbb',padding:'1px 4px'}}>{dewa}</td>
-                <td style={{fontFamily:ARFNT,fontSize:9.5,color:'#666',textAlign:'right',direction:'rtl',unicodeBidi:'embed',paddingLeft:4}}>رقم العقار (ديوا)</td>
+                <td style={{fontFamily:ARFNT,fontSize:9.5,color:'#666',textAlign:'right',direction:'rtl',unicodeBidi:'embed',paddingLeft:4}}>╪▒┘é┘à ╪º┘ä╪╣┘é╪º╪▒ (╪»┘è┘ê╪º)</td>
                 <td style={{fontFamily:ENFNT,fontSize:8,color:'#666',paddingLeft:6,whiteSpace:'nowrap'}}>Plot No.</td>
                 <td colSpan={2} style={{fontFamily:ENFNT,fontSize:9,fontWeight: 600,color:'#000',borderBottom:'1px dashed #bbb',padding:'1px 4px'}}>{plot}</td>
-                <td colSpan={2} style={{fontFamily:ARFNT,fontSize:9.5,color:'#666',textAlign:'right',direction:'rtl',unicodeBidi:'embed',paddingLeft:4}}>رقم الأرض</td>
+                <td colSpan={2} style={{fontFamily:ARFNT,fontSize:9.5,color:'#666',textAlign:'right',direction:'rtl',unicodeBidi:'embed',paddingLeft:4}}>╪▒┘é┘à ╪º┘ä╪ú╪▒╪╢</td>
               </tr>
 
               {/* Contract Period */}
@@ -437,13 +450,13 @@ export default function TenancyContractTemplate({ data, containerRef }: Props) {
                 <td colSpan={7} style={{fontFamily:ENFNT,fontSize:9,fontWeight: 600,borderBottom:'1px dashed #bbb',padding:'1px 6px'}}>
                   To &nbsp;<strong>{pTo}</strong>
                   &nbsp;&nbsp;&nbsp;&nbsp;
-                  <span style={{fontFamily:ARFNT,fontSize:10,direction:'rtl',unicodeBidi:'embed'}}>إلى</span>
+                  <span style={{fontFamily:ARFNT,fontSize:10,direction:'rtl',unicodeBidi:'embed'}}>╪Ñ┘ä┘ë</span>
                   &nbsp;&nbsp;&nbsp;&nbsp;
                   From &nbsp;<strong>{pFrom}</strong>
                   &nbsp;&nbsp;&nbsp;&nbsp;
-                  <span style={{fontFamily:ARFNT,fontSize:10,direction:'rtl',unicodeBidi:'embed'}}>من</span>
+                  <span style={{fontFamily:ARFNT,fontSize:10,direction:'rtl',unicodeBidi:'embed'}}>┘à┘å</span>
                 </td>
-                <td style={{fontFamily:ARFNT,fontSize:10,color:'#666',textAlign:'right',direction:'rtl',unicodeBidi:'embed',whiteSpace:'nowrap',paddingLeft:4}}>فترة الإيجار</td>
+                <td style={{fontFamily:ARFNT,fontSize:10,color:'#666',textAlign:'right',direction:'rtl',unicodeBidi:'embed',whiteSpace:'nowrap',paddingLeft:4}}>┘ü╪¬╪▒╪⌐ ╪º┘ä╪Ñ┘è╪¼╪º╪▒</td>
               </tr>
 
               {/* Annual Rent */}
@@ -452,7 +465,7 @@ export default function TenancyContractTemplate({ data, containerRef }: Props) {
                 <td colSpan={7} style={{fontFamily:ENFNT,fontSize:9,fontWeight: 600,borderBottom:'1px dashed #bbb',padding:'1px 6px'}}>
                   <strong>{fmtNum(rentAmt)}</strong>&nbsp;&nbsp;({rentW})
                 </td>
-                <td style={{fontFamily:ARFNT,fontSize:10,color:'#666',textAlign:'right',direction:'rtl',unicodeBidi:'embed',whiteSpace:'nowrap',paddingLeft:4}}>الإيجار السنوي</td>
+                <td style={{fontFamily:ARFNT,fontSize:10,color:'#666',textAlign:'right',direction:'rtl',unicodeBidi:'embed',whiteSpace:'nowrap',paddingLeft:4}}>╪º┘ä╪Ñ┘è╪¼╪º╪▒ ╪º┘ä╪│┘å┘ê┘è</td>
               </tr>
 
               {/* Contract Value */}
@@ -461,36 +474,36 @@ export default function TenancyContractTemplate({ data, containerRef }: Props) {
                 <td colSpan={7} style={{fontFamily:ENFNT,fontSize:9,fontWeight: 600,borderBottom:'1px dashed #bbb',padding:'1px 6px'}}>
                   <strong>{fmtNum(cValAmt)}</strong>&nbsp;&nbsp;({cValW})
                 </td>
-                <td style={{fontFamily:ARFNT,fontSize:10,color:'#666',textAlign:'right',direction:'rtl',unicodeBidi:'embed',whiteSpace:'nowrap',paddingLeft:4}}>قيمة العقد</td>
+                <td style={{fontFamily:ARFNT,fontSize:10,color:'#666',textAlign:'right',direction:'rtl',unicodeBidi:'embed',whiteSpace:'nowrap',paddingLeft:4}}>┘é┘è┘à╪⌐ ╪º┘ä╪╣┘é╪»</td>
               </tr>
 
               {/* Security Deposit | MOP */}
               <tr>
                 <td style={{fontFamily:ENFNT,fontSize:8,color:'#666',whiteSpace:'nowrap',paddingTop:3}}>Security Deposit Amount</td>
                 <td colSpan={2} style={{fontFamily:ENFNT,fontSize:9,fontWeight: 600,borderBottom:'1px dashed #bbb',padding:'1px 4px'}}>{secDep}</td>
-                <td style={{fontFamily:ARFNT,fontSize:10,color:'#666',textAlign:'right',direction:'rtl',unicodeBidi:'embed',paddingLeft:4}}>مبلغ التأمين</td>
+                <td style={{fontFamily:ARFNT,fontSize:10,color:'#666',textAlign:'right',direction:'rtl',unicodeBidi:'embed',paddingLeft:4}}>┘à╪¿┘ä╪║ ╪º┘ä╪¬╪ú┘à┘è┘å</td>
                 <td style={{fontFamily:ENFNT,fontSize:8,color:'#666',paddingLeft:6,whiteSpace:'nowrap'}}>Mode of Payment</td>
                 <td colSpan={2} style={{fontFamily:ENFNT,fontSize:9,fontWeight: 600,borderBottom:'1px dashed #bbb',padding:'1px 4px'}}>{mop}</td>
-                <td colSpan={2} style={{fontFamily:ARFNT,fontSize:10,color:'#666',textAlign:'right',direction:'rtl',unicodeBidi:'embed',paddingLeft:4}}>طريقة السداد</td>
+                <td colSpan={2} style={{fontFamily:ARFNT,fontSize:10,color:'#666',textAlign:'right',direction:'rtl',unicodeBidi:'embed',paddingLeft:4}}>╪╖╪▒┘è┘é╪⌐ ╪º┘ä╪│╪»╪º╪»</td>
               </tr>
             </tbody>
           </table>
         </div>
 
-        {/* ── TERMS & CONDITIONS ── */}
+        {/* ΓöÇΓöÇ TERMS & CONDITIONS ΓöÇΓöÇ */}
         <div style={{ position:'relative', zIndex:1 }}>
           <table style={{ width:'100%', borderCollapse:'collapse', marginTop:8 }}>
             <tbody>
-              <SecBar en="Terms &amp; Conditions:" ar="الشروط والأحكام:"/>
-              <Clause n={1} en="The tenant has inspected the premises and agreed to lease the unit on its current condition." ar="إستئجار المستأجر العقار موضوع الإيجار ووافق على إستئجار العقار على حالته الحالية."/>
-              <Clause n={2} en="Tenant undertakes to use the premises for designated purpose; tenant has no rights to transfer or relinquish the tenancy contract either with or without counterpart to any person without landlord's written approval. Also tenant is not allowed to sublease the premises or any part thereof to third party in whole or in part unless it is legally permitted." ar="يتعهد المستأجر باستخدام المأجور للغرض المخصص له، ولا يجوز للمستأجر تحويل أو التنازل عن عقد الإيجار للغير بمقابل أو دون مقابل دون موافقة المالك خطياً، كما لا يجوز للمستأجر تأجير المأجور من الباطن مالم يسمح بذلك قانوناً."/>
-              <Clause n={3} en="The tenant undertakes not to make any amendments, modifications or addendums to the premises subject of the contract without obtaining the landlord written approval; tenant shall be liable for any damages or failure due to that." ar="يتعهد المستأجر بعدم إجراء أي تعديلات أو إضافات على العقار دون موافقة المالك الخطية، ويكون المستأجر مسؤولاً عن أي أضرار أو نقص يلحق بالعقار."/>
-              <Clause n={4} en="The tenant shall be responsible for payment of all electricity, water, cooling and gas charges resulting of occupying leased unit unless other condition agreed in written." ar="يكون المستأجر مسؤولاً عن سداد كافة فواتير الكهرباء والمياه والتبريد والغاز المترتبة عن إشغاله المأجور، مالم يتم الاتفاق على غير ذلك كتابياً."/>
-              <Clause n={5} en="The tenant must pay the rent amount in the manner and dates agreed with the landlord." ar="يتعهد المستأجر بسداد مبلغ الإيجار المتفق عليه في هذا العقد في التواريخ والطريقة المتفق عليها."/>
-              <Clause n={6} en="The Tenant fully undertakes to comply with all the regulations and instructions related to the management of the property and the use of the premises and of common areas such (parking, swimming pools, gymnasium, etc...)." ar="يلتزم المستأجر التقيد التام بالأنظمة والتعليمات المتعلقة باستخدام المأجور والمنافع المشتركة (كمواقف السيارات، أحواض السباحة، النادي الصحي، الخ)."/>
-              <Clause n={7} en="Tenancy contract parties declare all mentioned emails addresses and phone numbers are correct; all formal and legal notifications will be sent to those addresses in case of dispute between parties." ar="يقر أطراف التعاقد بصحة العناوين وأرقام الهواتف المذكورة أعلاه، وتكون تلك العناوين هي المعتمدة رسمياً للإخطارات القضائية في حالة نشوء أي نزاع."/>
-              <Clause n={8} en="The Landlord undertakes to enable the tenant of the full use of the premises including its facilities (Swimming pool, gym, parking lot, etc) and do the regular maintenance as intended unless other condition agreed in written." ar="يتعهد المؤجر بتمكين المستأجر من الانتفاع التام بالعقار والمرافق الخاصة به كما يكون مسؤولاً عن أعمال الصيانة مالم يتم الاتفاق على غير ذلك."/>
-              <Clause n={9} en="By signing this agreement, the Landlord hereby confirms and undertakes that he is the current owner of the property or his legal representative under legal power of attorney duly entitled by the competent authorities." ar="يعتبر توقيع المؤجر على هذا العقد إقراراً منه بأنه المالك الحالي للعقار أو الوكيل القانوني لذلك المالك بموجب وكالة قانونية موثقة أصولاً."/>
+              <SecBar en="Terms &amp; Conditions:" ar="╪º┘ä╪┤╪▒┘ê╪╖ ┘ê╪º┘ä╪ú╪¡┘â╪º┘à:"/>
+              <Clause n={1} en="The tenant has inspected the premises and agreed to lease the unit on its current condition." ar="╪Ñ╪│╪¬╪ª╪¼╪º╪▒ ╪º┘ä┘à╪│╪¬╪ú╪¼╪▒ ╪º┘ä╪╣┘é╪º╪▒ ┘à┘ê╪╢┘ê╪╣ ╪º┘ä╪Ñ┘è╪¼╪º╪▒ ┘ê┘ê╪º┘ü┘é ╪╣┘ä┘ë ╪Ñ╪│╪¬╪ª╪¼╪º╪▒ ╪º┘ä╪╣┘é╪º╪▒ ╪╣┘ä┘ë ╪¡╪º┘ä╪¬┘ç ╪º┘ä╪¡╪º┘ä┘è╪⌐."/>
+              <Clause n={2} en="Tenant undertakes to use the premises for designated purpose; tenant has no rights to transfer or relinquish the tenancy contract either with or without counterpart to any person without landlord's written approval. Also tenant is not allowed to sublease the premises or any part thereof to third party in whole or in part unless it is legally permitted." ar="┘è╪¬╪╣┘ç╪» ╪º┘ä┘à╪│╪¬╪ú╪¼╪▒ ╪¿╪º╪│╪¬╪«╪»╪º┘à ╪º┘ä┘à╪ú╪¼┘ê╪▒ ┘ä┘ä╪║╪▒╪╢ ╪º┘ä┘à╪«╪╡╪╡ ┘ä┘ç╪î ┘ê┘ä╪º ┘è╪¼┘ê╪▓ ┘ä┘ä┘à╪│╪¬╪ú╪¼╪▒ ╪¬╪¡┘ê┘è┘ä ╪ú┘ê ╪º┘ä╪¬┘å╪º╪▓┘ä ╪╣┘å ╪╣┘é╪» ╪º┘ä╪Ñ┘è╪¼╪º╪▒ ┘ä┘ä╪║┘è╪▒ ╪¿┘à┘é╪º╪¿┘ä ╪ú┘ê ╪»┘ê┘å ┘à┘é╪º╪¿┘ä ╪»┘ê┘å ┘à┘ê╪º┘ü┘é╪⌐ ╪º┘ä┘à╪º┘ä┘â ╪«╪╖┘è╪º┘ï╪î ┘â┘à╪º ┘ä╪º ┘è╪¼┘ê╪▓ ┘ä┘ä┘à╪│╪¬╪ú╪¼╪▒ ╪¬╪ú╪¼┘è╪▒ ╪º┘ä┘à╪ú╪¼┘ê╪▒ ┘à┘å ╪º┘ä╪¿╪º╪╖┘å ┘à╪º┘ä┘à ┘è╪│┘à╪¡ ╪¿╪░┘ä┘â ┘é╪º┘å┘ê┘å╪º┘ï."/>
+              <Clause n={3} en="The tenant undertakes not to make any amendments, modifications or addendums to the premises subject of the contract without obtaining the landlord written approval; tenant shall be liable for any damages or failure due to that." ar="┘è╪¬╪╣┘ç╪» ╪º┘ä┘à╪│╪¬╪ú╪¼╪▒ ╪¿╪╣╪»┘à ╪Ñ╪¼╪▒╪º╪í ╪ú┘è ╪¬╪╣╪»┘è┘ä╪º╪¬ ╪ú┘ê ╪Ñ╪╢╪º┘ü╪º╪¬ ╪╣┘ä┘ë ╪º┘ä╪╣┘é╪º╪▒ ╪»┘ê┘å ┘à┘ê╪º┘ü┘é╪⌐ ╪º┘ä┘à╪º┘ä┘â ╪º┘ä╪«╪╖┘è╪⌐╪î ┘ê┘è┘â┘ê┘å ╪º┘ä┘à╪│╪¬╪ú╪¼╪▒ ┘à╪│╪ñ┘ê┘ä╪º┘ï ╪╣┘å ╪ú┘è ╪ú╪╢╪▒╪º╪▒ ╪ú┘ê ┘å┘é╪╡ ┘è┘ä╪¡┘é ╪¿╪º┘ä╪╣┘é╪º╪▒."/>
+              <Clause n={4} en="The tenant shall be responsible for payment of all electricity, water, cooling and gas charges resulting of occupying leased unit unless other condition agreed in written." ar="┘è┘â┘ê┘å ╪º┘ä┘à╪│╪¬╪ú╪¼╪▒ ┘à╪│╪ñ┘ê┘ä╪º┘ï ╪╣┘å ╪│╪»╪º╪» ┘â╪º┘ü╪⌐ ┘ü┘ê╪º╪¬┘è╪▒ ╪º┘ä┘â┘ç╪▒╪¿╪º╪í ┘ê╪º┘ä┘à┘è╪º┘ç ┘ê╪º┘ä╪¬╪¿╪▒┘è╪» ┘ê╪º┘ä╪║╪º╪▓ ╪º┘ä┘à╪¬╪▒╪¬╪¿╪⌐ ╪╣┘å ╪Ñ╪┤╪║╪º┘ä┘ç ╪º┘ä┘à╪ú╪¼┘ê╪▒╪î ┘à╪º┘ä┘à ┘è╪¬┘à ╪º┘ä╪º╪¬┘ü╪º┘é ╪╣┘ä┘ë ╪║┘è╪▒ ╪░┘ä┘â ┘â╪¬╪º╪¿┘è╪º┘ï."/>
+              <Clause n={5} en="The tenant must pay the rent amount in the manner and dates agreed with the landlord." ar="┘è╪¬╪╣┘ç╪» ╪º┘ä┘à╪│╪¬╪ú╪¼╪▒ ╪¿╪│╪»╪º╪» ┘à╪¿┘ä╪║ ╪º┘ä╪Ñ┘è╪¼╪º╪▒ ╪º┘ä┘à╪¬┘ü┘é ╪╣┘ä┘è┘ç ┘ü┘è ┘ç╪░╪º ╪º┘ä╪╣┘é╪» ┘ü┘è ╪º┘ä╪¬┘ê╪º╪▒┘è╪« ┘ê╪º┘ä╪╖╪▒┘è┘é╪⌐ ╪º┘ä┘à╪¬┘ü┘é ╪╣┘ä┘è┘ç╪º."/>
+              <Clause n={6} en="The Tenant fully undertakes to comply with all the regulations and instructions related to the management of the property and the use of the premises and of common areas such (parking, swimming pools, gymnasium, etc...)." ar="┘è┘ä╪¬╪▓┘à ╪º┘ä┘à╪│╪¬╪ú╪¼╪▒ ╪º┘ä╪¬┘é┘è╪» ╪º┘ä╪¬╪º┘à ╪¿╪º┘ä╪ú┘å╪╕┘à╪⌐ ┘ê╪º┘ä╪¬╪╣┘ä┘è┘à╪º╪¬ ╪º┘ä┘à╪¬╪╣┘ä┘é╪⌐ ╪¿╪º╪│╪¬╪«╪»╪º┘à ╪º┘ä┘à╪ú╪¼┘ê╪▒ ┘ê╪º┘ä┘à┘å╪º┘ü╪╣ ╪º┘ä┘à╪┤╪¬╪▒┘â╪⌐ (┘â┘à┘ê╪º┘é┘ü ╪º┘ä╪│┘è╪º╪▒╪º╪¬╪î ╪ú╪¡┘ê╪º╪╢ ╪º┘ä╪│╪¿╪º╪¡╪⌐╪î ╪º┘ä┘å╪º╪»┘è ╪º┘ä╪╡╪¡┘è╪î ╪º┘ä╪«)."/>
+              <Clause n={7} en="Tenancy contract parties declare all mentioned emails addresses and phone numbers are correct; all formal and legal notifications will be sent to those addresses in case of dispute between parties." ar="┘è┘é╪▒ ╪ú╪╖╪▒╪º┘ü ╪º┘ä╪¬╪╣╪º┘é╪» ╪¿╪╡╪¡╪⌐ ╪º┘ä╪╣┘å╪º┘ê┘è┘å ┘ê╪ú╪▒┘é╪º┘à ╪º┘ä┘ç┘ê╪º╪¬┘ü ╪º┘ä┘à╪░┘â┘ê╪▒╪⌐ ╪ú╪╣┘ä╪º┘ç╪î ┘ê╪¬┘â┘ê┘å ╪¬┘ä┘â ╪º┘ä╪╣┘å╪º┘ê┘è┘å ┘ç┘è ╪º┘ä┘à╪╣╪¬┘à╪»╪⌐ ╪▒╪│┘à┘è╪º┘ï ┘ä┘ä╪Ñ╪«╪╖╪º╪▒╪º╪¬ ╪º┘ä┘é╪╢╪º╪ª┘è╪⌐ ┘ü┘è ╪¡╪º┘ä╪⌐ ┘å╪┤┘ê╪í ╪ú┘è ┘å╪▓╪º╪╣."/>
+              <Clause n={8} en="The Landlord undertakes to enable the tenant of the full use of the premises including its facilities (Swimming pool, gym, parking lot, etc) and do the regular maintenance as intended unless other condition agreed in written." ar="┘è╪¬╪╣┘ç╪» ╪º┘ä┘à╪ñ╪¼╪▒ ╪¿╪¬┘à┘â┘è┘å ╪º┘ä┘à╪│╪¬╪ú╪¼╪▒ ┘à┘å ╪º┘ä╪º┘å╪¬┘ü╪º╪╣ ╪º┘ä╪¬╪º┘à ╪¿╪º┘ä╪╣┘é╪º╪▒ ┘ê╪º┘ä┘à╪▒╪º┘ü┘é ╪º┘ä╪«╪º╪╡╪⌐ ╪¿┘ç ┘â┘à╪º ┘è┘â┘ê┘å ┘à╪│╪ñ┘ê┘ä╪º┘ï ╪╣┘å ╪ú╪╣┘à╪º┘ä ╪º┘ä╪╡┘è╪º┘å╪⌐ ┘à╪º┘ä┘à ┘è╪¬┘à ╪º┘ä╪º╪¬┘ü╪º┘é ╪╣┘ä┘ë ╪║┘è╪▒ ╪░┘ä┘â."/>
+              <Clause n={9} en="By signing this agreement, the Landlord hereby confirms and undertakes that he is the current owner of the property or his legal representative under legal power of attorney duly entitled by the competent authorities." ar="┘è╪╣╪¬╪¿╪▒ ╪¬┘ê┘é┘è╪╣ ╪º┘ä┘à╪ñ╪¼╪▒ ╪╣┘ä┘ë ┘ç╪░╪º ╪º┘ä╪╣┘é╪» ╪Ñ┘é╪▒╪º╪▒╪º┘ï ┘à┘å┘ç ╪¿╪ú┘å┘ç ╪º┘ä┘à╪º┘ä┘â ╪º┘ä╪¡╪º┘ä┘è ┘ä┘ä╪╣┘é╪º╪▒ ╪ú┘ê ╪º┘ä┘ê┘â┘è┘ä ╪º┘ä┘é╪º┘å┘ê┘å┘è ┘ä╪░┘ä┘â ╪º┘ä┘à╪º┘ä┘â ╪¿┘à┘ê╪¼╪¿ ┘ê┘â╪º┘ä╪⌐ ┘é╪º┘å┘ê┘å┘è╪⌐ ┘à┘ê╪½┘é╪⌐ ╪ú╪╡┘ê┘ä╪º┘ï."/>
             </tbody>
           </table>
         </div>
@@ -499,47 +512,48 @@ export default function TenancyContractTemplate({ data, containerRef }: Props) {
         <Footer/>
       </div>
 
-      {/* ═══════════════════════ PAGE 2 ═══════════════════════ */}
+      {/* ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ PAGE 2 ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ */}
       <div style={{...P, minHeight:1123}} id="contract-page-2">
+        <StatusBanner/>
         <table style={{ width:'100%', borderCollapse:'collapse' }}>
           <tbody>
-            <Clause n={10} en="Any disagreement or dispute may arise from execution or interpretation of this contract shall be settled by the Rental Dispute Center." ar="أي خلاف أو نزاع قد ينشأ عن تنفيذ أو تفسير هذا العقد يعود البت فيه لمركز فض المنازعات الإيجارية."/>
-            <Clause n={11} en="This Contract is subject to all provisions of Law No (26) of 2007 regulating the relation between landlords and tenants in the Emirate of Dubai as amended, and as it will be changed or amended from time to time." ar="يخضع هذا العقد لأحكام القانون رقم (26) لسنة 2007 بشأن تنظيم العلاقة بين مؤجري ومستأجري العقارات في إمارة دبي وأي تعديل طرأ عليه."/>
-            <Clause n={12} en="Any additional condition will not be considered in case it conflicts with law." ar="لا يعتد بأي شرط تم إضافته إلى هذا العقد في حال تعارضه مع القانون."/>
-            <Clause n={13} en="In case of discrepancy occurs between Arabic and non Arabic texts with regards to the interpretation of this agreement, the Arabic text shall prevail." ar="في حال حدوث أي تعارض في التفسير بين النص العربي والنص الأجنبي يعتمد النص العربي."/>
-            <Clause n={14} en="The Landlord undertakes to register this tenancy contract on EJARI affiliated to Dubai Land Department and provide with all required documents." ar="يتعهد المؤجر بتسجيل عقد الإيجار في نظام إيجاري التابع لدائرة الأراضي والأملاك وتوفير كافة المستندات اللازمة لذلك."/>
+            <Clause n={10} en="Any disagreement or dispute may arise from execution or interpretation of this contract shall be settled by the Rental Dispute Center." ar="╪ú┘è ╪«┘ä╪º┘ü ╪ú┘ê ┘å╪▓╪º╪╣ ┘é╪» ┘è┘å╪┤╪ú ╪╣┘å ╪¬┘å┘ü┘è╪░ ╪ú┘ê ╪¬┘ü╪│┘è╪▒ ┘ç╪░╪º ╪º┘ä╪╣┘é╪» ┘è╪╣┘ê╪» ╪º┘ä╪¿╪¬ ┘ü┘è┘ç ┘ä┘à╪▒┘â╪▓ ┘ü╪╢ ╪º┘ä┘à┘å╪º╪▓╪╣╪º╪¬ ╪º┘ä╪Ñ┘è╪¼╪º╪▒┘è╪⌐."/>
+            <Clause n={11} en="This Contract is subject to all provisions of Law No (26) of 2007 regulating the relation between landlords and tenants in the Emirate of Dubai as amended, and as it will be changed or amended from time to time." ar="┘è╪«╪╢╪╣ ┘ç╪░╪º ╪º┘ä╪╣┘é╪» ┘ä╪ú╪¡┘â╪º┘à ╪º┘ä┘é╪º┘å┘ê┘å ╪▒┘é┘à (26) ┘ä╪│┘å╪⌐ 2007 ╪¿╪┤╪ú┘å ╪¬┘å╪╕┘è┘à ╪º┘ä╪╣┘ä╪º┘é╪⌐ ╪¿┘è┘å ┘à╪ñ╪¼╪▒┘è ┘ê┘à╪│╪¬╪ú╪¼╪▒┘è ╪º┘ä╪╣┘é╪º╪▒╪º╪¬ ┘ü┘è ╪Ñ┘à╪º╪▒╪⌐ ╪»╪¿┘è ┘ê╪ú┘è ╪¬╪╣╪»┘è┘ä ╪╖╪▒╪ú ╪╣┘ä┘è┘ç."/>
+            <Clause n={12} en="Any additional condition will not be considered in case it conflicts with law." ar="┘ä╪º ┘è╪╣╪¬╪» ╪¿╪ú┘è ╪┤╪▒╪╖ ╪¬┘à ╪Ñ╪╢╪º┘ü╪¬┘ç ╪Ñ┘ä┘ë ┘ç╪░╪º ╪º┘ä╪╣┘é╪» ┘ü┘è ╪¡╪º┘ä ╪¬╪╣╪º╪▒╪╢┘ç ┘à╪╣ ╪º┘ä┘é╪º┘å┘ê┘å."/>
+            <Clause n={13} en="In case of discrepancy occurs between Arabic and non Arabic texts with regards to the interpretation of this agreement, the Arabic text shall prevail." ar="┘ü┘è ╪¡╪º┘ä ╪¡╪»┘ê╪½ ╪ú┘è ╪¬╪╣╪º╪▒╪╢ ┘ü┘è ╪º┘ä╪¬┘ü╪│┘è╪▒ ╪¿┘è┘å ╪º┘ä┘å╪╡ ╪º┘ä╪╣╪▒╪¿┘è ┘ê╪º┘ä┘å╪╡ ╪º┘ä╪ú╪¼┘å╪¿┘è ┘è╪╣╪¬┘à╪» ╪º┘ä┘å╪╡ ╪º┘ä╪╣╪▒╪¿┘è."/>
+            <Clause n={14} en="The Landlord undertakes to register this tenancy contract on EJARI affiliated to Dubai Land Department and provide with all required documents." ar="┘è╪¬╪╣┘ç╪» ╪º┘ä┘à╪ñ╪¼╪▒ ╪¿╪¬╪│╪¼┘è┘ä ╪╣┘é╪» ╪º┘ä╪Ñ┘è╪¼╪º╪▒ ┘ü┘è ┘å╪╕╪º┘à ╪Ñ┘è╪¼╪º╪▒┘è ╪º┘ä╪¬╪º╪¿╪╣ ┘ä╪»╪º╪ª╪▒╪⌐ ╪º┘ä╪ú╪▒╪º╪╢┘è ┘ê╪º┘ä╪ú┘à┘ä╪º┘â ┘ê╪¬┘ê┘ü┘è╪▒ ┘â╪º┘ü╪⌐ ╪º┘ä┘à╪│╪¬┘å╪»╪º╪¬ ╪º┘ä┘ä╪º╪▓┘à╪⌐ ┘ä╪░┘ä┘â."/>
 
-            <SecBar en="Know your rights:" ar="لمعرفة حقوق الأطراف:"/>
+            <SecBar en="Know your rights:" ar="┘ä┘à╪╣╪▒┘ü╪⌐ ╪¡┘é┘ê┘é ╪º┘ä╪ú╪╖╪▒╪º┘ü:"/>
             {[
-              ['You may visit Rental Dispute Center website www.rdc.gov.ae and use Smart Judge service in case of any rental dispute between parties.','يمكنكم زيارة موقع مركز فض المنازعات الإيجارية www.rdc.gov.ae واستخدام خدمة القاضي الذكي في حال نشوء أي نزاع إيجاري.'],
-              ['Law No 26 of 2007 regulating relationship between landlords and tenants.','الاطلاع على قانون رقم 26 لسنة 2007 بشأن تنظيم العلاقة بين المؤجرين والمستأجرين.'],
-              ['Law No 33 of 2008 amending law 26 of year 2007.','الاطلاع على قانون رقم 33 لسنة 2008 الخاص بتعديل بعض أحكام قانون 26 لعام 2007.'],
-              ['Law No 43 of 2013 determining rent increases for properties.','الاطلاع على قانون رقم 43 لسنة 2013 بشأن تحديد زيادة بدل الإيجار.'],
+              ['You may visit Rental Dispute Center website www.rdc.gov.ae and use Smart Judge service in case of any rental dispute between parties.','┘è┘à┘â┘å┘â┘à ╪▓┘è╪º╪▒╪⌐ ┘à┘ê┘é╪╣ ┘à╪▒┘â╪▓ ┘ü╪╢ ╪º┘ä┘à┘å╪º╪▓╪╣╪º╪¬ ╪º┘ä╪Ñ┘è╪¼╪º╪▒┘è╪⌐ www.rdc.gov.ae ┘ê╪º╪│╪¬╪«╪»╪º┘à ╪«╪»┘à╪⌐ ╪º┘ä┘é╪º╪╢┘è ╪º┘ä╪░┘â┘è ┘ü┘è ╪¡╪º┘ä ┘å╪┤┘ê╪í ╪ú┘è ┘å╪▓╪º╪╣ ╪Ñ┘è╪¼╪º╪▒┘è.'],
+              ['Law No 26 of 2007 regulating relationship between landlords and tenants.','╪º┘ä╪º╪╖┘ä╪º╪╣ ╪╣┘ä┘ë ┘é╪º┘å┘ê┘å ╪▒┘é┘à 26 ┘ä╪│┘å╪⌐ 2007 ╪¿╪┤╪ú┘å ╪¬┘å╪╕┘è┘à ╪º┘ä╪╣┘ä╪º┘é╪⌐ ╪¿┘è┘å ╪º┘ä┘à╪ñ╪¼╪▒┘è┘å ┘ê╪º┘ä┘à╪│╪¬╪ú╪¼╪▒┘è┘å.'],
+              ['Law No 33 of 2008 amending law 26 of year 2007.','╪º┘ä╪º╪╖┘ä╪º╪╣ ╪╣┘ä┘ë ┘é╪º┘å┘ê┘å ╪▒┘é┘à 33 ┘ä╪│┘å╪⌐ 2008 ╪º┘ä╪«╪º╪╡ ╪¿╪¬╪╣╪»┘è┘ä ╪¿╪╣╪╢ ╪ú╪¡┘â╪º┘à ┘é╪º┘å┘ê┘å 26 ┘ä╪╣╪º┘à 2007.'],
+              ['Law No 43 of 2013 determining rent increases for properties.','╪º┘ä╪º╪╖┘ä╪º╪╣ ╪╣┘ä┘ë ┘é╪º┘å┘ê┘å ╪▒┘é┘à 43 ┘ä╪│┘å╪⌐ 2013 ╪¿╪┤╪ú┘å ╪¬╪¡╪»┘è╪» ╪▓┘è╪º╪»╪⌐ ╪¿╪»┘ä ╪º┘ä╪Ñ┘è╪¼╪º╪▒.'],
             ].map(([en,ar],i)=>(
               <tr key={i} style={{borderBottom:'1px solid #eef2f7'}}>
-                <td style={{width:18,fontSize:11,verticalAlign:'top',paddingTop:3}}>•</td>
+                <td style={{width:18,fontSize:11,verticalAlign:'top',paddingTop:3}}>ΓÇó</td>
                 <td style={{width:'47%',fontFamily:ENFNT,fontSize:7.5,lineHeight:1.4,color:'#111',padding:'3px 5px',verticalAlign:'top'}}>{en}</td>
                 <td style={{width:'47%',fontFamily:ARFNT,fontSize:9.5,textAlign:'right',color:'#111',padding:'3px 5px',lineHeight:1.5,verticalAlign:'top',direction:'rtl',unicodeBidi:'embed'}}>{ar}</td>
-                <td style={{width:18,fontSize:11,verticalAlign:'top',paddingTop:3}}>•</td>
+                <td style={{width:18,fontSize:11,verticalAlign:'top',paddingTop:3}}>ΓÇó</td>
               </tr>
             ))}
 
-            <SecBar en="Attachments for EJARI registration:" ar="المرفقات للتسجيل على إيجاري:"/>
-            <Clause n={1} en="Original unified tenancy contract." ar="نسخة أصلية عن عقد الإيجار الموحد."/>
-            <Clause n={2} en="Copy of Emirates ID or passport for tenant (individuals) Or trade license for tenant (companies)." ar="صور من بطاقة الهوية أو جواز سفر المستأجر (للأفراد) أو صور من الرخصة التجارية للمستأجر (للشركات)."/>
-            <Clause n={3} en="Original Emirates ID of applicant or representative card by DNRD." ar="أصل هوية الإمارات لمقدم الطلب أو بطاقة مندوب صادرة عن الإدارة العامة للإقامة وشؤون الأجانب."/>
+            <SecBar en="Attachments for EJARI registration:" ar="╪º┘ä┘à╪▒┘ü┘é╪º╪¬ ┘ä┘ä╪¬╪│╪¼┘è┘ä ╪╣┘ä┘ë ╪Ñ┘è╪¼╪º╪▒┘è:"/>
+            <Clause n={1} en="Original unified tenancy contract." ar="┘å╪│╪«╪⌐ ╪ú╪╡┘ä┘è╪⌐ ╪╣┘å ╪╣┘é╪» ╪º┘ä╪Ñ┘è╪¼╪º╪▒ ╪º┘ä┘à┘ê╪¡╪»."/>
+            <Clause n={2} en="Copy of Emirates ID or passport for tenant (individuals) Or trade license for tenant (companies)." ar="╪╡┘ê╪▒ ┘à┘å ╪¿╪╖╪º┘é╪⌐ ╪º┘ä┘ç┘ê┘è╪⌐ ╪ú┘ê ╪¼┘ê╪º╪▓ ╪│┘ü╪▒ ╪º┘ä┘à╪│╪¬╪ú╪¼╪▒ (┘ä┘ä╪ú┘ü╪▒╪º╪») ╪ú┘ê ╪╡┘ê╪▒ ┘à┘å ╪º┘ä╪▒╪«╪╡╪⌐ ╪º┘ä╪¬╪¼╪º╪▒┘è╪⌐ ┘ä┘ä┘à╪│╪¬╪ú╪¼╪▒ (┘ä┘ä╪┤╪▒┘â╪º╪¬)."/>
+            <Clause n={3} en="Original Emirates ID of applicant or representative card by DNRD." ar="╪ú╪╡┘ä ┘ç┘ê┘è╪⌐ ╪º┘ä╪Ñ┘à╪º╪▒╪º╪¬ ┘ä┘à┘é╪»┘à ╪º┘ä╪╖┘ä╪¿ ╪ú┘ê ╪¿╪╖╪º┘é╪⌐ ┘à┘å╪»┘ê╪¿ ╪╡╪º╪»╪▒╪⌐ ╪╣┘å ╪º┘ä╪Ñ╪»╪º╪▒╪⌐ ╪º┘ä╪╣╪º┘à╪⌐ ┘ä┘ä╪Ñ┘é╪º┘à╪⌐ ┘ê╪┤╪ñ┘ê┘å ╪º┘ä╪ú╪¼╪º┘å╪¿."/>
 
-            <SecBar en="Additional Terms:" ar="شروط إضافية:"/>
+            <SecBar en="Additional Terms:" ar="╪┤╪▒┘ê╪╖ ╪Ñ╪╢╪º┘ü┘è╪⌐:"/>
             {add && ['c1','c2','c3','c4','c5','c6','c7','c8'].some(k=>!!(add as any)[k]) ? (
-              ['c1','c2','c3','c4','c5','c6','c7','c8'].map((k,i)=>
-                (add as any)[k] ? (
+              ['c1','c2','c3','c4','c5','c6','c7','c8']
+                .filter(k => !!(add as any)[k])
+                .map((k,i) =>
                   <tr key={k} style={{borderBottom:'1px solid #eef2f7'}}>
                     <td style={{width:18}}><div style={{width:14,height:14,border:'1px solid #aaa',borderRadius:'50%',textAlign:'center',lineHeight:'12px',fontSize:7}}>{i+1}</div></td>
                     <td colSpan={2} style={{fontFamily:ENFNT,fontSize:7.5,padding:'3px 5px'}}>{(add as any)[k]}</td>
                     <td style={{width:18}}><div style={{width:14,height:14,border:'1px solid #aaa',borderRadius:'50%',textAlign:'center',lineHeight:'12px',fontSize:7}}>{i+1}</div></td>
                   </tr>
-                ) : null
-              )
+                )
             ) : (
               <tr><td style={{width:18}}>-</td><td colSpan={2} style={{fontFamily:ENFNT,fontSize:7.5,color:'#aaa',fontStyle:'italic',padding:'3px 5px'}}>No additional terms.</td><td style={{width:18}}>-</td></tr>
             )}
@@ -547,19 +561,20 @@ export default function TenancyContractTemplate({ data, containerRef }: Props) {
         </table>
         <p style={{fontFamily:ENFNT,fontSize:6.5,color:'#777',margin:'6px 0',textAlign:'center'}}>
           Note: You may add an addendum in case of additional terms; must be signed by all parties. |&nbsp;
-          <span style={{fontFamily:ARFNT,fontSize:8,direction:'rtl',unicodeBidi:'embed'}}>ملاحظة: يمكن إضافة ملحق إلى هذا العقد على أن يوقع من أطراف التعاقد.</span>
+          <span style={{fontFamily:ARFNT,fontSize:8,direction:'rtl',unicodeBidi:'embed'}}>┘à┘ä╪º╪¡╪╕╪⌐: ┘è┘à┘â┘å ╪Ñ╪╢╪º┘ü╪⌐ ┘à┘ä╪¡┘é ╪Ñ┘ä┘ë ┘ç╪░╪º ╪º┘ä╪╣┘é╪» ╪╣┘ä┘ë ╪ú┘å ┘è┘ê┘é╪╣ ┘à┘å ╪ú╪╖╪▒╪º┘ü ╪º┘ä╪¬╪╣╪º┘é╪».</span>
         </p>
         <Sigs/>
         <Footer/>
       </div>
 
-      {/* ═══════════════════════ PAGE 3: ADDENDUM ═══════════════ */}
+      {/* ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ PAGE 3: ADDENDUM ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ */}
       <div style={{...P, minHeight:1123}} id="contract-page-3">
+        <StatusBanner/>
         {/* Header */}
         <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',marginBottom:10}}>
           <GovDubaiLogo/>
           <div style={{textAlign:'right',display:'flex',flexDirection:'column',alignItems:'flex-end',gap:2}}>
-            <div style={{fontFamily:ARFNT,fontSize:14,fontWeight: 600,color:NAVY,direction:'rtl',unicodeBidi:'embed'}}>دائرة الأراضي والأملاك</div>
+            <div style={{fontFamily:ARFNT,fontSize:14,fontWeight: 600,color:NAVY,direction:'rtl',unicodeBidi:'embed'}}>╪»╪º╪ª╪▒╪⌐ ╪º┘ä╪ú╪▒╪º╪╢┘è ┘ê╪º┘ä╪ú┘à┘ä╪º┘â</div>
             <div style={{fontFamily:ENFNT,fontSize:8.5,fontWeight: 600,color:NAVY}}>Land Department</div>
             <LandLogo size={48}/>
           </div>
@@ -567,12 +582,12 @@ export default function TenancyContractTemplate({ data, containerRef }: Props) {
 
         <div style={{textAlign:'center',fontFamily:ENFNT,fontSize:11,fontWeight: 600,border:`1.8px solid #4a6fa5`,borderRadius:5,padding:'6px 10px',marginBottom:12,color:NAVY,display:'flex',justifyContent:'center',alignItems:'center',gap:16}}>
           ADDENDUM NO.{add?.addendum_no ?? '1'} TO TENANCY CONTRACT
-          <span style={{fontFamily:ARFNT,fontSize:14,direction:'rtl',unicodeBidi:'embed'}}>ملحق عقد الإيجار</span>
+          <span style={{fontFamily:ARFNT,fontSize:14,direction:'rtl',unicodeBidi:'embed'}}>┘à┘ä╪¡┘é ╪╣┘é╪» ╪º┘ä╪Ñ┘è╪¼╪º╪▒</span>
         </div>
 
         <table style={{width:'100%',fontFamily:ENFNT,fontSize:8.5,marginBottom:12,borderCollapse:'collapse'}}>
           <tbody>
-            {[['Tenant',tenN,'المستأجر'],['Contact',tenEm,'التواصل'],['Building',`${bld} - ${pNo} - ${pTp}`,'المبنى']].map(([lbl,val,ar])=>(
+            {[['Tenant',tenN,'╪º┘ä┘à╪│╪¬╪ú╪¼╪▒'],['Contact',tenEm,'╪º┘ä╪¬┘ê╪º╪╡┘ä'],['Building',`${bld} - ${pNo} - ${pTp}`,'╪º┘ä┘à╪¿┘å┘ë']].map(([lbl,val,ar])=>(
               <tr key={lbl as string}>
                 <td style={{width:70,fontWeight: 600,padding:'2px 4px'}}>{lbl}</td>
                 <td style={{padding:'2px 4px',borderBottom:'1px dashed #aaa'}}>{val}</td>
@@ -611,7 +626,7 @@ export default function TenancyContractTemplate({ data, containerRef }: Props) {
 
         <p style={{fontFamily:ENFNT,fontSize:8.5,marginTop:16,fontWeight: 600,color:NAVY}}>
           Agreed and Accepted /&nbsp;
-          <span style={{fontFamily:ARFNT,fontSize:11,direction:'rtl',unicodeBidi:'embed'}}>موافق ومقبول</span>
+          <span style={{fontFamily:ARFNT,fontSize:11,direction:'rtl',unicodeBidi:'embed'}}>┘à┘ê╪º┘ü┘é ┘ê┘à┘é╪¿┘ê┘ä</span>
         </p>
         <Sigs/>
         <Footer/>
