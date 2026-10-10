@@ -16,12 +16,19 @@ class UserResource extends JsonResource
             'id'         => $this->id,
             'name'       => $this->name,
             'email'      => $this->email,
-            'role'       => $this->role,
+            'role'           => $this->role,
             'account_status' => $this->account_status,
+            'organization_id'=> $this->organization_id,
+            'organization'   => $this->organization ? [
+                'id'     => $this->organization->id,
+                'name'   => $this->organization->name,
+                'status' => $this->organization->status,
+            ] : null,
+            'impersonation'  => null,
             'owner_scope_id' => $this->role === 'owner' ? $this->owner()->value('id') : $this->staffMembership()->value('owner_id'),
-            'permissions' => app(\App\Domain\Auth\Services\OwnerContextResolver::class)->permissions($this->resource),
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
+            'permissions'    => app(\App\Domain\Auth\Services\OwnerContextResolver::class)->permissions($this->resource),
+            'created_at'     => $this->created_at,
+            'updated_at'     => $this->updated_at,
         ];
     }
 }

@@ -20,4 +20,5 @@ return [
     SettlementServiceProvider::class,
     MaintenanceServiceProvider::class,
     ReportServiceProvider::class,
+    \App\Domain\Platform\Providers\PlatformServiceProvider::class,
 ];

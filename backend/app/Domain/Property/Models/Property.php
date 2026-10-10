@@ -13,7 +13,12 @@ class Property extends Model
     use HasFactory;
 
     // FLAG: type + total_units are draft extras — kept for existing UI/counts.
-    protected $fillable = ['owner_id', 'name', 'address', 'city', 'description', 'type', 'total_units'];
+    protected $fillable = ['owner_id', 'organization_id', 'name', 'address', 'city', 'description', 'type', 'total_units'];
+
+    public function organization(): BelongsTo
+    {
+        return $this->belongsTo(\App\Domain\Platform\Models\Organization::class, 'organization_id');
+    }
 
     public function owner(): BelongsTo
     {

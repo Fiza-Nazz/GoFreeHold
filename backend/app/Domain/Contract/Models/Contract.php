@@ -23,6 +23,7 @@ class Contract extends Model
         'unit_id',
         'tenant_id',
         'owner_id',
+        'organization_id',
         'date',
         'rent_amount',
         'lease_term',
@@ -66,6 +67,11 @@ class Contract extends Model
     public function tenant(): BelongsTo
     {
         return $this->belongsTo(Tenant::class);
+    }
+
+    public function organization(): BelongsTo
+    {
+        return $this->belongsTo(\App\Domain\Platform\Models\Organization::class, 'organization_id');
     }
 
     public function owner(): BelongsTo

@@ -15,6 +15,14 @@ class OwnerContextResolver
     {
         abort_unless($user->account_status === 'active', 403, 'Account is not active.');
         abort_unless(in_array($user->role, ['admin', 'owner', 'tenant', ...self::STAFF_ROLES], true), 403);
+
+        if ($user->role !== 'admin' && $user->organization_id) {
+            $orgStatus = DB::table('organizations')->where('id', $user->organization_id)->value('status');
+            if ($orgStatus === 'suspended') {
+                abort(403, 'Your organization has been suspended. Please contact platform support.');
+            }
+        }
+
         if ($user->role === 'owner' || in_array($user->role, self::STAFF_ROLES, true)) {
             $this->ownerId($user);
         }
@@ -57,7 +65,7 @@ class OwnerContextResolver
     public function permissions(User $user): array
     {
         return match ($user->role) {
-            'admin' => ['properties.read_all'],
+            'admin' => ['platform.manage', 'properties.read_all'],
             'owner' => ['properties.read_own', 'staff.list', 'staff.create', 'staff.update', 'staff.disable', 'staff.invite'],
             'cashier' => ['payments.read_own_owner', 'payments.create_own_owner', 'receipts.download_own_owner'],
             'accountant' => ['payments.read_own_owner', 'payments.create_own_owner', 'receipts.download_own_owner', 'ledger.read_own_owner'],

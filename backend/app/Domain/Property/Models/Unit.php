@@ -18,6 +18,7 @@ class Unit extends Model
     protected $fillable = [
         'property_id',
         'owner_id',
+        'organization_id',
         'number',
         'dhewa_no',
         'category',
@@ -66,6 +67,11 @@ class Unit extends Model
     public function property(): BelongsTo
     {
         return $this->belongsTo(Property::class);
+    }
+
+    public function organization(): BelongsTo
+    {
+        return $this->belongsTo(\App\Domain\Platform\Models\Organization::class, 'organization_id');
     }
 
     public function owner(): BelongsTo

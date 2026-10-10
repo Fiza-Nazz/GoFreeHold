@@ -16,6 +16,7 @@ class Tenant extends Model
     protected $fillable = [
         'user_id',
         'owner_id',
+        'organization_id',
         'name',
         'email',
         'address',
@@ -49,5 +50,10 @@ class Tenant extends Model
     public function preparedContracts(): HasMany
     {
         return $this->hasMany(\App\Domain\Contract\Models\PreparedContract::class, 'tenant_id');
+    }
+
+    public function organization(): BelongsTo
+    {
+        return $this->belongsTo(\App\Domain\Platform\Models\Organization::class);
     }
 }

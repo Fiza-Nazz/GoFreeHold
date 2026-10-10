@@ -1,0 +1,7 @@
+AddHandler application/x-httpd-php84 .php .php5 .php4 .php3
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteCond %{REQUEST_URI} !^/public/
+    RewriteRule ^(.*)$ public/$1 [L]
+</IfModule>
