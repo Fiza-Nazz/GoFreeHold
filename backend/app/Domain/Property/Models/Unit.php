@@ -82,4 +82,9 @@ class Unit extends Model
     {
         return $this->hasMany(Contract::class);
     }
+
+    public function preparedContracts(): HasMany
+    {
+        return $this->hasMany(\App\Domain\Contract\Models\PreparedContract::class, 'unit_id');
+    }
 }

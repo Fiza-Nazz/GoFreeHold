@@ -12,6 +12,7 @@ use App\Domain\Contract\Http\Controllers\ContractController;
 use App\Domain\Contract\Http\Controllers\ContractDocController;
 use App\Domain\Contract\Http\Controllers\ContractPdfController;
 use App\Domain\Contract\Http\Controllers\LegalCaseController;
+use App\Domain\Contract\Http\Controllers\PreparedContractController;
 use App\Domain\Contract\Http\Controllers\TenancyContractController;
 use App\Domain\Contract\Http\Controllers\TenancyResController;
 use App\Domain\Contract\Http\Controllers\TermController;
@@ -65,6 +66,12 @@ Route::middleware(['auth:sanctum', 'role:admin'])->prefix('admin')->group(functi
     Route::get('/contract-docs', [ContractDocController::class, 'index']);
     Route::post('/contract-docs', [ContractDocController::class, 'store']);
     Route::delete('/contract-docs/{contractDoc}', [ContractDocController::class, 'destroy']);
+
+    Route::get('/prepared-contracts', [PreparedContractController::class, 'index']);
+    Route::post('/prepared-contracts', [PreparedContractController::class, 'store']);
+    Route::get('/prepared-contracts/{preparedContract}', [PreparedContractController::class, 'show']);
+    Route::put('/prepared-contracts/{preparedContract}', [PreparedContractController::class, 'update']);
+    Route::delete('/prepared-contracts/{preparedContract}', [PreparedContractController::class, 'destroy']);
 });
 
 Route::middleware(['auth:sanctum', 'role:owner,cashier,accountant'])->prefix('owner')->group(function () {
@@ -108,4 +115,10 @@ Route::middleware(['auth:sanctum', 'role:owner,cashier,accountant'])->prefix('ow
     Route::get('/contract-docs', [ContractDocController::class, 'index']);
     Route::post('/contract-docs', [ContractDocController::class, 'store']);
     Route::delete('/contract-docs/{contractDoc}', [ContractDocController::class, 'destroy']);
+
+    Route::get('/prepared-contracts', [PreparedContractController::class, 'index']);
+    Route::post('/prepared-contracts', [PreparedContractController::class, 'store']);
+    Route::get('/prepared-contracts/{preparedContract}', [PreparedContractController::class, 'show']);
+    Route::put('/prepared-contracts/{preparedContract}', [PreparedContractController::class, 'update']);
+    Route::delete('/prepared-contracts/{preparedContract}', [PreparedContractController::class, 'destroy']);
 });

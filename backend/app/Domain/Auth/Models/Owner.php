@@ -36,4 +36,9 @@ class Owner extends Model
     {
         return $this->hasMany(Settlement::class, 'owner_id');
     }
+
+    public function preparedContracts(): HasMany
+    {
+        return $this->hasMany(\App\Domain\Contract\Models\PreparedContract::class, 'owner_id');
+    }
 }

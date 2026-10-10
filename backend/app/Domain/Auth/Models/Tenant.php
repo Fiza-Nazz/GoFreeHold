@@ -45,4 +45,9 @@ class Tenant extends Model
     {
         return $this->hasMany(Complaint::class);
     }
+
+    public function preparedContracts(): HasMany
+    {
+        return $this->hasMany(\App\Domain\Contract\Models\PreparedContract::class, 'tenant_id');
+    }
 }
