@@ -94,7 +94,7 @@ class ContractController extends Controller
             return response()->json([
                 'status'  => 'success',
                 'message' => 'Contract created successfully.',
-                'data'    => ['contract' => $contract->load(['unit.property', 'tenant', 'owner', 'cheques', 'tenancyContracts', 'terms', 'rentTransactions'])],
+                'data'    => ['contract' => $contract->load(['unit.property', 'tenant', 'owner', 'cheques', 'terms', 'rentTransactions'])],
             ], 201);
         } catch (\InvalidArgumentException $e) {
             return response()->json(['status' => 'error', 'message' => $e->getMessage()], 422);
@@ -106,7 +106,7 @@ class ContractController extends Controller
     public function show(Request $request, Contract $contract): JsonResponse
     {
         $this->assertContractAccess($request, $contract);
-        $contract->load(['unit.property', 'tenant', 'owner', 'cheques', 'callLogs.loggedBy', 'caseDocs', 'payments', 'tenancyContracts', 'terms', 'docs']);
+        $contract->load(['unit.property', 'tenant', 'owner', 'cheques', 'callLogs.loggedBy', 'caseDocs', 'payments', 'terms', 'docs']);
 
         return response()->json(['status' => 'success', 'data' => ['contract' => $contract]]);
     }

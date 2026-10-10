@@ -85,19 +85,7 @@ class ContractService
             // 4. Update Unit Status from AVAILABLE -> OCCUPIED
             $unit->update(['status' => 'OCCUPIED']);
 
-            // 5. Create Default Addendum (TenancyContract c1..c8) & Terms for PDF / Ejari
-            \App\Domain\Contract\Models\TenancyContract::create([
-                'contract_id' => $contract->id,
-                'c1' => 'The tenant shall use the leased premises strictly for ' . ($contract->type ?? 'residential') . ' purposes only and shall not sublease without prior written consent of the landlord.',
-                'c2' => 'All utility bills including DEWA, chiller, gas, and telecommunications shall be borne and paid directly by the tenant during the tenancy period.',
-                'c3' => 'The security deposit of AED ' . number_format((float) ($contract->security_deposit ?? 0), 2) . ' is refundable upon vacating the unit, subject to clearance of all utility bills and deduction for any damages beyond normal wear and tear.',
-                'c4' => 'Minor maintenance and day-to-day repairs up to AED 500 per occurrence are the responsibility of the tenant; major structural and MEP repairs are the responsibility of the landlord.',
-                'c5' => 'The tenant shall not make any structural alterations, partitioning, or modifications to the premises without written approval from the landlord and building management.',
-                'c6' => 'A dishonoured/bounced cheque penalty of AED 500 shall be charged to the tenant for each returned cheque.',
-                'c7' => 'Either party must give at least 90 days written notice prior to contract expiry for non-renewal or any amendment to the tenancy terms in accordance with RERA regulations.',
-                'c8' => 'Upon expiry or termination, the tenant shall hand over the unit in good, clean, and repainted condition along with all original keys and access cards.',
-            ]);
-
+            // 5. Create Default Terms for PDF / Ejari
             \App\Domain\Contract\Models\Term::create([
                 'cid'   => $contract->id,
                 'terms' => 'Standard UAE Ejari Tenancy Terms & Conditions apply. Rent is payable via ' . ($paymentFrequency ?: ($contract->mode_of_payment ?: 'agreed schedule')) . '. Security deposit is held against damages and unpaid utilities upon move-out.',

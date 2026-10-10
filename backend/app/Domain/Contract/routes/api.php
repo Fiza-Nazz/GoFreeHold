@@ -13,7 +13,6 @@ use App\Domain\Contract\Http\Controllers\ContractDocController;
 use App\Domain\Contract\Http\Controllers\ContractPdfController;
 use App\Domain\Contract\Http\Controllers\LegalCaseController;
 use App\Domain\Contract\Http\Controllers\PreparedContractController;
-use App\Domain\Contract\Http\Controllers\TenancyContractController;
 use App\Domain\Contract\Http\Controllers\TenancyResController;
 use App\Domain\Contract\Http\Controllers\TermController;
 use Illuminate\Support\Facades\Route;
@@ -60,7 +59,6 @@ Route::middleware(['auth:sanctum', 'role:admin'])->prefix('admin')->group(functi
     Route::delete('/contract-case-docs/{contractCaseDoc}', [ContractCaseDocController::class, 'destroy']);
 
     Route::apiResource('tenancy-res', TenancyResController::class)->parameters(['tenancy-res' => 'tenancyRes']);
-    Route::apiResource('tenancy-contracts', TenancyContractController::class);
     Route::apiResource('terms', TermController::class);
 
     Route::get('/contract-docs', [ContractDocController::class, 'index']);
@@ -109,7 +107,6 @@ Route::middleware(['auth:sanctum', 'role:owner,cashier,accountant'])->prefix('ow
     Route::post('/legal-cases/{legalCase}/documents', [LegalCaseController::class, 'storeDocument']);
     Route::delete('/legal-cases/{legalCase}/documents/{legalCaseDocument}', [LegalCaseController::class, 'destroyDocument']);
     Route::apiResource('tenancy-res', TenancyResController::class)->parameters(['tenancy-res' => 'tenancyRes']);
-    Route::apiResource('tenancy-contracts', TenancyContractController::class);
     Route::apiResource('terms', TermController::class);
 
     Route::get('/contract-docs', [ContractDocController::class, 'index']);

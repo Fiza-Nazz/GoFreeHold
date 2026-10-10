@@ -109,11 +109,6 @@ class Contract extends Model
         return $this->hasOne(TenancyRes::class);
     }
 
-    public function tenancyContracts(): HasMany
-    {
-        return $this->hasMany(TenancyContract::class);
-    }
-
     public function terms(): HasMany
     {
         return $this->hasMany(Term::class, 'cid');

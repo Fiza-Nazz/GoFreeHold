@@ -1,4 +1,4 @@
-﻿import { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { fetchPlatformDashboard } from '../../api/platform'
 import type { PlatformDashboardStats } from '../../types/platform'
@@ -101,7 +101,7 @@ export default function PlatformDashboard() {
       <div style={{ marginBottom: 22 }}>
         <h1 style={{ margin: 0, fontSize: 24, fontWeight: 700, color: THEME.ink }}>Platform Dashboard</h1>
         <p style={{ margin: '6px 0 0', color: THEME.textMuted, fontSize: 14 }}>
-          Cross-customer SaaS overview ΓÇö accounts, people, and portfolio volume
+          Cross-customer SaaS overview — accounts, people, and portfolio volume
         </p>
       </div>
 
@@ -112,7 +112,7 @@ export default function PlatformDashboard() {
       )}
 
       {loading ? (
-        <div style={{ padding: 40, color: THEME.textMuted }}>Loading platform metricsΓÇª</div>
+        <div style={{ padding: 40, color: THEME.textMuted }}>Loading platform metrics...</div>
       ) : (
         <>
           <section style={{ marginBottom: 22 }}>

@@ -29,7 +29,6 @@ class ContractPdfController extends Controller
             'tenant',
             'owner',
             'tenancyRes',
-            'tenancyContracts',
             'terms',
             'cheques',
         ]);
@@ -43,7 +42,7 @@ class ContractPdfController extends Controller
             'tenant'       => $contract->tenant,
             'owner'        => $contract->owner,
             'res'          => $contract->tenancyRes,
-            'addendum'     => $contract->tenancyContracts->first(),
+            'addendum'     => null,
             'termsList'    => $contract->terms,
             'cheques'      => $contract->cheques,
             'unit_items'   => $contract->unit?->unitItems,
