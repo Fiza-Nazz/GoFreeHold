@@ -20,7 +20,7 @@ use App\Domain\Maintenance\Http\Controllers\UnitItemController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth:sanctum')->group(function () {
-    // ── Admin
+    // ── Admin (Platform Admin should not CRUD customer inventory)
     Route::middleware('role:admin')->prefix('admin')->group(function () {
         Route::get('/complaints', [ComplaintController::class, 'index']);
         Route::get('/complaints/{complaint}', [ComplaintController::class, 'show']);
@@ -35,16 +35,24 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::apiResource('maintenance-charges', MaintenanceChargeController::class);
         Route::apiResource('maintenances', MaintenanceController::class);
 
-        Route::apiResource('appliances', ApplianceController::class);
+        // Deprecated operational admin inventory & appliances (403 role boundary)
+        Route::any('/inventory/{any?}', function () {
+            return response()->json([
+                'message' => 'Platform admin does not manage organization inventory. Use Owner portal (/api/owner/inventory/*).',
+                'code'    => 'ROLE_BOUNDARY_RESTRICTION',
+            ], 403);
+        })->where('any', '.*');
+
+        Route::any('/appliances/{any?}', function () {
+            return response()->json([
+                'message' => 'Platform admin does not manage organization inventory. Use Owner portal (/api/owner/appliances).',
+                'code'    => 'ROLE_BOUNDARY_RESTRICTION',
+            ], 403);
+        })->where('any', '.*');
+
         Route::apiResource('items', ItemController::class);
         Route::apiResource('unit-items', UnitItemController::class);
         Route::apiResource('item-store', ItemStoreController::class)->parameters(['item-store' => 'itemStore']);
-
-        Route::get('/inventory/warehouse', [InventoryController::class, 'warehouseItems']);
-        Route::get('/inventory/unit', [InventoryController::class, 'unitItems']);
-        Route::post('/inventory', [InventoryController::class, 'store']);
-        Route::put('/inventory/{inventoryItem}', [InventoryController::class, 'update']);
-        Route::delete('/inventory/{inventoryItem}', [InventoryController::class, 'destroy']);
 
         Route::get('/purchases', [PurchaseController::class, 'index']);
         Route::post('/purchases', [PurchaseController::class, 'store']);
@@ -70,7 +78,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/complaints', [ComplaintController::class, 'store']);
     });
 
-    // ── Owner role (Maintenance & Complaints Dispatching + Operations)
+    // ── Owner role (Maintenance & Complaints Dispatching + Unified Inventory Operations)
     Route::middleware('role:owner,cashier,accountant')->prefix('owner')->group(function () {
         Route::get('/complaints', [ComplaintController::class, 'index']);
         Route::get('/complaints/{complaint}', [ComplaintController::class, 'show']);
@@ -78,6 +86,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/complaints/{complaint}/status', [ComplaintController::class, 'updateStatus']);
         Route::get('/technicians', [ComplaintController::class, 'getTechnicians']);
 
+        // Compatibility aliases for legacy appliances UI
         Route::get('/appliances', [ApplianceController::class, 'index']);
         Route::post('/appliances', [ApplianceController::class, 'store']);
         Route::get('/appliances/{appliance}', [ApplianceController::class, 'show']);
@@ -100,11 +109,16 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/maintenance/daily-report', [MaintenanceReportController::class, 'dailyReport']);
         Route::get('/daily-maintenance', [MaintenanceReportController::class, 'dailyReport']);
 
+        // Unified Inventory APIs (Option A)
         Route::get('/inventory/warehouse', [InventoryController::class, 'warehouseItems']);
         Route::get('/inventory/unit', [InventoryController::class, 'unitItems']);
+        Route::get('/inventory', [InventoryController::class, 'index']);
         Route::post('/inventory', [InventoryController::class, 'store']);
+        Route::get('/inventory/{inventoryItem}', [InventoryController::class, 'show']);
         Route::put('/inventory/{inventoryItem}', [InventoryController::class, 'update']);
         Route::delete('/inventory/{inventoryItem}', [InventoryController::class, 'destroy']);
+        Route::post('/inventory/{inventoryItem}/transfer', [InventoryController::class, 'transfer']);
+        Route::get('/units/{unit}/inventory-addendum', [InventoryController::class, 'addendum']);
 
         Route::get('/item-store', [ItemStoreController::class, 'index']);
         Route::post('/item-store', [ItemStoreController::class, 'store']);
@@ -117,4 +131,3 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/purchase-orders', [PurchaseController::class, 'index']);
     });
 });
-

@@ -84,6 +84,11 @@ class Unit extends Model
         return $this->hasMany(UnitItem::class);
     }
 
+    public function inventoryItems(): HasMany
+    {
+        return $this->hasMany(\App\Domain\Maintenance\Models\InventoryItem::class, 'unit_id');
+    }
+
     public function contracts(): HasMany
     {
         return $this->hasMany(Contract::class);

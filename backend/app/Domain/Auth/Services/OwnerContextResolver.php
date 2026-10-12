@@ -43,6 +43,41 @@ class OwnerContextResolver
         return (int) $id;
     }
 
+    public function organizationId(User $user): int
+    {
+        abort_unless($user->account_status === 'active', 403, 'Account is not active.');
+
+        $orgId = $user->organization_id;
+
+        if (!$orgId && $user->role === 'owner') {
+            $orgId = DB::table('organizations')->where('primary_owner_id', $user->id)->value('id');
+        }
+
+        if (!$orgId && in_array($user->role, self::STAFF_ROLES, true)) {
+            $ownerStaff = OwnerStaff::where('user_id', $user->id)->first();
+            if ($ownerStaff && $ownerStaff->owner_id) {
+                $owner = Owner::find($ownerStaff->owner_id);
+                if ($owner && $owner->user_id) {
+                    $orgId = User::whereKey($owner->user_id)->value('organization_id')
+                        ?: DB::table('organizations')->where('primary_owner_id', $owner->user_id)->value('id');
+                }
+            }
+        }
+
+        if (!$orgId && $user->role === 'admin') {
+            return 1;
+        }
+
+        abort_unless($orgId, 403, 'Organization membership is not configured.');
+
+        $orgStatus = DB::table('organizations')->where('id', $orgId)->value('status');
+        if ($orgStatus === 'suspended') {
+            abort(403, 'ACCOUNT_ACCESS_DENIED');
+        }
+
+        return (int) $orgId;
+    }
+
     public function contracts(Builder $query, int $ownerId): Builder
     {
         return $query->where('contracts.owner_id', $ownerId)

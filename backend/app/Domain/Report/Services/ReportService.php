@@ -89,31 +89,38 @@ class ReportService
         ];
     }
 
-    public function inventorySummary(?int $ownerId = null): array
+    public function inventorySummary(?int $ownerId = null, ?int $orgId = null): array
     {
-        $warehouseStock = InventoryItem::where('location_type', 'warehouse')
-            ->when($ownerId !== null, fn ($q) => $q->where('owner_id', $ownerId))
-            ->get();
-        $unitStock = InventoryItem::where('location_type', 'unit')
-            ->with('unit.property')
-            ->when($ownerId !== null, fn ($q) => $q->where(function ($sq) use ($ownerId) {
-                $sq->where('owner_id', $ownerId)
-                   ->orWhereHas('unit', fn ($u) => $u->where('owner_id', $ownerId)->orWhereHas('property', fn ($p) => $p->where('owner_id', $ownerId)));
-            }))
-            ->get();
-        $lowStockItems = InventoryItem::where('location_type', 'warehouse')
-            ->when($ownerId !== null, fn ($q) => $q->where('owner_id', $ownerId))
+        $base = InventoryItem::query();
+        if ($orgId !== null) {
+            $base->where('organization_id', $orgId);
+        } elseif ($ownerId !== null) {
+            $base->where('owner_id', $ownerId);
+        }
+
+        $warehouseStock = (clone $base)->where('location_type', 'warehouse')->get();
+        $unitStock = (clone $base)->where('location_type', 'unit')->with('unit.property')->get();
+        $assetsCount = (clone $base)->where('item_kind', 'asset')->count();
+        $lowStockItems = (clone $base)->where('location_type', 'warehouse')
+            ->where('item_kind', 'stock')
             ->whereNotNull('min_stock_alert')
             ->whereColumn('quantity', '<=', 'min_stock_alert')
             ->get();
 
         return [
             'total_warehouse_items' => $warehouseStock->count(),
-            'total_unit_items' => $unitStock->count(),
-            'low_stock_count' => $lowStockItems->count(),
-            'low_stock_items' => $lowStockItems,
-            'warehouse_stock' => $warehouseStock,
-            'unit_stock' => $unitStock,
+            'total_unit_items'      => $unitStock->count(),
+            'total_assets'          => $assetsCount,
+            'low_stock_count'       => $lowStockItems->count(),
+            'low_stock_items'       => $lowStockItems->map(fn ($item) => [
+                'id'              => $item->id,
+                'name'            => $item->name,
+                'category'        => $item->category,
+                'quantity'        => (float) $item->quantity,
+                'min_stock_alert' => (float) $item->min_stock_alert,
+            ])->values()->all(),
+            'warehouse_stock'       => $warehouseStock,
+            'unit_stock'            => $unitStock,
         ];
     }
 

@@ -83,6 +83,7 @@ class MaintenanceService
     {
         return DB::transaction(function () use ($data) {
             $purchase = Purchase::create([
+                'organization_id' => $data['organization_id'] ?? null,
                 'owner_id' => $data['owner_id'] ?? null,
                 'supplier_name' => $data['supplier_name'],
                 'purchase_date' => $data['purchase_date'],

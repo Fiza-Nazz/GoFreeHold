@@ -13,13 +13,25 @@ class PurchaseItem extends Model
     protected $fillable = [
         'purchase_id',
         'item_id',
+        'inventory_item_id',
+        'item_kind',
         'item_name',
         'qty',
         'price',
     ];
 
+    protected $casts = [
+        'qty' => 'decimal:2',
+        'price' => 'decimal:2',
+    ];
+
     public function purchase(): BelongsTo
     {
         return $this->belongsTo(Purchase::class);
+    }
+
+    public function inventoryItem(): BelongsTo
+    {
+        return $this->belongsTo(InventoryItem::class, 'inventory_item_id');
     }
 }
