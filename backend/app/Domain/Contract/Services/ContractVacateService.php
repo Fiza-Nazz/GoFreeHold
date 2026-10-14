@@ -19,21 +19,35 @@ class ContractVacateService
      *
      * @param Contract $contract The contract being vacated
      * @param string|null $notes Optional notes to append to the contract
+     * @param bool $allowIdempotent If true, does not fail if already vacated
      * @return void
      */
-    public function vacate(Contract $contract, ?string $notes = null): void
+    public function vacate(Contract $contract, ?string $notes = null, bool $allowIdempotent = false): void
     {
-        DB::beginTransaction();
-        try {
+        DB::transaction(function () use ($contract, $notes, $allowIdempotent) {
+            if ($contract->status === 'vacated' && ! $allowIdempotent) {
+                abort(422, 'Contract already vacated.');
+            }
+
+            $formattedNotes = trim(($contract->notes ? $contract->notes . "\n" : '') . ($notes ?? ''));
+
             $contract->update([
                 'status' => 'vacated',
-                'notes'  => $notes ?? $contract->notes,
+                'notes'  => $formattedNotes !== '' ? $formattedNotes : $contract->notes,
             ]);
-            Unit::where('id', $contract->unit_id)->update(['status' => 'AVAILABLE']);
-            DB::commit();
-        } catch (\Throwable $e) {
-            DB::rollBack();
-            throw $e;
-        }
+
+            if ($contract->unit_id) {
+                Unit::where('id', $contract->unit_id)->update(['status' => 'AVAILABLE']);
+            }
+        });
+    }
+
+    /**
+     * Helper execution alias matching Paul's guide:
+     * VacateContractService::execute(contract, notes): void
+     */
+    public static function execute(Contract $contract, ?string $notes = null): void
+    {
+        app(self::class)->vacate($contract, $notes, true);
     }
 }

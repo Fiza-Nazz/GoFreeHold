@@ -18,11 +18,22 @@ class SettlementPaymentController extends Controller
     {
         $user = $request->user();
         if ($user && in_array($user->role, ['owner', 'cashier', 'accountant'], true)) {
-            $ownerId = app(\App\Domain\Auth\Services\OwnerContextResolver::class)->ownerId($user);
+            $resolver = app(\App\Domain\Auth\Services\OwnerContextResolver::class);
+            $ownerId = $resolver->ownerId($user);
+            $orgId = null;
+            try {
+                $orgId = $resolver->organizationId($user);
+            } catch (\Throwable) {}
+
             $settlement = \App\Domain\Settlement\Models\Settlement::with('contract.unit.property')->find($settlementId);
             abort_unless($settlement, 404, 'Settlement not found.');
+
             $settlementOwnerId = (int) ($settlement->owner_id ?: $settlement->contract?->owner_id ?: $settlement->contract?->unit?->property?->owner_id);
-            abort_unless($settlementOwnerId === (int) $ownerId, 403, 'Unauthorized access to this settlement.');
+            $matchesOwner = $settlementOwnerId === (int) $ownerId;
+            $settlementOrgId = (int) ($settlement->organization_id ?? $settlement->contract?->organization_id ?? 0);
+            $matchesOrg = $orgId && ($settlementOrgId === (int) $orgId);
+
+            abort_unless($matchesOwner || $matchesOrg, 404, 'Settlement not found.');
         }
     }
 
@@ -32,14 +43,27 @@ class SettlementPaymentController extends Controller
 
         $user = $request->user();
         if ($user && in_array($user->role, ['owner', 'cashier', 'accountant'], true)) {
-            $ownerId = app(\App\Domain\Auth\Services\OwnerContextResolver::class)->ownerId($user);
-            $query->whereHas('settlement', function ($s) use ($ownerId) {
+            $resolver = app(\App\Domain\Auth\Services\OwnerContextResolver::class);
+            $ownerId = $resolver->ownerId($user);
+            $orgId = null;
+            try {
+                $orgId = $resolver->organizationId($user);
+            } catch (\Throwable) {}
+
+            $query->whereHas('settlement', function ($s) use ($ownerId, $orgId) {
                 $s->where('settlements.owner_id', $ownerId)
-                  ->orWhereHas('contract', fn ($c) => $c->where('owner_id', $ownerId)->orWhereHas('unit.property', fn ($p) => $p->where('owner_id', $ownerId)));
+                  ->orWhereHas('contract', function ($c) use ($ownerId, $orgId) {
+                      $c->where('owner_id', $ownerId);
+                      if ($orgId) {
+                          $c->orWhere('organization_id', $orgId);
+                      }
+                      $c->orWhereHas('unit.property', fn ($p) => $p->where('owner_id', $ownerId));
+                  });
             });
         }
 
         if ($request->has('settlement_id')) {
+            $this->assertSettlementAccess($request, (int) $request->settlement_id);
             $query->where('settlement_id', $request->settlement_id);
         }
 
@@ -51,9 +75,13 @@ class SettlementPaymentController extends Controller
         $validated = $request->validate([
             'settlement_id'  => 'required|exists:settlements,id',
             'payment_method' => 'nullable|string|max:100',
-            'amount'         => 'required|numeric|min:0',
+            'amount'         => 'required|numeric|gt:0',
             'payment_date'   => 'required|date',
         ]);
+
+        if (isset($validated['payment_method'])) {
+            $validated['payment_method'] = strtolower(trim($validated['payment_method']));
+        }
 
         $this->assertSettlementAccess($request, (int) $validated['settlement_id']);
         $payment = $this->settlementService->recordPayment($validated);

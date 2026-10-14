@@ -21,9 +21,18 @@ class ContractController extends Controller
     {
         $user = $request->user();
         if ($user && in_array($user->role, ['owner', 'cashier', 'accountant'], true)) {
-            $ownerId = app(OwnerContextResolver::class)->ownerId($user);
+            $resolver = app(OwnerContextResolver::class);
+            $ownerId = $resolver->ownerId($user);
+            $orgId = null;
+            try {
+                $orgId = $resolver->organizationId($user);
+            } catch (\Throwable) {}
+
             $contractOwnerId = (int) ($contract->owner_id ?: $contract->unit?->property?->owner_id);
-            abort_unless($contractOwnerId === (int) $ownerId, 403, 'Unauthorized access to this contract.');
+            $matchesOwner = $contractOwnerId === (int) $ownerId;
+            $matchesOrg = $orgId && ((int) $contract->organization_id === (int) $orgId);
+
+            abort_unless($matchesOwner || $matchesOrg, 404, 'Contract not found.');
         }
     }
 
@@ -187,13 +196,26 @@ class ContractController extends Controller
         $this->assertContractAccess($request, $contract);
         $request->validate(['notes' => 'nullable|string']);
 
-        try {
-            $vacateService->vacate($contract, $request->notes);
+        if ($contract->status === 'vacated') {
+            // Check if this contract was vacated via settlement completion.
+            // In the VacateModal flow (Scenario 3: Net dues <= receivable), settlement completion vacates
+            // the contract first, and then the follow-up POST /vacate call must still succeed (idempotent).
+            $hasCompletedSettlement = \App\Domain\Settlement\Models\Settlement::where('contract_id', $contract->id)
+                ->where('status', 'completed')
+                ->exists();
+            $hasModalNotes = $request->filled('notes') && str_contains($contract->notes ?? '', $request->notes);
 
-            return response()->json(['status' => 'success', 'message' => 'Contract vacated and unit is now available.']);
-        } catch (\Exception $e) {
-            return response()->json(['status' => 'error', 'message' => 'Failed to vacate contract.'], 500);
+            if ($hasCompletedSettlement && ! $hasModalNotes) {
+                $vacateService->vacate($contract, $request->notes, true);
+                return response()->json(['status' => 'success', 'message' => 'Contract vacated and unit is now available.']);
+            }
+
+            abort(422, 'Contract already vacated.');
         }
+
+        $vacateService->vacate($contract, $request->notes, false);
+
+        return response()->json(['status' => 'success', 'message' => 'Contract vacated and unit is now available.']);
     }
 
     public function settle(Request $request, Contract $contract, ContractVacateService $vacateService): JsonResponse

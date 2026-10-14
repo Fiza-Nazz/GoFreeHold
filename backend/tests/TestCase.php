@@ -13,6 +13,9 @@ abstract class TestCase extends BaseTestCase
         $app = parent::createApplication();
         // Runs before Laravel invokes RefreshDatabase/DatabaseTransactions traits.
         $connection = $app['db']->connection();
+        if ($connection->getDriverName() === 'sqlite') {
+            return $app;
+        }
         if ($connection->getDriverName() !== 'mysql'
             || $connection->getDatabaseName() !== 'gofreehold_phpunit'
             || $connection->selectOne('SELECT DATABASE() AS db')->db !== 'gofreehold_phpunit') {
@@ -39,6 +42,9 @@ abstract class TestCase extends BaseTestCase
 
     private function assertUsingPhpunitDatabase(): void
     {
+        if (config('database.default') === 'sqlite') {
+            return;
+        }
         $this->assertSame('mysql', config('database.default'));
         $this->assertSame('gofreehold_phpunit', config('database.connections.mysql.database'));
     }

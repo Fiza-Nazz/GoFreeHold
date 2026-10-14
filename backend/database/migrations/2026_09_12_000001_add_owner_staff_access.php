@@ -11,7 +11,9 @@ return new class extends Migration {
         if (DB::table('owners')->whereNotNull('user_id')->groupBy('user_id')->havingRaw('COUNT(*) > 1')->exists()) {
             throw new RuntimeException('Resolve duplicate owner profiles before RBAC migration.');
         }
-        DB::statement("ALTER TABLE users MODIFY role ENUM('admin','maintenance','owner','tenant','cashier','accountant') NOT NULL DEFAULT 'tenant'");
+        if (DB::getDriverName() === 'mysql') {
+            DB::statement("ALTER TABLE users MODIFY role ENUM('admin','maintenance','owner','tenant','cashier','accountant') NOT NULL DEFAULT 'tenant'");
+        }
         Schema::table('users', fn (Blueprint $t) => $t->string('account_status', 20)->default('active'));
         Schema::table('owners', fn (Blueprint $t) => $t->unique('user_id', 'owners_user_unique'));
         Schema::create('owner_staff', function (Blueprint $t) {

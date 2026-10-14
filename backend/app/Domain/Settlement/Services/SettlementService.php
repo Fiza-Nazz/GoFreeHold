@@ -27,6 +27,12 @@ class SettlementService
             ]);
         }
 
+        if (Settlement::where('contract_id', $contract->id)->exists()) {
+            throw ValidationException::withMessages([
+                'contract_id' => ['Contract already has an open settlement.'],
+            ]);
+        }
+
         $ownerId = $contract->owner_id;
         if (! $ownerId) {
             throw ValidationException::withMessages([
@@ -57,6 +63,7 @@ class SettlementService
                 $this->vacateService->vacate(
                     $contract,
                     'Vacated via settlement #' . $settlement->id . ' completion',
+                    true
                 );
             }
 
@@ -91,6 +98,7 @@ class SettlementService
                 $this->vacateService->vacate(
                     $contract,
                     'Vacated via settlement #' . $settlement->id . ' completion',
+                    true
                 );
             }
         });
@@ -105,7 +113,7 @@ class SettlementService
 
     public function storeDocument(int $settlementId, UploadedFile $file): SettlementDoc
     {
-        $path = $file->store('settlement-docs', 'public');
+        $path = $file->store("settlements/{$settlementId}", 'local');
 
         return SettlementDoc::create([
             'settlement_id' => $settlementId,
@@ -117,6 +125,7 @@ class SettlementService
     public function deleteDocument(SettlementDoc $settlementDoc): void
     {
         if ($settlementDoc->file_path) {
+            Storage::disk('local')->delete($settlementDoc->file_path);
             Storage::disk('public')->delete($settlementDoc->file_path);
         }
 

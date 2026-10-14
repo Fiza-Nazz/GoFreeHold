@@ -16,10 +16,16 @@ class OwnerContextResolver
         abort_unless($user->account_status === 'active', 403, 'Account is not active.');
         abort_unless(in_array($user->role, ['admin', 'owner', 'tenant', ...self::STAFF_ROLES], true), 403);
 
-        if ($user->role !== 'admin' && $user->organization_id) {
-            $orgStatus = DB::table('organizations')->where('id', $user->organization_id)->value('status');
-            if ($orgStatus === 'suspended') {
-                abort(403, 'Your organization has been suspended. Please contact platform support.');
+        if ($user->role !== 'admin') {
+            $orgId = $user->organization_id;
+            if (!$orgId && $user->role === 'owner') {
+                $orgId = DB::table('organizations')->where('primary_owner_id', $user->id)->value('id');
+            }
+            if ($orgId) {
+                $orgStatus = DB::table('organizations')->where('id', $orgId)->value('status');
+                if ($orgStatus === 'suspended') {
+                    abort(403, 'ACCOUNT_ACCESS_DENIED');
+                }
             }
         }
 

@@ -17,21 +17,23 @@ use App\Domain\Settlement\Http\Controllers\SettlementPaymentController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth:sanctum', 'role:admin'])->prefix('admin')->group(function () {
-    Route::put('/settlements/{settlement}/on-case', [SettlementController::class, 'setOnCase']);
-    Route::apiResource('settlements', SettlementController::class);
-
-    Route::get('/settlement-docs', [SettlementDocController::class, 'index']);
-    Route::post('/settlement-docs', [SettlementDocController::class, 'store']);
-    Route::delete('/settlement-docs/{settlementDoc}', [SettlementDocController::class, 'destroy']);
-
-    Route::get('/settlement-payments', [SettlementPaymentController::class, 'index']);
-    Route::post('/settlement-payments', [SettlementPaymentController::class, 'store']);
-    Route::delete('/settlement-payments/{settlementPayment}', [SettlementPaymentController::class, 'destroy']);
+    Route::get('/settlements', [SettlementController::class, 'index']);
+    Route::get('/settlements/{settlement}', [SettlementController::class, 'show']);
 
     Route::apiResource('financial-entries', FinancialTrackingController::class)->only(['index', 'store', 'destroy']);
     Route::apiResource('categories', CategoryController::class)->except(['show', 'create', 'edit']);
     Route::apiResource('incomes', IncomeController::class);
     Route::apiResource('expenses', ExpenseController::class);
+
+    Route::get('/settlement-docs', [SettlementDocController::class, 'index']);
+    Route::post('/settlement-docs', [SettlementDocController::class, 'store']);
+    Route::get('/settlement-docs/{settlementDoc}', [SettlementDocController::class, 'show']);
+    Route::get('/settlement-docs/{settlementDoc}/download', [SettlementDocController::class, 'download']);
+    Route::delete('/settlement-docs/{settlementDoc}', [SettlementDocController::class, 'destroy']);
+
+    Route::get('/settlement-payments', [SettlementPaymentController::class, 'index']);
+    Route::post('/settlement-payments', [SettlementPaymentController::class, 'store']);
+    Route::delete('/settlement-payments/{settlementPayment}', [SettlementPaymentController::class, 'destroy']);
 
     Route::get('/banks', [BankAccountController::class, 'banks']);
     Route::apiResource('bank-accounts', BankAccountController::class);
@@ -44,13 +46,19 @@ Route::middleware(['auth:sanctum', 'role:owner,cashier,accountant'])->prefix('ow
     Route::post('/settlements', [SettlementController::class, 'store']);
     Route::get('/settlements/{settlement}', [SettlementController::class, 'show']);
     Route::put('/settlements/{settlement}', [SettlementController::class, 'update']);
-    Route::post('/settlements/{settlement}/documents', [SettlementController::class, 'storeDocument']);
-    Route::post('/settlements/{settlement}/payments', [SettlementController::class, 'storePayment']);
+    Route::delete('/settlements/{settlement}', [SettlementController::class, 'destroy']);
+    Route::put('/settlements/{settlement}/on-case', [SettlementController::class, 'setOnCase']);
 
     Route::get('/settlement-docs', [SettlementDocController::class, 'index']);
     Route::post('/settlement-docs', [SettlementDocController::class, 'store']);
+    Route::get('/settlement-docs/{settlementDoc}', [SettlementDocController::class, 'show']);
+    Route::get('/settlement-docs/{settlementDoc}/download', [SettlementDocController::class, 'download']);
+    Route::delete('/settlement-docs/{settlementDoc}', [SettlementDocController::class, 'destroy']);
+
     Route::get('/settlement-payments', [SettlementPaymentController::class, 'index']);
     Route::post('/settlement-payments', [SettlementPaymentController::class, 'store']);
+    Route::delete('/settlement-payments/{settlementPayment}', [SettlementPaymentController::class, 'destroy']);
+
     Route::get('/financial-entries', [FinancialTrackingController::class, 'index']);
     Route::post('/financial-entries', [FinancialTrackingController::class, 'store']);
     Route::delete('/financial-entries/{financial_entry}', [FinancialTrackingController::class, 'destroy']);
