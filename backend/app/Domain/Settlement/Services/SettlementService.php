@@ -100,6 +100,10 @@ class SettlementService
                     'Vacated via settlement #' . $settlement->id . ' completion',
                     true
                 );
+
+                try {
+                    app(\App\Domain\Accounting\Services\Posters\SettlementPoster::class)->postSettlementCompletion($settlement);
+                } catch (\Throwable) {}
             }
         });
 
@@ -108,7 +112,13 @@ class SettlementService
 
     public function recordPayment(array $payload): SettlementPayment
     {
-        return SettlementPayment::create($payload);
+        $payment = SettlementPayment::create($payload);
+
+        try {
+            app(\App\Domain\Accounting\Services\Posters\SettlementPoster::class)->postSettlementPayment($payment);
+        } catch (\Throwable) {}
+
+        return $payment;
     }
 
     public function storeDocument(int $settlementId, UploadedFile $file): SettlementDoc

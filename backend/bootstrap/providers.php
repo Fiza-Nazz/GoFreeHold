@@ -21,4 +21,5 @@ return [
     MaintenanceServiceProvider::class,
     ReportServiceProvider::class,
     \App\Domain\Platform\Providers\PlatformServiceProvider::class,
+    \App\Domain\Accounting\Providers\AccountingServiceProvider::class,
 ];

@@ -27,6 +27,10 @@ class PaymentService
                 'credit' => $payment->amount,
             ]);
 
+            try {
+                app(\App\Domain\Accounting\Services\Posters\PaymentPoster::class)->postPayment($payment);
+            } catch (\Throwable) {}
+
             return $payment;
         });
     }
@@ -65,6 +69,15 @@ class PaymentService
                     'linked_ledger_ids' => $linked->pluck('id')->values()->all(),
                 ]),
             ]);
+
+            if ($payment->ac_transaction_id) {
+                try {
+                    $glTx = \App\Domain\Accounting\Models\AccountingTransaction::find($payment->ac_transaction_id);
+                    if ($glTx && $glTx->isCompleted()) {
+                        app(\App\Domain\Accounting\Services\JournalService::class)->reverse($glTx, $userId, 'Payment deleted: ' . $reason);
+                    }
+                } catch (\Throwable) {}
+            }
 
             $payment->deleted_by = $userId;
             $payment->deletion_reason = $reason;

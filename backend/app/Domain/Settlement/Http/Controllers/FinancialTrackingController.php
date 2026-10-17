@@ -65,6 +65,14 @@ class FinancialTrackingController extends Controller
         $validated['recorded_by'] = $request->user()->id;
         $entry = FinancialEntry::create($validated);
 
+        try {
+            $orgId = null;
+            try {
+                $orgId = app(\App\Domain\Auth\Services\OwnerContextResolver::class)->organizationId($request->user());
+            } catch (\Throwable) {}
+            app(\App\Domain\Accounting\Services\Posters\FinancialEntryPoster::class)->postEntry($entry, $orgId);
+        } catch (\Throwable) {}
+
         return response()->json([
             'status'  => 'success',
             'message' => 'Financial entry recorded.',
@@ -74,6 +82,15 @@ class FinancialTrackingController extends Controller
 
     public function destroy(FinancialEntry $financialEntry): JsonResponse
     {
+        if ($financialEntry->ac_transaction_id) {
+            try {
+                $glTx = \App\Domain\Accounting\Models\AccountingTransaction::find($financialEntry->ac_transaction_id);
+                if ($glTx && $glTx->isCompleted()) {
+                    app(\App\Domain\Accounting\Services\JournalService::class)->reverse($glTx, request()->user()?->id, 'Financial entry #' . $financialEntry->id . ' deleted');
+                }
+            } catch (\Throwable) {}
+        }
+
         $financialEntry->delete();
 
         return response()->json(['status' => 'success', 'message' => 'Financial entry deleted.']);

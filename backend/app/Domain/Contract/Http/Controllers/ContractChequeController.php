@@ -103,6 +103,10 @@ class ContractChequeController extends Controller
 
         $cheque->update($validated);
 
+        try {
+            app(\App\Domain\Accounting\Services\Posters\ChequePoster::class)->postChequeStatus($cheque, $validated['status']);
+        } catch (\Throwable) {}
+
         return response()->json(['status' => 'success', 'message' => 'Cheque status updated.', 'data' => ['cheque' => $cheque]]);
     }
 

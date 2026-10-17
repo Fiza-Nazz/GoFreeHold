@@ -101,6 +101,12 @@ class RentTransactionController extends Controller
             'credit'      => $credit,
         ]);
 
+        if ($debit > 0) {
+            try {
+                app(\App\Domain\Accounting\Services\Posters\RentChargePoster::class)->postCharge($entry);
+            } catch (\Throwable) {}
+        }
+
         return response()->json([
             'status'  => 'success',
             'message' => 'Ledger entry created.',
