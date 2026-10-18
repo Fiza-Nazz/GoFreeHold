@@ -31,6 +31,7 @@ class PostMonthlyRentServiceTest extends TestCase
         $this->assertTrue($posted);
         $this->assertDatabaseHas('rent_transactions', [
             'contract_id' => $contract->id,
+            'description' => 'Rent Due ' . $month->format('F'),
             'debit'       => 5000,
             'credit'      => 0,
         ]);

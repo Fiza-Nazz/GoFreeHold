@@ -73,13 +73,19 @@ class PostMonthlyRentService
             }
         }
 
-        RentTransaction::create([
+        $entry = RentTransaction::create([
             'contract_id' => $contract->id,
             'date'        => $entryDate,
-            'description' => 'Rent due ' . $monthLabel,
+            'description' => 'Rent Due ' . $month->format('F'),
             'debit'       => $contract->rent_amount,
             'credit'      => 0,
         ]);
+
+        if ((float) $contract->rent_amount > 0) {
+            try {
+                app(\App\Domain\Accounting\Services\Posters\RentChargePoster::class)->postCharge($entry);
+            } catch (\Throwable) {}
+        }
 
         return true;
     }
@@ -104,7 +110,11 @@ class PostMonthlyRentService
         return RentTransaction::where('contract_id', $contractId)
             ->whereBetween('date', [$startOfMonth, $endOfMonth])
             ->where('debit', '>', 0)
-            ->where('description', 'like', 'Rent due%')
+            ->where(function ($q) {
+                $q->where('description', 'like', 'Rent Due%')
+                  ->orWhere('description', 'like', 'Rent due%')
+                  ->orWhereRaw('LOWER(description) LIKE ?', ['rent due%']);
+            })
             ->exists();
     }
 }
