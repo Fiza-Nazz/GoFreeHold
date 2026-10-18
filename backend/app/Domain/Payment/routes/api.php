@@ -23,6 +23,7 @@ Route::middleware(['auth:sanctum', 'role:cashier,accountant'])->prefix('staff/fi
     Route::get('/payments/{payment}', [$c, 'show']);
     Route::get('/ledger', [$c, 'ledger']);
     Route::get('/receivables', [$c, 'receivables']);
+    Route::get('/properties/{property}/unit-board', [\App\Domain\Property\Http\Controllers\PropertyUnitBoardController::class, 'show']);
 });
 
 Route::middleware(['auth:sanctum', 'role:admin'])->prefix('admin')->group(function () {

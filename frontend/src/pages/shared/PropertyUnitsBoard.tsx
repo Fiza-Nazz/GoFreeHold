@@ -31,6 +31,20 @@ interface Contract {
   lease_term?: string
 }
 
+interface BoardUnitCard {
+  id: number
+  number: string
+  type?: string
+  category?: string
+  status: string
+  on_case: boolean
+  rent: number | null
+  due: number | null
+  lease_term?: string | null
+  contract_id?: number | null
+  tenant_name?: string | null
+}
+
 function formatMoney(val?: number | string | null) {
   if (val === null || val === undefined || val === '') return '0'
   const num = Number(val)
@@ -93,6 +107,7 @@ export default function PropertyUnitsBoard() {
   )
   const [units, setUnits] = useState<Unit[]>([])
   const [contracts, setContracts] = useState<Contract[]>([])
+  const [boardCards, setBoardCards] = useState<BoardUnitCard[] | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
@@ -176,6 +191,26 @@ export default function PropertyUnitsBoard() {
     const load = async () => {
       setIsLoading(true)
       setError(null)
+
+      // Preferred path: Dedicated Unit Board API
+      const boardEndpoint = isStaff
+        ? `/staff/finance/properties/${propertyId}/unit-board`
+        : `/owner/dashboard/properties/${propertyId}/unit-board`
+
+      try {
+        const res = await api.get(boardEndpoint)
+        if (cancelled) return
+        const boardData = res.data?.data
+        if (boardData && boardData.property && Array.isArray(boardData.units)) {
+          setProperty(boardData.property)
+          setBoardCards(boardData.units)
+          setIsLoading(false)
+          return
+        }
+      } catch {
+        // Fall back to legacy multi-endpoint join
+      }
+
       try {
         const [prop, unitList, contractList] = await Promise.all([
           loadProperty(),
@@ -192,6 +227,7 @@ export default function PropertyUnitsBoard() {
         )
         setUnits(unitList)
         setContracts(contractList)
+        setBoardCards(null)
 
         if (unitList.length === 0 && !prop) {
           setError('No units found for this property (or access is limited for your role).')
@@ -221,6 +257,35 @@ export default function PropertyUnitsBoard() {
   }, [contracts])
 
   const enriched = useMemo(() => {
+    if (boardCards !== null) {
+      return boardCards.map((card) => {
+        const unit: Unit = {
+          id: card.id,
+          number: card.number,
+          type: card.type,
+          category: card.category,
+          status: card.status,
+          property_id: Number(propertyId),
+        }
+        const contract: Contract | undefined = card.contract_id
+          ? {
+              id: card.contract_id,
+              unit_id: card.id,
+              rent_amount: card.rent ?? undefined,
+              due: card.due ?? undefined,
+              status: card.status,
+              on_case: card.on_case,
+              lease_term: card.lease_term ?? undefined,
+            }
+          : undefined
+        const onCase = card.on_case
+        const rent = card.rent
+        const due = card.due
+        const available = card.status === 'AVAILABLE'
+        return { unit, contract, onCase, rent, due, available }
+      })
+    }
+
     const rows = units.map((unit) => {
       const contract = contractByUnit.get(unit.id)
       const onCase = !!contract?.on_case
@@ -234,7 +299,7 @@ export default function PropertyUnitsBoard() {
     return rows.sort((a, b) =>
       String(a.unit.number).localeCompare(String(b.unit.number), undefined, { numeric: true }),
     )
-  }, [units, contractByUnit])
+  }, [boardCards, units, contractByUnit, propertyId])
 
   const residential = enriched.filter((r) => !isCommercial(r.unit.type, r.unit.category))
   const commercial = enriched.filter((r) => isCommercial(r.unit.type, r.unit.category))
@@ -258,8 +323,8 @@ export default function PropertyUnitsBoard() {
                 <div className="gfh-pub-card-number">{unit.number}</div>
               </div>
               <div className="gfh-pub-card-meta">
-                <div>Rent : {available ? '' : formatMoney(rent)}</div>
-                <div>Due : {available ? '' : formatMoney(due)}</div>
+                <div>Rent : {available || rent == null ? '' : formatMoney(rent)}</div>
+                <div>Due : {available || due == null ? '' : formatMoney(due)}</div>
               </div>
             </Link>
           ))}

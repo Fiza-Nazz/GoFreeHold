@@ -25,6 +25,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/dashboard/summary', [DashboardController::class, 'ownerSummary']);
         Route::get('/dashboard/properties', [DashboardController::class, 'propertyDrillDown']);
         Route::get('/dashboard/properties/{property}/units', [DashboardController::class, 'propertyUnits']);
+        Route::get('/dashboard/properties/{property}/unit-board', [\App\Domain\Property\Http\Controllers\PropertyUnitBoardController::class, 'show']);
         Route::get('/dashboard/units/{unit}', [DashboardController::class, 'unitDetail']);
         Route::get('/dashboard/vacant-units', [DashboardController::class, 'vacantUnits']);
 

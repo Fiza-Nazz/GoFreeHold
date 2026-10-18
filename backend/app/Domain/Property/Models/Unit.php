@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Unit extends Model
 {
@@ -97,5 +98,12 @@ class Unit extends Model
     public function preparedContracts(): HasMany
     {
         return $this->hasMany(\App\Domain\Contract\Models\PreparedContract::class, 'unit_id');
+    }
+
+    public function activeContract(): HasOne
+    {
+        return $this->hasOne(Contract::class, 'unit_id')
+            ->whereRaw('LOWER(status) = ?', ['active'])
+            ->latestOfMany();
     }
 }
