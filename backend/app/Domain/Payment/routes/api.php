@@ -24,6 +24,7 @@ Route::middleware(['auth:sanctum', 'role:cashier,accountant'])->prefix('staff/fi
     Route::get('/ledger', [$c, 'ledger']);
     Route::get('/receivables', [$c, 'receivables']);
     Route::get('/properties/{property}/unit-board', [\App\Domain\Property\Http\Controllers\PropertyUnitBoardController::class, 'show']);
+    Route::get('/contracts/{contract}/vacate-summary', [\App\Domain\Contract\Http\Controllers\ContractController::class, 'vacateSummary']);
 });
 
 Route::middleware(['auth:sanctum', 'role:admin'])->prefix('admin')->group(function () {

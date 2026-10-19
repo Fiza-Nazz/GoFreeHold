@@ -8,6 +8,7 @@ use App\Domain\Contract\Http\Requests\UpdateContractRequest;
 use App\Domain\Contract\Models\Contract;
 use App\Domain\Contract\Services\ContractService;
 use App\Domain\Contract\Services\ContractVacateService;
+use App\Domain\Contract\Services\VacateSummaryService;
 use App\Domain\Dashboard\Services\PostMonthlyRentService;
 use App\Domain\Property\Models\Unit;
 use App\Http\Controllers\Controller;
@@ -216,6 +217,19 @@ class ContractController extends Controller
         $vacateService->vacate($contract, $request->notes, false);
 
         return response()->json(['status' => 'success', 'message' => 'Contract vacated and unit is now available.']);
+    }
+
+    public function vacateSummary(Request $request, Contract $contract, VacateSummaryService $vacateSummaryService): JsonResponse
+    {
+        $this->assertContractAccess($request, $contract);
+
+        $asOf = $request->query('as_of');
+        $summary = $vacateSummaryService->calculate($contract, $asOf);
+
+        return response()->json([
+            'status' => 'success',
+            'data'   => $summary,
+        ]);
     }
 
     public function settle(Request $request, Contract $contract, ContractVacateService $vacateService): JsonResponse

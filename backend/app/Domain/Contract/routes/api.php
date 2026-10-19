@@ -21,6 +21,7 @@ Route::middleware(['auth:sanctum', 'role:admin'])->prefix('admin')->group(functi
     // Custom actions before apiResource so {contract} never captures them incorrectly
     Route::post('/contracts/{contract}/renew', [ContractController::class, 'renew']);
     Route::post('/contracts/{contract}/vacate', [ContractController::class, 'vacate']);
+    Route::get('/contracts/{contract}/vacate-summary', [ContractController::class, 'vacateSummary']);
     Route::post('/contracts/{contract}/settle', [ContractController::class, 'settle']);
     Route::get('/contracts/{contract}/pdf', [ContractPdfController::class, 'generate']);
     Route::put('/contracts/{contract}/on-case', [ContractController::class, 'setOnCase']);
@@ -75,6 +76,7 @@ Route::middleware(['auth:sanctum', 'role:admin'])->prefix('admin')->group(functi
 Route::middleware(['auth:sanctum', 'role:owner,cashier,accountant'])->prefix('owner')->group(function () {
     Route::post('/contracts/{contract}/renew', [ContractController::class, 'renew']);
     Route::post('/contracts/{contract}/vacate', [ContractController::class, 'vacate']);
+    Route::get('/contracts/{contract}/vacate-summary', [ContractController::class, 'vacateSummary']);
     Route::post('/contracts/{contract}/settle', [ContractController::class, 'settle']);
     Route::get('/contracts/{contract}/pdf', [ContractPdfController::class, 'generate']);
     Route::put('/contracts/{contract}/on-case', [ContractController::class, 'setOnCase']);
@@ -119,3 +121,8 @@ Route::middleware(['auth:sanctum', 'role:owner,cashier,accountant'])->prefix('ow
     Route::put('/prepared-contracts/{preparedContract}', [PreparedContractController::class, 'update']);
     Route::delete('/prepared-contracts/{preparedContract}', [PreparedContractController::class, 'destroy']);
 });
+
+Route::middleware(['auth:sanctum', 'role:admin,owner,cashier,accountant'])->group(function () {
+    Route::get('/contracts/{contract}/vacate-summary', [ContractController::class, 'vacateSummary']);
+});
+

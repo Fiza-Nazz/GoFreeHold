@@ -7,6 +7,8 @@ export interface ContractForVacate {
   owner_id?: number
   rent_amount?: number | string
   security_deposit?: number | string
+  dewa_deposit?: number | string
+  end_date?: string
   unit_id?: number
   unit?: {
     id: number
@@ -53,34 +55,82 @@ export default function VacateSettlementModal({
   const [rentDue, setRentDue] = useState<string>('0')
   const [dewaDue, setDewaDue] = useState<string>('0')
   const [otherCharges, setOtherCharges] = useState<string>('0')
-  const [adminFees, setAdminFees] = useState<string>('0')
+  const [adminFees, setAdminFees] = useState<string>('250')
   const [depositAmount, setDepositAmount] = useState<string>('0')
   const [remarks, setRemarks] = useState<string>('')
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
+  const [isCalculating, setIsCalculating] = useState<boolean>(false)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
+  const [summaryMeta, setSummaryMeta] = useState<{
+    as_of?: string
+    total_rent?: number
+    total_rent_paid?: number
+    amount_due?: number
+  } | null>(null)
+
+  const fetchVacateSummary = async (targetDate?: string) => {
+    if (!contract) return
+    setIsCalculating(true)
+    const dateParam = targetDate || vacantDate
+    try {
+      const res = await api.get(`${apiPrefix}/contracts/${contract.id}/vacate-summary`, {
+        params: dateParam ? { as_of: dateParam } : {},
+      })
+      const summary = res.data?.data
+      if (summary) {
+        const rentDebit = Number(summary.receivables?.total_rent || summary.receivables?.rent || 0)
+        const rentCredit = Number(summary.received?.total_rent_paid || summary.received?.rent || 0)
+        const pendingRent = Math.max(0, rentDebit - rentCredit)
+        setRentDue(String(pendingRent))
+
+        const dewaDebit = Number(summary.receivables?.total_dewa || summary.receivables?.dewa || 0)
+        const dewaCredit = Number(summary.received?.total_dewa_paid || summary.received?.dewa || 0)
+        setDewaDue(String(Math.max(0, dewaDebit - dewaCredit)))
+
+        const otherDebit = Number(summary.receivables?.other_charges || summary.receivables?.other || 0)
+        const otherCredit = Number(summary.received?.other_charges_paid || summary.received?.other || 0)
+        setOtherCharges(String(Math.max(0, otherDebit - otherCredit)))
+
+        const adminFee = Number(summary.receivables?.admin_charge ?? summary.receivables?.admin_fee ?? 250)
+        setAdminFees(String(adminFee))
+
+        const deposits = Number(summary.settlement_preview?.deposits_total ?? summary.settlement_preview?.deposits ?? contract.security_deposit ?? 0)
+        setDepositAmount(String(deposits))
+
+        setSummaryMeta({
+          as_of: summary.as_of,
+          total_rent: rentDebit,
+          total_rent_paid: rentCredit,
+          amount_due: Number(summary.settlement_preview?.amount_due || 0),
+        })
+      }
+    } catch (err) {
+      console.warn('Could not fetch vacate summary, using fallback:', err)
+      const totalRent = Number(contract.rent_amount) || 0
+      const totalPaid = (contract.payments || []).reduce((acc, p) => acc + (Number(p.amount) || 0), 0)
+      setRentDue(String(Math.max(0, totalRent - totalPaid)))
+      setDepositAmount(String(Number(contract.security_deposit || 0) + Number(contract.dewa_deposit || 0)))
+    } finally {
+      setIsCalculating(false)
+    }
+  }
 
   // Initialize/prefill defaults when modal opens with contract
   useEffect(() => {
     if (contract && isOpen) {
-      setVacantDate(new Date().toISOString().split('T')[0])
-      
-      // Calculate pending rent from contract value and payments
-      const totalRent = Number(contract.rent_amount) || 0
-      const totalPaid = (contract.payments || []).reduce((acc, p) => acc + (Number(p.amount) || 0), 0)
-      const pendingRent = Math.max(0, totalRent - totalPaid)
-      setRentDue(String(pendingRent))
-
+      const initialDate = contract.end_date
+        ? String(contract.end_date).split('T')[0]
+        : new Date().toISOString().split('T')[0]
+      setVacantDate(initialDate)
+      setRentDue('0')
       setDewaDue('0')
       setOtherCharges('0')
-      setAdminFees('0')
-
-      // Security deposit prefill
-      const deposit = Number(contract.security_deposit) || 0
-      setDepositAmount(String(deposit))
-
+      setAdminFees('250')
+      setDepositAmount(String(Number(contract.security_deposit || 0) + Number(contract.dewa_deposit || 0)))
       setRemarks('')
       setErrorMessage(null)
       setIsSubmitting(false)
+      fetchVacateSummary(initialDate)
     }
   }, [contract, isOpen])
 
@@ -390,14 +440,70 @@ export default function VacateSettlementModal({
                 Frees unit to Available
               </span>
             </div>
-            <input
-              type="date"
-              required
-              value={vacantDate}
-              onChange={(e) => setVacantDate(e.target.value)}
-              className="gfh-vacate-input"
-              style={{ fontWeight: 600, color: '#0F172A' }}
-            />
+            <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
+              <input
+                type="date"
+                required
+                value={vacantDate}
+                onChange={(e) => setVacantDate(e.target.value)}
+                className="gfh-vacate-input"
+                style={{ fontWeight: 600, color: '#0F172A', flex: 1 }}
+              />
+              <button
+                type="button"
+                onClick={() => fetchVacateSummary(vacantDate)}
+                disabled={isCalculating}
+                style={{
+                  padding: '9px 18px',
+                  borderRadius: 8,
+                  border: '1px solid #059669',
+                  background: isCalculating ? '#F1F5F9' : '#ECFDF5',
+                  color: isCalculating ? '#64748B' : '#065F46',
+                  fontWeight: 700,
+                  fontSize: 13,
+                  cursor: isCalculating ? 'not-allowed' : 'pointer',
+                  whiteSpace: 'nowrap',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 6,
+                  transition: 'all 0.15s ease',
+                }}
+              >
+                {isCalculating ? (
+                  'Calculating...'
+                ) : (
+                  <>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                      <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+                    </svg>
+                    Calculate
+                  </>
+                )}
+              </button>
+            </div>
+            {summaryMeta && (
+              <div
+                style={{
+                  marginTop: 10,
+                  padding: '8px 12px',
+                  background: '#F0FDF4',
+                  borderRadius: 6,
+                  border: '1px solid #BBF7D0',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  fontSize: 12,
+                  color: '#065F46',
+                }}
+              >
+                <span>
+                  As of <strong>{summaryMeta.as_of}</strong>: Rent Incurred AED {Number(summaryMeta.total_rent || 0).toLocaleString()} (Paid AED {Number(summaryMeta.total_rent_paid || 0).toLocaleString()})
+                </span>
+                <span style={{ fontWeight: 700 }}>
+                  Preview: AED {Number(summaryMeta.amount_due || 0).toLocaleString()}
+                </span>
+              </div>
+            )}
           </div>
 
           {/* Section 2: Dues Breakdown Inputs */}
