@@ -29,6 +29,8 @@ class Unit extends Model
         'furnished',
         'price',
         'monthly_service_charge',
+        'quarterly_service_charge',
+        'yearly_service_charge',
         'status',
         'image',
     ];
