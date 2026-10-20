@@ -4,7 +4,7 @@ namespace Tests\Unit\Domain\Payment;
 
 use App\Domain\Payment\Models\ServiceCharge;
 use App\Domain\Payment\Models\ServiceChargePayment;
-use PHPUnit\Framework\TestCase;
+use Tests\TestCase;
 
 class ServiceChargeServiceTest extends TestCase
 {
