@@ -113,46 +113,7 @@ class DashboardController extends Controller
      */
     public function unitDetail(Request $request, Unit $unit): JsonResponse
     {
-        $ownerId = app(\App\Domain\Auth\Services\OwnerContextResolver::class)->ownerId($request->user());
-
-        if ((int) $unit->owner_id !== (int) $ownerId && (int) $unit->property?->owner_id !== $ownerId) {
-            return response()->json(['status' => 'error', 'message' => 'Unauthorized'], 403);
-        }
-
-        $unit->load([
-            'property:id,name,address,city,type',
-            'contracts' => fn ($q) => $q->with('tenant:id,name,email,phone,contact')->latest(),
-        ]);
-
-        $activeContract = $unit->contracts->firstWhere('status', 'active') ?? $unit->contracts->first();
-        $complaints = \App\Domain\Maintenance\Models\Complaint::where('unit_id', $unit->id)
-            ->with(['job.assignedTo:id,name'])
-            ->latest()
-            ->take(5)
-            ->get();
-
-        // Load recent payments for the active contract
-        $recentPayments = [];
-        if ($activeContract) {
-            $recentPayments = \App\Domain\Payment\Models\Payment::where('contract_id', $activeContract->id)
-                ->latest('date')
-                ->take(10)
-                ->get(['id', 'contract_id', 'type', 'mode', 'amount', 'date', 'remarks', 'receipt_number']);
-        }
-
-        $unitData = (new UnitDetailResource($unit))->resolve();
-        $unitData['active_contract'] = $activeContract;
-        $unitData['contracts_count'] = $unit->contracts->count();
-        $unitData['recent_contracts'] = $unit->contracts->take(5);
-        $unitData['recent_complaints'] = $complaints;
-        $unitData['recent_payments'] = $recentPayments;
-
-        return response()->json([
-            'status' => 'success',
-            'data'   => [
-                'unit' => $unitData,
-            ],
-        ]);
+        return app(\App\Domain\Property\Http\Controllers\UnitDetailController::class)->show($request, $unit->id);
     }
 
     /**

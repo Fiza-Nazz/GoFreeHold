@@ -61,6 +61,20 @@ interface UnitDetail {
   property?: PropertyInfo
   active_contract?: ContractInfo | null
   recent_payments?: PaymentInfo[]
+  statement?: {
+    entries: Array<{
+      id: number
+      date: string
+      description: string
+      debit: number | string
+      credit: number | string
+    }>
+    summary: {
+      total_debit: number
+      total_credit: number
+      total_balance: number
+    }
+  }
 }
 
 function formatDateDDMMYYYY(dateStr?: string | null): string {
@@ -273,10 +287,17 @@ export default function UnitDetailPage() {
       try {
         let fetchedUnit: UnitDetail | null = null
         try {
-          const res = await api.get(`/owner/dashboard/units/${unitId}`)
+          const detailPath = isStaff ? `/staff/finance/units/${unitId}` : `/owner/dashboard/units/${unitId}`
+          const res = await api.get(detailPath)
           fetchedUnit = res.data?.data?.unit || null
         } catch {
-          fetchedUnit = null
+          try {
+            const altPath = isStaff ? `/owner/dashboard/units/${unitId}` : `/staff/finance/units/${unitId}`
+            const res = await api.get(altPath)
+            fetchedUnit = res.data?.data?.unit || null
+          } catch {
+            fetchedUnit = null
+          }
         }
 
         if (!fetchedUnit) {
@@ -317,7 +338,9 @@ export default function UnitDetailPage() {
           setPayments([])
         }
 
-        if (fetchedUnit?.active_contract?.id) {
+        if (fetchedUnit?.statement?.entries && fetchedUnit.statement.entries.length > 0) {
+          applyLedgerPayload({ data: { data: fetchedUnit.statement } })
+        } else if (fetchedUnit?.active_contract?.id) {
           void fetchLedger(fetchedUnit.active_contract.id)
         } else {
           setLedgerEntries([])
@@ -346,17 +369,15 @@ export default function UnitDetailPage() {
       return d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth()
     })
     .reduce((sum, p) => sum + (Number(p.amount) || 0), 0)
-  const balanceDue = isMonthlyContract
-    ? (ledgerEntries.length > 0
-        ? computeMonthlyOutstanding(ledgerEntries, monthlyRent)
-        : Math.max(0, monthlyRent - paymentsThisMonth))
-    : Math.max(
-        0,
-        ledgerSummary.total_debit > 0
-          ? Number(ledgerSummary.total_balance)
-          : (Number(activeContract?.due ?? activeContract?.rent_amount ?? 0) -
-              payments.reduce((sum, p) => sum + (Number(p.amount) || 0), 0)),
-      )
+  const balanceDue = activeContract?.due !== undefined && activeContract?.due !== null
+    ? Number(activeContract.due)
+    : (isMonthlyContract
+        ? (ledgerEntries.length > 0
+            ? computeMonthlyOutstanding(ledgerEntries, monthlyRent)
+            : (monthlyRent - paymentsThisMonth))
+        : (ledgerSummary.total_debit > 0
+            ? Number(ledgerSummary.total_balance)
+            : (Number(activeContract?.rent_amount ?? 0) - payments.reduce((sum, p) => sum + (Number(p.amount) || 0), 0))))
 
   const handleExportStatement = () => {
     if (!activeContract) return
@@ -1299,14 +1320,14 @@ export default function UnitDetailPage() {
                   <div style={{ borderTop: '1px solid #E2E8F0', paddingTop: 14, marginTop: 2 }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: 12 }}>
                       <span style={{ fontSize: 16, fontWeight: 700, color: '#0F172A' }}>
-                        Due
+                        {Number(balanceDue) < 0 ? 'Credit' : 'Due'}
                         {isMonthlyContract && (
                           <span style={{ display: 'block', fontSize: 11, fontWeight: 600, color: '#94A3B8', marginTop: 2 }}>
                             Monthly outstanding
                           </span>
                         )}
                       </span>
-                      <span style={{ fontSize: 28, fontWeight: 700, color: '#DC2626', letterSpacing: '-0.02em', lineHeight: 1 }}>
+                      <span style={{ fontSize: 28, fontWeight: 700, color: Number(balanceDue) < 0 ? '#059669' : '#DC2626', letterSpacing: '-0.02em', lineHeight: 1 }}>
                         {Number(balanceDue).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                       </span>
                     </div>

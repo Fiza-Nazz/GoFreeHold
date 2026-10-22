@@ -25,6 +25,7 @@ Route::middleware(['auth:sanctum', 'role:cashier,accountant'])->prefix('staff/fi
     Route::get('/ledger', [$c, 'ledger']);
     Route::get('/receivables', [$c, 'receivables']);
     Route::get('/properties/{property}/unit-board', [\App\Domain\Property\Http\Controllers\PropertyUnitBoardController::class, 'show']);
+    Route::get('/units/{unit}', [\App\Domain\Property\Http\Controllers\UnitDetailController::class, 'show']);
     Route::get('/contracts/{contract}/vacate-summary', [\App\Domain\Contract\Http\Controllers\ContractController::class, 'vacateSummary']);
 
     // Staff Finance aliases for Service Charges
@@ -77,6 +78,7 @@ Route::middleware(['auth:sanctum', 'role:owner,cashier,accountant'])->prefix('ow
     Route::post('/rent-transactions', [RentTransactionController::class, 'store']);
     Route::delete('/ledger/{rentTransaction}/soft-delete', [RentTransactionController::class, 'softDelete']);
     Route::get('/properties/{property}/unit-board', [\App\Domain\Property\Http\Controllers\PropertyUnitBoardController::class, 'show']);
+    Route::get('/units/{unit}/detail', [\App\Domain\Property\Http\Controllers\UnitDetailController::class, 'show']);
 
     // Owner Service Charges & Analytics
     Route::get('/service-charges/summary', [ServiceChargeController::class, 'summary']);

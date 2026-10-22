@@ -119,6 +119,11 @@ class Contract extends Model
         return $this->hasMany(ContractDoc::class);
     }
 
+    public function documents(): HasMany
+    {
+        return $this->hasMany(ContractDoc::class);
+    }
+
     public function caseDocs(): HasMany
     {
         return $this->hasMany(ContractCaseDoc::class);

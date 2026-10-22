@@ -20,13 +20,14 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/ledger/{contractId}/rebuild', [LedgerUtilityController::class, 'rebuildLedger']);
     });
 
-    // Owner — portfolio, drill-down, vacant filter
-    Route::middleware('role:owner')->prefix('owner')->group(function () {
+    // Owner / Staff — portfolio, drill-down, vacant filter
+    Route::middleware('role:owner,cashier,accountant')->prefix('owner')->group(function () {
         Route::get('/dashboard/summary', [DashboardController::class, 'ownerSummary']);
         Route::get('/dashboard/properties', [DashboardController::class, 'propertyDrillDown']);
         Route::get('/dashboard/properties/{property}/units', [DashboardController::class, 'propertyUnits']);
         Route::get('/dashboard/properties/{property}/unit-board', [\App\Domain\Property\Http\Controllers\PropertyUnitBoardController::class, 'show']);
-        Route::get('/dashboard/units/{unit}', [DashboardController::class, 'unitDetail']);
+        Route::get('/dashboard/units/{unit}', [\App\Domain\Property\Http\Controllers\UnitDetailController::class, 'show']);
+        Route::get('/units/{unit}/detail', [\App\Domain\Property\Http\Controllers\UnitDetailController::class, 'show']);
         Route::get('/dashboard/vacant-units', [DashboardController::class, 'vacantUnits']);
 
         // Owner-scoped finance views (read-only)
