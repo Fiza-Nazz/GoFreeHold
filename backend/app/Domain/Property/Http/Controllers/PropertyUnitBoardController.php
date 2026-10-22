@@ -58,15 +58,21 @@ class PropertyUnitBoardController extends Controller
         // Property lookup scoped to organization and owner
         $propertyQuery = Property::where('id', $property);
 
-        if ($orgId && $ownerId) {
-            $propertyQuery->where(function ($q) use ($orgId, $ownerId) {
-                $q->where('organization_id', $orgId)
-                  ->orWhere('owner_id', $ownerId);
-            });
-        } elseif ($orgId) {
-            $propertyQuery->where('organization_id', $orgId);
-        } elseif ($ownerId) {
+        if (in_array($user->role, ['cashier', 'accountant'], true)) {
+            // Staff are assigned strictly to their employing owner's properties
             $propertyQuery->where('owner_id', $ownerId);
+        } else {
+            // Owner can access properties under their owner_id or organization_id
+            if ($orgId && $ownerId) {
+                $propertyQuery->where(function ($q) use ($orgId, $ownerId) {
+                    $q->where('owner_id', $ownerId)
+                      ->orWhere('organization_id', $orgId);
+                });
+            } elseif ($ownerId) {
+                $propertyQuery->where('owner_id', $ownerId);
+            } elseif ($orgId) {
+                $propertyQuery->where('organization_id', $orgId);
+            }
         }
 
         $propertyModel = $propertyQuery->first();
@@ -119,14 +125,21 @@ class PropertyUnitBoardController extends Controller
                 $rawRent = (float) ($contract->rent_amount ?? 0);
                 $rent = $isMonthly ? round($rawRent, 2) : round($rawRent / 12, 2);
 
-                // Due calculation (Section 5.3: preferred order)
+                // Due calculation (Section 5.3: preferred order, strictly signed, NO max(0, …) clamping)
                 if ($contract->relationLoaded('rentTransactions') && $contract->rentTransactions->isNotEmpty()) {
                     $debitSum = (float) $contract->rentTransactions->sum('debit');
                     $creditSum = (float) $contract->rentTransactions->sum('credit');
-                    $due = max(0.00, round($debitSum - $creditSum, 2));
+                    $due = round($debitSum - $creditSum, 2);
                 } elseif ($contract->due !== null) {
-                    $due = max(0.00, round((float) $contract->due, 2));
+                    $due = round((float) $contract->due, 2);
                 } else {
+                    // Fallback: monthly_rent - payments_this_period (may be negative when overpaid)
+                    $paymentsSum = (float) ($contract->payments()->sum('amount') ?? 0);
+                    $due = $paymentsSum > 0 ? round($rent - $paymentsSum, 2) : 0.00;
+                }
+
+                // Normalise -0.00 to 0.00
+                if (abs($due) < 0.0001) {
                     $due = 0.00;
                 }
 

@@ -53,6 +53,7 @@ Route::middleware(['auth:sanctum', 'role:admin'])->prefix('admin')->group(functi
     Route::get('/rent-ledger', [RentTransactionController::class, 'index']); // plan path
     Route::get('/ledger/receivables', [RentTransactionController::class, 'receivablesSummary']);
     Route::delete('/ledger/{rentTransaction}/soft-delete', [RentTransactionController::class, 'softDelete']);
+    Route::get('/properties/{property}/unit-board', [\App\Domain\Property\Http\Controllers\PropertyUnitBoardController::class, 'show']);
     Route::get('/ledger/{rentTransaction}/audit-log', [RentTransactionController::class, 'auditLog']);
     Route::apiResource('rent-transactions', RentTransactionController::class);
 
@@ -75,6 +76,7 @@ Route::middleware(['auth:sanctum', 'role:owner,cashier,accountant'])->prefix('ow
     Route::get('/receivables', [RentTransactionController::class, 'receivablesSummary']);
     Route::post('/rent-transactions', [RentTransactionController::class, 'store']);
     Route::delete('/ledger/{rentTransaction}/soft-delete', [RentTransactionController::class, 'softDelete']);
+    Route::get('/properties/{property}/unit-board', [\App\Domain\Property\Http\Controllers\PropertyUnitBoardController::class, 'show']);
 
     // Owner Service Charges & Analytics
     Route::get('/service-charges/summary', [ServiceChargeController::class, 'summary']);
