@@ -10,10 +10,9 @@ class MaintenanceStatusService
 {
     public function updateComplaintStatus(Complaint $complaint, string $status, int $userId, ?string $notes = null): Job
     {
-        $job = $complaint->job;
-        abort_unless($job, 409, 'Assign this complaint to an eligible worker first.');
-        $jobStatus = match ($status) { 'resolved' => 'completed', 'in_progress' => 'in_progress', 'assigned' => 'assigned', default => 'open' };
-        return $this->updateJob($job, ['status' => $jobStatus, 'notes' => $notes ?? $job->notes], $userId);
+        $actor = User::findOrFail($userId);
+        $updatedComplaint = app(ComplaintWorkflowService::class)->transition($complaint, $status, $notes, $actor);
+        return $updatedComplaint->job;
     }
 
     public function updateJob(Job $job, array $payload, int $userId): Job

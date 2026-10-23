@@ -18,47 +18,13 @@ class MaintenanceService
 {
     public function createComplaint(User $user, array $data): Complaint
     {
-        $tenant = Tenant::where('user_id', $user->id)->first();
-        abort_unless($tenant, 403, 'A tenant profile and active contract are required to submit a complaint.');
-        $allowed = Contract::where('tenant_id', $tenant->id)
-            ->where('unit_id', $data['unit_id'])->whereIn('status', ['active', 'renewed'])->exists();
-        if (! $allowed) {
-            throw \Illuminate\Validation\ValidationException::withMessages([
-                'unit_id' => ['Select a unit from your active contracts.'],
-            ]);
-        }
-
-        unset($data['category']);
-        $data['tenant_id'] = $tenant->id;
-        $data['status'] = 'open';
-
-        return Complaint::create($data);
+        return app(ComplaintWorkflowService::class)->create($data, $user);
     }
 
     public function assignComplaint(Complaint $complaint, array $data, int $assignedBy): Job
     {
-        return DB::transaction(function () use ($complaint, $data, $assignedBy) {
-            app(JobAccessService::class)->technician($complaint, (int) $data['assigned_to']);
-            $complaint = Complaint::lockForUpdate()->findOrFail($complaint->id);
-            abort_if(Job::where('complaint_id', $complaint->id)->count() > 1, 409, 'This complaint has multiple jobs. Admin must review the duplicate records before assignment.');
-            $job = Job::updateOrCreate(
-                ['complaint_id' => $complaint->id],
-                [
-                    'assigned_to' => $data['assigned_to'],
-                    'assigned_by' => $assignedBy,
-                    'team_id' => $data['team_id'] ?? null,
-                    'status' => 'assigned',
-                    'completed_at' => null,
-                    'notes' => $data['notes'] ?? null,
-                ],
-            );
-
-            $complaint->update(['status' => 'assigned', 'assigned_to' => $data['assigned_to']]);
-
-            DB::table('staff_access_audits')->insert(['actor_id' => $assignedBy, 'owner_id' => $complaint->unit->property->owner_id, 'action' => 'job.assigned', 'target_id' => $job->id, 'details' => json_encode(['assigned_to' => $data['assigned_to']]), 'created_at' => now(), 'updated_at' => now()]);
-
-            return $job;
-        });
+        $actor = User::findOrFail($assignedBy);
+        return app(ComplaintWorkflowService::class)->assign($complaint, $data, $actor);
     }
 
     public function createInventoryItem(array $data): InventoryItem

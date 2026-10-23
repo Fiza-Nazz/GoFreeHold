@@ -5,14 +5,42 @@ import { THEME, ADMIN_COLORS, Icon, portalPageCss, heroStyle, panelStyle } from 
 import { safeUpper, safeUpperLabel } from '../../utils/safeLabel'
 import { formatDubaiDateTime } from '../../utils/formatDate'
 
+interface ComplaintAttachment {
+  id: number
+  file_path: string
+  file_name?: string
+  url?: string
+}
+
+interface ComplaintUpdate {
+  id: number
+  from_status?: string
+  to_status?: string
+  note?: string
+  created_at?: string
+  user?: { id: number; name: string }
+}
+
+interface ComplaintJob {
+  id: number
+  status: string
+  scheduled_date?: string
+  notes?: string
+  assigned_to?: { id: number; name: string }
+}
+
 interface Complaint {
   id: number
   title: string
   description?: string
+  category?: string
   status: string
   priority?: string
   created_at?: string
   unit?: { number?: string; property?: { name?: string; address?: string } }
+  job?: ComplaintJob
+  attachments?: ComplaintAttachment[]
+  updates?: ComplaintUpdate[]
 }
 
 const icons = {
@@ -22,6 +50,8 @@ const icons = {
   clock: 'M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm1 10.41l3.54 2.12-.75 1.23L11.5 13V7h1.5z',
   chevronLeft: 'M15 18l-6-6 6-6',
   alert: 'M12 9v4M12 17h.01M10.29 3.86 1.82 18a1 1 0 0 0 .86 1.5h18.64a1 1 0 0 0 .86-1.5L13.71 3.86a1 1 0 0 0-1.72 0z',
+  calendar: 'M8 2v4M16 2v4M3 10h18M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z',
+  image: 'M4 16l4.586-4.586a2 2 0 0 1 2.828 0L16 16m-2-2 1.586-1.586a2 2 0 0 1 2.828 0L20 14m-6-6h.01M6 20h12a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2z',
 }
 
 const STATUS_STYLE: Record<string, { bg: string; color: string; border: string }> = {
@@ -50,14 +80,13 @@ export default function TenantComplaintDetail() {
       setIsLoading(true)
       setError(null)
       try {
-        const res = await api.get('/tenant/complaints')
-        const list: Complaint[] = res.data?.data?.complaints || []
-        const found = list.find((c) => String(c.id) === String(id)) || null
-        if (!found) {
+        const res = await api.get(`/tenant/complaints/${id}`)
+        const item: Complaint = res.data?.data?.complaint || null
+        if (!item) {
           setError('Maintenance complaint ticket not found.')
           setComplaint(null)
         } else {
-          setComplaint(found)
+          setComplaint(item)
         }
       } catch (err: any) {
         setError(err.response?.data?.message || 'Failed to load complaint.')
@@ -90,7 +119,7 @@ export default function TenantComplaintDetail() {
             Complaint #{id}
           </div>
           <div style={{ fontSize: 13, color: THEME.textMuted, marginTop: 4 }}>
-            Live status tracking and technician assignment details
+            Live status tracking, technician assignment details, and resolution history
           </div>
         </div>
 
@@ -151,7 +180,7 @@ export default function TenantComplaintDetail() {
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', position: 'relative', flexWrap: 'wrap', gap: 16 }}>
               {[
                 { title: '1. Submitted', desc: 'Request logged in system', active: true, done: true },
-                { title: '2. Dispatched', desc: 'Assigned to technician', active: isAssigned, done: isInProgress },
+                { title: '2. Dispatched', desc: complaint.job?.assigned_to ? `Assigned to ${complaint.job.assigned_to.name}` : 'Assigned to technician', active: isAssigned, done: isInProgress },
                 { title: '3. In Progress', desc: 'Repair work on-site', active: isInProgress, done: isResolved },
                 { title: '4. Resolved', desc: 'Inspected & finalized', active: isResolved, done: isResolved },
               ].map((step, idx) => (
@@ -198,7 +227,7 @@ export default function TenantComplaintDetail() {
               boxShadow: '0 1px 3px rgba(16,24,40,0.04)',
             }}
           >
-            {/* Header: Title and Status Pill */}
+            {/* Header: Title and Status Pills */}
             <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: 12, paddingBottom: 18, borderBottom: `1px solid #F1F5F9` }}>
               <div>
                 <span style={{ fontSize: 12, fontWeight: 600, background: '#F1F5F9', color: '#0F172A', padding: '3px 9px', borderRadius: 6 }}>
@@ -209,7 +238,23 @@ export default function TenantComplaintDetail() {
                 </h1>
               </div>
 
-              <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+              <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
+                {complaint.category && (
+                  <span
+                    style={{
+                      background: '#F0FDF4',
+                      color: '#065F46',
+                      border: '1px solid #BBF7D0',
+                      padding: '4px 12px',
+                      borderRadius: 999,
+                      fontSize: 12,
+                      fontWeight: 600,
+                      textTransform: 'capitalize',
+                    }}
+                  >
+                    {complaint.category}
+                  </span>
+                )}
                 {complaint.priority && (
                   <span
                     style={{
@@ -263,6 +308,44 @@ export default function TenantComplaintDetail() {
               </div>
             </div>
 
+            {/* Photos / Attachments Block */}
+            {complaint.attachments && complaint.attachments.length > 0 && (
+              <div style={{ marginTop: 22 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 11.5, fontWeight: 600, color: '#64748B', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: 10 }}>
+                  <Icon path={icons.image} size={15} />
+                  Attached Photos ({complaint.attachments.length})
+                </div>
+                <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+                  {complaint.attachments.map((att, i) => {
+                    const imgSrc = att.url || `/storage/${att.file_path}`
+                    return (
+                      <a
+                        key={att.id || i}
+                        href={imgSrc}
+                        target="_blank"
+                        rel="noreferrer"
+                        style={{
+                          display: 'block',
+                          width: 100,
+                          height: 100,
+                          borderRadius: 10,
+                          overflow: 'hidden',
+                          border: '1px solid #E2E8F0',
+                          boxShadow: '0 1px 3px rgba(0,0,0,0.06)',
+                        }}
+                      >
+                        <img
+                          src={imgSrc}
+                          alt={att.file_name || 'Attachment'}
+                          style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                        />
+                      </a>
+                    )
+                  })}
+                </div>
+              </div>
+            )}
+
             {/* Meta Grid */}
             <div style={{ marginTop: 22, display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 14 }}>
               {/* Unit & Property */}
@@ -293,20 +376,81 @@ export default function TenantComplaintDetail() {
                 </div>
               </div>
 
-              {/* Service Team */}
+              {/* Service Team & Technician */}
               <div style={{ padding: '14px 16px', borderRadius: 12, border: '1px solid #E2E8F0', background: '#F6F8FA' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#D97706', marginBottom: 4 }}>
                   <Icon path={icons.wrench} size={16} />
                   <span style={{ fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Assigned Handler</span>
                 </div>
                 <div style={{ fontSize: 13.5, fontWeight: 600, color: THEME.ink }}>
-                  Property Maintenance Team
+                  {complaint.job?.assigned_to?.name || 'Property Maintenance Team'}
                 </div>
                 <div style={{ fontSize: 12, color: '#64748B', marginTop: 2 }}>
-                  Field Technician Assigned
+                  {complaint.job?.scheduled_date ? `Scheduled: ${complaint.job.scheduled_date}` : 'Field Technician Assigned'}
                 </div>
               </div>
             </div>
+
+            {/* Updates History Timeline */}
+            {complaint.updates && complaint.updates.length > 0 && (
+              <div style={{ marginTop: 26, paddingTop: 20, borderTop: '1px solid #F1F5F9' }}>
+                <div style={{ fontSize: 12, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.6px', color: '#64748B', marginBottom: 14 }}>
+                  Activity & Status Updates
+                </div>
+                <div style={{ display: 'grid', gap: 10 }}>
+                  {complaint.updates.map((upd, idx) => (
+                    <div
+                      key={upd.id || idx}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'flex-start',
+                        gap: 12,
+                        padding: '10px 14px',
+                        background: '#F8FAFC',
+                        borderRadius: 10,
+                        border: '1px solid #EDF2F7',
+                      }}
+                    >
+                      <div
+                        style={{
+                          width: 8,
+                          height: 8,
+                          borderRadius: '50%',
+                          background: upd.to_status === 'resolved' ? '#10B981' : upd.to_status === 'in_progress' ? '#0284C7' : '#D97706',
+                          marginTop: 6,
+                          flexShrink: 0,
+                        }}
+                      />
+                      <div style={{ flex: 1 }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+                          <span style={{ fontSize: 12.5, fontWeight: 600, color: '#0F172A' }}>
+                            Status: {safeUpperLabel(upd.to_status || '')}
+                            {upd.from_status && upd.from_status !== upd.to_status && (
+                              <span style={{ fontSize: 11.5, color: '#64748B', fontWeight: 400, marginLeft: 6 }}>
+                                (from {safeUpperLabel(upd.from_status)})
+                              </span>
+                            )}
+                          </span>
+                          <span style={{ fontSize: 11, color: '#94A3B8' }}>
+                            {upd.created_at ? formatDubaiDateTime(upd.created_at) : ''}
+                          </span>
+                        </div>
+                        {upd.note && (
+                          <div style={{ fontSize: 12.5, color: '#475569', marginTop: 3 }}>
+                            {upd.note}
+                          </div>
+                        )}
+                        {upd.user?.name && (
+                          <div style={{ fontSize: 11, color: '#94A3B8', marginTop: 2 }}>
+                            By {upd.user.name}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         </div>
       ) : null}

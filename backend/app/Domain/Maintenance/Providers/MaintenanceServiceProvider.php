@@ -2,6 +2,9 @@
 
 namespace App\Domain\Maintenance\Providers;
 
+use App\Domain\Maintenance\Models\Complaint;
+use App\Domain\Maintenance\Policies\ComplaintPolicy;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 
@@ -14,6 +17,8 @@ class MaintenanceServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        Gate::policy(Complaint::class, ComplaintPolicy::class);
+
         $this->registerMaintenanceRoutes();
     }
 

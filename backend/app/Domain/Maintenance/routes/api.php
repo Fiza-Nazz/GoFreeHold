@@ -15,6 +15,7 @@ use App\Domain\Maintenance\Http\Controllers\MaintenanceChargeController;
 use App\Domain\Maintenance\Http\Controllers\MaintenanceController;
 use App\Domain\Maintenance\Http\Controllers\MaintenanceReportController;
 use App\Domain\Maintenance\Http\Controllers\PurchaseController;
+use App\Domain\Maintenance\Http\Controllers\StaffJobController;
 use App\Domain\Maintenance\Http\Controllers\TeamController;
 use App\Domain\Maintenance\Http\Controllers\UnitItemController;
 use Illuminate\Support\Facades\Route;
@@ -23,9 +24,11 @@ Route::middleware('auth:sanctum')->group(function () {
     // ── Admin (Platform Admin should not CRUD customer inventory)
     Route::middleware('role:admin')->prefix('admin')->group(function () {
         Route::get('/complaints', [ComplaintController::class, 'index']);
+        Route::post('/complaints', [ComplaintController::class, 'store']);
         Route::get('/complaints/{complaint}', [ComplaintController::class, 'show']);
         Route::post('/complaints/{complaint}/assign', [ComplaintController::class, 'assign']);
         Route::post('/complaints/{complaint}/status', [ComplaintController::class, 'updateStatus']);
+        Route::post('/complaints/{complaint}/attachments', [ComplaintController::class, 'storeAttachments']);
         Route::get('/technicians', [ComplaintController::class, 'getTechnicians']);
 
         Route::get('/maintenance/daily-report', [MaintenanceReportController::class, 'dailyReport']);
@@ -61,13 +64,19 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::delete('/purchases/{purchase}', [PurchaseController::class, 'destroy']);
     });
 
-    // ── Maintenance role
+    // ── Maintenance supervisor role (Create, org-queue list, assign, status, attachments, technicians, jobs)
     Route::middleware('role:maintenance')->prefix('maintenance')->group(function () {
-        Route::get('/jobs', [\App\Domain\Maintenance\Http\Controllers\StaffJobController::class, 'index']);
-        Route::get('/jobs/{job}', [\App\Domain\Maintenance\Http\Controllers\StaffJobController::class, 'show']);
-        Route::post('/jobs/{job}/status', [\App\Domain\Maintenance\Http\Controllers\StaffJobController::class, 'status']);
         Route::get('/complaints', [ComplaintController::class, 'index']);
+        Route::post('/complaints', [ComplaintController::class, 'store']);
+        Route::get('/complaints/{complaint}', [ComplaintController::class, 'show']);
+        Route::post('/complaints/{complaint}/assign', [ComplaintController::class, 'assign']);
         Route::post('/complaints/{complaint}/status', [ComplaintController::class, 'updateStatus']);
+        Route::post('/complaints/{complaint}/attachments', [ComplaintController::class, 'storeAttachments']);
+        Route::get('/technicians', [ComplaintController::class, 'getTechnicians']);
+
+        Route::get('/jobs', [StaffJobController::class, 'index']);
+        Route::get('/jobs/{job}', [StaffJobController::class, 'show']);
+        Route::post('/jobs/{job}/status', [StaffJobController::class, 'status']);
         Route::get('/daily-report', [MaintenanceReportController::class, 'dailyReport']);
     });
 
@@ -76,14 +85,17 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/units', [ComplaintController::class, 'tenantUnits']);
         Route::get('/complaints', [ComplaintController::class, 'index']);
         Route::post('/complaints', [ComplaintController::class, 'store']);
+        Route::get('/complaints/{complaint}', [ComplaintController::class, 'show']);
     });
 
     // ── Owner role (Maintenance & Complaints Dispatching + Unified Inventory Operations)
     Route::middleware('role:owner,cashier,accountant')->prefix('owner')->group(function () {
         Route::get('/complaints', [ComplaintController::class, 'index']);
+        Route::post('/complaints', [ComplaintController::class, 'store']);
         Route::get('/complaints/{complaint}', [ComplaintController::class, 'show']);
         Route::post('/complaints/{complaint}/assign', [ComplaintController::class, 'assign']);
         Route::post('/complaints/{complaint}/status', [ComplaintController::class, 'updateStatus']);
+        Route::post('/complaints/{complaint}/attachments', [ComplaintController::class, 'storeAttachments']);
         Route::get('/technicians', [ComplaintController::class, 'getTechnicians']);
 
         // Compatibility aliases for legacy appliances UI
