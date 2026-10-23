@@ -21,9 +21,9 @@ class StaffJobController extends Controller
         $q = $this->query($r);
         $counts = (clone $q)->select('status')->selectRaw('COUNT(*) as total')->groupBy('status')->pluck('total','status');
         if ($r->filled('status')) $q->where('status', $r->status);
-        return response()->json(['data' => ['jobs' => $q->latest('id')->paginate(25), 'counts' => $counts]]);
+        return response()->json(['status' => 'success', 'data' => ['jobs' => $q->latest('id')->paginate(25), 'counts' => $counts]]);
     }
-    public function show(Request $r, int $job) { return response()->json(['data' => ['job' => $this->query($r)->findOrFail($job)]]); }
+    public function show(Request $r, int $job) { return response()->json(['status' => 'success', 'data' => ['job' => $this->query($r)->findOrFail($job)]]); }
     public function status(Request $r, int $job)
     {
         $data = $r->validate(['status' => 'required|in:assigned,in_progress,completed', 'notes' => 'nullable|string|max:4000', 'assigned_to' => 'prohibited', 'owner_id' => 'prohibited']);
