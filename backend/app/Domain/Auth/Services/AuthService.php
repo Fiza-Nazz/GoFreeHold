@@ -148,8 +148,12 @@ class AuthService
         ];
     }
 
-    public function logout(User $user): void
+    public function logout($user): void
     {
+        if (! $user) {
+            return;
+        }
+
         $token = $user->currentAccessToken();
 
         // Sanctum API tokens (Bearer) — revoke the current personal access token
