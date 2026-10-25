@@ -51,5 +51,7 @@ Route::middleware(['auth:sanctum', 'role:owner,cashier,accountant'])->prefix('ow
     Route::get('/tenants/{tenant}', [TenantController::class, 'show']);
     Route::put('/tenants/{tenant}', [TenantController::class, 'update']);
     Route::delete('/tenants/{tenant}', [TenantController::class, 'destroy']);
+    Route::post('/tenants/{tenant}/portal', [TenantController::class, 'enablePortal']);
+    Route::post('/tenants/{tenant}/portal/reset-password', [TenantController::class, 'resetPortalPassword']);
     Route::get('/reports/vacant-properties', VacantPropertyController::class);
 });

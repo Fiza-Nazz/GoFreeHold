@@ -36,8 +36,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/finance/payments', [OwnerFinanceController::class, 'payments']);
     });
 
-    // Tenant — finance views (read-only)
-    Route::middleware('role:tenant')->prefix('tenant')->group(function () {
+    // Tenant — finance views (read-only, Lease-Gated)
+    Route::middleware(['role:tenant', 'lease.active'])->prefix('tenant')->group(function () {
         Route::get('/finance/ledger', [TenantFinanceController::class, 'ledger']);
         Route::get('/finance/payments', [TenantFinanceController::class, 'payments']);
     });

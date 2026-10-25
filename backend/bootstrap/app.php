@@ -19,6 +19,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->appendToPriorityList(\App\Domain\Auth\Http\Middleware\ActiveAccountMiddleware::class, \App\Domain\Auth\Http\Middleware\RoleMiddleware::class);
         $middleware->alias([
             'role' => \App\Domain\Auth\Http\Middleware\RoleMiddleware::class,
+            'lease.active' => \App\Domain\Auth\Http\Middleware\EnsureTenantLeaseActive::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

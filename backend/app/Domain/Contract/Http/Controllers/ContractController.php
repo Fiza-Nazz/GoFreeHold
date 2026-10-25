@@ -98,13 +98,79 @@ class ContractController extends Controller
             }
         }
 
+        $portalResult = null;
+        if (!empty($validated['tenant_email'])) {
+            $provData = [
+                'name'            => $validated['tenant_name'] ?? 'Tenant User',
+                'email'           => $validated['tenant_email'],
+                'phone'           => $validated['tenant_phone'] ?? null,
+                'emirates_id'     => $validated['tenant_emirates_id'] ?? null,
+                'nationality'     => $validated['tenant_nationality'] ?? null,
+                'passport_number' => $validated['tenant_passport_number'] ?? null,
+                'address'         => $validated['tenant_address'] ?? null,
+                'owner_id'        => $validated['owner_id'] ?? null,
+                'tenant_id'       => $validated['tenant_id'] ?? null,
+            ];
+            $portalResult = app(\App\Domain\Auth\Services\TenantPortalProvisioner::class)->provision($provData);
+            $validated['tenant_id'] = $portalResult['tenant']->id;
+        } elseif (!empty($validated['tenant_id']) && $request->boolean('create_portal')) {
+            $tenant = \App\Domain\Auth\Models\Tenant::find($validated['tenant_id']);
+            if ($tenant && !empty($tenant->email)) {
+                $provData = [
+                    'name'      => $tenant->name,
+                    'email'     => $tenant->email,
+                    'phone'     => $tenant->phone ?: $tenant->contact,
+                    'tenant_id' => $tenant->id,
+                    'owner_id'  => $validated['owner_id'] ?? $tenant->owner_id,
+                ];
+                $portalResult = app(\App\Domain\Auth\Services\TenantPortalProvisioner::class)->provision($provData);
+            }
+        }
+
         try {
             $contract = $contractService->createContract($validated);
+
+            $portalData = null;
+            if ($portalResult) {
+                $emailSent = false;
+                if (!empty($portalResult['password_set']) && !empty($portalResult['temp_password'])) {
+                    try {
+                        $propName = $unit->property?->name;
+                        \Illuminate\Support\Facades\Mail::to($portalResult['user']->email)
+                            ->send(new \App\Domain\Auth\Mail\TenantPortalCredentialsMail(
+                                $portalResult['user'],
+                                $portalResult['temp_password'],
+                                $propName
+                            ));
+                        $emailSent = true;
+                    } catch (\Throwable $e) {
+                        \Illuminate\Support\Facades\Log::warning('Failed to send TenantPortalCredentialsMail: ' . $e->getMessage());
+                        $emailSent = false;
+                    }
+                } else {
+                    $emailSent = true;
+                }
+
+                $portalData = [
+                    'provisioned'   => true,
+                    'was_created'   => $portalResult['was_created'],
+                    'email'         => $portalResult['user']->email,
+                    'email_sent'    => $emailSent,
+                    'temp_password' => $emailSent ? null : $portalResult['temp_password'],
+                ];
+            }
+
+            $responseData = [
+                'contract' => $contract->load(['unit.property', 'tenant', 'owner', 'cheques', 'terms', 'rentTransactions']),
+            ];
+            if ($portalData) {
+                $responseData['portal'] = $portalData;
+            }
 
             return response()->json([
                 'status'  => 'success',
                 'message' => 'Contract created successfully.',
-                'data'    => ['contract' => $contract->load(['unit.property', 'tenant', 'owner', 'cheques', 'terms', 'rentTransactions'])],
+                'data'    => $responseData,
             ], 201);
         } catch (\InvalidArgumentException $e) {
             return response()->json(['status' => 'error', 'message' => $e->getMessage()], 422);

@@ -59,9 +59,22 @@ class StoreContractRequest extends FormRequest
                     }
                 },
             ],
-            'tenant_id'              => 'nullable|exists:tenants,id|required_without:tenant_name',
-            'tenant_name'            => 'nullable|string|max:255|required_without:tenant_id',
-            'tenant_email'           => 'nullable|email|max:255',
+            'tenant_id'              => 'nullable|exists:tenants,id|required_without:tenant_email',
+            'tenant_name'            => 'nullable|string|max:255|required_with:tenant_email|required_without:tenant_id',
+            'tenant_email'           => [
+                'nullable',
+                'email',
+                'max:255',
+                'required_without:tenant_id',
+                function ($attribute, $value, $fail) {
+                    if ($value) {
+                        $user = \App\Domain\Auth\Models\User::where('email', strtolower(trim($value)))->first();
+                        if ($user && $user->role !== 'tenant') {
+                            $fail('This email belongs to a staff or owner account.');
+                        }
+                    }
+                },
+            ],
             'tenant_phone'           => 'nullable|string|max:50',
             'tenant_emirates_id'     => 'nullable|string|max:50',
             'tenant_nationality'     => 'nullable|string|max:100',

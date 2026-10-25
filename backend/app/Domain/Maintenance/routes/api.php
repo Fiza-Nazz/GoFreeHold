@@ -80,8 +80,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/daily-report', [MaintenanceReportController::class, 'dailyReport']);
     });
 
-    // ── Tenant role
-    Route::middleware('role:tenant')->prefix('tenant')->group(function () {
+    // ── Tenant role (Lease-Gated)
+    Route::middleware(['role:tenant', 'lease.active'])->prefix('tenant')->group(function () {
         Route::get('/units', [ComplaintController::class, 'tenantUnits']);
         Route::get('/complaints', [ComplaintController::class, 'index']);
         Route::post('/complaints', [ComplaintController::class, 'store']);

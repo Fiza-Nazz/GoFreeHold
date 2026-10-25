@@ -131,6 +131,15 @@ class AuthService
         }
 
         app(OwnerContextResolver::class)->assertActive($user);
+
+        if ($user->role === 'tenant') {
+            if (!app(\App\Domain\Auth\Services\TenantPortalProvisioner::class)->tenantHasActiveLease($user)) {
+                throw ValidationException::withMessages([
+                    'email' => ['Portal access is available only with an active tenancy. Contact your property manager.'],
+                ]);
+            }
+        }
+
         $token = $user->createToken('auth_token')->plainTextToken;
 
         return [
